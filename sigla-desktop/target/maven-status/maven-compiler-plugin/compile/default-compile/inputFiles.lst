@@ -1,0 +1,15 @@
+C:\Sigla\Sigla\sigla-desktop\src\main\java\br\com\sigla\desktop\app\AppShell.java
+C:\Sigla\Sigla\sigla-desktop\src\main\java\br\com\sigla\desktop\app\SiglaDesktopApplication.java
+C:\Sigla\Sigla\sigla-desktop\src\main\java\br\com\sigla\desktop\bootstrap\SiglaLauncher.java
+C:\Sigla\Sigla\sigla-desktop\src\main\java\br\com\sigla\desktop\bootstrap\SiglaSpringApplication.java
+C:\Sigla\Sigla\sigla-desktop\src\main\java\br\com\sigla\desktop\bootstrap\SpringContextHolder.java
+C:\Sigla\Sigla\sigla-desktop\src\main\java\br\com\sigla\desktop\controller\AppShellController.java
+C:\Sigla\Sigla\sigla-desktop\src\main\java\br\com\sigla\desktop\controller\BillingController.java
+C:\Sigla\Sigla\sigla-desktop\src\main\java\br\com\sigla\desktop\controller\CustomerController.java
+C:\Sigla\Sigla\sigla-desktop\src\main\java\br\com\sigla\desktop\controller\FiscalController.java
+C:\Sigla\Sigla\sigla-desktop\src\main\java\br\com\sigla\desktop\controller\InventoryController.java
+C:\Sigla\Sigla\sigla-desktop\src\main\java\br\com\sigla\desktop\controller\NotificationController.java
+C:\Sigla\Sigla\sigla-desktop\src\main\java\br\com\sigla\desktop\mapper\CpfMaskFormatter.java
+C:\Sigla\Sigla\sigla-desktop\src\main\java\br\com\sigla\desktop\navigation\AppView.java
+C:\Sigla\Sigla\sigla-desktop\src\main\java\br\com\sigla\desktop\navigation\NavigationManager.java
+C:\Sigla\Sigla\sigla-desktop\src\main\java\br\com\sigla\desktop\presenter\CurrencyPresenter.java

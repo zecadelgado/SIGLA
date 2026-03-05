@@ -1,0 +1,4 @@
+sigla:
+  storage:
+    fiscal-root: var/fiscal
+    fiscal-environment: homologacao

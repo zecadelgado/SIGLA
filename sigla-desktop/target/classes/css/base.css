@@ -1,0 +1,28 @@
+.root {
+    -fx-font-family: "Segoe UI";
+    -fx-background-color: linear-gradient(to bottom, #f5f7fa, #eef2f6);
+}
+
+.top-nav {
+    -fx-background-color: #1f3b5b;
+}
+
+.top-nav .button {
+    -fx-background-color: #2d4f77;
+    -fx-text-fill: #ffffff;
+    -fx-background-radius: 6;
+}
+
+.top-nav .button:hover {
+    -fx-background-color: #39628f;
+}
+
+.content-host {
+    -fx-padding: 20;
+}
+
+.screen-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1f3b5b;
+}

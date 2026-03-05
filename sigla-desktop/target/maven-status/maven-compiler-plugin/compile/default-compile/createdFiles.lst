@@ -1,0 +1,15 @@
+br\com\sigla\desktop\controller\NotificationController.class
+br\com\sigla\desktop\bootstrap\SiglaSpringApplication.class
+br\com\sigla\desktop\controller\InventoryController.class
+br\com\sigla\desktop\navigation\AppView.class
+br\com\sigla\desktop\controller\AppShellController.class
+br\com\sigla\desktop\bootstrap\SpringContextHolder.class
+br\com\sigla\desktop\app\SiglaDesktopApplication.class
+br\com\sigla\desktop\bootstrap\SiglaLauncher.class
+br\com\sigla\desktop\controller\FiscalController.class
+br\com\sigla\desktop\app\AppShell.class
+br\com\sigla\desktop\mapper\CpfMaskFormatter.class
+br\com\sigla\desktop\controller\BillingController.class
+br\com\sigla\desktop\navigation\NavigationManager.class
+br\com\sigla\desktop\controller\CustomerController.class
+br\com\sigla\desktop\presenter\CurrencyPresenter.class
