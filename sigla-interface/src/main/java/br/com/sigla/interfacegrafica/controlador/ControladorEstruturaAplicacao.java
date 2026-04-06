@@ -16,7 +16,17 @@ public class ControladorEstruturaAplicacao {
     public void bindNavigation(GerenciadorNavegacao navigationManager) {
         this.navigationManager = navigationManager;
         this.navigationManager.bindHost(contentHost);
-        this.navigationManager.navigateTo(VisaoAplicacao.CUSTOMERS);
+        this.navigationManager.navigateTo(VisaoAplicacao.DASHBOARD);
+    }
+
+    @FXML
+    private void onDashboardClick() {
+        navigate(VisaoAplicacao.DASHBOARD);
+    }
+
+    @FXML
+    private void onFinanceiroClick() {
+        navigate(VisaoAplicacao.FINANCE);
     }
 
     @FXML
@@ -25,48 +35,13 @@ public class ControladorEstruturaAplicacao {
     }
 
     @FXML
-    private void onContratosClick() {
-        navigate(VisaoAplicacao.CONTRACTS);
-    }
-
-    @FXML
-    private void onSchedulingClick() {
-        navigate(VisaoAplicacao.SCHEDULING);
-    }
-
-    @FXML
-    private void onServicesClick() {
+    private void onServicosClick() {
         navigate(VisaoAplicacao.SERVICES);
     }
 
     @FXML
-    private void onFinanceClick() {
-        navigate(VisaoAplicacao.FINANCE);
-    }
-
-    @FXML
-    private void onInventoryClick() {
+    private void onEstoqueClick() {
         navigate(VisaoAplicacao.INVENTORY);
-    }
-
-    @FXML
-    private void onCertificadosClick() {
-        navigate(VisaoAplicacao.CERTIFICATES);
-    }
-
-    @FXML
-    private void onPotencialClientesClick() {
-        navigate(VisaoAplicacao.LEADS);
-    }
-
-    @FXML
-    private void onNotificacaosClick() {
-        navigate(VisaoAplicacao.NOTIFICATIONS);
-    }
-
-    @FXML
-    private void onFuncionariosClick() {
-        navigate(VisaoAplicacao.EMPLOYEES);
     }
 
     private void navigate(VisaoAplicacao view) {

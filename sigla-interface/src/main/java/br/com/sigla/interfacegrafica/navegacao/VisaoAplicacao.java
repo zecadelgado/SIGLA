@@ -1,6 +1,7 @@
 package br.com.sigla.interfacegrafica.navegacao;
 
 public enum VisaoAplicacao {
+    DASHBOARD("/fxml/dashboard/dashboard-visao.fxml"),
     CUSTOMERS("/fxml/clientes/clientes-visao.fxml"),
     CONTRACTS("/fxml/contratos/contratos-visao.fxml"),
     SCHEDULING("/fxml/agenda/agenda-visao.fxml"),

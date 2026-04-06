@@ -1,9 +1,11 @@
 package br.com.sigla.infraestrutura.transacao;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
 
 @Component
+@ConditionalOnBean(TransactionTemplate.class)
 public class ExecutorTransacao {
 
     private final TransactionTemplate transactionTemplate;

@@ -1,7 +1,6 @@
 package br.com.sigla.interfacegrafica.aplicativo;
 
 import br.com.sigla.interfacegrafica.inicializacao.AplicacaoSpringSigla;
-import br.com.sigla.interfacegrafica.inicializacao.SuporteContextoSpring;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -17,7 +16,6 @@ public class AplicacaoDesktopSigla extends Application {
         context = new SpringApplicationBuilder(AplicacaoSpringSigla.class)
                 .headless(false)
                 .run();
-        SuporteContextoSpring.setContext(context);
     }
 
     @Override

@@ -2,37 +2,33 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.estrutura.BorderPane?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.estrutura.StackPane?>
-<?import javafx.scene.estrutura.VBox?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
 <BorderPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="br.com.sigla.interfacegrafica.controlador.ControladorEstruturaAplicacao"
             prefWidth="1280" prefHeight="720">
     <left>
-        <VBox spacing="10" prefWidth="250" styleClass="side-nav">
+        <VBox spacing="14" prefWidth="250" styleClass="shell-sidebar">
             <padding>
-                <Insets top="20" right="16" bottom="20" left="16"/>
+                <Insets top="24" right="18" bottom="24" left="18"/>
             </padding>
             <children>
-                <Label text="SIGLA" styleClass="brand-title"/>
-                <Label text="%app.subtitle" styleClass="brand-subtitle"/>
-                <Button text="%menu.clientes" onAction="#onClientesClick" maxWidth="Infinity"/>
-                <Button text="%menu.contratos" onAction="#onContratosClick" maxWidth="Infinity"/>
-                <Button text="%menu.agenda" onAction="#onSchedulingClick" maxWidth="Infinity"/>
-                <Button text="%menu.servicos" onAction="#onServicesClick" maxWidth="Infinity"/>
-                <Button text="%menu.financeiro" onAction="#onFinanceClick" maxWidth="Infinity"/>
-                <Button text="%menu.estoque" onAction="#onInventoryClick" maxWidth="Infinity"/>
-                <Button text="%menu.certificados" onAction="#onCertificadosClick" maxWidth="Infinity"/>
-                <Button text="%menu.potenciaisclientes" onAction="#onPotencialClientesClick" maxWidth="Infinity"/>
-                <Button text="%menu.notificacoes" onAction="#onNotificacaosClick" maxWidth="Infinity"/>
-                <Button text="%menu.funcionarios" onAction="#onFuncionariosClick" maxWidth="Infinity"/>
+                <Label text="Sigla" styleClass="shell-brand-title"/>
+                <Label text="%app.subtitle" styleClass="shell-brand-subtitle"/>
+                <Button text="%menu.dashboard" onAction="#onDashboardClick" maxWidth="Infinity" prefHeight="42" styleClass="app-nav-button"/>
+                <Button text="%menu.cadastros" maxWidth="Infinity" prefHeight="42" disable="true" styleClass="app-nav-button"/>
+                <Button text="%menu.financeiro" onAction="#onFinanceiroClick" maxWidth="Infinity" prefHeight="42" styleClass="app-nav-button"/>
+                <Button text="%menu.clientes" onAction="#onClientesClick" maxWidth="Infinity" prefHeight="42" styleClass="app-nav-button"/>
+                <Button text="%menu.servicos" onAction="#onServicosClick" maxWidth="Infinity" prefHeight="42" styleClass="app-nav-button"/>
+                <Button text="%menu.estoque" onAction="#onEstoqueClick" maxWidth="Infinity" prefHeight="42" styleClass="app-nav-button"/>
             </children>
         </VBox>
     </left>
     <center>
-        <StackPane fx:id="contentHost" styleClass="content-host"/>
+        <StackPane fx:id="contentHost" styleClass="shell-content-host"/>
     </center>
 </BorderPane>
 

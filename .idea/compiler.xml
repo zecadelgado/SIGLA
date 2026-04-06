@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="sigla-infraestrutura" />
+        <module name="sigla-aplicacao" />
+        <module name="sigla-dominio" />
+        <module name="sigla-relatorios" />
+        <module name="sigla-interface" />
+      </profile>
+    </annotationProcessing>
+  </component>
+</project>

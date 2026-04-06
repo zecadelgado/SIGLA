@@ -1,38 +1,57 @@
 .root {
     -fx-font-family: "Segoe UI";
-    -fx-background-color: linear-gradient(to bottom, #f4f1e8, #efe7d4);
+    -fx-background-color: linear-gradient(to bottom right, #f1f4f8, #dfe6ee);
 }
 
-.side-nav {
-    -fx-background-color: #183447;
+.shell-sidebar {
+    -fx-background-color: #0b2a6f;
 }
 
-.side-nav .button {
-    -fx-background-color: #28546f;
+.shell-brand-title {
+    -fx-font-size: 40px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #a6d3ff;
+}
+
+.shell-brand-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: #c8e2f2;
+    -fx-padding: -10 0 12 0;
+}
+
+.shell-sidebar .button,
+.app-nav-button {
+    -fx-background-color: transparent;
     -fx-text-fill: #ffffff;
-    -fx-background-radius: 6;
+    -fx-background-radius: 10;
     -fx-alignment: CENTER_LEFT;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
     -fx-padding: 10 14 10 14;
 }
 
-.side-nav .button:hover {
-    -fx-background-color: #356d8f;
+.shell-sidebar .button:hover,
+.app-nav-button:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.12);
 }
 
-.brand-title {
-    -fx-font-size: 30px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #fff7ec;
+.shell-sidebar .button:focused,
+.app-nav-button:focused {
+    -fx-background-color: rgba(255, 255, 255, 0.18);
+    -fx-border-color: rgba(255, 255, 255, 0.22);
+    -fx-border-radius: 10;
 }
 
-.brand-subtitle {
-    -fx-font-size: 13px;
-    -fx-text-fill: #cde0eb;
-    -fx-padding: 0 0 16 0;
+.shell-sidebar .button:disabled,
+.app-nav-button:disabled {
+    -fx-opacity: 1;
+    -fx-text-fill: #b9c7de;
+    -fx-background-color: rgba(255, 255, 255, 0.08);
 }
 
-.content-host {
-    -fx-padding: 20;
+.shell-content-host {
+    -fx-padding: 24;
+    -fx-background-color: #e8edf3;
 }
 
 .screen-title {
@@ -48,4 +67,45 @@
     -fx-border-color: #d8cdb7;
     -fx-border-radius: 8;
     -fx-background-radius: 8;
+}
+
+.dashboard-view {
+    -fx-spacing: 20;
+}
+
+.dashboard-title {
+    -fx-font-size: 40px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #00417e;
+}
+
+.dashboard-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: #303030;
+}
+
+.dashboard-grid {
+    -fx-padding: 8 0 0 0;
+}
+
+.dashboard-card {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #d7e0ea;
+    -fx-padding: 18;
+    -fx-spacing: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.14), 18, 0, 0, 6);
+}
+
+.dashboard-card-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0b2a6f;
+}
+
+.dashboard-card-body {
+    -fx-font-size: 13px;
+    -fx-text-fill: #4f5c6b;
+    -fx-wrap-text: true;
 }
