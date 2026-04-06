@@ -1,14 +1,19 @@
 # SIGLA
 
-Sistema Integrado de Gerenciamento Logistico e Administrativo para oticas.
+Sistema Integrado de Gestao Logistica e Administrativa para operacao de detetizacao.
 
 ## Arquitetura
 
-- `sigla-domain`: entidades, value objects e regras de negocio.
-- `sigla-application`: casos de uso e ports (entrada/saida).
-- `sigla-infrastructure`: persistencia, integracoes fiscais, notificacoes e configuracao tecnica.
-- `sigla-reporting`: geracao/impressao de DANFE, recibos e etiquetas.
-- `sigla-desktop`: aplicacao JavaFX (FXML + CSS) com bootstrap Spring Boot.
+- `sigla-dominio`: entidades e regras puras dos modulos de clientes, contratos, agenda, servicos, financeiro, estoque, certificados, potenciaisclientes, notificacoes e funcionarios.
+- `sigla-aplicacao`: casos de uso explicitos e contratos de repositorio/adapters.
+- `sigla-infraestrutura`: persistencia, armazenamento de anexos e configuracao tecnica.
+- `sigla-relatorios`: relatorios e impressoes auxiliares.
+- `sigla-interface`: aplicacao JavaFX com navegacao voltada ao fluxo operacional da detetizadora.
+
+## Guia Da Estrutura
+
+- guia rapido do repositorio: `docs/guia-estrutura-sigla.md`
+- documento arquitetural da detetizadora: `docs/arquitetura-detetizadora.md`
 
 ## Requisitos tecnicos
 
@@ -19,12 +24,13 @@ Sistema Integrado de Gerenciamento Logistico e Administrativo para oticas.
 
 ```bash
 ./mvnw clean test
-./mvnw -pl sigla-desktop spring-boot:run
+./mvnw -pl sigla-interface spring-boot:run
 ```
 
 No Windows PowerShell:
 
 ```powershell
 .\mvnw.cmd clean test
-.\mvnw.cmd -pl sigla-desktop spring-boot:run
+.\mvnw.cmd -pl sigla-interface spring-boot:run
 ```
+

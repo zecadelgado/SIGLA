@@ -1,4 +1,0 @@
-sigla:
-  storage:
-    fiscal-root: var/fiscal
-    fiscal-environment: producao

@@ -1,1 +1,2 @@
-./mvnw.cmd -pl sigla-infrastructure -am flyway:migrate
+﻿./mvnw.cmd -pl sigla-infraestrutura -am flyway:migrate
+

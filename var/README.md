@@ -1,5 +1,5 @@
 # Dados Locais de Runtime
 
 - `logs/`: logs da aplicacao.
-- `fiscal/`: XML, retornos e eventos fiscais por ambiente.
+- `attachments/`: assinaturas, comprovantes e anexos de atendimento.
 - `relatorios/`: arquivos gerados para impressao/exportacao.

@@ -1,0 +1,4 @@
+br\com\sigla\relatorios\recibo\ServicoRelatorioRecibo.class
+br\com\sigla\relatorios\etiqueta\ServicoRelatorioEtiqueta.class
+br\com\sigla\relatorios\impressao\DespachanteImpressao.class
+br\com\sigla\relatorios\modelo\ProvedorModeloRelatorio.class

@@ -1,7 +1,11 @@
 # Modulos Essenciais
 
-- Estoque.
-- Cadastro de clientes (aniversarios, receitas, tipo de oculos, situacao de pagamento).
-- Faturamento (debitos, entradas/saidas, orcamentos, saldo, contas futuras, juros).
-- Avisos e notificacoes.
-- Emissao e consulta de notas.
+- Clientes e responsaveis.
+- Contratos e renovacoes.
+- Agenda operacional (mensal, quinzenal e avulsa).
+- Servicos prestados com assinatura e anexos.
+- Financeiro (entradas, saidas, cobranca e parcelamento).
+- Estoque com rastreabilidade.
+- Certificados com alerta de renovacao.
+- Potenciais clientes e fidelizacao.
+- Funcionarios e notificacoes operacionais.

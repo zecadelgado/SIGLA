@@ -1,1 +1,2 @@
-./mvnw.cmd -pl sigla-desktop -am spring-boot:run
+﻿./mvnw.cmd -pl sigla-interface -am spring-boot:run
+

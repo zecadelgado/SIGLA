@@ -12,11 +12,11 @@
     <description>Sistema Integrado de Gerenciamento Logistico e Administrativo</description>
 
     <modules>
-        <module>sigla-domain</module>
-        <module>sigla-application</module>
-        <module>sigla-infrastructure</module>
-        <module>sigla-reporting</module>
-        <module>sigla-desktop</module>
+        <module>sigla-dominio</module>
+        <module>sigla-aplicacao</module>
+        <module>sigla-infraestrutura</module>
+        <module>sigla-relatorios</module>
+        <module>sigla-interface</module>
     </modules>
 
     <properties>
@@ -69,3 +69,4 @@
         </pluginManagement>
     </build>
 </project>
+

@@ -1,0 +1,51 @@
+.root {
+    -fx-font-family: "Segoe UI";
+    -fx-background-color: linear-gradient(to bottom, #f4f1e8, #efe7d4);
+}
+
+.side-nav {
+    -fx-background-color: #183447;
+}
+
+.side-nav .button {
+    -fx-background-color: #28546f;
+    -fx-text-fill: #ffffff;
+    -fx-background-radius: 6;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 10 14 10 14;
+}
+
+.side-nav .button:hover {
+    -fx-background-color: #356d8f;
+}
+
+.brand-title {
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #fff7ec;
+}
+
+.brand-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #cde0eb;
+    -fx-padding: 0 0 16 0;
+}
+
+.content-host {
+    -fx-padding: 20;
+}
+
+.screen-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #183447;
+}
+
+.screen-summary {
+    -fx-font-family: "Consolas";
+    -fx-font-size: 13px;
+    -fx-control-inner-background: #fffaf3;
+    -fx-border-color: #d8cdb7;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}

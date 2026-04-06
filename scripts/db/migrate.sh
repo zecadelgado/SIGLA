@@ -1,3 +1,4 @@
-#!/usr/bin/env bash
+﻿#!/usr/bin/env bash
 set -euo pipefail
-./mvnw -pl sigla-infrastructure -am flyway:migrate
+./mvnw -pl sigla-infraestrutura -am flyway:migrate
+
