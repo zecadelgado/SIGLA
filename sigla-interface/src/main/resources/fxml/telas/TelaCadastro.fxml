@@ -12,7 +12,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane prefHeight="790.0" prefWidth="1530.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CONTROLLER_NAME">
    <children>
       <HBox prefHeight="870.0" prefWidth="1530.0">
@@ -46,7 +45,7 @@
                         <Insets top="20.0" />
                      </VBox.margin>
                   </Button>
-                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Cadastros" textFill="WHITE">
+                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #1c2e94; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Cadastros" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="20.0" />
                      </font>
@@ -173,18 +172,19 @@
                         <Insets right="20.0" />
                      </padding>
                   </HBox>
-                  <TableView prefHeight="400.0" prefWidth="200.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5); -fx-background-radius: 10;">
-                    <columns>
-                      <TableColumn minWidth="20.0" prefWidth="180.0" text="Nome" />
-                      <TableColumn prefWidth="180.0" text="CPF/CNPJ" />
-                        <TableColumn prefWidth="180.0" text="Tipo" />
-                        <TableColumn prefWidth="180.0" text="Telefone" />
-                        <TableColumn prefWidth="180.0" text="Email" />
-                        <TableColumn prefWidth="180.0" text="Data" />
-                        <TableColumn prefWidth="180.0" text="Ações" />
-                    </columns>
+                  <TableView prefHeight="510.0" prefWidth="1247.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5); -fx-background-radius: 10;">
+                     <columns>
+                        <TableColumn minWidth="20.0" prefWidth="155.0" text="Nome" />
+                        <TableColumn prefWidth="155.0" text="CPF" />
+                        <TableColumn prefWidth="155.0" text="CNPJ" />
+                        <TableColumn prefWidth="155.0" text="Razão Social" />
+                        <TableColumn prefWidth="155.0" text="Telefone" />
+                        <TableColumn prefWidth="155.0" text="Email" />
+                        <TableColumn prefWidth="155.0" text="CEP" />
+                        <TableColumn prefWidth="165.0" text="Cidade" />
+                     </columns>
                      <VBox.margin>
-                        <Insets left="25.0" right="25.0" top="20.0" />
+                        <Insets left="25.0" right="25.0" top="35.0" />
                      </VBox.margin>
                   </TableView>
                </children>

@@ -41,7 +41,7 @@
                                     <Insets left="28.0" />
                                  </padding>
                                  <VBox.margin>
-                                    <Insets left="2.0" top="-5.0" />
+                                    <Insets left="2.0" top="-2.0" />
                                  </VBox.margin>
                               </Label>
                            </children>
@@ -223,7 +223,7 @@
                         <Insets top="10.0" />
                      </VBox.margin>
                   </Button>
-                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Financeiro" textFill="WHITE">
+                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #1c2e94; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Financeiro" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="20.0" />
                      </font>
