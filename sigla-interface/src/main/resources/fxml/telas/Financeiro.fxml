@@ -33,7 +33,7 @@
                                     <Insets left="28.0" top="18.0" />
                                  </VBox.margin>
                               </Label>
-                              <Label prefHeight="20.0" prefWidth="434.0" text="Visão geral do sistema" textFill="#303030">
+                              <Label prefHeight="20.0" prefWidth="434.0" text="Controle de receitas e despesas" textFill="#303030">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -47,7 +47,7 @@
                            </children>
                         </VBox>
                         <Region prefHeight="126.0" prefWidth="600.0" HBox.hgrow="ALWAYS" />
-                        <Button mnemonicParsing="false" prefHeight="34.0" prefWidth="153.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="+ Novo Cadastro" textFill="WHITE">
+                        <Button mnemonicParsing="false" prefHeight="34.0" prefWidth="153.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="+ Nova Transação" textFill="WHITE">
                            <font>
                               <Font name="Ebrima Bold" size="14.0" />
                            </font>
