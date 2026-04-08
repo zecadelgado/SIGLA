@@ -1,0 +1,20 @@
+{
+  "groups": [
+    {
+      "name": "sigla.armazenamento",
+      "type": "br.com.sigla.infraestrutura.configuracao.PropriedadesArmazenamentoSigla",
+      "sourceType": "br.com.sigla.infraestrutura.configuracao.PropriedadesArmazenamentoSigla"
+    }
+  ],
+  "properties": [
+    {
+      "name": "sigla.armazenamento.attachment-root",
+      "type": "java.lang.String",
+      "sourceType": "br.com.sigla.infraestrutura.configuracao.PropriedadesArmazenamentoSigla"
+    }
+  ],
+  "hints": [],
+  "ignored": {
+    "properties": []
+  }
+}
