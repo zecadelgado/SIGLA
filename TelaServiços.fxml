@@ -119,30 +119,10 @@
                               </Label>
                            </children>
                         </VBox>
-                        <Region prefHeight="106.0" prefWidth="421.0" />
-                        <HBox prefHeight="68.0" prefWidth="211.0">
-                           <children>
-                              <Button mnemonicParsing="false" prefWidth="75.0" style="-fx-background-color: white; -fx-border-width: 1 1 1 1; -fx-border-color: black; -fx-border-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Agenda">
-                                 <HBox.margin>
-                                    <Insets left="20.0" top="43.0" />
-                                 </HBox.margin>
-                                 <font>
-                                    <Font name="System Bold" size="12.0" />
-                                 </font>
-                              </Button>
-                              <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="75.0" style="-fx-background-color: white; -fx-border-width: 1 1 1 1; -fx-border-color: black; -fx-border-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Lista">
-                                 <HBox.margin>
-                                    <Insets left="20.0" top="43.0" />
-                                 </HBox.margin>
-                                 <font>
-                                    <Font name="System Bold" size="12.0" />
-                                 </font>
-                              </Button>
-                           </children>
-                        </HBox>
-                        <Button mnemonicParsing="false" prefHeight="34.0" prefWidth="153.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="+ Novo Serviço" textFill="WHITE">
+                        <Region prefHeight="106.0" prefWidth="559.0" />
+                        <Button mnemonicParsing="false" prefHeight="47.0" prefWidth="222.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="+ Novo Serviço" textFill="WHITE">
                            <font>
-                              <Font name="Ebrima Bold" size="14.0" />
+                              <Font name="Ebrima Bold" size="24.0" />
                            </font>
                            <HBox.margin>
                               <Insets left="50.0" top="40.0" />
@@ -162,15 +142,15 @@
                                     <Insets left="10.0" top="10.0" />
                                  </VBox.margin>
                                  <font>
-                                    <Font name="Ebrima Bold" size="16.0" />
+                                    <Font name="Ebrima Bold" size="18.0" />
                                  </font>
                               </Label>
                               <Label text="0" textFill="#000e66">
                                  <VBox.margin>
-                                    <Insets left="10.0" top="10.0" />
+                                    <Insets left="10.0" top="15.0" />
                                  </VBox.margin>
                                  <font>
-                                    <Font name="Ebrima Bold" size="20.0" />
+                                    <Font name="Ebrima Bold" size="24.0" />
                                  </font>
                               </Label>
                            </children>
@@ -182,15 +162,15 @@
                                     <Insets left="10.0" top="10.0" />
                                  </VBox.margin>
                                  <font>
-                                    <Font name="Ebrima Bold" size="16.0" />
+                                    <Font name="Ebrima Bold" size="18.0" />
                                  </font>
                               </Label>
-                              <Label text="0" textFill="#000e66">
+                              <Label text="R$ 0" textFill="#000e66">
                                  <font>
-                                    <Font name="Ebrima Bold" size="20.0" />
+                                    <Font name="Ebrima Bold" size="24.0" />
                                  </font>
                                  <VBox.margin>
-                                    <Insets left="10.0" top="10.0" />
+                                    <Insets left="10.0" top="15.0" />
                                  </VBox.margin>
                               </Label>
                            </children>
@@ -205,15 +185,15 @@
                                     <Insets left="10.0" top="10.0" />
                                  </VBox.margin>
                                  <font>
-                                    <Font name="Ebrima Bold" size="16.0" />
+                                    <Font name="Ebrima Bold" size="18.0" />
                                  </font>
                               </Label>
-                              <Label text="0" textFill="#000e66">
+                              <Label text="R$ 0" textFill="#000e66">
                                  <font>
-                                    <Font name="Ebrima Bold" size="20.0" />
+                                    <Font name="Ebrima Bold" size="24.0" />
                                  </font>
                                  <VBox.margin>
-                                    <Insets left="10.0" top="10.0" />
+                                    <Insets left="10.0" top="15.0" />
                                  </VBox.margin>
                               </Label>
                            </children>
