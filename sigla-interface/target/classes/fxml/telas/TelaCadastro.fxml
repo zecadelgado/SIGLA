@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="790.0" prefWidth="1530.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CONTROLLER_NAME">
+   <children>
+      <HBox prefHeight="870.0" prefWidth="1530.0">
+         <children>
+            <VBox prefHeight="765.0" prefWidth="250.0" spacing="15.0" style="-fx-background-color: #0B2A6F;">
+               <children>
+                  <Label text="Sigla" textFill="#a6d3ff">
+                     <font>
+                        <Font name="Ebrima Bold" size="40.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets left="15.0" top="15.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label text="Gestão Empresarial" textFill="#c8e2f2">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <padding>
+                        <Insets left="15.0" top="-15.0" />
+                     </padding>
+                  </Label>
+                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Dashboard" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="20.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="20.0" />
+                     </VBox.margin>
+                  </Button>
+                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #1c2e94; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Cadastros" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="20.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="10.0" />
+                     </VBox.margin>
+                  </Button>
+                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Financeiro" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="20.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="10.0" />
+                     </VBox.margin>
+                  </Button>
+                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Serviços" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="20.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="10.0" />
+                     </VBox.margin>
+                  </Button>
+                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Ordem de Serviço" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="20.0" />
+                     </font>
+                  </Button>
+                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Estoque" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="20.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="10.0" />
+                     </VBox.margin>
+                  </Button>
+                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Clientes" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="20.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="10.0" />
+                     </VBox.margin>
+                  </Button>
+               </children>
+               <padding>
+                  <Insets bottom="20.0" left="15.0" right="15.0" top="20.0" />
+               </padding>
+            </VBox>
+            <VBox prefHeight="870.0" prefWidth="1336.0" style="-fx-background-color: lightgrey;">
+               <children>
+                  <HBox alignment="CENTER_LEFT" prefHeight="120.0" prefWidth="1333.0" spacing="10.0">
+                     <children>
+                        <VBox prefHeight="120.0" prefWidth="378.0">
+                           <children>
+                              <Label text="Cadastros" textFill="#00417e">
+                                 <font>
+                                    <Font name="Ebrima Bold" size="40.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets left="25.0" top="32.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <Label prefHeight="20.0" prefWidth="233.0" text="Gerencie funcionários e clientes" textFill="#303030">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets left="25.0" />
+                                 </padding>
+                              </Label>
+                           </children>
+                        </VBox>
+                        <Region prefHeight="120.0" prefWidth="620.0" />
+                        <Button mnemonicParsing="false" prefHeight="34.0" prefWidth="153.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="+ Novo Cadastro" textFill="WHITE" HBox.hgrow="ALWAYS">
+                           <font>
+                              <Font name="Ebrima Bold" size="14.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets left="110.0" />
+                           </HBox.margin>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <HBox prefHeight="58.0" prefWidth="1257.0" spacing="10.0" style="-fx-background-color: WHITE; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
+                     <children>
+                        <TextField prefWidth="920.0" style="-fx-background-radius: 5; -fx-padding: 5;" text="Buscar por nome ou CPF/CNPJ...">
+                           <HBox.margin>
+                              <Insets left="25.0" top="15.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                        <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="70.0" style="-fx-background-radius: 5;" text="Todos" textFill="#484848">
+                           <HBox.margin>
+                              <Insets left="5.0" top="15.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Button>
+                        <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="105.0" style="-fx-background-radius: 5;" text="Funcionários" textFill="#484848">
+                           <HBox.margin>
+                              <Insets left="5.0" top="15.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Button>
+                        <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="74.0" style="-fx-background-radius: 5;" text="Clientes" textFill="#484848">
+                           <HBox.margin>
+                              <Insets left="5.0" top="15.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font name="Ebrima Bold" size="14.0" />
+                           </font>
+                        </Button>
+                     </children>
+                     <VBox.margin>
+                        <Insets left="25.0" right="25.0" />
+                     </VBox.margin>
+                     <padding>
+                        <Insets right="20.0" />
+                     </padding>
+                  </HBox>
+                  <TableView prefHeight="510.0" prefWidth="1247.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5); -fx-background-radius: 10;">
+                     <columns>
+                        <TableColumn minWidth="20.0" prefWidth="155.0" text="Nome" />
+                        <TableColumn prefWidth="155.0" text="CPF" />
+                        <TableColumn prefWidth="155.0" text="CNPJ" />
+                        <TableColumn prefWidth="155.0" text="Razão Social" />
+                        <TableColumn prefWidth="155.0" text="Telefone" />
+                        <TableColumn prefWidth="155.0" text="Email" />
+                        <TableColumn prefWidth="155.0" text="CEP" />
+                        <TableColumn prefWidth="165.0" text="Cidade" />
+                     </columns>
+                     <VBox.margin>
+                        <Insets left="25.0" right="25.0" top="35.0" />
+                     </VBox.margin>
+                  </TableView>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+   </children>
+</AnchorPane>
