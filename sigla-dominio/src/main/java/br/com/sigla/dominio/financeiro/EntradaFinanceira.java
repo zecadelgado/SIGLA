@@ -11,6 +11,13 @@ public record EntradaFinanceira(
         LocalDate entryDate,
         String customerId,
         String serviceProvidedId,
+        String description,
+        String category,
+        LocalDate dueDate,
+        LocalDate paymentDate,
+        String paymentMethod,
+        String createdBy,
+        String orderReference,
         EntryStatus status
 ) {
     public EntradaFinanceira {
@@ -20,7 +27,43 @@ public record EntradaFinanceira(
         entryDate = Objects.requireNonNull(entryDate, "entryDate is required");
         customerId = normalizeOptional(customerId);
         serviceProvidedId = normalizeOptional(serviceProvidedId);
+        description = normalizeOptional(description);
+        category = normalizeOptional(category);
+        dueDate = dueDate == null ? entryDate : dueDate;
+        if (paymentDate != null && paymentDate.isBefore(entryDate)) {
+            throw new IllegalArgumentException("paymentDate must not be before entryDate");
+        }
+        paymentMethod = normalizeOptional(paymentMethod);
+        createdBy = normalizeOptional(createdBy);
+        orderReference = normalizeOptional(orderReference);
         status = Objects.requireNonNull(status, "status is required");
+    }
+
+    public EntradaFinanceira(
+            String id,
+            EntryType entryType,
+            BigDecimal amount,
+            LocalDate entryDate,
+            String customerId,
+            String serviceProvidedId,
+            EntryStatus status
+    ) {
+        this(
+                id,
+                entryType,
+                amount,
+                entryDate,
+                customerId,
+                serviceProvidedId,
+                "",
+                "",
+                entryDate,
+                null,
+                "",
+                "",
+                null,
+                status
+        );
     }
 
     public enum EntryType {
@@ -54,7 +97,7 @@ public record EntradaFinanceira(
 
     private static String normalizeOptional(String value) {
         if (value == null || value.isBlank()) {
-            return null;
+            return "";
         }
         return value.trim();
     }

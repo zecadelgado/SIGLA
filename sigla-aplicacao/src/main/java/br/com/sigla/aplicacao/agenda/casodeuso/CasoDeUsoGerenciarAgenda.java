@@ -25,6 +25,12 @@ public class CasoDeUsoGerenciarAgenda implements CasoDeUsoAgenda {
                 command.contractId(),
                 command.type(),
                 command.scheduledDate(),
+                command.title(),
+                command.serviceType(),
+                command.internalResponsible(),
+                command.startAt(),
+                command.endAt(),
+                command.allDay(),
                 command.status(),
                 command.notes()
         ));

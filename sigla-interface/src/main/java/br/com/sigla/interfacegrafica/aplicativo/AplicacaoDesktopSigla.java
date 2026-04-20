@@ -2,7 +2,6 @@ package br.com.sigla.interfacegrafica.aplicativo;
 
 import br.com.sigla.interfacegrafica.inicializacao.AplicacaoSpringSigla;
 import javafx.application.Application;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -20,12 +19,10 @@ public class AplicacaoDesktopSigla extends Application {
 
     @Override
     public void start(Stage stage) {
-        EstruturaAplicacao appShell = new EstruturaAplicacao(context);
-        Scene scene = new Scene(appShell.loadRoot(), 1280, 720);
-        scene.getStylesheets().add(getClass().getResource("/css/base.css").toExternalForm());
-
         stage.setTitle("S.I.G.L.A");
-        stage.setScene(scene);
+        FluxoAplicacao fluxoAplicacao = context.getBean(FluxoAplicacao.class);
+        fluxoAplicacao.attachStage(stage);
+        fluxoAplicacao.showLogin();
         stage.show();
     }
 

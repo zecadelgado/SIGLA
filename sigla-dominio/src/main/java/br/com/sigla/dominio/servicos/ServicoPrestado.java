@@ -18,6 +18,8 @@ public record ServicoPrestado(
         SignatureType signatureType,
         String signaturePath,
         List<Attachment> attachments,
+        ServiceStatus serviceStatus,
+        ServicePriority priority,
         String notes
 ) {
     public ServicoPrestado {
@@ -33,7 +35,43 @@ public record ServicoPrestado(
         signatureType = Objects.requireNonNull(signatureType, "signatureType is required");
         signaturePath = normalizeOptional(signaturePath);
         attachments = List.copyOf(Objects.requireNonNullElse(attachments, List.of()));
+        serviceStatus = Objects.requireNonNull(serviceStatus, "serviceStatus is required");
+        priority = Objects.requireNonNull(priority, "priority is required");
         notes = normalizeOptional(notes);
+    }
+
+    public ServicoPrestado(
+            String id,
+            String customerId,
+            String contractId,
+            String scheduleId,
+            String employeeId,
+            LocalDate executionDate,
+            String description,
+            BigDecimal amountCharged,
+            PaymentStatus paymentStatus,
+            SignatureType signatureType,
+            String signaturePath,
+            List<Attachment> attachments,
+            String notes
+    ) {
+        this(
+                id,
+                customerId,
+                contractId,
+                scheduleId,
+                employeeId,
+                executionDate,
+                description,
+                amountCharged,
+                paymentStatus,
+                signatureType,
+                signaturePath,
+                attachments,
+                ServiceStatus.SCHEDULED,
+                ServicePriority.NORMAL,
+                notes
+        );
     }
 
     public boolean isPaid() {
@@ -63,6 +101,20 @@ public record ServicoPrestado(
         NONE,
         MANUAL,
         DIGITAL
+    }
+
+    public enum ServiceStatus {
+        SCHEDULED,
+        IN_PROGRESS,
+        COMPLETED,
+        CANCELLED
+    }
+
+    public enum ServicePriority {
+        LOW,
+        NORMAL,
+        HIGH,
+        URGENT
     }
 
     private static String requireText(String value, String fieldName) {

@@ -31,6 +31,13 @@ public class AdaptadorRepositorioEntradaFinanceira implements RepositorioEntrada
         entity.setEntryDate(entry.entryDate());
         entity.setClienteId(entry.customerId());
         entity.setServicoPrestadoId(entry.serviceProvidedId());
+        entity.setDescription(entry.description());
+        entity.setCategory(entry.category());
+        entity.setDueDate(entry.dueDate());
+        entity.setPaymentDate(entry.paymentDate());
+        entity.setPaymentMethod(entry.paymentMethod());
+        entity.setCreatedBy(entry.createdBy());
+        entity.setOrderReference(entry.orderReference());
         entity.setStatus(entry.status());
         repository.save(entity);
     }
@@ -45,6 +52,13 @@ public class AdaptadorRepositorioEntradaFinanceira implements RepositorioEntrada
                         entity.getEntryDate(),
                         entity.getClienteId(),
                         entity.getServicoPrestadoId(),
+                        entity.getDescription(),
+                        entity.getCategory(),
+                        entity.getDueDate(),
+                        entity.getPaymentDate(),
+                        entity.getPaymentMethod(),
+                        entity.getCreatedBy(),
+                        entity.getOrderReference(),
                         entity.getStatus()
                 ))
                 .toList();

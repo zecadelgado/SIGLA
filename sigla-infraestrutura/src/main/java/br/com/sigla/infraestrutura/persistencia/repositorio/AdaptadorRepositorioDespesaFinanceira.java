@@ -30,6 +30,13 @@ public class AdaptadorRepositorioDespesaFinanceira implements RepositorioDespesa
         entity.setAmount(expense.amount());
         entity.setExpenseDate(expense.expenseDate());
         entity.setResponsible(expense.responsible());
+        entity.setDescription(expense.description());
+        entity.setDueDate(expense.dueDate());
+        entity.setPaymentDate(expense.paymentDate());
+        entity.setPaymentMethod(expense.paymentMethod());
+        entity.setCreatedBy(expense.createdBy());
+        entity.setOrderReference(expense.orderReference());
+        entity.setStatus(expense.status());
         entity.setNotes(expense.notes());
         repository.save(entity);
     }
@@ -43,6 +50,13 @@ public class AdaptadorRepositorioDespesaFinanceira implements RepositorioDespesa
                         entity.getAmount(),
                         entity.getExpenseDate(),
                         entity.getResponsible(),
+                        entity.getDescription(),
+                        entity.getDueDate(),
+                        entity.getPaymentDate(),
+                        entity.getPaymentMethod(),
+                        entity.getCreatedBy(),
+                        entity.getOrderReference(),
+                        entity.getStatus(),
                         entity.getNotes()
                 ))
                 .toList();

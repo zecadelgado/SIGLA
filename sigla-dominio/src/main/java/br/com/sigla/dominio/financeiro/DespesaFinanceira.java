@@ -10,6 +10,13 @@ public record DespesaFinanceira(
         BigDecimal amount,
         LocalDate expenseDate,
         String responsible,
+        String description,
+        LocalDate dueDate,
+        LocalDate paymentDate,
+        String paymentMethod,
+        String createdBy,
+        String orderReference,
+        ExpenseStatus status,
         String notes
 ) {
     public DespesaFinanceira {
@@ -18,7 +25,41 @@ public record DespesaFinanceira(
         amount = requireAmount(amount);
         expenseDate = Objects.requireNonNull(expenseDate, "expenseDate is required");
         responsible = requireText(responsible, "responsible");
+        description = requireText(description, "description");
+        dueDate = dueDate == null ? expenseDate : dueDate;
+        if (paymentDate != null && paymentDate.isBefore(expenseDate)) {
+            throw new IllegalArgumentException("paymentDate must not be before expenseDate");
+        }
+        paymentMethod = normalizeOptional(paymentMethod);
+        createdBy = normalizeOptional(createdBy);
+        orderReference = normalizeOptional(orderReference);
+        status = Objects.requireNonNull(status, "status is required");
         notes = normalizeOptional(notes);
+    }
+
+    public DespesaFinanceira(
+            String id,
+            ExpenseCategory category,
+            BigDecimal amount,
+            LocalDate expenseDate,
+            String responsible,
+            String notes
+    ) {
+        this(
+                id,
+                category,
+                amount,
+                expenseDate,
+                responsible,
+                category.name(),
+                expenseDate,
+                null,
+                "",
+                responsible,
+                null,
+                ExpenseStatus.PAID,
+                notes
+        );
     }
 
     public enum ExpenseCategory {
@@ -26,6 +67,12 @@ public record DespesaFinanceira(
         FUEL,
         PRODUCTS,
         EXTRAS
+    }
+
+    public enum ExpenseStatus {
+        PENDING,
+        PAID,
+        CANCELLED
     }
 
     private static String requireText(String value, String fieldName) {

@@ -26,8 +26,45 @@ public interface CasoDeUsoServicoPrestado {
             String signatureFileName,
             byte[] signaturePayload,
             List<AttachmentCommand> attachments,
+            ServicoPrestado.ServiceStatus serviceStatus,
+            ServicoPrestado.ServicePriority priority,
             String notes
     ) {
+        public RegisterServicoPrestadoCommand(
+                String id,
+                String customerId,
+                String contractId,
+                String scheduleId,
+                String employeeId,
+                LocalDate executionDate,
+                String description,
+                BigDecimal amountCharged,
+                ServicoPrestado.PaymentStatus paymentStatus,
+                ServicoPrestado.SignatureType signatureType,
+                String signatureFileName,
+                byte[] signaturePayload,
+                List<AttachmentCommand> attachments,
+                String notes
+        ) {
+            this(
+                    id,
+                    customerId,
+                    contractId,
+                    scheduleId,
+                    employeeId,
+                    executionDate,
+                    description,
+                    amountCharged,
+                    paymentStatus,
+                    signatureType,
+                    signatureFileName,
+                    signaturePayload,
+                    attachments,
+                    ServicoPrestado.ServiceStatus.SCHEDULED,
+                    ServicoPrestado.ServicePriority.NORMAL,
+                    notes
+            );
+        }
     }
 
     record AttachmentCommand(

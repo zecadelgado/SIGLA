@@ -45,6 +45,12 @@ public class AdaptadorRepositorioAgenda implements RepositorioAgenda {
                 entity.getContratoId(),
                 entity.getType(),
                 entity.getScheduledDate(),
+                entity.getTitle(),
+                entity.getServiceType(),
+                entity.getInternalResponsible(),
+                entity.getStartAt(),
+                entity.getEndAt(),
+                entity.isAllDay(),
                 entity.getStatus(),
                 entity.getNotes()
         );
@@ -57,6 +63,12 @@ public class AdaptadorRepositorioAgenda implements RepositorioAgenda {
         entity.setContratoId(schedule.contractId());
         entity.setType(schedule.type());
         entity.setScheduledDate(schedule.scheduledDate());
+        entity.setTitle(schedule.title());
+        entity.setServiceType(schedule.serviceType());
+        entity.setInternalResponsible(schedule.internalResponsible());
+        entity.setStartAt(schedule.startAt());
+        entity.setEndAt(schedule.endAt());
+        entity.setAllDay(schedule.allDay());
         entity.setStatus(schedule.status());
         entity.setNotes(schedule.notes());
         return entity;

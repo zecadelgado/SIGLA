@@ -16,11 +16,15 @@ public interface CasoDeUsoFinanceiro {
 
     void registerPlanoParcelamento(RegisterPlanoParcelamentoCommand command);
 
+    void registerTransaction(RegisterTransacaoFinanceiraCommand command);
+
     List<EntradaFinanceira> listEntries();
 
     List<DespesaFinanceira> listExpenses();
 
     List<PlanoParcelamento> listPlanoParcelamentos();
+
+    List<TransacaoFinanceiraView> listTransactions();
 
     BigDecimal currentBalance();
 
@@ -33,8 +37,41 @@ public interface CasoDeUsoFinanceiro {
             LocalDate entryDate,
             String customerId,
             String serviceProvidedId,
+            String description,
+            String category,
+            LocalDate dueDate,
+            LocalDate paymentDate,
+            String paymentMethod,
+            String createdBy,
+            String orderReference,
             EntradaFinanceira.EntryStatus status
     ) {
+        public RegisterEntradaFinanceiraCommand(
+                String id,
+                EntradaFinanceira.EntryType entryType,
+                BigDecimal amount,
+                LocalDate entryDate,
+                String customerId,
+                String serviceProvidedId,
+                EntradaFinanceira.EntryStatus status
+        ) {
+            this(
+                    id,
+                    entryType,
+                    amount,
+                    entryDate,
+                    customerId,
+                    serviceProvidedId,
+                    "",
+                    "",
+                    entryDate,
+                    null,
+                    "",
+                    "",
+                    null,
+                    status
+            );
+        }
     }
 
     record RegisterDespesaFinanceiraCommand(
@@ -43,8 +80,39 @@ public interface CasoDeUsoFinanceiro {
             BigDecimal amount,
             LocalDate expenseDate,
             String responsible,
+            String description,
+            LocalDate dueDate,
+            LocalDate paymentDate,
+            String paymentMethod,
+            String createdBy,
+            String orderReference,
+            DespesaFinanceira.ExpenseStatus status,
             String notes
     ) {
+        public RegisterDespesaFinanceiraCommand(
+                String id,
+                DespesaFinanceira.ExpenseCategory category,
+                BigDecimal amount,
+                LocalDate expenseDate,
+                String responsible,
+                String notes
+        ) {
+            this(
+                    id,
+                    category,
+                    amount,
+                    expenseDate,
+                    responsible,
+                    category.name(),
+                    expenseDate,
+                    null,
+                    "",
+                    responsible,
+                    null,
+                    DespesaFinanceira.ExpenseStatus.PAID,
+                    notes
+            );
+        }
     }
 
     record RegisterPlanoParcelamentoCommand(
@@ -56,6 +124,55 @@ public interface CasoDeUsoFinanceiro {
             PlanoParcelamento.InstallmentStatus status,
             LocalDate nextDueDate
     ) {
+    }
+
+    record RegisterTransacaoFinanceiraCommand(
+            String id,
+            TransactionType type,
+            String category,
+            String description,
+            String customerId,
+            String serviceProvidedId,
+            String orderReference,
+            BigDecimal amount,
+            LocalDate issueDate,
+            LocalDate dueDate,
+            LocalDate paymentDate,
+            String paymentMethod,
+            boolean installment,
+            int installmentCount,
+            String createdBy,
+            String notes,
+            TransactionStatus status
+    ) {
+    }
+
+    record TransacaoFinanceiraView(
+            String id,
+            TransactionType type,
+            String category,
+            String description,
+            String customerId,
+            String orderReference,
+            BigDecimal amount,
+            LocalDate issueDate,
+            LocalDate dueDate,
+            LocalDate paymentDate,
+            String paymentMethod,
+            String createdBy,
+            TransactionStatus status
+    ) {
+    }
+
+    enum TransactionType {
+        ENTRY,
+        EXPENSE
+    }
+
+    enum TransactionStatus {
+        PENDING,
+        PAID,
+        CANCELLED
     }
 }
 

@@ -2,7 +2,6 @@ package br.com.sigla.interfacegrafica.navegacao;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.layout.StackPane;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -13,31 +12,35 @@ import java.util.ResourceBundle;
 public class GerenciadorNavegacao {
 
     private final ConfigurableApplicationContext context;
-    private StackPane host;
+    private final br.com.sigla.interfacegrafica.aplicativo.FluxoAplicacao fluxoAplicacao;
+    private VisaoAplicacao currentView;
 
-    public GerenciadorNavegacao(ConfigurableApplicationContext context) {
+    public GerenciadorNavegacao(
+            ConfigurableApplicationContext context,
+            br.com.sigla.interfacegrafica.aplicativo.FluxoAplicacao fluxoAplicacao
+    ) {
         this.context = context;
-    }
-
-    public void bindHost(StackPane host) {
-        this.host = host;
+        this.fluxoAplicacao = fluxoAplicacao;
     }
 
     public void navigateTo(VisaoAplicacao view) {
-        if (host == null) {
-            throw new IllegalStateException("Navigation host not bound");
-        }
+        fluxoAplicacao.showView(view);
+        currentView = view;
+    }
 
+    public Node loadView(VisaoAplicacao view) {
         try {
             ResourceBundle bundle = ResourceBundle.getBundle("i18n.mensagens");
             FXMLLoader loader = new FXMLLoader(getClass().getResource(view.fxmlPath()), bundle);
             loader.setControllerFactory(context::getBean);
-            Node content = loader.load();
-
-            host.getChildren().setAll(content);
+            return loader.load();
         } catch (IOException e) {
             throw new IllegalStateException("Cannot navigate to " + view, e);
         }
+    }
+
+    public VisaoAplicacao currentView() {
+        return currentView;
     }
 }
 

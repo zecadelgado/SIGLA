@@ -44,6 +44,8 @@ public class CasoDeUsoRegistrarServicoPrestado implements CasoDeUsoServicoPresta
                 command.signatureType(),
                 signaturePath,
                 attachments,
+                command.serviceStatus(),
+                command.priority(),
                 command.notes()
         ));
     }

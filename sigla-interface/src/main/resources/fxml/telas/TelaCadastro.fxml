@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="790.0" prefWidth="1530.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CONTROLLER_NAME">
+<AnchorPane prefHeight="790.0" prefWidth="1530.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.sigla.interfacegrafica.controlador.ControladorCadastro">
    <children>
       <HBox prefHeight="870.0" prefWidth="1530.0">
          <children>
@@ -37,7 +37,7 @@
                         <Insets left="15.0" top="-15.0" />
                      </padding>
                   </Label>
-                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Dashboard" textFill="WHITE">
+                  <Button mnemonicParsing="false" onAction="#onDashboardClick" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Dashboard" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="20.0" />
                      </font>
@@ -45,7 +45,7 @@
                         <Insets top="20.0" />
                      </VBox.margin>
                   </Button>
-                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #1c2e94; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Cadastros" textFill="WHITE">
+                  <Button mnemonicParsing="false" onAction="#onCadastrosClick" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #1c2e94; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Cadastros" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="20.0" />
                      </font>
@@ -53,7 +53,7 @@
                         <Insets top="10.0" />
                      </VBox.margin>
                   </Button>
-                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Financeiro" textFill="WHITE">
+                  <Button mnemonicParsing="false" onAction="#onFinanceiroClick" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Financeiro" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="20.0" />
                      </font>
@@ -61,7 +61,7 @@
                         <Insets top="10.0" />
                      </VBox.margin>
                   </Button>
-                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Serviços" textFill="WHITE">
+                  <Button mnemonicParsing="false" onAction="#onServicosClick" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Serviços" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="20.0" />
                      </font>
@@ -69,12 +69,12 @@
                         <Insets top="10.0" />
                      </VBox.margin>
                   </Button>
-                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Ordem de Serviço" textFill="WHITE">
+                  <Button mnemonicParsing="false" onAction="#onOrdemServicoClick" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Ordem de Serviço" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="20.0" />
                      </font>
                   </Button>
-                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Estoque" textFill="WHITE">
+                  <Button mnemonicParsing="false" onAction="#onEstoqueClick" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Estoque" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="20.0" />
                      </font>
@@ -82,7 +82,7 @@
                         <Insets top="10.0" />
                      </VBox.margin>
                   </Button>
-                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Clientes" textFill="WHITE">
+                  <Button mnemonicParsing="false" onAction="#onClientesClick" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Clientes" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="20.0" />
                      </font>
@@ -120,7 +120,7 @@
                            </children>
                         </VBox>
                         <Region prefHeight="120.0" prefWidth="620.0" />
-                        <Button mnemonicParsing="false" prefHeight="34.0" prefWidth="153.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="+ Novo Cadastro" textFill="WHITE" HBox.hgrow="ALWAYS">
+                        <Button mnemonicParsing="false" onAction="#onNovoCadastro" prefHeight="34.0" prefWidth="153.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="+ Novo Cadastro" textFill="WHITE" HBox.hgrow="ALWAYS">
                            <font>
                               <Font name="Ebrima Bold" size="14.0" />
                            </font>
@@ -132,7 +132,7 @@
                   </HBox>
                   <HBox prefHeight="58.0" prefWidth="1257.0" spacing="10.0" style="-fx-background-color: WHITE; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
                      <children>
-                        <TextField prefWidth="920.0" style="-fx-background-radius: 5; -fx-padding: 5;" text="Buscar por nome ou CPF/CNPJ...">
+                        <TextField fx:id="searchField" prefWidth="920.0" style="-fx-background-radius: 5; -fx-padding: 5;" text="Buscar por nome ou CPF/CNPJ...">
                            <HBox.margin>
                               <Insets left="25.0" top="15.0" />
                            </HBox.margin>
@@ -140,7 +140,7 @@
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="70.0" style="-fx-background-radius: 5;" text="Todos" textFill="#484848">
+                        <Button mnemonicParsing="false" onAction="#onTodos" prefHeight="30.0" prefWidth="70.0" style="-fx-background-radius: 5;" text="Todos" textFill="#484848">
                            <HBox.margin>
                               <Insets left="5.0" top="15.0" />
                            </HBox.margin>
@@ -148,7 +148,7 @@
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </Button>
-                        <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="105.0" style="-fx-background-radius: 5;" text="Funcionários" textFill="#484848">
+                        <Button mnemonicParsing="false" onAction="#onFuncionarios" prefHeight="30.0" prefWidth="105.0" style="-fx-background-radius: 5;" text="Funcionários" textFill="#484848">
                            <HBox.margin>
                               <Insets left="5.0" top="15.0" />
                            </HBox.margin>
@@ -156,7 +156,7 @@
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </Button>
-                        <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="74.0" style="-fx-background-radius: 5;" text="Clientes" textFill="#484848">
+                        <Button mnemonicParsing="false" onAction="#onClientes" prefHeight="30.0" prefWidth="74.0" style="-fx-background-radius: 5;" text="Clientes" textFill="#484848">
                            <HBox.margin>
                               <Insets left="5.0" top="15.0" />
                            </HBox.margin>
@@ -172,7 +172,7 @@
                         <Insets right="20.0" />
                      </padding>
                   </HBox>
-                  <TableView prefHeight="510.0" prefWidth="1247.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5); -fx-background-radius: 10;">
+                  <TableView fx:id="cadastroTable" prefHeight="510.0" prefWidth="1247.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5); -fx-background-radius: 10;">
                      <columns>
                         <TableColumn minWidth="20.0" prefWidth="155.0" text="Nome" />
                         <TableColumn prefWidth="155.0" text="CPF" />

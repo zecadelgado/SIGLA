@@ -72,6 +72,13 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <mainClass>br.com.sigla.interfacegrafica.inicializacao.LancadorSigla</mainClass>
+                    <additionalClasspathElements>
+                        <additionalClasspathElement>${project.basedir}/../sigla-dominio/target/classes</additionalClasspathElement>
+                        <additionalClasspathElement>${project.basedir}/../sigla-aplicacao/target/classes</additionalClasspathElement>
+                        <additionalClasspathElement>${project.basedir}/../sigla-infraestrutura/target/classes</additionalClasspathElement>
+                        <additionalClasspathElement>${project.basedir}/../sigla-relatorios/target/classes</additionalClasspathElement>
+                    </additionalClasspathElements>
+                    <jvmArguments>--enable-native-access=ALL-UNNAMED</jvmArguments>
                 </configuration>
             </plugin>
             <plugin>

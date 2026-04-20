@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +29,20 @@ public class ItemEstoqueEntidade {
     @Column(name = "name", nullable = false, length = 120)
     private String name;
 
+    @Column(name = "description", length = 500)
+    private String description;
+
+    @Column(name = "cost_price", nullable = false, precision = 12, scale = 2)
+    private BigDecimal costPrice;
+
+    @Column(name = "sale_price", nullable = false, precision = 12, scale = 2)
+    private BigDecimal salePrice;
+
     @Column(name = "quantity", nullable = false)
     private int quantity;
+
+    @Column(name = "minimum_quantity", nullable = false)
+    private int minimumQuantity;
 
     @Column(name = "unit", nullable = false, length = 24)
     private String unit;
@@ -54,12 +67,44 @@ public class ItemEstoqueEntidade {
         this.name = name;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public BigDecimal getCostPrice() {
+        return costPrice;
+    }
+
+    public void setCostPrice(BigDecimal costPrice) {
+        this.costPrice = costPrice;
+    }
+
+    public BigDecimal getSalePrice() {
+        return salePrice;
+    }
+
+    public void setSalePrice(BigDecimal salePrice) {
+        this.salePrice = salePrice;
+    }
+
     public int getQuantity() {
         return quantity;
     }
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public int getMinimumQuantity() {
+        return minimumQuantity;
+    }
+
+    public void setMinimumQuantity(int minimumQuantity) {
+        this.minimumQuantity = minimumQuantity;
     }
 
     public String getUnit() {
@@ -94,14 +139,23 @@ public class ItemEstoqueEntidade {
         @Column(name = "occurred_on", nullable = false)
         private LocalDate occurredOn;
 
-        @Column(name = "handled_by", length = 120)
-        private String handledBy;
+        @Column(name = "unit_price", nullable = false, precision = 12, scale = 2)
+        private BigDecimal unitPrice;
 
-        @Column(name = "purchased_by", length = 120)
-        private String purchasedBy;
+        @Column(name = "total_price", nullable = false, precision = 12, scale = 2)
+        private BigDecimal totalPrice;
 
-        @Column(name = "stored_by", length = 120)
-        private String storedBy;
+        @Column(name = "created_by", length = 120)
+        private String createdBy;
+
+        @Column(name = "customer_id", length = 64)
+        private String customerId;
+
+        @Column(name = "order_reference", length = 64)
+        private String orderReference;
+
+        @Column(name = "destination_description", length = 240)
+        private String destinationDescription;
 
         @Column(name = "notes", length = 500)
         private String notes;
@@ -138,28 +192,52 @@ public class ItemEstoqueEntidade {
             this.occurredOn = occurredOn;
         }
 
-        public String getHandledBy() {
-            return handledBy;
+        public BigDecimal getUnitPrice() {
+            return unitPrice;
         }
 
-        public void setHandledBy(String handledBy) {
-            this.handledBy = handledBy;
+        public void setUnitPrice(BigDecimal unitPrice) {
+            this.unitPrice = unitPrice;
         }
 
-        public String getPurchasedBy() {
-            return purchasedBy;
+        public BigDecimal getTotalPrice() {
+            return totalPrice;
         }
 
-        public void setPurchasedBy(String purchasedBy) {
-            this.purchasedBy = purchasedBy;
+        public void setTotalPrice(BigDecimal totalPrice) {
+            this.totalPrice = totalPrice;
         }
 
-        public String getStoredBy() {
-            return storedBy;
+        public String getCreatedBy() {
+            return createdBy;
         }
 
-        public void setStoredBy(String storedBy) {
-            this.storedBy = storedBy;
+        public void setCreatedBy(String createdBy) {
+            this.createdBy = createdBy;
+        }
+
+        public String getCustomerId() {
+            return customerId;
+        }
+
+        public void setCustomerId(String customerId) {
+            this.customerId = customerId;
+        }
+
+        public String getOrderReference() {
+            return orderReference;
+        }
+
+        public void setOrderReference(String orderReference) {
+            this.orderReference = orderReference;
+        }
+
+        public String getDestinationDescription() {
+            return destinationDescription;
+        }
+
+        public void setDestinationDescription(String destinationDescription) {
+            this.destinationDescription = destinationDescription;
         }
 
         public String getNotes() {

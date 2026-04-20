@@ -35,6 +35,27 @@ public class EntradaFinanceiraEntidade {
     @Column(name = "service_provided_id", length = 64)
     private String serviceProvidedId;
 
+    @Column(name = "description", length = 500)
+    private String description;
+
+    @Column(name = "category_label", length = 120)
+    private String category;
+
+    @Column(name = "due_date")
+    private LocalDate dueDate;
+
+    @Column(name = "payment_date")
+    private LocalDate paymentDate;
+
+    @Column(name = "payment_method", length = 120)
+    private String paymentMethod;
+
+    @Column(name = "created_by", length = 120)
+    private String createdBy;
+
+    @Column(name = "order_reference", length = 64)
+    private String orderReference;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 24)
     private EntradaFinanceira.EntryStatus status;
@@ -85,6 +106,62 @@ public class EntradaFinanceiraEntidade {
 
     public void setServicoPrestadoId(String serviceProvidedId) {
         this.serviceProvidedId = serviceProvidedId;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public LocalDate getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public LocalDate getPaymentDate() {
+        return paymentDate;
+    }
+
+    public void setPaymentDate(LocalDate paymentDate) {
+        this.paymentDate = paymentDate;
+    }
+
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public String getOrderReference() {
+        return orderReference;
+    }
+
+    public void setOrderReference(String orderReference) {
+        this.orderReference = orderReference;
     }
 
     public EntradaFinanceira.EntryStatus getStatus() {

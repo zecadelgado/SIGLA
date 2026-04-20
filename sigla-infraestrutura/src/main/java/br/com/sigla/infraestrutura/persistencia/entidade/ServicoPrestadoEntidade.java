@@ -55,6 +55,14 @@ public class ServicoPrestadoEntidade {
     @Column(name = "signature_type", nullable = false, length = 24)
     private ServicoPrestado.SignatureType signatureType;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "service_status", nullable = false, length = 24)
+    private ServicoPrestado.ServiceStatus serviceStatus;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "priority", nullable = false, length = 24)
+    private ServicoPrestado.ServicePriority priority;
+
     @Column(name = "signature_path", length = 255)
     private String signaturePath;
 
@@ -143,6 +151,22 @@ public class ServicoPrestadoEntidade {
 
     public void setSignatureType(ServicoPrestado.SignatureType signatureType) {
         this.signatureType = signatureType;
+    }
+
+    public ServicoPrestado.ServiceStatus getServiceStatus() {
+        return serviceStatus;
+    }
+
+    public void setServiceStatus(ServicoPrestado.ServiceStatus serviceStatus) {
+        this.serviceStatus = serviceStatus;
+    }
+
+    public ServicoPrestado.ServicePriority getPriority() {
+        return priority;
+    }
+
+    public void setPriority(ServicoPrestado.ServicePriority priority) {
+        this.priority = priority;
     }
 
     public String getSignaturePath() {

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="br.com.sigla.interfacegrafica.controlador.ControladorDashboard"
+      styleClass="screen-root">
+    <children>
+        <VBox styleClass="screen-header">
+            <children>
+                <Label text="Dashboard operacional" styleClass="screen-title-large"/>
+                <Label text="Visao rapida do que importa hoje: clientes, contratos, visitas, caixa e alertas." styleClass="screen-subtitle" wrapText="true"/>
+            </children>
+        </VBox>
+        <GridPane styleClass="metric-grid">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="25"/>
+                <ColumnConstraints percentWidth="25"/>
+                <ColumnConstraints percentWidth="25"/>
+                <ColumnConstraints percentWidth="25"/>
+            </columnConstraints>
+            <children>
+                <VBox GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="metric-card">
+                    <children>
+                        <Label text="Clientes ativos" styleClass="metric-label"/>
+                        <Label fx:id="totalClientesLabel" styleClass="metric-value"/>
+                    </children>
+                </VBox>
+                <VBox GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="metric-card">
+                    <children>
+                        <Label text="Contratos proximos" styleClass="metric-label"/>
+                        <Label fx:id="contratosProximosLabel" styleClass="metric-value"/>
+                    </children>
+                </VBox>
+                <VBox GridPane.columnIndex="2" GridPane.rowIndex="0" styleClass="metric-card">
+                    <children>
+                        <Label text="Visitas na semana" styleClass="metric-label"/>
+                        <Label fx:id="visitasProximasLabel" styleClass="metric-value"/>
+                    </children>
+                </VBox>
+                <VBox GridPane.columnIndex="3" GridPane.rowIndex="0" styleClass="metric-card">
+                    <children>
+                        <Label text="Visitas atrasadas" styleClass="metric-label"/>
+                        <Label fx:id="visitasAtrasadasLabel" styleClass="metric-value"/>
+                    </children>
+                </VBox>
+                <VBox GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="metric-card">
+                    <children>
+                        <Label text="Saldo atual" styleClass="metric-label"/>
+                        <Label fx:id="saldoAtualLabel" styleClass="metric-value"/>
+                    </children>
+                </VBox>
+                <VBox GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="metric-card">
+                    <children>
+                        <Label text="Itens em baixa" styleClass="metric-label"/>
+                        <Label fx:id="estoqueBaixoLabel" styleClass="metric-value"/>
+                    </children>
+                </VBox>
+                <VBox GridPane.columnIndex="2" GridPane.rowIndex="1" styleClass="metric-card">
+                    <children>
+                        <Label text="Certificados vencendo" styleClass="metric-label"/>
+                        <Label fx:id="certificadosLabel" styleClass="metric-value"/>
+                    </children>
+                </VBox>
+                <VBox GridPane.columnIndex="3" GridPane.rowIndex="1" styleClass="metric-card">
+                    <children>
+                        <Label text="Notificacoes abertas" styleClass="metric-label"/>
+                        <Label fx:id="notificacoesLabel" styleClass="metric-value"/>
+                    </children>
+                </VBox>
+            </children>
+        </GridPane>
+        <VBox styleClass="content-card">
+            <children>
+                <Label text="Leitura do dia" styleClass="section-title"/>
+                <Label text="Se algum numero subir torto aqui, o resto da operacao vai chiar logo adiante. Esse painel serve justamente pra pegar o folego do sistema antes do problema virar baile." wrapText="true" styleClass="screen-subtitle"/>
+            </children>
+            <padding>
+                <Insets top="4" right="4" bottom="4" left="4"/>
+            </padding>
+        </VBox>
+    </children>
+</VBox>

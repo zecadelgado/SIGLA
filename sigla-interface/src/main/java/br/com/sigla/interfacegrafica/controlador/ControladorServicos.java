@@ -1,51 +1,65 @@
 package br.com.sigla.interfacegrafica.controlador;
 
 import br.com.sigla.aplicacao.servicos.porta.entrada.CasoDeUsoServicoPrestado;
+import br.com.sigla.dominio.servicos.ServicoPrestado;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorMoeda;
-import br.com.sigla.interfacegrafica.apresentacao.ApresentadorTexto;
+import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
+import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+
 @Component
-public class ControladorServicos {
+public class ControladorServicos extends ControladorComMenuPrincipal {
 
-    private final CasoDeUsoServicoPrestado serviceProvidedUseCase;
-    private final ApresentadorMoeda currencyPresenter;
-    private final ApresentadorTexto textBlockPresenter;
-
-    @FXML
-    private Label title;
+    private final CasoDeUsoServicoPrestado casoDeUsoServicoPrestado;
+    private final GerenciadorNavegacao gerenciadorNavegacao;
+    private final ApresentadorMoeda apresentadorMoeda;
 
     @FXML
-    private TextArea summary;
+    private Label totalServicosLabel;
+    @FXML
+    private Label recebidosLabel;
+    @FXML
+    private Label pendentesLabel;
 
     public ControladorServicos(
-            CasoDeUsoServicoPrestado serviceProvidedUseCase,
-            ApresentadorMoeda currencyPresenter,
-            ApresentadorTexto textBlockPresenter
+            CasoDeUsoServicoPrestado casoDeUsoServicoPrestado,
+            GerenciadorNavegacao gerenciadorNavegacao,
+            ApresentadorMoeda apresentadorMoeda
     ) {
-        this.serviceProvidedUseCase = serviceProvidedUseCase;
-        this.currencyPresenter = currencyPresenter;
-        this.textBlockPresenter = textBlockPresenter;
+        super(gerenciadorNavegacao);
+        this.casoDeUsoServicoPrestado = casoDeUsoServicoPrestado;
+        this.gerenciadorNavegacao = gerenciadorNavegacao;
+        this.apresentadorMoeda = apresentadorMoeda;
     }
 
     @FXML
     public void initialize() {
-        title.setText("Servicos Prestados");
-        summary.setText(textBlockPresenter.render(
-                serviceProvidedUseCase.listAll().stream()
-                        .map(service -> service.id()
-                                + " | Cliente " + service.customerId()
-                                + " | Funcionario " + service.employeeId()
-                                + " | " + service.executionDate()
-                                + " | " + currencyPresenter.format(service.amountCharged())
-                                + " | pagamento " + service.paymentStatus()
-                                + " | assinatura " + service.signatureType())
-                        .toList(),
-                "Nenhum servico prestado registrado."
-        ));
+        refresh();
+    }
+
+    @FXML
+    private void onNovoServico() {
+        gerenciadorNavegacao.navigateTo(VisaoAplicacao.NEW_SERVICE);
+    }
+
+    private void refresh() {
+        var services = casoDeUsoServicoPrestado.listAll();
+        totalServicosLabel.setText(String.valueOf(services.size()));
+
+        BigDecimal recebidos = services.stream()
+                .filter(service -> service.paymentStatus() == ServicoPrestado.PaymentStatus.PAID)
+                .map(ServicoPrestado::amountCharged)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        recebidosLabel.setText(apresentadorMoeda.format(recebidos));
+
+        BigDecimal pendentes = services.stream()
+                .filter(service -> service.paymentStatus() != ServicoPrestado.PaymentStatus.PAID)
+                .map(ServicoPrestado::amountCharged)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        pendentesLabel.setText(apresentadorMoeda.format(pendentes));
     }
 }
-

@@ -1,0 +1,119 @@
+package br.com.sigla.interfacegrafica.controlador;
+
+import br.com.sigla.aplicacao.estoque.porta.entrada.CasoDeUsoEstoque;
+import br.com.sigla.dominio.estoque.ItemEstoque;
+import br.com.sigla.interfacegrafica.consulta.ServicoConsultaReferencias;
+import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
+import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.parseEnum;
+import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.resolveOpcional;
+
+@Component
+public class ControladorNovaMovimentacao {
+
+    private final CasoDeUsoEstoque casoDeUsoEstoque;
+    private final ServicoConsultaReferencias servicoConsultaReferencias;
+    private final GerenciadorNavegacao gerenciadorNavegacao;
+
+    @FXML
+    private TextField produtoField;
+    @FXML
+    private TextField tipoField;
+    @FXML
+    private TextField quantidadeField;
+    @FXML
+    private TextField valorUnitarioField;
+    @FXML
+    private TextField valorTotalField;
+    @FXML
+    private TextField usuarioField;
+    @FXML
+    private TextField clienteField;
+    @FXML
+    private TextField ordemField;
+    @FXML
+    private TextField destinoField;
+    @FXML
+    private TextField observacoesField;
+    @FXML
+    private Label feedbackLabel;
+
+    public ControladorNovaMovimentacao(
+            CasoDeUsoEstoque casoDeUsoEstoque,
+            ServicoConsultaReferencias servicoConsultaReferencias,
+            GerenciadorNavegacao gerenciadorNavegacao
+    ) {
+        this.casoDeUsoEstoque = casoDeUsoEstoque;
+        this.servicoConsultaReferencias = servicoConsultaReferencias;
+        this.gerenciadorNavegacao = gerenciadorNavegacao;
+    }
+
+    @FXML
+    public void initialize() {
+        if (tipoField != null && tipoField.getText().isBlank()) {
+            tipoField.setText(ItemEstoque.MovementType.OUTBOUND.name());
+        }
+        quantidadeField.textProperty().addListener((observable, oldValue, newValue) -> recomputeTotal());
+        valorUnitarioField.textProperty().addListener((observable, oldValue, newValue) -> recomputeTotal());
+        setFeedback("");
+    }
+
+    @FXML
+    private void onConfirmarMovimentacao() {
+        try {
+            var produto = resolveOpcional(servicoConsultaReferencias.produtos(), produtoField == null ? "" : produtoField.getText());
+            if (produto == null) {
+                throw new IllegalArgumentException("Selecione um produto valido.");
+            }
+            var cliente = resolveOpcional(servicoConsultaReferencias.clientes(), clienteField == null ? "" : clienteField.getText());
+            var ordem = resolveOpcional(servicoConsultaReferencias.ordensServico(), ordemField == null ? "" : ordemField.getText());
+
+            casoDeUsoEstoque.recordMovement(new CasoDeUsoEstoque.RecordInventoryMovementCommand(
+                    produto.id(),
+                    "MOV-" + System.currentTimeMillis(),
+                    parseEnum(ItemEstoque.MovementType.class, tipoField == null ? "" : tipoField.getText(), ItemEstoque.MovementType.OUTBOUND),
+                    Integer.parseInt(quantidadeField.getText()),
+                    LocalDate.now(),
+                    new BigDecimal(valorUnitarioField.getText()),
+                    new BigDecimal(valorTotalField.getText()),
+                    usuarioField.getText(),
+                    cliente == null ? "" : cliente.id(),
+                    ordem == null ? "" : ordem.id(),
+                    destinoField.getText(),
+                    observacoesField == null ? "" : observacoesField.getText()
+            ));
+            gerenciadorNavegacao.navigateTo(VisaoAplicacao.INVENTORY);
+        } catch (Exception exception) {
+            setFeedback(exception.getMessage());
+        }
+    }
+
+    @FXML
+    private void onCancelar() {
+        gerenciadorNavegacao.navigateTo(VisaoAplicacao.INVENTORY);
+    }
+
+    private void recomputeTotal() {
+        try {
+            BigDecimal quantidade = new BigDecimal(quantidadeField.getText());
+            BigDecimal valorUnitario = new BigDecimal(valorUnitarioField.getText());
+            valorTotalField.setText(quantidade.multiply(valorUnitario).toPlainString());
+        } catch (Exception ignored) {
+            // campos incompletos
+        }
+    }
+
+    private void setFeedback(String message) {
+        if (feedbackLabel != null) {
+            feedbackLabel.setText(message == null ? "" : message);
+        }
+    }
+}

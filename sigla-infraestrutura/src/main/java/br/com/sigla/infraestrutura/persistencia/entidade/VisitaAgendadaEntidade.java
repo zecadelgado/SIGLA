@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "visit_schedules")
@@ -30,6 +31,24 @@ public class VisitaAgendadaEntidade {
 
     @Column(name = "scheduled_date", nullable = false)
     private LocalDate scheduledDate;
+
+    @Column(name = "title", length = 180)
+    private String title;
+
+    @Column(name = "service_type", length = 120)
+    private String serviceType;
+
+    @Column(name = "internal_responsible", length = 120)
+    private String internalResponsible;
+
+    @Column(name = "start_at")
+    private LocalDateTime startAt;
+
+    @Column(name = "end_at")
+    private LocalDateTime endAt;
+
+    @Column(name = "all_day", nullable = false)
+    private boolean allDay;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 24)
@@ -76,6 +95,54 @@ public class VisitaAgendadaEntidade {
 
     public void setScheduledDate(LocalDate scheduledDate) {
         this.scheduledDate = scheduledDate;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getServiceType() {
+        return serviceType;
+    }
+
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
+    }
+
+    public String getInternalResponsible() {
+        return internalResponsible;
+    }
+
+    public void setInternalResponsible(String internalResponsible) {
+        this.internalResponsible = internalResponsible;
+    }
+
+    public LocalDateTime getStartAt() {
+        return startAt;
+    }
+
+    public void setStartAt(LocalDateTime startAt) {
+        this.startAt = startAt;
+    }
+
+    public LocalDateTime getEndAt() {
+        return endAt;
+    }
+
+    public void setEndAt(LocalDateTime endAt) {
+        this.endAt = endAt;
+    }
+
+    public boolean isAllDay() {
+        return allDay;
+    }
+
+    public void setAllDay(boolean allDay) {
+        this.allDay = allDay;
     }
 
     public VisitaAgendada.VisitStatus getStatus() {

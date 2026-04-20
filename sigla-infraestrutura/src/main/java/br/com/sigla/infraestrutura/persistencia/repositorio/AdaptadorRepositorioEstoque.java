@@ -43,7 +43,11 @@ public class AdaptadorRepositorioEstoque implements RepositorioEstoque {
         return new ItemEstoque(
                 entity.getId(),
                 entity.getName(),
+                entity.getDescription(),
+                entity.getCostPrice(),
+                entity.getSalePrice(),
                 entity.getQuantity(),
+                entity.getMinimumQuantity(),
                 entity.getUnit(),
                 entity.getMovements().stream()
                         .map(movement -> new ItemEstoque.InventoryMovement(
@@ -51,9 +55,12 @@ public class AdaptadorRepositorioEstoque implements RepositorioEstoque {
                                 movement.getType(),
                                 movement.getAmount(),
                                 movement.getOccurredOn(),
-                                movement.getHandledBy(),
-                                movement.getPurchasedBy(),
-                                movement.getStoredBy(),
+                                movement.getUnitPrice(),
+                                movement.getTotalPrice(),
+                                movement.getCreatedBy(),
+                                movement.getCustomerId(),
+                                movement.getOrderReference(),
+                                movement.getDestinationDescription(),
                                 movement.getNotes()
                         ))
                         .toList()
@@ -64,7 +71,11 @@ public class AdaptadorRepositorioEstoque implements RepositorioEstoque {
         ItemEstoqueEntidade entity = new ItemEstoqueEntidade();
         entity.setId(item.id());
         entity.setName(item.name());
+        entity.setDescription(item.description());
+        entity.setCostPrice(item.costPrice());
+        entity.setSalePrice(item.salePrice());
         entity.setQuantity(item.quantity());
+        entity.setMinimumQuantity(item.minimumQuantity());
         entity.setUnit(item.unit());
         List<ItemEstoqueEntidade.MovementEmbeddable> movements = new ArrayList<>();
         for (ItemEstoque.InventoryMovement movement : item.movements()) {
@@ -73,9 +84,12 @@ public class AdaptadorRepositorioEstoque implements RepositorioEstoque {
             embeddable.setType(movement.type());
             embeddable.setAmount(movement.amount());
             embeddable.setOccurredOn(movement.occurredOn());
-            embeddable.setHandledBy(movement.handledBy());
-            embeddable.setPurchasedBy(movement.purchasedBy());
-            embeddable.setStoredBy(movement.storedBy());
+            embeddable.setUnitPrice(movement.unitPrice());
+            embeddable.setTotalPrice(movement.totalPrice());
+            embeddable.setCreatedBy(movement.createdBy());
+            embeddable.setCustomerId(movement.customerId());
+            embeddable.setOrderReference(movement.orderReference());
+            embeddable.setDestinationDescription(movement.destinationDescription());
             embeddable.setNotes(movement.notes());
             movements.add(embeddable);
         }

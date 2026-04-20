@@ -59,6 +59,8 @@ public class AdaptadorRepositorioServicoPrestado implements RepositorioServicoPr
                                 attachment.getContentType()
                         ))
                         .toList(),
+                entity.getServiceStatus(),
+                entity.getPriority(),
                 entity.getNotes()
         );
     }
@@ -75,6 +77,8 @@ public class AdaptadorRepositorioServicoPrestado implements RepositorioServicoPr
         entity.setAmountCharged(serviceProvided.amountCharged());
         entity.setPaymentStatus(serviceProvided.paymentStatus());
         entity.setSignatureType(serviceProvided.signatureType());
+        entity.setServiceStatus(serviceProvided.serviceStatus());
+        entity.setPriority(serviceProvided.priority());
         entity.setSignaturePath(serviceProvided.signaturePath());
         entity.setNotes(serviceProvided.notes());
         List<ServicoPrestadoEntidade.AttachmentEmbeddable> attachments = new ArrayList<>();

@@ -1,3 +1,5 @@
 br\com\sigla\interfacegrafica\controlador\ControladorEstruturaAplicacaoTest.class
 br\com\sigla\interfacegrafica\navegacao\VisaoAplicacaoTest.class
+br\com\sigla\interfacegrafica\aplicativo\SessaoLocalAplicacaoTest.class
+br\com\sigla\interfacegrafica\fxml\TelaFxmlResourcesTest.class
 br\com\sigla\interfacegrafica\controlador\ControladorEstruturaAplicacaoTest$SpyGerenciadorNavegacao.class

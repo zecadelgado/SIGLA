@@ -1,3 +1,4 @@
+br\com\sigla\dominio\financeiro\DespesaFinanceira$ExpenseStatus.class
 br\com\sigla\dominio\agenda\VisitaAgendada$VisitType.class
 br\com\sigla\dominio\financeiro\EntradaFinanceira.class
 br\com\sigla\dominio\servicos\ServicoPrestado$Attachment.class
@@ -16,12 +17,14 @@ br\com\sigla\dominio\financeiro\EntradaFinanceira$EntryStatus.class
 br\com\sigla\dominio\estoque\ItemEstoque.class
 br\com\sigla\dominio\financeiro\PlanoParcelamento.class
 br\com\sigla\dominio\notificacoes\Notificacao$NotificacaoStatus.class
+br\com\sigla\dominio\servicos\ServicoPrestado$ServicePriority.class
 br\com\sigla\dominio\certificados\Certificado$CertificadoStatus.class
 br\com\sigla\dominio\notificacoes\Notificacao.class
 br\com\sigla\dominio\contratos\Contrato$ServiceFrequency.class
 br\com\sigla\dominio\clientes\Cliente$ContactPerson.class
 br\com\sigla\dominio\contratos\Contrato$ContratoStatus.class
 br\com\sigla\dominio\notificacoes\Notificacao$NotificacaoType.class
+br\com\sigla\dominio\servicos\ServicoPrestado$ServiceStatus.class
 br\com\sigla\dominio\certificados\Certificado.class
 br\com\sigla\dominio\servicos\ServicoPrestado.class
 br\com\sigla\dominio\agenda\VisitaAgendada.class

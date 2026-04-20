@@ -2,6 +2,7 @@ package br.com.sigla.dominio.estoque;
 
 import br.com.sigla.dominio.compartilhado.ExcecaoDominio;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,19 +12,44 @@ public final class ItemEstoque {
 
     private final String id;
     private final String name;
+    private final String description;
+    private final BigDecimal costPrice;
+    private final BigDecimal salePrice;
+    private final int minimumQuantity;
     private final String unit;
     private final List<InventoryMovement> movements;
     private int quantity;
 
-    public ItemEstoque(String id, String name, int quantity, String unit, List<InventoryMovement> movements) {
+    public ItemEstoque(
+            String id,
+            String name,
+            String description,
+            BigDecimal costPrice,
+            BigDecimal salePrice,
+            int quantity,
+            int minimumQuantity,
+            String unit,
+            List<InventoryMovement> movements
+    ) {
         this.id = requireText(id, "id");
         this.name = requireText(name, "name");
+        this.description = normalizeOptional(description);
+        this.costPrice = requireMoney(costPrice, "costPrice");
+        this.salePrice = requireMoney(salePrice, "salePrice");
+        if (minimumQuantity < 0) {
+            throw new ExcecaoDominio("Minimum quantity cannot be negative");
+        }
+        this.minimumQuantity = minimumQuantity;
         this.unit = requireText(unit, "unit");
         if (quantity < 0) {
             throw new ExcecaoDominio("Initial quantity cannot be negative");
         }
         this.quantity = quantity;
         this.movements = new ArrayList<>(Objects.requireNonNullElse(movements, List.of()));
+    }
+
+    public ItemEstoque(String id, String name, int quantity, String unit, List<InventoryMovement> movements) {
+        this(id, name, "", BigDecimal.ZERO, BigDecimal.ZERO, quantity, 0, unit, movements);
     }
 
     public String id() {
@@ -34,6 +60,18 @@ public final class ItemEstoque {
         return name;
     }
 
+    public String description() {
+        return description;
+    }
+
+    public BigDecimal costPrice() {
+        return costPrice;
+    }
+
+    public BigDecimal salePrice() {
+        return salePrice;
+    }
+
     public int quantity() {
         return quantity;
     }
@@ -42,8 +80,16 @@ public final class ItemEstoque {
         return unit;
     }
 
+    public int minimumQuantity() {
+        return minimumQuantity;
+    }
+
     public List<InventoryMovement> movements() {
         return List.copyOf(movements);
+    }
+
+    public boolean isLowStock() {
+        return quantity <= minimumQuantity;
     }
 
     public void recordMovement(InventoryMovement movement) {
@@ -64,9 +110,12 @@ public final class ItemEstoque {
             MovementType type,
             int amount,
             LocalDate occurredOn,
-            String handledBy,
-            String purchasedBy,
-            String storedBy,
+            BigDecimal unitPrice,
+            BigDecimal totalPrice,
+            String createdBy,
+            String customerId,
+            String orderReference,
+            String destinationDescription,
             String notes
     ) {
         public InventoryMovement {
@@ -76,10 +125,38 @@ public final class ItemEstoque {
                 throw new ExcecaoDominio("Movement amount must be greater than zero");
             }
             occurredOn = Objects.requireNonNull(occurredOn, "occurredOn is required");
-            handledBy = normalizeOptional(handledBy);
-            purchasedBy = normalizeOptional(purchasedBy);
-            storedBy = normalizeOptional(storedBy);
+            unitPrice = requireMoney(unitPrice, "unitPrice");
+            totalPrice = requireMoney(totalPrice, "totalPrice");
+            createdBy = normalizeOptional(createdBy);
+            customerId = normalizeOptional(customerId);
+            orderReference = normalizeOptional(orderReference);
+            destinationDescription = normalizeOptional(destinationDescription);
             notes = normalizeOptional(notes);
+        }
+
+        public InventoryMovement(
+                String id,
+                MovementType type,
+                int amount,
+                LocalDate occurredOn,
+                String handledBy,
+                String purchasedBy,
+                String storedBy,
+                String notes
+        ) {
+            this(
+                    id,
+                    type,
+                    amount,
+                    occurredOn,
+                    BigDecimal.ZERO,
+                    BigDecimal.ZERO,
+                    handledBy,
+                    purchasedBy,
+                    null,
+                    storedBy,
+                    notes
+            );
         }
     }
 
@@ -101,6 +178,14 @@ public final class ItemEstoque {
             return "";
         }
         return value.trim();
+    }
+
+    private static BigDecimal requireMoney(BigDecimal value, String fieldName) {
+        Objects.requireNonNull(value, fieldName + " is required");
+        if (value.signum() < 0) {
+            throw new ExcecaoDominio(fieldName + " cannot be negative");
+        }
+        return value;
     }
 }
 
