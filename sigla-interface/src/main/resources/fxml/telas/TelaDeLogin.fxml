@@ -11,23 +11,23 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="300.0" prefWidth="620.0" style="-fx-background-color: lightgrey;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.sigla.interfacegrafica.controlador.ControladorLogin">
+<AnchorPane prefHeight="340.0" prefWidth="620.0" style="-fx-background-color: lightgrey;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.sigla.interfacegrafica.controlador.ControladorLogin">
    <children>
-      <VBox prefHeight="300.0" prefWidth="620.0" style="-fx-background-color: lightgrey;">
+      <VBox prefHeight="340.0" prefWidth="620.0" style="-fx-background-color: #0B2A6F;">
          <children>
-            <Label prefHeight="52.0" prefWidth="358.0" text="Login" textFill="#00417e">
+            <Label prefHeight="52.0" prefWidth="358.0" text="Login" textFill="#94cbff">
                <font>
-                  <Font name="Ebrima Bold" size="48.0" />
+                  <Font name="Ebrima Bold" size="65.0" />
                </font>
                <VBox.margin>
                   <Insets left="37.0" top="15.0" />
                </VBox.margin>
             </Label>
-            <VBox prefHeight="162.0" prefWidth="670.0">
+            <VBox prefHeight="162.0" prefWidth="620.0">
                <children>
-                  <VBox prefHeight="134.0" prefWidth="670.0">
+                  <VBox prefHeight="86.0" prefWidth="620.0">
                      <children>
-                        <Label text="Usuário">
+                        <Label text="Usuário" textFill="WHITE">
                            <font>
                               <Font size="16.0" />
                            </font>
@@ -35,7 +35,7 @@
                               <Insets left="40.0" top="5.0" />
                            </VBox.margin>
                         </Label>
-                        <TextField fx:id="usernameField" prefHeight="30.0" prefWidth="300.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
+                        <TextField fx:id="usernameField" prefHeight="34.0" prefWidth="540.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -43,50 +43,51 @@
                               <Insets left="40.0" right="40.0" />
                            </VBox.margin>
                         </TextField>
-                        <VBox prefHeight="85.0" prefWidth="670.0">
-                           <children>
-                              <Label text="Senha">
-                                 <font>
-                                    <Font size="16.0" />
-                                 </font>
-                                 <VBox.margin>
-                                    <Insets left="40.0" top="5.0" />
-                                 </VBox.margin>
-                              </Label>
-                              <PasswordField fx:id="passwordField" prefHeight="30.0" prefWidth="590.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5); -fx-background-radius: 5;">
-                                 <VBox.margin>
-                                    <Insets left="40.0" right="40.0" />
-                                 </VBox.margin>
-                              </PasswordField>
-                              <Label fx:id="errorLabel" textFill="#b42318" wrapText="true">
-                                 <VBox.margin>
-                                    <Insets left="40.0" right="40.0" top="6.0" />
-                                 </VBox.margin>
-                              </Label>
-                           </children>
-                           <VBox.margin>
-                              <Insets top="10.0" />
-                           </VBox.margin>
-                        </VBox>
                      </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </VBox>
+                  <VBox prefHeight="66.0" prefWidth="620.0">
+                     <children>
+                        <Label text="Senha" textFill="WHITE">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets left="40.0" top="5.0" />
+                           </VBox.margin>
+                        </Label>
+                        <PasswordField fx:id="passwordField" prefHeight="60.0" prefWidth="540.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5); -fx-background-radius: 5;">
+                           <VBox.margin>
+                              <Insets left="40.0" right="40.0" />
+                           </VBox.margin>
+                        </PasswordField>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="-10.0" />
+                     </VBox.margin>
                   </VBox>
                </children>
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin>
             </VBox>
             <HBox prefHeight="46.0" prefWidth="670.0">
                <children>
                   <Region prefHeight="200.0" prefWidth="200.0" />
-                  <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onLogin" prefWidth="310.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Entrar" textFill="WHITE">
+                  <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onLogin" prefWidth="310.0" style="-fx-background-color: #94cbff; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Entrar" textFill="WHITE">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>
                      <font>
-                        <Font name="Ebrima Bold" size="18.0" />
+                        <Font name="Ebrima Bold" size="22.0" />
                      </font>
                   </Button>
                   <Region prefHeight="200.0" prefWidth="200.0" />
                </children>
                <VBox.margin>
-                  <Insets />
+                  <Insets top="5.0" />
                </VBox.margin>
             </HBox>
          </children>
