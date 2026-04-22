@@ -5,6 +5,7 @@ import br.com.sigla.dominio.estoque.ItemEstoque;
 import br.com.sigla.interfacegrafica.consulta.ServicoConsultaReferencias;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
+import br.com.sigla.interfacegrafica.util.UtilJanela;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -91,6 +92,7 @@ public class ControladorNovaMovimentacao {
                     observacoesField == null ? "" : observacoesField.getText()
             ));
             gerenciadorNavegacao.navigateTo(VisaoAplicacao.INVENTORY);
+            UtilJanela.fecharJanela(produtoField);
         } catch (Exception exception) {
             setFeedback(exception.getMessage());
         }
@@ -98,7 +100,7 @@ public class ControladorNovaMovimentacao {
 
     @FXML
     private void onCancelar() {
-        gerenciadorNavegacao.navigateTo(VisaoAplicacao.INVENTORY);
+        UtilJanela.fecharJanela(produtoField);
     }
 
     private void recomputeTotal() {

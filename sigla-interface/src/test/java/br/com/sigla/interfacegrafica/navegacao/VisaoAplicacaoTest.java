@@ -29,5 +29,13 @@ class VisaoAplicacaoTest {
         assertTrue(VisaoAplicacao.DASHBOARD.isShellContent());
         assertTrue(VisaoAplicacao.NEW_SERVICE_ORDER.isShellContent());
     }
+
+    @Test
+    void shouldMarkNewViewsAsFloatingWindows() {
+        assertTrue(VisaoAplicacao.NEW_REGISTRY.isSobreposta());
+        assertTrue(VisaoAplicacao.NEW_TRANSACTION.isSobreposta());
+        assertFalse(VisaoAplicacao.LOGIN.isSobreposta());
+        assertFalse(VisaoAplicacao.CUSTOMERS.isSobreposta());
+    }
 }
 
