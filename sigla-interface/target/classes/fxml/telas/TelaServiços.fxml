@@ -119,10 +119,10 @@
                               </Label>
                            </children>
                         </VBox>
-                        <Region prefHeight="106.0" prefWidth="559.0" />
-                        <Button mnemonicParsing="false" onAction="#onNovoServico" prefHeight="47.0" prefWidth="222.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="+ Novo Serviço" textFill="WHITE">
+                        <Region prefHeight="106.0" prefWidth="571.0" />
+                        <Button mnemonicParsing="false" onAction="#onNovoServico" prefHeight="42.0" prefWidth="214.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="+ Novo Serviço" textFill="WHITE">
                            <font>
-                              <Font name="Ebrima Bold" size="24.0" />
+                              <Font name="Ebrima Bold" size="22.0" />
                            </font>
                            <HBox.margin>
                               <Insets left="50.0" top="40.0" />
@@ -132,7 +132,7 @@
                   </HBox>
                   <HBox prefHeight="100.0" prefWidth="200.0">
                      <VBox.margin>
-                        <Insets left="30.0" right="30.0" top="30.0" />
+                        <Insets left="30.0" right="30.0" top="40.0" />
                      </VBox.margin>
                      <children>
                         <VBox prefHeight="100.0" prefWidth="400.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">

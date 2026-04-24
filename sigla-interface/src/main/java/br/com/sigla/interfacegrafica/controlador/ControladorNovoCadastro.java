@@ -5,6 +5,7 @@ import br.com.sigla.aplicacao.funcionarios.porta.entrada.CasoDeUsoFuncionario;
 import br.com.sigla.dominio.funcionarios.Funcionario;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
+import br.com.sigla.interfacegrafica.util.UtilJanela;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -74,6 +75,7 @@ public class ControladorNovoCadastro {
                 cadastrarCliente();
             }
             gerenciadorNavegacao.navigateTo(VisaoAplicacao.REGISTRY);
+            UtilJanela.fecharJanela(nomeField);
         } catch (IllegalArgumentException exception) {
             setFeedback(exception.getMessage());
         }
@@ -81,7 +83,7 @@ public class ControladorNovoCadastro {
 
     @FXML
     private void onCancelar() {
-        gerenciadorNavegacao.navigateTo(VisaoAplicacao.REGISTRY);
+        UtilJanela.fecharJanela(nomeField);
     }
 
     private void cadastrarCliente() {

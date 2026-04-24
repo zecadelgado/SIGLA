@@ -6,6 +6,7 @@ import br.com.sigla.interfacegrafica.consulta.ServicoConsultaReferencias;
 import br.com.sigla.interfacegrafica.modelo.OpcaoId;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
+import br.com.sigla.interfacegrafica.util.UtilJanela;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -103,6 +104,7 @@ public class ControladorNovoServico {
                     ""
             ));
             gerenciadorNavegacao.navigateTo(VisaoAplicacao.SERVICES);
+            UtilJanela.fecharJanela(clienteField);
         } catch (Exception exception) {
             setFeedback(exception.getMessage());
         }
@@ -110,7 +112,7 @@ public class ControladorNovoServico {
 
     @FXML
     private void onCancelar() {
-        gerenciadorNavegacao.navigateTo(VisaoAplicacao.SERVICES);
+        UtilJanela.fecharJanela(clienteField);
     }
 
     private String mergeDescricao() {

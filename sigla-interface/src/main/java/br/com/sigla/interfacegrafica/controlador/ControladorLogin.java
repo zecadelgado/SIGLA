@@ -30,22 +30,31 @@ public class ControladorLogin {
 
     @FXML
     public void initialize() {
-        errorLabel.setVisible(false);
-        errorLabel.setManaged(false);
+        setErrorVisible(false);
     }
 
     @FXML
     private void onLogin() {
-        boolean authenticated = sessaoLocalAplicacao.login(usernameField.getText(), passwordField.getText());
+        String username = usernameField == null ? "" : usernameField.getText();
+        String password = passwordField == null ? "" : passwordField.getText();
+        boolean authenticated = sessaoLocalAplicacao.login(username, password);
         if (authenticated) {
-            errorLabel.setVisible(false);
-            errorLabel.setManaged(false);
+            setErrorVisible(false);
             fluxoAplicacao.showShell();
             return;
         }
 
-        errorLabel.setText("Usuário ou senha inválidos.");
-        errorLabel.setVisible(true);
-        errorLabel.setManaged(true);
+        if (errorLabel != null) {
+            errorLabel.setText("Usuário ou senha inválidos.");
+        }
+        setErrorVisible(true);
+    }
+
+    private void setErrorVisible(boolean visible) {
+        if (errorLabel == null) {
+            return;
+        }
+        errorLabel.setVisible(visible);
+        errorLabel.setManaged(visible);
     }
 }

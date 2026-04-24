@@ -4,6 +4,7 @@ import br.com.sigla.aplicacao.financeiro.porta.entrada.CasoDeUsoFinanceiro;
 import br.com.sigla.interfacegrafica.consulta.ServicoConsultaReferencias;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
+import br.com.sigla.interfacegrafica.util.UtilJanela;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
@@ -108,6 +109,7 @@ public class ControladorNovaTransacao {
                     parseEnum(CasoDeUsoFinanceiro.TransactionStatus.class, statusField == null ? "" : statusField.getText(), CasoDeUsoFinanceiro.TransactionStatus.PENDING)
             ));
             gerenciadorNavegacao.navigateTo(VisaoAplicacao.FINANCE);
+            UtilJanela.fecharJanela(tipoCombo);
         } catch (Exception exception) {
             setFeedback(exception.getMessage());
         }
@@ -115,7 +117,7 @@ public class ControladorNovaTransacao {
 
     @FXML
     private void onCancelar() {
-        gerenciadorNavegacao.navigateTo(VisaoAplicacao.FINANCE);
+        UtilJanela.fecharJanela(tipoCombo);
     }
 
     private void setFeedback(String message) {

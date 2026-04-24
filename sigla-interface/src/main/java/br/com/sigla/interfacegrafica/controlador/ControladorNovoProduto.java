@@ -3,6 +3,7 @@ package br.com.sigla.interfacegrafica.controlador;
 import br.com.sigla.aplicacao.estoque.porta.entrada.CasoDeUsoEstoque;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
+import br.com.sigla.interfacegrafica.util.UtilJanela;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -55,6 +56,7 @@ public class ControladorNovoProduto {
                     "un"
             ));
             gerenciadorNavegacao.navigateTo(VisaoAplicacao.INVENTORY);
+            UtilJanela.fecharJanela(nomeField);
         } catch (Exception exception) {
             setFeedback(exception.getMessage());
         }
@@ -62,7 +64,7 @@ public class ControladorNovoProduto {
 
     @FXML
     private void onCancelar() {
-        gerenciadorNavegacao.navigateTo(VisaoAplicacao.INVENTORY);
+        UtilJanela.fecharJanela(nomeField);
     }
 
     private void setFeedback(String message) {

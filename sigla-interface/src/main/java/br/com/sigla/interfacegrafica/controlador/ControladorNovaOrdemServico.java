@@ -6,6 +6,7 @@ import br.com.sigla.interfacegrafica.consulta.ServicoConsultaReferencias;
 import br.com.sigla.interfacegrafica.modelo.OpcaoId;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
+import br.com.sigla.interfacegrafica.util.UtilJanela;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -109,6 +110,7 @@ public class ControladorNovaOrdemServico {
                     mergeObservacoes()
             ));
             gerenciadorNavegacao.navigateTo(VisaoAplicacao.SERVICE_ORDER);
+            UtilJanela.fecharJanela(clienteField);
         } catch (Exception exception) {
             setFeedback(exception.getMessage());
         }
@@ -116,7 +118,7 @@ public class ControladorNovaOrdemServico {
 
     @FXML
     private void onCancelar() {
-        gerenciadorNavegacao.navigateTo(VisaoAplicacao.SERVICE_ORDER);
+        UtilJanela.fecharJanela(clienteField);
     }
 
     private OpcaoId requiredOption(OpcaoId value, String message) {
