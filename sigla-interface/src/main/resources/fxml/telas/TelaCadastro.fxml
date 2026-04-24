@@ -120,22 +120,22 @@
                               </Label>
                            </children>
                         </VBox>
-                        <Region prefHeight="120.0" prefWidth="522.0" />
+                        <Region prefHeight="120.0" prefWidth="634.0" />
                         <Button mnemonicParsing="false" onAction="#onNovoCadastro" prefHeight="29.0" prefWidth="222.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="+ Novo Cadastro" textFill="WHITE" HBox.hgrow="ALWAYS">
                            <font>
                               <Font name="Ebrima Bold" size="22.0" />
                            </font>
                            <HBox.margin>
-                              <Insets left="110.0" />
+                              <Insets right="25.0" />
                            </HBox.margin>
                         </Button>
                      </children>
                   </HBox>
                   <HBox prefHeight="58.0" prefWidth="1257.0" spacing="10.0" style="-fx-background-color: WHITE; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
                      <children>
-                        <TextField fx:id="searchField" prefHeight="30.0" prefWidth="896.0" style="-fx-background-radius: 5; -fx-padding: 5;" text="Buscar por nome ou CPF/CNPJ...">
+                        <TextField fx:id="searchField" prefHeight="30.0" prefWidth="880.0" style="-fx-background-radius: 5; -fx-padding: 5;" text="Buscar por nome ou CPF/CNPJ...">
                            <HBox.margin>
-                              <Insets left="25.0" top="15.0" />
+                              <Insets left="25.0" right="5.0" top="15.0" />
                            </HBox.margin>
                            <font>
                               <Font size="14.0" />
@@ -143,7 +143,7 @@
                         </TextField>
                         <Button mnemonicParsing="false" onAction="#onTodos" prefHeight="30.0" prefWidth="70.0" style="-fx-background-radius: 5;" text="Todos" textFill="#484848">
                            <HBox.margin>
-                              <Insets left="5.0" top="15.0" />
+                              <Insets left="5.0" right="5.0" top="15.0" />
                            </HBox.margin>
                            <font>
                               <Font name="System Bold" size="14.0" />
@@ -151,7 +151,7 @@
                         </Button>
                         <Button mnemonicParsing="false" onAction="#onFuncionarios" prefHeight="30.0" prefWidth="105.0" style="-fx-background-radius: 5;" text="Funcionários" textFill="#484848">
                            <HBox.margin>
-                              <Insets left="5.0" top="15.0" />
+                              <Insets left="5.0" right="5.0" top="15.0" />
                            </HBox.margin>
                            <font>
                               <Font name="System Bold" size="14.0" />
@@ -159,7 +159,7 @@
                         </Button>
                         <Button mnemonicParsing="false" onAction="#onClientes" prefHeight="30.0" prefWidth="74.0" style="-fx-background-radius: 5;" text="Clientes" textFill="#484848">
                            <HBox.margin>
-                              <Insets left="5.0" top="15.0" />
+                              <Insets left="5.0" right="5.0" top="15.0" />
                            </HBox.margin>
                            <font>
                               <Font name="Ebrima Bold" size="14.0" />
@@ -170,7 +170,7 @@
                         <Insets left="25.0" right="25.0" />
                      </VBox.margin>
                      <padding>
-                        <Insets right="20.0" />
+                        <Insets right="10.0" />
                      </padding>
                   </HBox>
                   <ScrollPane prefHeight="520.0" prefWidth="1234.0">

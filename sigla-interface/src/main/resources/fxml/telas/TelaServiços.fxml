@@ -119,13 +119,13 @@
                               </Label>
                            </children>
                         </VBox>
-                        <Region prefHeight="106.0" prefWidth="571.0" />
+                        <Region prefHeight="106.0" prefWidth="619.0" />
                         <Button mnemonicParsing="false" onAction="#onNovoServico" prefHeight="42.0" prefWidth="214.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="+ Novo Serviço" textFill="WHITE">
                            <font>
                               <Font name="Ebrima Bold" size="22.0" />
                            </font>
                            <HBox.margin>
-                              <Insets left="50.0" top="40.0" />
+                              <Insets right="30.0" top="40.0" />
                            </HBox.margin>
                         </Button>
                      </children>
