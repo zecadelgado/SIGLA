@@ -32,6 +32,8 @@ public class CasoDeUsoGerenciarAgenda implements CasoDeUsoAgenda {
                 command.endAt(),
                 command.allDay(),
                 command.status(),
+                command.priority(),
+                command.responsibleId(),
                 command.notes()
         ));
     }

@@ -2,6 +2,7 @@ package br.com.sigla.infraestrutura.persistencia.repositorio;
 
 import br.com.sigla.aplicacao.clientes.porta.saida.RepositorioCliente;
 import br.com.sigla.dominio.clientes.Cliente;
+import br.com.sigla.infraestrutura.persistencia.PersistenciaIds;
 import br.com.sigla.infraestrutura.persistencia.entidade.ClienteEntidade;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
@@ -36,41 +38,73 @@ public class AdaptadorRepositorioCliente implements RepositorioCliente {
 
     @Override
     public Optional<Cliente> findById(String id) {
-        return repository.findById(id).map(this::toDomain);
+        return repository.findById(PersistenciaIds.toUuid(id)).map(this::toDomain);
     }
 
     private Cliente toDomain(ClienteEntidade entity) {
         return new Cliente(
-                entity.getId(),
-                entity.getName(),
-                entity.getLocation(),
+                PersistenciaIds.toString(entity.getId()),
+                prefer(entity.getNome(), prefer(entity.getNomeFantasia(), entity.getRazaoSocial())),
+                entity.getRazaoSocial(),
+                entity.getNomeFantasia(),
+                entity.getCpf(),
                 entity.getCnpj(),
-                entity.getPhone(),
-                entity.getContacts().stream()
-                        .map(contact -> new Cliente.ContactPerson(contact.getName(), contact.getRole(), contact.getContact()))
+                entity.getTelefonePrincipal(),
+                entity.getEmail(),
+                entity.getCep(),
+                entity.getRua(),
+                entity.getNumero(),
+                entity.getComplemento(),
+                entity.getBairro(),
+                entity.getCidade(),
+                entity.getEstado(),
+                entity.getResponsaveis().stream()
+                        .map(contact -> new Cliente.ContactPerson(contact.getNome(), contact.getCargo(), prefer(contact.getTelefone(), contact.getEmail())))
                         .toList(),
-                entity.getNotes()
+                entity.getObservacoes(),
+                entity.isAtivo()
         );
     }
 
     private ClienteEntidade toEntity(Cliente customer) {
         ClienteEntidade entity = new ClienteEntidade();
-        entity.setId(customer.id());
-        entity.setName(customer.name());
-        entity.setLocation(customer.location());
+        entity.setId(PersistenciaIds.toUuid(customer.id()));
+        entity.setTipo("CLIENTE");
+        entity.setNome(customer.name());
+        entity.setRazaoSocial(customer.razaoSocial());
+        entity.setNomeFantasia(customer.nomeFantasia());
+        entity.setCpf(customer.cpf());
         entity.setCnpj(customer.cnpj());
-        entity.setPhone(customer.phone());
-        entity.setNotes(customer.notes());
-        List<ClienteEntidade.ContactEmbeddable> contacts = new ArrayList<>();
+        entity.setTelefonePrincipal(customer.phone());
+        entity.setEmail(customer.email());
+        entity.setCep(customer.cep());
+        entity.setRua(customer.rua());
+        entity.setNumero(customer.numero());
+        entity.setComplemento(customer.complemento());
+        entity.setBairro(customer.bairro());
+        entity.setCidade(customer.cidade());
+        entity.setEstado(customer.estado());
+        entity.setObservacoes(customer.notes());
+        entity.setAtivo(customer.ativo());
+        List<ClienteEntidade.ResponsavelEntidade> contacts = new ArrayList<>();
+        boolean principal = true;
         for (Cliente.ContactPerson contact : customer.contacts()) {
-            ClienteEntidade.ContactEmbeddable embeddable = new ClienteEntidade.ContactEmbeddable();
-            embeddable.setName(contact.name());
-            embeddable.setRole(contact.role());
-            embeddable.setContact(contact.contact());
+            ClienteEntidade.ResponsavelEntidade embeddable = new ClienteEntidade.ResponsavelEntidade();
+            embeddable.setId(UUID.randomUUID());
+            embeddable.setNome(contact.name());
+            embeddable.setCargo(contact.role());
+            embeddable.setTelefone(contact.contact());
+            embeddable.setEmail("");
+            embeddable.setPrincipal(principal);
+            principal = false;
             contacts.add(embeddable);
         }
-        entity.setContacts(contacts);
+        entity.setResponsaveis(contacts);
         return entity;
+    }
+
+    private String prefer(String first, String second) {
+        return first == null || first.isBlank() ? second : first;
     }
 }
 
@@ -96,6 +130,6 @@ class InMemoryAdaptadorRepositorioCliente implements RepositorioCliente {
     }
 }
 
-interface SpringDataRepositorioCliente extends JpaRepository<ClienteEntidade, String> {
+interface SpringDataRepositorioCliente extends JpaRepository<ClienteEntidade, UUID> {
 }
 

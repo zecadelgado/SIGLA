@@ -1,100 +1,84 @@
 package br.com.sigla.infraestrutura.persistencia.entidade;
 
-import br.com.sigla.dominio.agenda.VisitaAgendada;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
-@Table(name = "visit_schedules")
+@Table(name = "agenda_eventos")
 public class VisitaAgendadaEntidade {
 
     @Id
-    @Column(name = "id", nullable = false, length = 64)
-    private String id;
+    @Column(name = "id", nullable = false)
+    private UUID id;
 
-    @Column(name = "customer_id", nullable = false, length = 64)
-    private String customerId;
+    @Column(name = "cliente_id")
+    private UUID customerId;
 
-    @Column(name = "contract_id", length = 64)
-    private String contractId;
+    @Column(name = "ordem_servico_id")
+    private UUID orderId;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "type", nullable = false, length = 24)
-    private VisitaAgendada.VisitType type;
-
-    @Column(name = "scheduled_date", nullable = false)
-    private LocalDate scheduledDate;
-
-    @Column(name = "title", length = 180)
+    @Column(name = "titulo", nullable = false)
     private String title;
 
-    @Column(name = "service_type", length = 120)
-    private String serviceType;
+    @Column(name = "descricao")
+    private String description;
 
-    @Column(name = "internal_responsible", length = 120)
-    private String internalResponsible;
+    @Column(name = "tipo_evento", nullable = false)
+    private String type;
 
-    @Column(name = "start_at")
+    @Column(name = "data_inicio", nullable = false)
     private LocalDateTime startAt;
 
-    @Column(name = "end_at")
+    @Column(name = "data_fim")
     private LocalDateTime endAt;
 
-    @Column(name = "all_day", nullable = false)
+    @Column(name = "dia_inteiro", nullable = false)
     private boolean allDay;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, length = 24)
-    private VisitaAgendada.VisitStatus status;
+    @Column(name = "status", nullable = false)
+    private String status;
 
-    @Column(name = "notes", length = 2000)
-    private String notes;
+    @Column(name = "prioridade", nullable = false)
+    private String priority;
 
-    public String getId() {
+    @Column(name = "responsavel_id")
+    private UUID responsibleId;
+
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
-    public String getClienteId() {
+    public UUID getClienteId() {
         return customerId;
     }
 
-    public void setClienteId(String customerId) {
+    public void setClienteId(UUID customerId) {
         this.customerId = customerId;
     }
 
-    public String getContratoId() {
-        return contractId;
+    public UUID getContratoId() {
+        return orderId;
     }
 
-    public void setContratoId(String contractId) {
-        this.contractId = contractId;
+    public void setContratoId(UUID orderId) {
+        this.orderId = orderId;
     }
 
-    public VisitaAgendada.VisitType getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(VisitaAgendada.VisitType type) {
+    public void setType(String type) {
         this.type = type;
-    }
-
-    public LocalDate getScheduledDate() {
-        return scheduledDate;
-    }
-
-    public void setScheduledDate(LocalDate scheduledDate) {
-        this.scheduledDate = scheduledDate;
     }
 
     public String getTitle() {
@@ -106,19 +90,18 @@ public class VisitaAgendadaEntidade {
     }
 
     public String getServiceType() {
-        return serviceType;
+        return type;
     }
 
     public void setServiceType(String serviceType) {
-        this.serviceType = serviceType;
+        this.type = serviceType;
     }
 
     public String getInternalResponsible() {
-        return internalResponsible;
+        return responsibleId == null ? "" : responsibleId.toString();
     }
 
-    public void setInternalResponsible(String internalResponsible) {
-        this.internalResponsible = internalResponsible;
+    public void setInternalResponsible(String ignored) {
     }
 
     public LocalDateTime getStartAt() {
@@ -145,20 +128,35 @@ public class VisitaAgendadaEntidade {
         this.allDay = allDay;
     }
 
-    public VisitaAgendada.VisitStatus getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(VisitaAgendada.VisitStatus status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
-    public String getNotes() {
-        return notes;
+    public String getPriority() {
+        return priority;
     }
 
-    public void setNotes(String notes) {
-        this.notes = notes;
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
+
+    public UUID getResponsibleId() {
+        return responsibleId;
+    }
+
+    public void setResponsibleId(UUID responsibleId) {
+        this.responsibleId = responsibleId;
+    }
+
+    public String getNotes() {
+        return description;
+    }
+
+    public void setNotes(String description) {
+        this.description = description;
     }
 }
-

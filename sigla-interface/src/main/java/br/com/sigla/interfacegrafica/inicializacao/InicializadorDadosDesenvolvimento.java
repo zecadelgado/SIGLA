@@ -90,7 +90,7 @@ public class InicializadorDadosDesenvolvimento {
             agendaUseCase.schedule(new CasoDeUsoAgenda.ScheduleVisitCommand(
                     "VIS-001",
                     "CUS-001",
-                    "CTR-001",
+                    "",
                     VisitaAgendada.VisitType.MONTHLY,
                     today.plusDays(3),
                     VisitaAgendada.VisitStatus.SCHEDULED,
@@ -100,7 +100,7 @@ public class InicializadorDadosDesenvolvimento {
             agendaUseCase.schedule(new CasoDeUsoAgenda.ScheduleVisitCommand(
                     "VIS-002",
                     "CUS-001",
-                    "CTR-001",
+                    "",
                     VisitaAgendada.VisitType.MONTHLY,
                     today.minusDays(2),
                     VisitaAgendada.VisitStatus.SCHEDULED,
@@ -174,7 +174,7 @@ public class InicializadorDadosDesenvolvimento {
 
             certificateUseCase.issue(new CasoDeUsoCertificado.IssueCertificadoCommand(
                     "CRT-001",
-                    "SRV-001",
+                    "CUS-001",
                     today.minusMonths(5),
                     today.plusDays(12),
                     Certificado.CertificadoStatus.ACTIVE,

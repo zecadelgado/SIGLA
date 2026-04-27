@@ -1,53 +1,72 @@
 package br.com.sigla.infraestrutura.persistencia.entidade;
 
-import br.com.sigla.dominio.certificados.Certificado;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Entity
 @Table(name = "certificados")
 public class CertificadoEntidade {
 
     @Id
-    @Column(name = "id", nullable = false, length = 64)
-    private String id;
+    @Column(name = "id", nullable = false)
+    private UUID id;
 
-    @Column(name = "service_provided_id", nullable = false, length = 64)
-    private String serviceProvidedId;
+    @Column(name = "cliente_id", nullable = false)
+    private UUID clienteId;
 
-    @Column(name = "issued_on", nullable = false)
+    @Column(name = "ordem_servico_id")
+    private UUID ordemServicoId;
+
+    @Column(name = "descricao")
+    private String descricao;
+
+    @Column(name = "data_emissao", nullable = false)
     private LocalDate issuedOn;
 
-    @Column(name = "valid_until", nullable = false)
+    @Column(name = "data_validade")
     private LocalDate validUntil;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, length = 24)
-    private Certificado.CertificadoStatus status;
-
-    @Column(name = "renewal_alert_days", nullable = false)
+    @Column(name = "dias_alerta")
     private int renewalAlertDays;
 
-    public String getId() {
+    @Column(name = "status")
+    private String status;
+
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
-    public String getServicoPrestadoId() {
-        return serviceProvidedId;
+    public UUID getClienteId() {
+        return clienteId;
     }
 
-    public void setServicoPrestadoId(String serviceProvidedId) {
-        this.serviceProvidedId = serviceProvidedId;
+    public void setClienteId(UUID clienteId) {
+        this.clienteId = clienteId;
+    }
+
+    public UUID getOrdemServicoId() {
+        return ordemServicoId;
+    }
+
+    public void setOrdemServicoId(UUID ordemServicoId) {
+        this.ordemServicoId = ordemServicoId;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
     }
 
     public LocalDate getIssuedOn() {
@@ -66,14 +85,6 @@ public class CertificadoEntidade {
         this.validUntil = validUntil;
     }
 
-    public Certificado.CertificadoStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(Certificado.CertificadoStatus status) {
-        this.status = status;
-    }
-
     public int getRenewalAlertDays() {
         return renewalAlertDays;
     }
@@ -81,5 +92,12 @@ public class CertificadoEntidade {
     public void setRenewalAlertDays(int renewalAlertDays) {
         this.renewalAlertDays = renewalAlertDays;
     }
-}
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+}

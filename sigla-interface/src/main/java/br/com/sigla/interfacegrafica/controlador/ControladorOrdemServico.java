@@ -112,7 +112,7 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
     }
 
     private void configureTable() {
-        configureColumn(numeroColumn, 0, row -> row.id());
+        configureColumn(numeroColumn, 0, row -> row.numero());
         configureColumn(clienteColumn, 1, row -> row.customerName());
         configureColumn(responsavelColumn, 2, row -> row.responsible());
         configureColumn(emissaoColumn, 3, row -> apresentadorData.format(row.emissionDate()));

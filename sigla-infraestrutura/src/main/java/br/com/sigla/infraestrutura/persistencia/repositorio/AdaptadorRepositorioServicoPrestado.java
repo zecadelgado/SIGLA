@@ -6,6 +6,7 @@ import br.com.sigla.infraestrutura.persistencia.entidade.ServicoPrestadoEntidade
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -116,6 +117,7 @@ class InMemoryAdaptadorRepositorioServicoPrestado implements RepositorioServicoP
     }
 }
 
+@NoRepositoryBean
 interface SpringDataRepositorioServicoPrestado extends JpaRepository<ServicoPrestadoEntidade, String> {
 }
 

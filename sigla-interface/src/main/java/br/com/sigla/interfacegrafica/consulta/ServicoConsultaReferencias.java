@@ -48,7 +48,7 @@ public class ServicoConsultaReferencias {
 
     public List<OpcaoId> ordensServico() {
         return servicoConsultaOrdemServico.listAll().stream()
-                .map(order -> new OpcaoId(order.id(), order.id() + " - " + order.customerName()))
+                .map(order -> new OpcaoId(order.id(), order.numero() + " - " + order.customerName()))
                 .toList();
     }
 }

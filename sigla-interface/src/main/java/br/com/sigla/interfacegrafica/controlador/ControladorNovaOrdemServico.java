@@ -1,7 +1,7 @@
 package br.com.sigla.interfacegrafica.controlador;
 
-import br.com.sigla.aplicacao.agenda.porta.entrada.CasoDeUsoAgenda;
-import br.com.sigla.dominio.agenda.VisitaAgendada;
+import br.com.sigla.aplicacao.servicos.porta.entrada.CasoDeUsoOrdemServico;
+import br.com.sigla.dominio.servicos.OrdemServico;
 import br.com.sigla.interfacegrafica.consulta.ServicoConsultaReferencias;
 import br.com.sigla.interfacegrafica.modelo.OpcaoId;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.parseEnum;
@@ -23,7 +24,7 @@ import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.resolveO
 @Component
 public class ControladorNovaOrdemServico {
 
-    private final CasoDeUsoAgenda casoDeUsoAgenda;
+    private final CasoDeUsoOrdemServico casoDeUsoOrdemServico;
     private final ServicoConsultaReferencias servicoConsultaReferencias;
     private final GerenciadorNavegacao gerenciadorNavegacao;
 
@@ -57,11 +58,11 @@ public class ControladorNovaOrdemServico {
     private Label feedbackLabel;
 
     public ControladorNovaOrdemServico(
-            CasoDeUsoAgenda casoDeUsoAgenda,
+            CasoDeUsoOrdemServico casoDeUsoOrdemServico,
             ServicoConsultaReferencias servicoConsultaReferencias,
             GerenciadorNavegacao gerenciadorNavegacao
     ) {
-        this.casoDeUsoAgenda = casoDeUsoAgenda;
+        this.casoDeUsoOrdemServico = casoDeUsoOrdemServico;
         this.servicoConsultaReferencias = servicoConsultaReferencias;
         this.gerenciadorNavegacao = gerenciadorNavegacao;
     }
@@ -79,7 +80,7 @@ public class ControladorNovaOrdemServico {
             dataFimPicker.setValue(hoje);
         }
         if (statusField != null && statusField.getText().isBlank()) {
-            statusField.setText(VisitaAgendada.VisitStatus.SCHEDULED.name());
+            statusField.setText(OrdemServico.OrdemServicoStatus.AGENDADA.name());
         }
         setFeedback("");
     }
@@ -94,20 +95,20 @@ public class ControladorNovaOrdemServico {
             LocalDateTime inicio = dataInicio.atTime(8, 0);
             LocalDateTime fim = dataFim.atTime(18, 0);
 
-            casoDeUsoAgenda.schedule(new CasoDeUsoAgenda.ScheduleVisitCommand(
-                    "OS-" + System.currentTimeMillis(),
+            casoDeUsoOrdemServico.create(new CasoDeUsoOrdemServico.CreateOrdemServicoCommand(
+                    UUID.randomUUID().toString(),
                     cliente.id(),
-                    "",
-                    VisitaAgendada.VisitType.ONE_OFF,
-                    dataAgendada,
                     tituloField == null ? "" : tituloField.getText(),
+                    descricaoField == null ? "" : descricaoField.getText(),
                     tipoServicoField == null ? "" : tipoServicoField.getText(),
-                    chooseResponsible(),
+                    parseEnum(OrdemServico.OrdemServicoStatus.class, statusField == null ? "" : statusField.getText(), OrdemServico.OrdemServicoStatus.AGENDADA),
+                    dataAgendada.atStartOfDay(),
                     inicio,
                     fim,
-                    false,
-                    parseEnum(VisitaAgendada.VisitStatus.class, statusField == null ? "" : statusField.getText(), VisitaAgendada.VisitStatus.SCHEDULED),
-                    mergeObservacoes()
+                    onlyUuid(chooseResponsible()),
+                    onlyUuid(executadoPorField == null ? "" : executadoPorField.getText()),
+                    parseMoney(valorServicoField == null ? "" : valorServicoField.getText()),
+                    observacoesField == null ? "" : observacoesField.getText()
             ));
             gerenciadorNavegacao.navigateTo(VisaoAplicacao.SERVICE_ORDER);
             UtilJanela.fecharJanela(clienteField);
@@ -147,6 +148,24 @@ public class ControladorNovaOrdemServico {
                 .filter(value -> value != null && !value.isBlank())
                 .reduce((left, right) -> left + " | " + right)
                 .orElse("");
+    }
+
+    private String onlyUuid(String value) {
+        if (value == null || value.isBlank()) {
+            return "";
+        }
+        try {
+            return UUID.fromString(value.trim()).toString();
+        } catch (IllegalArgumentException exception) {
+            return "";
+        }
+    }
+
+    private java.math.BigDecimal parseMoney(String value) {
+        if (value == null || value.isBlank()) {
+            return java.math.BigDecimal.ZERO;
+        }
+        return new java.math.BigDecimal(value.trim().replace(",", "."));
     }
 
     private void setFeedback(String message) {

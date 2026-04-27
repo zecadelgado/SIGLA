@@ -12,6 +12,7 @@ import javafx.scene.control.TextField;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class ControladorNovoCadastro {
@@ -87,20 +88,31 @@ public class ControladorNovoCadastro {
     }
 
     private void cadastrarCliente() {
-        String id = "CUS-" + System.currentTimeMillis();
+        String id = UUID.randomUUID().toString();
         String nomeCliente = !razaoSocialField.getText().isBlank() ? razaoSocialField.getText() : nomeField.getText();
         casoDeUsoCliente.register(new CasoDeUsoCliente.RegisterClienteCommand(
                 id,
                 nomeCliente,
-                montarLocalizacao(),
+                razaoSocialField.getText(),
+                nomeField.getText(),
+                cpfField.getText(),
                 cnpjField.getText(),
                 telefoneField.getText(),
+                emailField.getText(),
+                cepField.getText(),
+                ruaField.getText(),
+                numeroField.getText(),
+                complementoField.getText(),
+                bairroField.getText(),
+                cidadeField.getText(),
+                estadoField.getText(),
                 List.of(new CasoDeUsoCliente.ContactCommand(
                         nomeField.getText().isBlank() ? nomeCliente : nomeField.getText(),
-                        emailField.getText().isBlank() ? "Contato principal" : emailField.getText(),
+                        "Contato principal",
                         telefoneField.getText()
                 )),
-                observacoesField == null ? "" : observacoesField.getText()
+                observacoesField == null ? "" : observacoesField.getText(),
+                true
         ));
     }
 
@@ -117,18 +129,6 @@ public class ControladorNovoCadastro {
                 telefoneField.getText().isBlank() ? emailField.getText() : telefoneField.getText(),
                 Funcionario.FuncionarioStatus.ACTIVE
         ));
-    }
-
-    private String montarLocalizacao() {
-        return String.join(" - ", List.of(
-                ruaField.getText(),
-                numeroField.getText(),
-                complementoField.getText(),
-                bairroField.getText(),
-                cidadeField.getText(),
-                estadoField.getText(),
-                cepField.getText()
-        ).stream().filter(value -> value != null && !value.isBlank()).toList());
     }
 
     private boolean isCadastroFuncionario() {

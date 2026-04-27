@@ -2,6 +2,7 @@ package br.com.sigla.infraestrutura.persistencia.repositorio;
 
 import br.com.sigla.aplicacao.contratos.porta.saida.RepositorioContrato;
 import br.com.sigla.dominio.contratos.Contrato;
+import br.com.sigla.infraestrutura.persistencia.PersistenciaIds;
 import br.com.sigla.infraestrutura.persistencia.entidade.ContratoEntidade;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
@@ -35,35 +37,72 @@ public class AdaptadorRepositorioContrato implements RepositorioContrato {
 
     @Override
     public Optional<Contrato> findById(String id) {
-        return repository.findById(id).map(this::toDomain);
+        return repository.findById(PersistenciaIds.toUuid(id)).map(this::toDomain);
     }
 
     private Contrato toDomain(ContratoEntidade entity) {
         return new Contrato(
-                entity.getId(),
-                entity.getClienteId(),
-                entity.getStartDate(),
-                entity.getEndDate(),
-                entity.getType(),
-                entity.getServiceFrequency(),
-                entity.getStatus(),
-                entity.getRenewalRule(),
-                entity.getAlertDaysBeforeEnd()
+                PersistenciaIds.toString(entity.getId()),
+                PersistenciaIds.toString(entity.getClienteId()),
+                entity.getDataInicio(),
+                entity.getDataFim() == null ? entity.getDataInicio() : entity.getDataFim(),
+                parseType(entity.getTipoContrato()),
+                parseFrequency(entity.getTipoContrato()),
+                parseStatus(entity.getStatus()),
+                Contrato.RenewalRule.MANUAL,
+                entity.getDiasAlertaFim()
         );
     }
 
     private ContratoEntidade toEntity(Contrato contract) {
         ContratoEntidade entity = new ContratoEntidade();
-        entity.setId(contract.id());
-        entity.setClienteId(contract.customerId());
-        entity.setStartDate(contract.startDate());
-        entity.setEndDate(contract.endDate());
-        entity.setType(contract.type());
-        entity.setServiceFrequency(contract.serviceFrequency());
-        entity.setStatus(contract.status());
-        entity.setRenewalRule(contract.renewalRule());
-        entity.setAlertDaysBeforeEnd(contract.alertDaysBeforeEnd());
+        entity.setId(PersistenciaIds.toUuid(contract.id()));
+        entity.setClienteId(PersistenciaIds.toUuid(contract.customerId()));
+        entity.setDescricao(contract.type().name());
+        entity.setTipoContrato(contract.type().name());
+        entity.setDataInicio(contract.startDate());
+        entity.setDataFim(contract.endDate());
+        entity.setValorMensal(java.math.BigDecimal.ZERO);
+        entity.setAlertaAtivo(true);
+        entity.setDiasAlertaFim(contract.alertDaysBeforeEnd());
+        entity.setStatus(contract.status().name());
+        entity.setObservacoes(contract.renewalRule().name());
         return entity;
+    }
+
+    private Contrato.ContratoType parseType(String value) {
+        if (value == null || value.isBlank()) {
+            return Contrato.ContratoType.MONTHLY;
+        }
+        return switch (value.trim().toUpperCase()) {
+            case "MENSAL" -> Contrato.ContratoType.MONTHLY;
+            case "QUINZENAL" -> Contrato.ContratoType.QUINZENAL;
+            case "AVULSO" -> Contrato.ContratoType.AVULSO;
+            default -> Contrato.ContratoType.CORPORATE;
+        };
+    }
+
+    private Contrato.ServiceFrequency parseFrequency(String value) {
+        if (value == null || value.isBlank()) {
+            return Contrato.ServiceFrequency.MONTHLY;
+        }
+        return switch (value.trim().toUpperCase()) {
+            case "QUINZENAL" -> Contrato.ServiceFrequency.BIWEEKLY;
+            case "AVULSO" -> Contrato.ServiceFrequency.ONE_OFF;
+            default -> Contrato.ServiceFrequency.MONTHLY;
+        };
+    }
+
+    private Contrato.ContratoStatus parseStatus(String value) {
+        if (value == null || value.isBlank()) {
+            return Contrato.ContratoStatus.ACTIVE;
+        }
+        return switch (value.trim().toUpperCase()) {
+            case "ATIVO", "ACTIVE" -> Contrato.ContratoStatus.ACTIVE;
+            case "CANCELADO", "CANCELLED" -> Contrato.ContratoStatus.CANCELLED;
+            case "EXPIRADO", "EXPIRED" -> Contrato.ContratoStatus.EXPIRED;
+            default -> Contrato.ContratoStatus.DRAFT;
+        };
     }
 }
 
@@ -89,6 +128,6 @@ class InMemoryAdaptadorRepositorioContrato implements RepositorioContrato {
     }
 }
 
-interface SpringDataRepositorioContrato extends JpaRepository<ContratoEntidade, String> {
+interface SpringDataRepositorioContrato extends JpaRepository<ContratoEntidade, UUID> {
 }
 

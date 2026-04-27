@@ -1,67 +1,119 @@
 package br.com.sigla.infraestrutura.persistencia.entidade;
 
-import jakarta.persistence.CollectionTable;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Embeddable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
-@Table(name = "clientes")
+@Table(name = "cadastro")
 public class ClienteEntidade {
 
     @Id
-    @Column(name = "id", nullable = false, length = 64)
-    private String id;
+    @Column(name = "id", nullable = false)
+    private UUID id;
 
-    @Column(name = "name", nullable = false, length = 120)
-    private String name;
+    @Column(name = "tipo", nullable = false)
+    private String tipo = "CLIENTE";
 
-    @Column(name = "location", nullable = false, length = 160)
-    private String location;
+    @Column(name = "nome")
+    private String nome;
 
-    @Column(name = "cnpj", nullable = false, length = 32)
+    @Column(name = "razao_social")
+    private String razaoSocial;
+
+    @Column(name = "nome_fantasia")
+    private String nomeFantasia;
+
+    @Column(name = "cnpj")
     private String cnpj;
 
-    @Column(name = "phone", nullable = false, length = 32)
-    private String phone;
+    @Column(name = "cpf")
+    private String cpf;
 
-    @Column(name = "notes", length = 2000)
-    private String notes;
+    @Column(name = "telefone_principal")
+    private String telefonePrincipal;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "customer_contacts", joinColumns = @JoinColumn(name = "customer_id"))
-    private List<ContactEmbeddable> contacts = new ArrayList<>();
+    @Column(name = "email")
+    private String email;
 
-    public String getId() {
+    @Column(name = "cep")
+    private String cep;
+
+    @Column(name = "rua")
+    private String rua;
+
+    @Column(name = "numero")
+    private String numero;
+
+    @Column(name = "complemento")
+    private String complemento;
+
+    @Column(name = "bairro")
+    private String bairro;
+
+    @Column(name = "cidade")
+    private String cidade;
+
+    @Column(name = "estado")
+    private String estado;
+
+    @Column(name = "observacoes")
+    private String observacoes;
+
+    @Column(name = "ativo", nullable = false)
+    private boolean ativo = true;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "cliente_id", nullable = false)
+    private List<ResponsavelEntidade> responsaveis = new ArrayList<>();
+
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getTipo() {
+        return tipo;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 
-    public String getLocation() {
-        return location;
+    public String getNome() {
+        return nome;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getRazaoSocial() {
+        return razaoSocial;
+    }
+
+    public void setRazaoSocial(String razaoSocial) {
+        this.razaoSocial = razaoSocial;
+    }
+
+    public String getNomeFantasia() {
+        return nomeFantasia;
+    }
+
+    public void setNomeFantasia(String nomeFantasia) {
+        this.nomeFantasia = nomeFantasia;
     }
 
     public String getCnpj() {
@@ -72,65 +124,179 @@ public class ClienteEntidade {
         this.cnpj = cnpj;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getCpf() {
+        return cpf;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
-    public String getNotes() {
-        return notes;
+    public String getTelefonePrincipal() {
+        return telefonePrincipal;
     }
 
-    public void setNotes(String notes) {
-        this.notes = notes;
+    public void setTelefonePrincipal(String telefonePrincipal) {
+        this.telefonePrincipal = telefonePrincipal;
     }
 
-    public List<ContactEmbeddable> getContacts() {
-        return contacts;
+    public String getEmail() {
+        return email;
     }
 
-    public void setContacts(List<ContactEmbeddable> contacts) {
-        this.contacts = contacts;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    @Embeddable
-    public static class ContactEmbeddable {
+    public String getCep() {
+        return cep;
+    }
 
-        @Column(name = "contact_name", nullable = false, length = 120)
-        private String name;
+    public void setCep(String cep) {
+        this.cep = cep;
+    }
 
-        @Column(name = "contact_role", nullable = false, length = 80)
-        private String role;
+    public String getRua() {
+        return rua;
+    }
 
-        @Column(name = "contact_value", nullable = false, length = 120)
-        private String contact;
+    public void setRua(String rua) {
+        this.rua = rua;
+    }
 
-        public String getName() {
-            return name;
+    public String getNumero() {
+        return numero;
+    }
+
+    public void setNumero(String numero) {
+        this.numero = numero;
+    }
+
+    public String getComplemento() {
+        return complemento;
+    }
+
+    public void setComplemento(String complemento) {
+        this.complemento = complemento;
+    }
+
+    public String getBairro() {
+        return bairro;
+    }
+
+    public void setBairro(String bairro) {
+        this.bairro = bairro;
+    }
+
+    public String getCidade() {
+        return cidade;
+    }
+
+    public void setCidade(String cidade) {
+        this.cidade = cidade;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public String getObservacoes() {
+        return observacoes;
+    }
+
+    public void setObservacoes(String observacoes) {
+        this.observacoes = observacoes;
+    }
+
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+    }
+
+    public List<ResponsavelEntidade> getResponsaveis() {
+        return responsaveis;
+    }
+
+    public void setResponsaveis(List<ResponsavelEntidade> responsaveis) {
+        this.responsaveis = responsaveis;
+    }
+
+    @Entity
+    @Table(name = "cliente_responsaveis")
+    public static class ResponsavelEntidade {
+
+        @Id
+        @Column(name = "id", nullable = false)
+        private UUID id;
+
+        @Column(name = "nome", nullable = false)
+        private String nome;
+
+        @Column(name = "cargo")
+        private String cargo;
+
+        @Column(name = "telefone")
+        private String telefone;
+
+        @Column(name = "email")
+        private String email;
+
+        @Column(name = "principal", nullable = false)
+        private boolean principal;
+
+        public UUID getId() {
+            return id;
         }
 
-        public void setName(String name) {
-            this.name = name;
+        public void setId(UUID id) {
+            this.id = id;
         }
 
-        public String getRole() {
-            return role;
+        public String getNome() {
+            return nome;
         }
 
-        public void setRole(String role) {
-            this.role = role;
+        public void setNome(String nome) {
+            this.nome = nome;
         }
 
-        public String getContact() {
-            return contact;
+        public String getCargo() {
+            return cargo;
         }
 
-        public void setContact(String contact) {
-            this.contact = contact;
+        public void setCargo(String cargo) {
+            this.cargo = cargo;
+        }
+
+        public String getTelefone() {
+            return telefone;
+        }
+
+        public void setTelefone(String telefone) {
+            this.telefone = telefone;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public boolean isPrincipal() {
+            return principal;
+        }
+
+        public void setPrincipal(boolean principal) {
+            this.principal = principal;
         }
     }
 }
-

@@ -24,11 +24,22 @@ public class CasoDeUsoGerenciarCliente implements CasoDeUsoCliente {
         Cliente customer = new Cliente(
                 command.id(),
                 command.name(),
-                command.location(),
+                command.razaoSocial(),
+                command.nomeFantasia(),
+                command.cpf(),
                 command.cnpj(),
                 command.phone(),
+                command.email(),
+                command.cep(),
+                command.rua(),
+                command.numero(),
+                command.complemento(),
+                command.bairro(),
+                command.cidade(),
+                command.estado(),
                 contacts,
-                command.notes()
+                command.notes(),
+                command.ativo()
         );
         repository.save(customer);
     }
