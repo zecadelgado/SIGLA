@@ -29,8 +29,44 @@ public interface CasoDeUsoAgenda {
             LocalDateTime endAt,
             boolean allDay,
             VisitaAgendada.VisitStatus status,
+            VisitaAgendada.VisitPriority priority,
+            String responsibleId,
             String notes
     ) {
+        public ScheduleVisitCommand(
+                String id,
+                String customerId,
+                String contractId,
+                VisitaAgendada.VisitType type,
+                LocalDate scheduledDate,
+                String title,
+                String serviceType,
+                String internalResponsible,
+                LocalDateTime startAt,
+                LocalDateTime endAt,
+                boolean allDay,
+                VisitaAgendada.VisitStatus status,
+                String notes
+        ) {
+            this(
+                    id,
+                    customerId,
+                    contractId,
+                    type,
+                    scheduledDate,
+                    title,
+                    serviceType,
+                    internalResponsible,
+                    startAt,
+                    endAt,
+                    allDay,
+                    status,
+                    VisitaAgendada.VisitPriority.NORMAL,
+                    "",
+                    notes
+            );
+        }
+
         public ScheduleVisitCommand(
                 String id,
                 String customerId,
@@ -53,6 +89,8 @@ public interface CasoDeUsoAgenda {
                     scheduledDate.atStartOfDay(),
                     true,
                     status,
+                    VisitaAgendada.VisitPriority.NORMAL,
+                    "",
                     notes
             );
         }

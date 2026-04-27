@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.parseBoolean;
 import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.parseEnum;
@@ -90,7 +91,7 @@ public class ControladorNovaTransacao {
             var cliente = resolveOpcional(servicoConsultaReferencias.clientes(), clienteField == null ? "" : clienteField.getText());
             var ordem = resolveOpcional(servicoConsultaReferencias.ordensServico(), ordemField == null ? "" : ordemField.getText());
             casoDeUsoFinanceiro.registerTransaction(new CasoDeUsoFinanceiro.RegisterTransacaoFinanceiraCommand(
-                    "FIN-" + System.currentTimeMillis(),
+                    UUID.randomUUID().toString(),
                     tipoCombo == null || tipoCombo.getValue() == null ? CasoDeUsoFinanceiro.TransactionType.ENTRY : tipoCombo.getValue(),
                     categoriaField.getText(),
                     descricaoField.getText(),

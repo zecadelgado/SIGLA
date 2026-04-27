@@ -1,121 +1,137 @@
 package br.com.sigla.infraestrutura.persistencia.entidade;
 
-import br.com.sigla.dominio.contratos.Contrato;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Entity
 @Table(name = "contratos")
 public class ContratoEntidade {
 
     @Id
-    @Column(name = "id", nullable = false, length = 64)
-    private String id;
+    @Column(name = "id", nullable = false)
+    private UUID id;
 
-    @Column(name = "customer_id", nullable = false, length = 64)
-    private String customerId;
+    @Column(name = "cliente_id", nullable = false)
+    private UUID clienteId;
 
-    @Column(name = "start_date", nullable = false)
-    private LocalDate startDate;
+    @Column(name = "descricao")
+    private String descricao;
 
-    @Column(name = "end_date", nullable = false)
-    private LocalDate endDate;
+    @Column(name = "tipo_contrato")
+    private String tipoContrato;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "type", nullable = false, length = 24)
-    private Contrato.ContratoType type;
+    @Column(name = "data_inicio", nullable = false)
+    private LocalDate dataInicio;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "service_frequency", nullable = false, length = 24)
-    private Contrato.ServiceFrequency serviceFrequency;
+    @Column(name = "data_fim")
+    private LocalDate dataFim;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, length = 24)
-    private Contrato.ContratoStatus status;
+    @Column(name = "valor_mensal")
+    private BigDecimal valorMensal;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "renewal_rule", nullable = false, length = 24)
-    private Contrato.RenewalRule renewalRule;
+    @Column(name = "alerta_ativo")
+    private boolean alertaAtivo = true;
 
-    @Column(name = "alert_days_before_end", nullable = false)
-    private int alertDaysBeforeEnd;
+    @Column(name = "dias_alerta_fim")
+    private int diasAlertaFim = 30;
 
-    public String getId() {
+    @Column(name = "status")
+    private String status;
+
+    @Column(name = "observacoes")
+    private String observacoes;
+
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
-    public String getClienteId() {
-        return customerId;
+    public UUID getClienteId() {
+        return clienteId;
     }
 
-    public void setClienteId(String customerId) {
-        this.customerId = customerId;
+    public void setClienteId(UUID clienteId) {
+        this.clienteId = clienteId;
     }
 
-    public LocalDate getStartDate() {
-        return startDate;
+    public String getDescricao() {
+        return descricao;
     }
 
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
     }
 
-    public LocalDate getEndDate() {
-        return endDate;
+    public String getTipoContrato() {
+        return tipoContrato;
     }
 
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
+    public void setTipoContrato(String tipoContrato) {
+        this.tipoContrato = tipoContrato;
     }
 
-    public Contrato.ContratoType getType() {
-        return type;
+    public LocalDate getDataInicio() {
+        return dataInicio;
     }
 
-    public void setType(Contrato.ContratoType type) {
-        this.type = type;
+    public void setDataInicio(LocalDate dataInicio) {
+        this.dataInicio = dataInicio;
     }
 
-    public Contrato.ServiceFrequency getServiceFrequency() {
-        return serviceFrequency;
+    public LocalDate getDataFim() {
+        return dataFim;
     }
 
-    public void setServiceFrequency(Contrato.ServiceFrequency serviceFrequency) {
-        this.serviceFrequency = serviceFrequency;
+    public void setDataFim(LocalDate dataFim) {
+        this.dataFim = dataFim;
     }
 
-    public Contrato.ContratoStatus getStatus() {
+    public BigDecimal getValorMensal() {
+        return valorMensal;
+    }
+
+    public void setValorMensal(BigDecimal valorMensal) {
+        this.valorMensal = valorMensal;
+    }
+
+    public boolean isAlertaAtivo() {
+        return alertaAtivo;
+    }
+
+    public void setAlertaAtivo(boolean alertaAtivo) {
+        this.alertaAtivo = alertaAtivo;
+    }
+
+    public int getDiasAlertaFim() {
+        return diasAlertaFim;
+    }
+
+    public void setDiasAlertaFim(int diasAlertaFim) {
+        this.diasAlertaFim = diasAlertaFim;
+    }
+
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(Contrato.ContratoStatus status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
-    public Contrato.RenewalRule getRenewalRule() {
-        return renewalRule;
+    public String getObservacoes() {
+        return observacoes;
     }
 
-    public void setRenewalRule(Contrato.RenewalRule renewalRule) {
-        this.renewalRule = renewalRule;
-    }
-
-    public int getAlertDaysBeforeEnd() {
-        return alertDaysBeforeEnd;
-    }
-
-    public void setAlertDaysBeforeEnd(int alertDaysBeforeEnd) {
-        this.alertDaysBeforeEnd = alertDaysBeforeEnd;
+    public void setObservacoes(String observacoes) {
+        this.observacoes = observacoes;
     }
 }
-

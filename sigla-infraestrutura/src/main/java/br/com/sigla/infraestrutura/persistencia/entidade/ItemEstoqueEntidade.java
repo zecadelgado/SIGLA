@@ -1,118 +1,122 @@
 package br.com.sigla.infraestrutura.persistencia.entidade;
 
-import br.com.sigla.dominio.estoque.ItemEstoque;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
-@Table(name = "estoque_items")
+@Table(name = "produtos")
 public class ItemEstoqueEntidade {
 
     @Id
-    @Column(name = "id", nullable = false, length = 64)
-    private String id;
+    @Column(name = "id", nullable = false)
+    private UUID id;
 
-    @Column(name = "name", nullable = false, length = 120)
-    private String name;
+    @Column(name = "nome", nullable = false)
+    private String nome;
 
-    @Column(name = "description", length = 500)
-    private String description;
+    @Column(name = "descricao")
+    private String descricao;
 
-    @Column(name = "cost_price", nullable = false, precision = 12, scale = 2)
-    private BigDecimal costPrice;
+    @Column(name = "sku")
+    private String sku;
 
-    @Column(name = "sale_price", nullable = false, precision = 12, scale = 2)
-    private BigDecimal salePrice;
+    @Column(name = "unidade")
+    private String unidade;
 
-    @Column(name = "quantity", nullable = false)
-    private int quantity;
+    @Column(name = "valor_custo", nullable = false)
+    private BigDecimal valorCusto;
 
-    @Column(name = "minimum_quantity", nullable = false)
-    private int minimumQuantity;
+    @Column(name = "valor_venda", nullable = false)
+    private BigDecimal valorVenda;
 
-    @Column(name = "unit", nullable = false, length = 24)
-    private String unit;
+    @Column(name = "quantidade_atual", nullable = false)
+    private BigDecimal quantidadeAtual;
+
+    @Column(name = "quantidade_minima", nullable = false)
+    private BigDecimal quantidadeMinima;
+
+    @Column(name = "ativo", nullable = false)
+    private boolean ativo = true;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "estoque_movements", joinColumns = @JoinColumn(name = "item_id"))
+    @CollectionTable(name = "estoque_movimentacoes", joinColumns = @JoinColumn(name = "produto_id"))
     private List<MovementEmbeddable> movements = new ArrayList<>();
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
     public String getName() {
-        return name;
+        return nome;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String nome) {
+        this.nome = nome;
     }
 
     public String getDescription() {
-        return description;
+        return descricao;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDescription(String descricao) {
+        this.descricao = descricao;
     }
 
     public BigDecimal getCostPrice() {
-        return costPrice;
+        return valorCusto;
     }
 
-    public void setCostPrice(BigDecimal costPrice) {
-        this.costPrice = costPrice;
+    public void setCostPrice(BigDecimal valorCusto) {
+        this.valorCusto = valorCusto;
     }
 
     public BigDecimal getSalePrice() {
-        return salePrice;
+        return valorVenda;
     }
 
-    public void setSalePrice(BigDecimal salePrice) {
-        this.salePrice = salePrice;
+    public void setSalePrice(BigDecimal valorVenda) {
+        this.valorVenda = valorVenda;
     }
 
     public int getQuantity() {
-        return quantity;
+        return quantidadeAtual == null ? 0 : quantidadeAtual.intValue();
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public void setQuantity(int quantidade) {
+        this.quantidadeAtual = BigDecimal.valueOf(quantidade);
     }
 
     public int getMinimumQuantity() {
-        return minimumQuantity;
+        return quantidadeMinima == null ? 0 : quantidadeMinima.intValue();
     }
 
-    public void setMinimumQuantity(int minimumQuantity) {
-        this.minimumQuantity = minimumQuantity;
+    public void setMinimumQuantity(int quantidadeMinima) {
+        this.quantidadeMinima = BigDecimal.valueOf(quantidadeMinima);
     }
 
     public String getUnit() {
-        return unit;
+        return unidade;
     }
 
-    public void setUnit(String unit) {
-        this.unit = unit;
+    public void setUnit(String unidade) {
+        this.unidade = unidade;
     }
 
     public List<MovementEmbeddable> getMovements() {
@@ -126,69 +130,68 @@ public class ItemEstoqueEntidade {
     @Embeddable
     public static class MovementEmbeddable {
 
-        @Column(name = "movement_id", nullable = false, length = 64)
-        private String id;
+        @Column(name = "id", nullable = false)
+        private UUID id;
 
-        @Enumerated(EnumType.STRING)
-        @Column(name = "movement_type", nullable = false, length = 24)
-        private ItemEstoque.MovementType type;
+        @Column(name = "tipo_movimentacao", nullable = false)
+        private String type;
 
-        @Column(name = "amount", nullable = false)
-        private int amount;
+        @Column(name = "quantidade", nullable = false)
+        private BigDecimal amount;
 
-        @Column(name = "occurred_on", nullable = false)
-        private LocalDate occurredOn;
+        @Column(name = "data_movimentacao", nullable = false)
+        private LocalDateTime occurredOn;
 
-        @Column(name = "unit_price", nullable = false, precision = 12, scale = 2)
+        @Column(name = "valor_unitario", nullable = false)
         private BigDecimal unitPrice;
 
-        @Column(name = "total_price", nullable = false, precision = 12, scale = 2)
+        @Column(name = "valor_total")
         private BigDecimal totalPrice;
 
-        @Column(name = "created_by", length = 120)
-        private String createdBy;
+        @Column(name = "usuario_id")
+        private UUID createdBy;
 
-        @Column(name = "customer_id", length = 64)
-        private String customerId;
+        @Column(name = "cliente_id")
+        private UUID customerId;
 
-        @Column(name = "order_reference", length = 64)
-        private String orderReference;
+        @Column(name = "ordem_servico_id")
+        private UUID orderReference;
 
-        @Column(name = "destination_description", length = 240)
+        @Column(name = "destino_descricao")
         private String destinationDescription;
 
-        @Column(name = "notes", length = 500)
+        @Column(name = "observacoes")
         private String notes;
 
-        public String getId() {
+        public UUID getId() {
             return id;
         }
 
-        public void setId(String id) {
+        public void setId(UUID id) {
             this.id = id;
         }
 
-        public ItemEstoque.MovementType getType() {
+        public String getType() {
             return type;
         }
 
-        public void setType(ItemEstoque.MovementType type) {
+        public void setType(String type) {
             this.type = type;
         }
 
         public int getAmount() {
-            return amount;
+            return amount == null ? 0 : amount.intValue();
         }
 
         public void setAmount(int amount) {
-            this.amount = amount;
+            this.amount = BigDecimal.valueOf(amount);
         }
 
-        public LocalDate getOccurredOn() {
+        public LocalDateTime getOccurredOn() {
             return occurredOn;
         }
 
-        public void setOccurredOn(LocalDate occurredOn) {
+        public void setOccurredOn(LocalDateTime occurredOn) {
             this.occurredOn = occurredOn;
         }
 
@@ -208,27 +211,27 @@ public class ItemEstoqueEntidade {
             this.totalPrice = totalPrice;
         }
 
-        public String getCreatedBy() {
+        public UUID getCreatedBy() {
             return createdBy;
         }
 
-        public void setCreatedBy(String createdBy) {
+        public void setCreatedBy(UUID createdBy) {
             this.createdBy = createdBy;
         }
 
-        public String getCustomerId() {
+        public UUID getCustomerId() {
             return customerId;
         }
 
-        public void setCustomerId(String customerId) {
+        public void setCustomerId(UUID customerId) {
             this.customerId = customerId;
         }
 
-        public String getOrderReference() {
+        public UUID getOrderReference() {
             return orderReference;
         }
 
-        public void setOrderReference(String orderReference) {
+        public void setOrderReference(UUID orderReference) {
             this.orderReference = orderReference;
         }
 
@@ -249,4 +252,3 @@ public class ItemEstoqueEntidade {
         }
     }
 }
-

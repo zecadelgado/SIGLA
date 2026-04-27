@@ -94,13 +94,13 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
         if (!"FUNCIONARIO".equals(filtroAtual)) {
             casoDeUsoCliente.listAll().forEach(customer -> registros.add(new CadastroRow(
                     customer.name(),
-                    "",
+                    customer.cpf(),
                     customer.cnpj(),
-                    customer.name(),
+                    customer.razaoSocial(),
                     customer.phone(),
-                    customer.contacts().isEmpty() ? "-" : customer.contacts().getFirst().contact(),
-                    extractCep(customer.location()),
-                    extractCidade(customer.location())
+                    customer.email().isBlank() ? "-" : customer.email(),
+                    blankAsDash(customer.cep()),
+                    blankAsDash(customer.cidade())
             )));
         }
         if (!"CLIENTE".equals(filtroAtual)) {
@@ -179,6 +179,10 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
         }
         String[] parts = location.split(" - ");
         return parts.length == 0 ? "-" : parts[parts.length - 1];
+    }
+
+    private String blankAsDash(String value) {
+        return value == null || value.isBlank() ? "-" : value;
     }
 
     private record CadastroRow(

@@ -1,7 +1,7 @@
 package br.com.sigla.interfacegrafica.controlador;
 
-import br.com.sigla.aplicacao.servicos.porta.entrada.CasoDeUsoServicoPrestado;
-import br.com.sigla.dominio.servicos.ServicoPrestado;
+import br.com.sigla.aplicacao.agenda.porta.entrada.CasoDeUsoAgenda;
+import br.com.sigla.dominio.agenda.VisitaAgendada;
 import br.com.sigla.interfacegrafica.consulta.ServicoConsultaReferencias;
 import br.com.sigla.interfacegrafica.modelo.OpcaoId;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
@@ -13,9 +13,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.UUID;
 
 import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.parseEnum;
 import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.resolveOpcional;
@@ -23,7 +22,7 @@ import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.resolveO
 @Component
 public class ControladorNovoServico {
 
-    private final CasoDeUsoServicoPrestado casoDeUsoServicoPrestado;
+    private final CasoDeUsoAgenda casoDeUsoAgenda;
     private final ServicoConsultaReferencias servicoConsultaReferencias;
     private final GerenciadorNavegacao gerenciadorNavegacao;
 
@@ -51,11 +50,11 @@ public class ControladorNovoServico {
     private Label feedbackLabel;
 
     public ControladorNovoServico(
-            CasoDeUsoServicoPrestado casoDeUsoServicoPrestado,
+            CasoDeUsoAgenda casoDeUsoAgenda,
             ServicoConsultaReferencias servicoConsultaReferencias,
             GerenciadorNavegacao gerenciadorNavegacao
     ) {
-        this.casoDeUsoServicoPrestado = casoDeUsoServicoPrestado;
+        this.casoDeUsoAgenda = casoDeUsoAgenda;
         this.servicoConsultaReferencias = servicoConsultaReferencias;
         this.gerenciadorNavegacao = gerenciadorNavegacao;
     }
@@ -70,10 +69,10 @@ public class ControladorNovoServico {
             dataFimPicker.setValue(hoje);
         }
         if (statusField != null && statusField.getText().isBlank()) {
-            statusField.setText(ServicoPrestado.ServiceStatus.SCHEDULED.name());
+            statusField.setText(VisitaAgendada.VisitStatus.SCHEDULED.name());
         }
         if (prioridadeField != null && prioridadeField.getText().isBlank()) {
-            prioridadeField.setText(ServicoPrestado.ServicePriority.NORMAL.name());
+            prioridadeField.setText(VisitaAgendada.VisitPriority.NORMAL.name());
         }
         setFeedback("");
     }
@@ -82,26 +81,26 @@ public class ControladorNovoServico {
     private void onConfirmar() {
         try {
             OpcaoId cliente = requiredOption(resolveOpcional(servicoConsultaReferencias.clientes(), clienteField == null ? "" : clienteField.getText()), "Selecione um cliente.");
-            OpcaoId responsavel = requiredOption(resolveOpcional(servicoConsultaReferencias.funcionarios(), responsavelField == null ? "" : responsavelField.getText()), "Selecione um responsavel.");
             OpcaoId ordem = resolveOpcional(servicoConsultaReferencias.ordensServico(), ordemField == null ? "" : ordemField.getText());
+            LocalDate dataInicio = dataInicioPicker == null || dataInicioPicker.getValue() == null ? LocalDate.now() : dataInicioPicker.getValue();
+            LocalDate dataFim = dataFimPicker == null || dataFimPicker.getValue() == null ? dataInicio : dataFimPicker.getValue();
 
-            casoDeUsoServicoPrestado.register(new CasoDeUsoServicoPrestado.RegisterServicoPrestadoCommand(
-                    "SRV-" + System.currentTimeMillis(),
+            casoDeUsoAgenda.schedule(new CasoDeUsoAgenda.ScheduleVisitCommand(
+                    UUID.randomUUID().toString(),
                     cliente.id(),
-                    "",
                     ordem == null ? "" : ordem.id(),
-                    responsavel.id(),
-                    dataInicioPicker == null ? LocalDate.now() : dataInicioPicker.getValue(),
-                    mergeDescricao(),
-                    BigDecimal.ZERO,
-                    ServicoPrestado.PaymentStatus.PENDING,
-                    ServicoPrestado.SignatureType.NONE,
-                    null,
-                    null,
-                    List.of(),
-                    parseEnum(ServicoPrestado.ServiceStatus.class, statusField == null ? "" : statusField.getText(), ServicoPrestado.ServiceStatus.SCHEDULED),
-                    parseEnum(ServicoPrestado.ServicePriority.class, prioridadeField == null ? "" : prioridadeField.getText(), ServicoPrestado.ServicePriority.NORMAL),
-                    ""
+                    VisitaAgendada.VisitType.ONE_OFF,
+                    dataInicio,
+                    tituloField == null ? "" : tituloField.getText(),
+                    "servico",
+                    "",
+                    dataInicio.atStartOfDay(),
+                    dataFim.atTime(23, 59),
+                    diaInteiroPicker != null && diaInteiroPicker.getValue() != null,
+                    parseEnum(VisitaAgendada.VisitStatus.class, statusField == null ? "" : statusField.getText(), VisitaAgendada.VisitStatus.SCHEDULED),
+                    parseEnum(VisitaAgendada.VisitPriority.class, prioridadeField == null ? "" : prioridadeField.getText(), VisitaAgendada.VisitPriority.NORMAL),
+                    onlyUuid(responsavelField == null ? "" : responsavelField.getText()),
+                    mergeDescricao()
             ));
             gerenciadorNavegacao.navigateTo(VisaoAplicacao.SERVICES);
             UtilJanela.fecharJanela(clienteField);
@@ -130,6 +129,17 @@ public class ControladorNovoServico {
             throw new IllegalArgumentException(message);
         }
         return value;
+    }
+
+    private String onlyUuid(String value) {
+        if (value == null || value.isBlank()) {
+            return "";
+        }
+        try {
+            return UUID.fromString(value.trim()).toString();
+        } catch (IllegalArgumentException exception) {
+            return "";
+        }
     }
 
     private void setFeedback(String message) {

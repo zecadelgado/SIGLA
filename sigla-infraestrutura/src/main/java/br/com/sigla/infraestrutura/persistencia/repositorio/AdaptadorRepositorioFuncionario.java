@@ -2,7 +2,8 @@ package br.com.sigla.infraestrutura.persistencia.repositorio;
 
 import br.com.sigla.aplicacao.funcionarios.porta.saida.RepositorioFuncionario;
 import br.com.sigla.dominio.funcionarios.Funcionario;
-import br.com.sigla.infraestrutura.persistencia.entidade.FuncionarioEntidade;
+import br.com.sigla.infraestrutura.persistencia.PersistenciaIds;
+import br.com.sigla.infraestrutura.persistencia.entidade.ClienteEntidade;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
@@ -30,26 +32,39 @@ public class AdaptadorRepositorioFuncionario implements RepositorioFuncionario {
 
     @Override
     public List<Funcionario> findAll() {
-        return repository.findAll().stream().map(this::toDomain).toList();
+        return repository.findByTipo("FUNCIONARIO").stream().map(this::toDomain).toList();
     }
 
     @Override
     public Optional<Funcionario> findById(String id) {
-        return repository.findById(id).map(this::toDomain);
+        return repository.findById(PersistenciaIds.toUuid(id)).filter(entity -> "FUNCIONARIO".equals(entity.getTipo())).map(this::toDomain);
     }
 
-    private Funcionario toDomain(FuncionarioEntidade entity) {
-        return new Funcionario(entity.getId(), entity.getName(), entity.getRole(), entity.getContact(), entity.getStatus());
+    private Funcionario toDomain(ClienteEntidade entity) {
+        return new Funcionario(
+                PersistenciaIds.toString(entity.getId()),
+                entity.getNome(),
+                blankAs(entity.getObservacoes(), "Equipe"),
+                blankAs(entity.getTelefonePrincipal(), entity.getEmail()),
+                entity.isAtivo() ? Funcionario.FuncionarioStatus.ACTIVE : Funcionario.FuncionarioStatus.INACTIVE
+        );
     }
 
-    private FuncionarioEntidade toEntity(Funcionario employee) {
-        FuncionarioEntidade entity = new FuncionarioEntidade();
-        entity.setId(employee.id());
-        entity.setName(employee.name());
-        entity.setRole(employee.role());
-        entity.setContact(employee.contact());
-        entity.setStatus(employee.status());
+    private ClienteEntidade toEntity(Funcionario employee) {
+        ClienteEntidade entity = new ClienteEntidade();
+        entity.setId(PersistenciaIds.toUuid(employee.id()));
+        entity.setTipo("FUNCIONARIO");
+        entity.setNome(employee.name());
+        entity.setNomeFantasia(employee.name());
+        entity.setTelefonePrincipal(employee.contact());
+        entity.setEmail(employee.contact().contains("@") ? employee.contact() : "");
+        entity.setObservacoes(employee.role());
+        entity.setAtivo(employee.status() == Funcionario.FuncionarioStatus.ACTIVE);
         return entity;
+    }
+
+    private String blankAs(String value, String fallback) {
+        return value == null || value.isBlank() ? fallback : value;
     }
 }
 
@@ -75,6 +90,6 @@ class InMemoryAdaptadorRepositorioFuncionario implements RepositorioFuncionario 
     }
 }
 
-interface SpringDataRepositorioFuncionario extends JpaRepository<FuncionarioEntidade, String> {
+interface SpringDataRepositorioFuncionario extends JpaRepository<ClienteEntidade, UUID> {
+    List<ClienteEntidade> findByTipo(String tipo);
 }
-

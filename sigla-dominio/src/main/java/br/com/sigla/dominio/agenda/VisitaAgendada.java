@@ -17,6 +17,8 @@ public record VisitaAgendada(
         LocalDateTime endAt,
         boolean allDay,
         VisitStatus status,
+        VisitPriority priority,
+        String responsibleId,
         String notes
 ) {
     public VisitaAgendada {
@@ -32,7 +34,43 @@ public record VisitaAgendada(
             throw new IllegalArgumentException("endAt must not be before startAt");
         }
         status = Objects.requireNonNull(status, "status is required");
+        priority = Objects.requireNonNullElse(priority, VisitPriority.NORMAL);
+        responsibleId = normalizeOptional(responsibleId);
         notes = normalizeOptional(notes);
+    }
+
+    public VisitaAgendada(
+            String id,
+            String customerId,
+            String contractId,
+            VisitType type,
+            LocalDate scheduledDate,
+            String title,
+            String serviceType,
+            String internalResponsible,
+            LocalDateTime startAt,
+            LocalDateTime endAt,
+            boolean allDay,
+            VisitStatus status,
+            String notes
+    ) {
+        this(
+                id,
+                customerId,
+                contractId,
+                type,
+                scheduledDate,
+                title,
+                serviceType,
+                internalResponsible,
+                startAt,
+                endAt,
+                allDay,
+                status,
+                VisitPriority.NORMAL,
+                "",
+                notes
+        );
     }
 
     public VisitaAgendada(
@@ -87,6 +125,13 @@ public record VisitaAgendada(
         COMPLETED,
         CANCELLED,
         MISSED
+    }
+
+    public enum VisitPriority {
+        LOW,
+        NORMAL,
+        HIGH,
+        URGENT
     }
 
     private static String requireText(String value, String fieldName) {

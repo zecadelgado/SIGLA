@@ -10,6 +10,7 @@ import javafx.scene.control.TextField;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Component
 public class ControladorNovoProduto {
@@ -46,7 +47,7 @@ public class ControladorNovoProduto {
     private void onConfirmar() {
         try {
             casoDeUsoEstoque.registerItem(new CasoDeUsoEstoque.RegisterItemEstoqueCommand(
-                    "INV-" + System.currentTimeMillis(),
+                    UUID.randomUUID().toString(),
                     nomeField.getText(),
                     descricaoField.getText(),
                     new BigDecimal(valorCustoField.getText()),

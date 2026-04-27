@@ -2,16 +2,18 @@ package br.com.sigla.infraestrutura.persistencia.repositorio;
 
 import br.com.sigla.aplicacao.potenciaisclientes.porta.saida.RepositorioPotencialCliente;
 import br.com.sigla.dominio.potenciaisclientes.PotencialCliente;
+import br.com.sigla.infraestrutura.persistencia.PersistenciaIds;
 import br.com.sigla.infraestrutura.persistencia.entidade.PotencialClienteEntidade;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
@@ -36,43 +38,49 @@ public class AdaptadorRepositorioPotencialCliente implements RepositorioPotencia
 
     @Override
     public Optional<PotencialCliente> findById(String id) {
-        return repository.findById(id).map(this::toDomain);
+        return repository.findById(PersistenciaIds.toUuid(id)).map(this::toDomain);
     }
 
     private PotencialCliente toDomain(PotencialClienteEntidade entity) {
+        LocalDate data = entity.getDataIndicacao() == null ? LocalDate.now() : entity.getDataIndicacao();
         return new PotencialCliente(
-                entity.getId(),
-                entity.getName(),
-                entity.getContact(),
-                entity.getOrigin(),
-                entity.getStatus(),
-                entity.getInteractions().stream()
-                        .map(interaction -> new PotencialCliente.Interaction(
-                                interaction.getInteractionDate(),
-                                interaction.getChannel(),
-                                interaction.getNotes()
-                        ))
-                        .toList()
+                PersistenciaIds.toString(entity.getId()),
+                entity.getNomeIndicado(),
+                entity.getTelefone() == null ? "" : entity.getTelefone(),
+                "INDICACAO:" + PersistenciaIds.toString(entity.getClienteIndicadorId()),
+                parseStatus(entity.getStatus()),
+                List.of(new PotencialCliente.Interaction(data, "Indicacao", entity.getObservacoes() == null ? "Indicacao cadastrada." : entity.getObservacoes()))
         );
     }
 
     private PotencialClienteEntidade toEntity(PotencialCliente lead) {
         PotencialClienteEntidade entity = new PotencialClienteEntidade();
-        entity.setId(lead.id());
-        entity.setName(lead.name());
-        entity.setContact(lead.contact());
-        entity.setOrigin(lead.origin());
-        entity.setStatus(lead.status());
-        List<PotencialClienteEntidade.InteractionEmbeddable> interactions = new ArrayList<>();
-        for (PotencialCliente.Interaction interaction : lead.interactionHistory()) {
-            PotencialClienteEntidade.InteractionEmbeddable embeddable = new PotencialClienteEntidade.InteractionEmbeddable();
-            embeddable.setInteractionDate(interaction.interactionDate());
-            embeddable.setChannel(interaction.channel());
-            embeddable.setNotes(interaction.notes());
-            interactions.add(embeddable);
-        }
-        entity.setInteractions(interactions);
+        entity.setId(PersistenciaIds.toUuid(lead.id()));
+        entity.setNomeIndicado(lead.name());
+        entity.setTelefone(lead.contact());
+        entity.setClienteIndicadorId(PersistenciaIds.toUuid(extractCustomerId(lead.origin())));
+        entity.setDataIndicacao(lead.interactionHistory().isEmpty() ? LocalDate.now() : lead.interactionHistory().getFirst().interactionDate());
+        entity.setStatus(lead.status().name());
+        entity.setObservacoes(lead.interactionHistory().isEmpty() ? "" : lead.interactionHistory().getFirst().notes());
         return entity;
+    }
+
+    private String extractCustomerId(String origin) {
+        if (origin == null || !origin.contains(":")) {
+            return "";
+        }
+        return origin.substring(origin.indexOf(':') + 1).trim();
+    }
+
+    private PotencialCliente.PotencialClienteStatus parseStatus(String value) {
+        if (value == null || value.isBlank()) {
+            return PotencialCliente.PotencialClienteStatus.NEW;
+        }
+        try {
+            return PotencialCliente.PotencialClienteStatus.valueOf(value.trim().toUpperCase());
+        } catch (IllegalArgumentException exception) {
+            return PotencialCliente.PotencialClienteStatus.NEW;
+        }
     }
 }
 
@@ -98,6 +106,5 @@ class InMemoryAdaptadorRepositorioPotencialCliente implements RepositorioPotenci
     }
 }
 
-interface SpringDataRepositorioPotencialCliente extends JpaRepository<PotencialClienteEntidade, String> {
+interface SpringDataRepositorioPotencialCliente extends JpaRepository<PotencialClienteEntidade, UUID> {
 }
-

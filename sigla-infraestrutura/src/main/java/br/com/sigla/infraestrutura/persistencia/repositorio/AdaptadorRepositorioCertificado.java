@@ -2,6 +2,7 @@ package br.com.sigla.infraestrutura.persistencia.repositorio;
 
 import br.com.sigla.aplicacao.certificados.porta.saida.RepositorioCertificado;
 import br.com.sigla.dominio.certificados.Certificado;
+import br.com.sigla.infraestrutura.persistencia.PersistenciaIds;
 import br.com.sigla.infraestrutura.persistencia.entidade.CertificadoEntidade;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
@@ -35,29 +37,41 @@ public class AdaptadorRepositorioCertificado implements RepositorioCertificado {
 
     @Override
     public Optional<Certificado> findById(String id) {
-        return repository.findById(id).map(this::toDomain);
+        return repository.findById(PersistenciaIds.toUuid(id)).map(this::toDomain);
     }
 
     private CertificadoEntidade toEntity(Certificado certificate) {
         CertificadoEntidade entity = new CertificadoEntidade();
-        entity.setId(certificate.id());
-        entity.setServicoPrestadoId(certificate.serviceProvidedId());
+        entity.setId(PersistenciaIds.toUuid(certificate.id()));
+        entity.setClienteId(PersistenciaIds.toUuid(certificate.serviceProvidedId()));
+        entity.setDescricao("Certificado");
         entity.setIssuedOn(certificate.issuedOn());
         entity.setValidUntil(certificate.validUntil());
-        entity.setStatus(certificate.status());
+        entity.setStatus(certificate.status().name());
         entity.setRenewalAlertDays(certificate.renewalAlertDays());
         return entity;
     }
 
     private Certificado toDomain(CertificadoEntidade entity) {
         return new Certificado(
-                entity.getId(),
-                entity.getServicoPrestadoId(),
+                PersistenciaIds.toString(entity.getId()),
+                PersistenciaIds.toString(entity.getClienteId()),
                 entity.getIssuedOn(),
                 entity.getValidUntil(),
-                entity.getStatus(),
+                parseStatus(entity.getStatus()),
                 entity.getRenewalAlertDays()
         );
+    }
+
+    private Certificado.CertificadoStatus parseStatus(String value) {
+        if (value == null || value.isBlank()) {
+            return Certificado.CertificadoStatus.ACTIVE;
+        }
+        return switch (value.trim().toUpperCase()) {
+            case "VALIDO", "VÁLIDO", "ACTIVE" -> Certificado.CertificadoStatus.ACTIVE;
+            case "VENCIDO", "EXPIRED" -> Certificado.CertificadoStatus.EXPIRED;
+            default -> Certificado.CertificadoStatus.REPLACED;
+        };
     }
 }
 
@@ -83,6 +97,6 @@ class InMemoryAdaptadorRepositorioCertificado implements RepositorioCertificado 
     }
 }
 
-interface SpringDataRepositorioCertificado extends JpaRepository<CertificadoEntidade, String> {
+interface SpringDataRepositorioCertificado extends JpaRepository<CertificadoEntidade, UUID> {
 }
 

@@ -1,7 +1,7 @@
 package br.com.sigla.interfacegrafica.controlador;
 
-import br.com.sigla.aplicacao.servicos.porta.entrada.CasoDeUsoServicoPrestado;
-import br.com.sigla.dominio.servicos.ServicoPrestado;
+import br.com.sigla.aplicacao.agenda.porta.entrada.CasoDeUsoAgenda;
+import br.com.sigla.dominio.agenda.VisitaAgendada;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorMoeda;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @Component
 public class ControladorServicos extends ControladorComMenuPrincipal {
 
-    private final CasoDeUsoServicoPrestado casoDeUsoServicoPrestado;
+    private final CasoDeUsoAgenda casoDeUsoAgenda;
     private final GerenciadorNavegacao gerenciadorNavegacao;
     private final ApresentadorMoeda apresentadorMoeda;
 
@@ -26,12 +26,12 @@ public class ControladorServicos extends ControladorComMenuPrincipal {
     private Label pendentesLabel;
 
     public ControladorServicos(
-            CasoDeUsoServicoPrestado casoDeUsoServicoPrestado,
+            CasoDeUsoAgenda casoDeUsoAgenda,
             GerenciadorNavegacao gerenciadorNavegacao,
             ApresentadorMoeda apresentadorMoeda
     ) {
         super(gerenciadorNavegacao);
-        this.casoDeUsoServicoPrestado = casoDeUsoServicoPrestado;
+        this.casoDeUsoAgenda = casoDeUsoAgenda;
         this.gerenciadorNavegacao = gerenciadorNavegacao;
         this.apresentadorMoeda = apresentadorMoeda;
     }
@@ -47,19 +47,15 @@ public class ControladorServicos extends ControladorComMenuPrincipal {
     }
 
     private void refresh() {
-        var services = casoDeUsoServicoPrestado.listAll();
+        var services = casoDeUsoAgenda.listAll();
         totalServicosLabel.setText(String.valueOf(services.size()));
 
-        BigDecimal recebidos = services.stream()
-                .filter(service -> service.paymentStatus() == ServicoPrestado.PaymentStatus.PAID)
-                .map(ServicoPrestado::amountCharged)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal recebidos = BigDecimal.ZERO;
         recebidosLabel.setText(apresentadorMoeda.format(recebidos));
 
-        BigDecimal pendentes = services.stream()
-                .filter(service -> service.paymentStatus() != ServicoPrestado.PaymentStatus.PAID)
-                .map(ServicoPrestado::amountCharged)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal pendentes = BigDecimal.valueOf(services.stream()
+                .filter(service -> service.status() != VisitaAgendada.VisitStatus.COMPLETED)
+                .count());
         pendentesLabel.setText(apresentadorMoeda.format(pendentes));
     }
 }

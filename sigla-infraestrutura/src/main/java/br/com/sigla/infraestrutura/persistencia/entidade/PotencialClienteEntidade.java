@@ -1,130 +1,92 @@
 package br.com.sigla.infraestrutura.persistencia.entidade;
 
-import br.com.sigla.dominio.potenciaisclientes.PotencialCliente;
-import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Embeddable;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.UUID;
 
 @Entity
-@Table(name = "potenciaisclientes")
+@Table(name = "cliente_indicacoes")
 public class PotencialClienteEntidade {
 
     @Id
-    @Column(name = "id", nullable = false, length = 64)
-    private String id;
+    @Column(name = "id", nullable = false)
+    private UUID id;
 
-    @Column(name = "name", nullable = false, length = 120)
-    private String name;
+    @Column(name = "nome_indicado", nullable = false)
+    private String nomeIndicado;
 
-    @Column(name = "contact", nullable = false, length = 120)
-    private String contact;
+    @Column(name = "telefone")
+    private String telefone;
 
-    @Column(name = "origin", nullable = false, length = 80)
-    private String origin;
+    @Column(name = "cliente_indicador_id")
+    private UUID clienteIndicadorId;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, length = 24)
-    private PotencialCliente.PotencialClienteStatus status;
+    @Column(name = "data_indicacao")
+    private LocalDate dataIndicacao;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "lead_interactions", joinColumns = @JoinColumn(name = "lead_id"))
-    private List<InteractionEmbeddable> interactions = new ArrayList<>();
+    @Column(name = "status")
+    private String status;
 
-    public String getId() {
+    @Column(name = "observacoes")
+    private String observacoes;
+
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getNomeIndicado() {
+        return nomeIndicado;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNomeIndicado(String nomeIndicado) {
+        this.nomeIndicado = nomeIndicado;
     }
 
-    public String getContact() {
-        return contact;
+    public String getTelefone() {
+        return telefone;
     }
 
-    public void setContact(String contact) {
-        this.contact = contact;
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
     }
 
-    public String getOrigin() {
-        return origin;
+    public UUID getClienteIndicadorId() {
+        return clienteIndicadorId;
     }
 
-    public void setOrigin(String origin) {
-        this.origin = origin;
+    public void setClienteIndicadorId(UUID clienteIndicadorId) {
+        this.clienteIndicadorId = clienteIndicadorId;
     }
 
-    public PotencialCliente.PotencialClienteStatus getStatus() {
+    public LocalDate getDataIndicacao() {
+        return dataIndicacao;
+    }
+
+    public void setDataIndicacao(LocalDate dataIndicacao) {
+        this.dataIndicacao = dataIndicacao;
+    }
+
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(PotencialCliente.PotencialClienteStatus status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
-    public List<InteractionEmbeddable> getInteractions() {
-        return interactions;
+    public String getObservacoes() {
+        return observacoes;
     }
 
-    public void setInteractions(List<InteractionEmbeddable> interactions) {
-        this.interactions = interactions;
-    }
-
-    @Embeddable
-    public static class InteractionEmbeddable {
-
-        @Column(name = "interaction_date", nullable = false)
-        private LocalDate interactionDate;
-
-        @Column(name = "channel", nullable = false, length = 80)
-        private String channel;
-
-        @Column(name = "notes", nullable = false, length = 500)
-        private String notes;
-
-        public LocalDate getInteractionDate() {
-            return interactionDate;
-        }
-
-        public void setInteractionDate(LocalDate interactionDate) {
-            this.interactionDate = interactionDate;
-        }
-
-        public String getChannel() {
-            return channel;
-        }
-
-        public void setChannel(String channel) {
-            this.channel = channel;
-        }
-
-        public String getNotes() {
-            return notes;
-        }
-
-        public void setNotes(String notes) {
-            this.notes = notes;
-        }
+    public void setObservacoes(String observacoes) {
+        this.observacoes = observacoes;
     }
 }
-

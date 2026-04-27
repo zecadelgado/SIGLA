@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.parseEnum;
 import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.resolveOpcional;
@@ -79,7 +80,7 @@ public class ControladorNovaMovimentacao {
 
             casoDeUsoEstoque.recordMovement(new CasoDeUsoEstoque.RecordInventoryMovementCommand(
                     produto.id(),
-                    "MOV-" + System.currentTimeMillis(),
+                    UUID.randomUUID().toString(),
                     parseEnum(ItemEstoque.MovementType.class, tipoField == null ? "" : tipoField.getText(), ItemEstoque.MovementType.OUTBOUND),
                     Integer.parseInt(quantidadeField.getText()),
                     LocalDate.now(),
