@@ -171,7 +171,7 @@
             </HBox>
             <HBox prefHeight="46.0" prefWidth="670.0">
                <children>
-                  <Button mnemonicParsing="false" onAction="#onConfirmar" prefHeight="40.0" prefWidth="300.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Confirmar Movimentação" textFill="WHITE">
+                  <Button mnemonicParsing="false" onAction="#onConfirmar" prefHeight="40.0" prefWidth="300.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Adicionar Produto" textFill="WHITE">
                      <HBox.margin>
                         <Insets left="25.0" />
                      </HBox.margin>
