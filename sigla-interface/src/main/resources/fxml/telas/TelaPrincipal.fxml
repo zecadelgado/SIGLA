@@ -29,7 +29,7 @@
                               <Font name="Ebrima Bold" size="40.0" />
                            </font>
                            <VBox.margin>
-                              <Insets left="15.0" top="10.0" />
+                              <Insets left="15.0" top="18.0" />
                            </VBox.margin>
                         </Label>
                         <Label text="Gestão Empresarial" textFill="#c8e2f2">
@@ -48,7 +48,7 @@
                               <Font name="System Bold" size="20.0" />
                            </font>
                            <VBox.margin>
-                              <Insets left="15.0" right="10.0" top="20.0" />
+                              <Insets left="15.0" right="10.0" top="25.0" />
                            </VBox.margin>
                         </Button>
                         <Button mnemonicParsing="false" onAction="#onCadastrosClick" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Cadastros" textFill="WHITE">
@@ -204,7 +204,7 @@
                                         <CategoryAxis side="TOP" />
                                       </xAxis>
                                       <yAxis>
-                                        <NumberAxis minorTickCount="2" side="LEFT" tickLabelGap="1.0" tickLength="10.0" tickUnit="2.0" upperBound="10000.0">
+                                        <NumberAxis minorTickCount="2" side="LEFT" tickLabelGap="1.0" tickLength="10.0" tickUnit="2.0" upperBound="14000.0">
                                              <tickLabelFont>
                                                 <Font size="12.0" />
                                              </tickLabelFont>
