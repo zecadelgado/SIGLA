@@ -141,7 +141,7 @@
                               <Insets left="25.0" top="15.0" />
                            </padding>
                         </Label>
-                        <GridPane hgap="25.0" prefHeight="400.0" prefWidth="1205.0" vgap="30.0">
+                        <GridPane hgap="25.0" prefHeight="450.0" prefWidth="1205.0" vgap="30.0">
                            <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -151,14 +151,14 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <VBox layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15; -fx-spacing: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5); -fx-border-color: #2563EB; -fx-border-width: 0 0 0 5; -fx-border-radius: 10;" GridPane.columnIndex="2">
+                              <VBox layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15; -fx-spacing: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 30,0,0,10); -fx-border-color: #2563EB; -fx-border-width: 0 0 0 5; -fx-border-radius: 10;" GridPane.columnIndex="2">
                                  <children>
                                     <Label prefHeight="21.0" prefWidth="108.0" text="Serviços" textFill="#00417e">
                                        <font>
-                                          <Font name="Ebrima Bold" size="20.0" />
+                                          <Font name="Ebrima Bold" size="24.0" />
                                        </font>
                                        <VBox.margin>
-                                          <Insets top="5.0" />
+                                          <Insets left="5.0" />
                                        </VBox.margin>
                                     </Label>
                                     <BarChart>
@@ -166,30 +166,37 @@
                                         <CategoryAxis side="BOTTOM" />
                                       </xAxis>
                                       <yAxis>
-                                        <NumberAxis side="LEFT" />
+                                        <NumberAxis side="LEFT" upperBound="50.0">
+                                             <tickLabelFont>
+                                                <Font size="12.0" />
+                                             </tickLabelFont>
+                                          </NumberAxis>
                                       </yAxis>
+                                       <VBox.margin>
+                                          <Insets left="-10.0" top="-5.0" />
+                                       </VBox.margin>
                                     </BarChart>
-                                    <Button mnemonicParsing="false" prefHeight="20.0" prefWidth="122.0" style="-fx-background-color: white;" text="Acessar módulo →" textFill="#3b5fd4">
+                                    <Button mnemonicParsing="false" prefHeight="20.0" prefWidth="134.0" style="-fx-background-color: white;" text="Acessar módulo →" textFill="#3b5fd4">
                                        <font>
                                           <Font name="System Bold" size="14.0" />
                                        </font>
                                        <padding>
-                                          <Insets left="-2.0" />
+                                          <Insets left="5.0" />
                                        </padding>
                                        <VBox.margin>
-                                          <Insets />
+                                          <Insets top="-15.0" />
                                        </VBox.margin>
                                     </Button>
                                  </children>
                               </VBox>
-                              <VBox layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15; -fx-spacing: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5); -fx-border-color: #2563EB; -fx-border-width: 0 0 0 5; -fx-border-radius: 10;">
+                              <VBox layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15; -fx-spacing: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 30,0,0,10); -fx-border-color: #2563EB; -fx-border-width: 0 0 0 5; -fx-border-radius: 10;">
                                  <children>
-                                    <Label prefHeight="21.0" prefWidth="108.0" text="Financeiro" textFill="#00417e">
+                                    <Label prefHeight="31.0" prefWidth="118.0" text="Financeiro" textFill="#00417e">
                                        <font>
-                                          <Font name="Ebrima Bold" size="20.0" />
+                                          <Font name="Ebrima Bold" size="24.0" />
                                        </font>
                                        <VBox.margin>
-                                          <Insets top="5.0" />
+                                          <Insets left="5.0" />
                                        </VBox.margin>
                                     </Label>
                                     <LineChart>
@@ -197,30 +204,37 @@
                                         <CategoryAxis side="TOP" />
                                       </xAxis>
                                       <yAxis>
-                                        <NumberAxis side="LEFT" />
+                                        <NumberAxis minorTickCount="2" side="LEFT" tickLabelGap="1.0" tickLength="10.0" tickUnit="2.0" upperBound="10000.0">
+                                             <tickLabelFont>
+                                                <Font size="12.0" />
+                                             </tickLabelFont>
+                                          </NumberAxis>
                                       </yAxis>
+                                       <VBox.margin>
+                                          <Insets left="-10.0" top="-10.0" />
+                                       </VBox.margin>
                                     </LineChart>
-                                    <Button mnemonicParsing="false" prefHeight="20.0" prefWidth="122.0" style="-fx-background-color: white;" text="Acessar módulo →" textFill="#3b5fd4">
+                                    <Button mnemonicParsing="false" prefHeight="20.0" prefWidth="139.0" style="-fx-background-color: white;" text="Acessar módulo →" textFill="#3b5fd4">
                                        <font>
                                           <Font name="System Bold" size="14.0" />
                                        </font>
                                        <padding>
-                                          <Insets left="-2.0" />
+                                          <Insets left="5.0" />
                                        </padding>
                                        <VBox.margin>
-                                          <Insets />
+                                          <Insets top="-5.0" />
                                        </VBox.margin>
                                     </Button>
                                  </children>
                               </VBox>
-                              <VBox layoutX="420.0" layoutY="10.0" prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15; -fx-spacing: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5); -fx-border-color: #2563EB; -fx-border-width: 0 0 0 5; -fx-border-radius: 10;" GridPane.columnIndex="1">
+                              <VBox layoutX="420.0" layoutY="10.0" prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15; -fx-spacing: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 30,0,0,10); -fx-border-color: #2563EB; -fx-border-width: 0 0 0 5; -fx-border-radius: 10;" GridPane.columnIndex="1">
                                  <children>
                                     <Label prefHeight="21.0" prefWidth="108.0" text="Estoque" textFill="#00417e">
                                        <font>
-                                          <Font name="Ebrima Bold" size="20.0" />
+                                          <Font name="Ebrima Bold" size="24.0" />
                                        </font>
                                        <VBox.margin>
-                                          <Insets top="5.0" />
+                                          <Insets left="5.0" />
                                        </VBox.margin>
                                     </Label>
                                     <BarChart>
@@ -228,25 +242,32 @@
                                         <CategoryAxis side="BOTTOM" />
                                       </xAxis>
                                       <yAxis>
-                                        <NumberAxis side="LEFT" />
+                                        <NumberAxis side="LEFT">
+                                             <tickLabelFont>
+                                                <Font size="12.0" />
+                                             </tickLabelFont>
+                                          </NumberAxis>
                                       </yAxis>
+                                       <VBox.margin>
+                                          <Insets left="-10.0" top="-5.0" />
+                                       </VBox.margin>
                                     </BarChart>
-                                    <Button mnemonicParsing="false" prefHeight="20.0" prefWidth="122.0" style="-fx-background-color: white;" text="Acessar módulo →" textFill="#3b5fd4">
+                                    <Button mnemonicParsing="false" prefHeight="20.0" prefWidth="138.0" style="-fx-background-color: white;" text="Acessar módulo →" textFill="#3b5fd4">
                                        <font>
                                           <Font name="System Bold" size="14.0" />
                                        </font>
                                        <padding>
-                                          <Insets left="-2.0" />
+                                          <Insets left="5.0" />
                                        </padding>
                                        <VBox.margin>
-                                          <Insets />
+                                          <Insets top="-15.0" />
                                        </VBox.margin>
                                     </Button>
                                  </children>
                               </VBox>
                            </children>
                            <VBox.margin>
-                              <Insets bottom="20.0" left="25.0" right="25.0" top="10.0" />
+                              <Insets bottom="20.0" left="25.0" right="25.0" />
                            </VBox.margin>
                         </GridPane>
                      </children>
