@@ -28,7 +28,7 @@
                            <children>
                               <Label text="Financeiro" textFill="#00417e">
                                  <font>
-                                    <Font name="Ebrima Bold" size="40.0" />
+                                    <Font name="Ebrima Bold" size="50.0" />
                                  </font>
                                  <VBox.margin>
                                     <Insets left="28.0" top="18.0" />

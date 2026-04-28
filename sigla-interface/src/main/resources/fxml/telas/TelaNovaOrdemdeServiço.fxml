@@ -320,7 +320,7 @@
                   </HBox>
                   <VBox prefHeight="270.0" prefWidth="790.0">
                      <children>
-                        <Label text="Inserir Assinatura do Cliente:">
+                        <Label text="Assinatura Cliente:">
                            <font>
                               <Font size="16.0" />
                            </font>
