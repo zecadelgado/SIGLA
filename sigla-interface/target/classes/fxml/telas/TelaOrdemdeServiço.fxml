@@ -243,7 +243,7 @@
                               </TextField>
                            </children>
                         </VBox>
-                        <VBox prefHeight="66.0" prefWidth="204.0">
+                        <VBox prefHeight="66.0" prefWidth="200.0">
                            <children>
                               <Label text="Status">
                                  <VBox.margin>
@@ -257,14 +257,18 @@
                               </ComboBox>
                            </children>
                         </VBox>
-                         <Button mnemonicParsing="false" onAction="#onNovaOrdem" prefHeight="46.0" prefWidth="239.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 5;" text="+ Nova Ordem de Serviço" textFill="WHITE">
-                           <font>
-                              <Font name="Ebrima Bold" size="17.0" />
-                           </font>
+                        <VBox prefHeight="66.0" prefWidth="250.0">
+                           <children>
+                               <Button mnemonicParsing="false" onAction="#onNovaOrdem" prefHeight="46.0" prefWidth="237.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 5;" text="+ Nova Ordem de Serviço" textFill="WHITE">
+                                 <font>
+                                    <Font name="Ebrima Bold" size="17.0" />
+                                 </font>
+                              </Button>
+                           </children>
                            <HBox.margin>
-                              <Insets top="10.0" />
+                              <Insets bottom="10.0" left="5.0" top="10.0" />
                            </HBox.margin>
-                        </Button>
+                        </VBox>
                      </children>
                   </HBox>
                   <ScrollPane prefHeight="365.0" prefWidth="1222.0">

@@ -4,340 +4,388 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="615.0" prefWidth="800.0" style="-fx-background-color: lightgrey;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.sigla.interfacegrafica.controlador.ControladorNovaOrdemServico">
-   <children>
-      <VBox prefHeight="615.0" prefWidth="800.0" style="-fx-background-color: lightgrey;">
+<ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="800.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/25">
+   <content>
+      <AnchorPane prefHeight="900.0" prefWidth="800.0" style="-fx-background-color: lightgrey;">
          <children>
-            <Label prefHeight="52.0" prefWidth="449.0" text="Nova Ordem de Serviço" textFill="#00417e">
-               <font>
-                  <Font name="Ebrima Bold" size="40.0" />
-               </font>
-               <VBox.margin>
-                  <Insets left="20.0" top="15.0" />
-               </VBox.margin>
-            </Label>
-            <HBox prefHeight="76.0" prefWidth="656.0">
+            <VBox prefHeight="900.0" prefWidth="800.0" style="-fx-background-color: lightgrey;">
                <children>
-                  <VBox prefHeight="76.0" prefWidth="370.0">
-                     <children>
-                        <Label text="Cliente">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="25.0" top="5.0" />
-                           </VBox.margin>
-                        </Label>
-                        <TextField fx:id="clienteField" prefHeight="30.0" prefWidth="350.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="25.0" />
-                           </VBox.margin>
-                        </TextField>
-                     </children>
-                  </VBox>
-                  <Region prefHeight="76.0" prefWidth="40.0" />
-                  <VBox prefHeight="76.0" prefWidth="380.0">
-                     <children>
-                        <Label text="Título">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets top="5.0" />
-                           </VBox.margin>
-                        </Label>
-                        <TextField fx:id="tituloField" prefHeight="30.0" prefWidth="350.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets right="25.0" />
-                           </VBox.margin>
-                        </TextField>
-                     </children>
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                  </VBox>
-               </children>
-               <VBox.margin>
-                  <Insets top="15.0" />
-               </VBox.margin>
-            </HBox>
-            <HBox prefHeight="76.0" prefWidth="656.0">
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
-               <children>
-                  <VBox prefHeight="76.0" prefWidth="370.0">
-                     <children>
-                        <Label text="Descrição">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="25.0" top="5.0" />
-                           </VBox.margin>
-                        </Label>
-                        <TextField fx:id="descricaoField" prefHeight="30.0" prefWidth="350.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="25.0" />
-                           </VBox.margin>
-                        </TextField>
-                     </children>
-                  </VBox>
-                  <Region prefHeight="76.0" prefWidth="40.0" />
-                  <VBox prefHeight="76.0" prefWidth="380.0">
-                     <children>
-                        <Label text="Tipo Serviço">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets top="5.0" />
-                           </VBox.margin>
-                        </Label>
-                        <TextField fx:id="tipoServicoField" prefHeight="30.0" prefWidth="350.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets right="25.0" />
-                           </VBox.margin>
-                        </TextField>
-                     </children>
-                  </VBox>
-               </children>
-            </HBox>
-            <HBox prefHeight="76.0" prefWidth="656.0">
-               <children>
-                  <VBox layoutX="10.0" layoutY="10.0" prefHeight="76.0" prefWidth="370.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                     <children>
-                        <Label text="Status">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="25.0" top="5.0" />
-                           </VBox.margin>
-                        </Label>
-                        <TextField fx:id="statusField" prefHeight="30.0" prefWidth="350.0" style="-fx-background-radius: 5;">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="25.0" />
-                           </VBox.margin>
-                        </TextField>
-                     </children>
-                  </VBox>
-                  <Region prefHeight="76.0" prefWidth="40.0" />
-                  <VBox prefHeight="76.0" prefWidth="380.0">
-                     <children>
-                        <Label text="Responsável Interno">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets top="5.0" />
-                           </VBox.margin>
-                        </Label>
-                        <TextField fx:id="responsavelInternoField" prefHeight="30.0" prefWidth="350.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets right="25.0" />
-                           </VBox.margin>
-                        </TextField>
-                     </children>
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                  </VBox>
-               </children>
-            </HBox>
-            <HBox prefHeight="68.0" prefWidth="800.0">
-               <children>
-                  <VBox prefHeight="100.0" prefWidth="253.0">
-                     <children>
-                        <Label text="Data Agendada">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="27.0" />
-                           </VBox.margin>
-                        </Label>
-                        <DatePicker fx:id="dataAgendadaPicker" prefHeight="26.0" prefWidth="220.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                           <VBox.margin>
-                              <Insets left="28.0" />
-                           </VBox.margin>
-                        </DatePicker>
-                     </children>
-                  </VBox>
-                  <Region prefHeight="100.0" prefWidth="40.0" />
-                  <VBox prefHeight="100.0" prefWidth="222.0">
-                     <children>
-                        <Label text="Data Início">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </Label>
-                        <DatePicker fx:id="dataInicioPicker" prefHeight="26.0" prefWidth="220.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" />
-                     </children>
-                  </VBox>
-                  <Region prefHeight="200.0" prefWidth="40.0" />
-                  <VBox prefHeight="100.0" prefWidth="258.0">
-                     <children>
-                        <Label text="Data Fim">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </Label>
-                        <DatePicker fx:id="dataFimPicker" prefHeight="26.0" prefWidth="220.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                           <VBox.margin>
-                              <Insets right="25.0" />
-                           </VBox.margin>
-                        </DatePicker>
-                     </children>
-                  </VBox>
-               </children>
-            </HBox>
-            <HBox prefHeight="76.0" prefWidth="656.0">
-               <children>
-                  <VBox prefHeight="76.0" prefWidth="370.0">
-                     <children>
-                        <Label text="Responsável Interno">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="25.0" top="5.0" />
-                           </VBox.margin>
-                        </Label>
-                        <TextField fx:id="responsavelSecundarioField" prefHeight="30.0" prefWidth="350.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="25.0" />
-                           </VBox.margin>
-                        </TextField>
-                     </children>
-                  </VBox>
-                  <Region prefHeight="76.0" prefWidth="40.0" />
-                  <VBox prefHeight="76.0" prefWidth="380.0">
-                     <children>
-                        <Label text="Executado por">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets top="5.0" />
-                           </VBox.margin>
-                        </Label>
-                        <TextField fx:id="executadoPorField" prefHeight="30.0" prefWidth="350.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets right="25.0" />
-                           </VBox.margin>
-                        </TextField>
-                     </children>
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                  </VBox>
-               </children>
-            </HBox>
-            <HBox prefHeight="76.0" prefWidth="656.0">
-               <children>
-                  <VBox prefHeight="76.0" prefWidth="370.0">
-                     <children>
-                        <Label text="Valor Serviço">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="25.0" top="5.0" />
-                           </VBox.margin>
-                        </Label>
-                        <TextField fx:id="valorServicoField" prefHeight="30.0" prefWidth="350.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="25.0" />
-                           </VBox.margin>
-                        </TextField>
-                     </children>
-                  </VBox>
-                  <Region prefHeight="76.0" prefWidth="40.0" />
-                  <VBox prefHeight="76.0" prefWidth="380.0">
-                     <children>
-                        <Label text="Observações">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets top="5.0" />
-                           </VBox.margin>
-                        </Label>
-                        <TextField fx:id="observacoesField" prefHeight="30.0" prefWidth="350.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets right="25.0" />
-                           </VBox.margin>
-                        </TextField>
-                     </children>
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                  </VBox>
-               </children>
-            </HBox>
-            <HBox prefHeight="46.0" prefWidth="670.0">
-               <children>
-                  <Button mnemonicParsing="false" onAction="#onConfirmar" prefHeight="40.0" prefWidth="310.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Cadastrar" textFill="WHITE">
-                     <HBox.margin>
-                        <Insets left="60.0" />
-                     </HBox.margin>
+                  <Label prefHeight="52.0" prefWidth="449.0" text="Nova Ordem de Serviço" textFill="#00417e">
                      <font>
-                        <Font name="Ebrima Bold" size="18.0" />
+                        <Font name="Ebrima Bold" size="40.0" />
                      </font>
-                  </Button>
-                  <Region prefHeight="46.0" prefWidth="40.0" />
-                  <Button mnemonicParsing="false" onAction="#onCancelar" prefHeight="40.0" prefWidth="300.0" style="-fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5); -fx-background-color: white;" text="Cancelar">
-                     <HBox.margin>
-                        <Insets right="25.0" />
-                     </HBox.margin>
-                     <font>
-                        <Font name="Ebrima Bold" size="18.0" />
-                     </font>
-                  </Button>
+                     <VBox.margin>
+                        <Insets left="20.0" top="15.0" />
+                     </VBox.margin>
+                  </Label>
+                  <HBox prefHeight="76.0" prefWidth="656.0">
+                     <children>
+                        <VBox prefHeight="76.0" prefWidth="370.0">
+                           <children>
+                              <Label text="Cliente">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets left="25.0" top="5.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <TextField fx:id="clienteField" prefHeight="30.0" prefWidth="350.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets left="25.0" />
+                                 </VBox.margin>
+                              </TextField>
+                           </children>
+                        </VBox>
+                        <Region prefHeight="76.0" prefWidth="40.0" />
+                        <VBox prefHeight="76.0" prefWidth="380.0">
+                           <children>
+                              <Label text="Título">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets top="5.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <TextField fx:id="tituloField" prefHeight="30.0" prefWidth="350.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets right="25.0" />
+                                 </VBox.margin>
+                              </TextField>
+                           </children>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </VBox>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="15.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox prefHeight="76.0" prefWidth="656.0">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <children>
+                        <VBox prefHeight="76.0" prefWidth="370.0">
+                           <children>
+                              <Label text="Descrição">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets left="25.0" top="5.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <TextField fx:id="descricaoField" prefHeight="30.0" prefWidth="350.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets left="25.0" />
+                                 </VBox.margin>
+                              </TextField>
+                           </children>
+                        </VBox>
+                        <Region prefHeight="76.0" prefWidth="40.0" />
+                        <VBox prefHeight="76.0" prefWidth="380.0">
+                           <children>
+                              <Label text="Tipo Serviço">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets top="5.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <TextField fx:id="tipoServicoField" prefHeight="30.0" prefWidth="350.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets right="25.0" />
+                                 </VBox.margin>
+                              </TextField>
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+                  <HBox prefHeight="76.0" prefWidth="656.0">
+                     <children>
+                        <VBox layoutX="10.0" layoutY="10.0" prefHeight="76.0" prefWidth="370.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
+                           <children>
+                              <Label text="Status">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets left="25.0" top="5.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <TextField fx:id="statusField" prefHeight="30.0" prefWidth="350.0" style="-fx-background-radius: 5;">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets left="25.0" />
+                                 </VBox.margin>
+                              </TextField>
+                           </children>
+                        </VBox>
+                        <Region prefHeight="76.0" prefWidth="40.0" />
+                        <VBox prefHeight="76.0" prefWidth="380.0">
+                           <children>
+                              <Label text="Responsável Interno">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets top="5.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <TextField fx:id="responsavelInternoField" prefHeight="30.0" prefWidth="350.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets right="25.0" />
+                                 </VBox.margin>
+                              </TextField>
+                           </children>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </VBox>
+                     </children>
+                  </HBox>
+                  <HBox prefHeight="68.0" prefWidth="800.0">
+                     <children>
+                        <VBox prefHeight="100.0" prefWidth="253.0">
+                           <children>
+                              <Label text="Data Agendada">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets left="27.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <DatePicker fx:id="dataAgendadaPicker" prefHeight="26.0" prefWidth="220.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
+                                 <VBox.margin>
+                                    <Insets left="28.0" />
+                                 </VBox.margin>
+                              </DatePicker>
+                           </children>
+                        </VBox>
+                        <Region prefHeight="100.0" prefWidth="40.0" />
+                        <VBox prefHeight="100.0" prefWidth="222.0">
+                           <children>
+                              <Label text="Data Início">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                              <DatePicker fx:id="dataInicioPicker" prefHeight="26.0" prefWidth="220.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" />
+                           </children>
+                        </VBox>
+                        <Region prefHeight="200.0" prefWidth="40.0" />
+                        <VBox prefHeight="100.0" prefWidth="258.0">
+                           <children>
+                              <Label text="Data Fim">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                              <DatePicker fx:id="dataFimPicker" prefHeight="26.0" prefWidth="220.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
+                                 <VBox.margin>
+                                    <Insets right="25.0" />
+                                 </VBox.margin>
+                              </DatePicker>
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+                  <HBox prefHeight="76.0" prefWidth="656.0">
+                     <children>
+                        <VBox prefHeight="76.0" prefWidth="370.0">
+                           <children>
+                              <Label text="Responsável Interno">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets left="25.0" top="5.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <TextField fx:id="responsavelSecundarioField" prefHeight="30.0" prefWidth="350.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets left="25.0" />
+                                 </VBox.margin>
+                              </TextField>
+                           </children>
+                        </VBox>
+                        <Region prefHeight="76.0" prefWidth="40.0" />
+                        <VBox prefHeight="76.0" prefWidth="380.0">
+                           <children>
+                              <Label text="Executado por">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets top="5.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <TextField fx:id="executadoPorField" prefHeight="30.0" prefWidth="350.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets right="25.0" />
+                                 </VBox.margin>
+                              </TextField>
+                           </children>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </VBox>
+                     </children>
+                  </HBox>
+                  <HBox prefHeight="76.0" prefWidth="656.0">
+                     <children>
+                        <VBox prefHeight="76.0" prefWidth="370.0">
+                           <children>
+                              <Label text="Valor Serviço">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets left="25.0" top="5.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <TextField fx:id="valorServicoField" prefHeight="30.0" prefWidth="350.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets left="25.0" />
+                                 </VBox.margin>
+                              </TextField>
+                           </children>
+                        </VBox>
+                        <Region prefHeight="76.0" prefWidth="40.0" />
+                        <VBox prefHeight="76.0" prefWidth="380.0">
+                           <children>
+                              <Label text="Observações">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets top="5.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <TextField fx:id="observacoesField" prefHeight="30.0" prefWidth="350.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets right="25.0" />
+                                 </VBox.margin>
+                              </TextField>
+                           </children>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </VBox>
+                     </children>
+                  </HBox>
+                  <VBox prefHeight="270.0" prefWidth="790.0">
+                     <children>
+                        <Label text="Inserir Assinatura da Ordem de Serviço">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets left="50.0" top="15.0" />
+                           </VBox.margin>
+                        </Label>
+                        <StackPane prefHeight="205.0" prefWidth="700.0" style="-fx-border-color: #B0B0B0; -fx-border-radius: 5; -fx-border-width: 2; -fx-border-style: segments(10, 10); -fx-background-radius: 5; -fx-background-color: #FAFAFA; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
+                           <VBox.margin>
+                              <Insets left="40.0" right="50.0" top="10.0" />
+                           </VBox.margin>
+                           <children>
+                              <ImageView fitHeight="205.0" fitWidth="700.0" pickOnBounds="true" preserveRatio="true" />
+                              <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" StackPane.alignment="CENTER">
+                                 <children>
+                                    <Label alignment="CENTER" text="Arraste a imagem aqui" textFill="#595959">
+                                       <font>
+                                          <Font name="Ebrima Bold" size="14.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets left="270.0" top="40.0" />
+                                       </VBox.margin>
+                                    </Label>
+                                    <Label alignment="CENTER" text="📰​​" textFill="#b7b7b7">
+                                       <VBox.margin>
+                                          <Insets left="300.0" top="-15.0" />
+                                       </VBox.margin>
+                                       <font>
+                                          <Font name="Ebrima Bold" size="100.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </StackPane>
+                     </children>
+                  </VBox>
+                  <HBox prefHeight="46.0" prefWidth="670.0">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#onConfirmar" prefHeight="40.0" prefWidth="310.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Cadastrar" textFill="WHITE">
+                           <HBox.margin>
+                              <Insets left="60.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font name="Ebrima Bold" size="18.0" />
+                           </font>
+                        </Button>
+                        <Region prefHeight="46.0" prefWidth="40.0" />
+                        <Button mnemonicParsing="false" onAction="#onCancelar" prefHeight="40.0" prefWidth="300.0" style="-fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5); -fx-background-color: white;" text="Cancelar">
+                           <HBox.margin>
+                              <Insets right="25.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font name="Ebrima Bold" size="18.0" />
+                           </font>
+                        </Button>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="20.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <Region prefHeight="30.0" prefWidth="805.0" />
                </children>
-               <VBox.margin>
-                  <Insets top="15.0" />
-               </VBox.margin>
-            </HBox>
+            </VBox>
          </children>
-      </VBox>
-   </children>
-</AnchorPane>
+      </AnchorPane>
+   </content>
+</ScrollPane>
