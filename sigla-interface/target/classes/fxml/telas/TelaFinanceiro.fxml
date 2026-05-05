@@ -28,7 +28,7 @@
                            <children>
                               <Label text="Financeiro" textFill="#00417e">
                                  <font>
-                                    <Font name="Ebrima Bold" size="40.0" />
+                                    <Font name="Ebrima Bold" size="50.0" />
                                  </font>
                                  <VBox.margin>
                                     <Insets left="28.0" top="18.0" />
@@ -152,6 +152,22 @@
                            </font>
                         </Button>
                         <Button mnemonicParsing="false" onAction="#onPendentes" prefHeight="30.0" prefWidth="135.0" style="-fx-background-radius: 5;" text="Pendentes" textFill="#484848">
+                           <HBox.margin>
+                              <Insets left="5.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font name="Ebrima Bold" size="15.0" />
+                           </font>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#onMarcarPago" prefHeight="30.0" prefWidth="135.0" style="-fx-background-radius: 5; -fx-background-color: #178c1b;" text="Marcar pago" textFill="WHITE">
+                           <HBox.margin>
+                              <Insets left="20.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font name="Ebrima Bold" size="15.0" />
+                           </font>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#onCancelarTransacao" prefHeight="30.0" prefWidth="135.0" style="-fx-background-radius: 5; -fx-background-color: #a83232;" text="Cancelar" textFill="WHITE">
                            <HBox.margin>
                               <Insets left="5.0" />
                            </HBox.margin>

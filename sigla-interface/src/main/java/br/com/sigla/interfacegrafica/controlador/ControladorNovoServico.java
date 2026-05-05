@@ -8,6 +8,7 @@ import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import br.com.sigla.interfacegrafica.util.UtilJanela;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -39,7 +40,7 @@ public class ControladorNovoServico {
     @FXML
     private DatePicker dataFimPicker;
     @FXML
-    private DatePicker diaInteiroPicker;
+    private CheckBox diaInteiroCheck;
     @FXML
     private TextField statusField;
     @FXML
@@ -96,7 +97,7 @@ public class ControladorNovoServico {
                     "",
                     dataInicio.atStartOfDay(),
                     dataFim.atTime(23, 59),
-                    diaInteiroPicker != null && diaInteiroPicker.getValue() != null,
+                    diaInteiroCheck != null && diaInteiroCheck.isSelected(),
                     parseEnum(VisitaAgendada.VisitStatus.class, statusField == null ? "" : statusField.getText(), VisitaAgendada.VisitStatus.SCHEDULED),
                     parseEnum(VisitaAgendada.VisitPriority.class, prioridadeField == null ? "" : prioridadeField.getText(), VisitaAgendada.VisitPriority.NORMAL),
                     onlyUuid(responsavelField == null ? "" : responsavelField.getText()),
@@ -121,7 +122,7 @@ public class ControladorNovoServico {
         }
         String titulo = tituloField == null ? "" : tituloField.getText().trim();
         String texto = titulo.isBlank() ? descricao : titulo + " - " + descricao;
-        return diaInteiroPicker != null && diaInteiroPicker.getValue() != null ? texto + " | Dia inteiro" : texto;
+        return diaInteiroCheck != null && diaInteiroCheck.isSelected() ? texto + " | Dia inteiro" : texto;
     }
 
     private OpcaoId requiredOption(OpcaoId value, String message) {

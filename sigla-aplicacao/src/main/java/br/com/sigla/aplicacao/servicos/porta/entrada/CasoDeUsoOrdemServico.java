@@ -10,6 +10,10 @@ public interface CasoDeUsoOrdemServico {
 
     OrdemServico create(CreateOrdemServicoCommand command);
 
+    OrdemServico conclude(String id);
+
+    OrdemServico cancel(String id);
+
     List<OrdemServico> listAll();
 
     record CreateOrdemServicoCommand(

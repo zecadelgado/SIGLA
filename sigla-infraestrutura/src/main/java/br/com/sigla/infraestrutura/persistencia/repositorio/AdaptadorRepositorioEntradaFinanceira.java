@@ -58,6 +58,13 @@ public class AdaptadorRepositorioEntradaFinanceira implements RepositorioEntrada
     }
 
     @Override
+    public Optional<EntradaFinanceira> findById(String id) {
+        return findAll().stream()
+                .filter(entry -> entry.id().equals(id))
+                .findFirst();
+    }
+
+    @Override
     public List<EntradaFinanceira> findAll() {
         return repository.findByTipo("ENTRY").stream()
                 .map(entity -> new EntradaFinanceira(
@@ -147,6 +154,11 @@ class InMemoryAdaptadorRepositorioEntradaFinanceira implements RepositorioEntrad
     @Override
     public void save(EntradaFinanceira entry) {
         storage.put(entry.id(), entry);
+    }
+
+    @Override
+    public Optional<EntradaFinanceira> findById(String id) {
+        return Optional.ofNullable(storage.get(id));
     }
 
     @Override

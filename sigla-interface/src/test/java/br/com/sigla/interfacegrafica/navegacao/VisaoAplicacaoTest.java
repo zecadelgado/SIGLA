@@ -10,13 +10,13 @@ class VisaoAplicacaoTest {
 
     @Test
     void shouldExposeFxmlPath() {
-        assertEquals("/fxml/telas/TelaPrincipal.fxml", VisaoAplicacao.DASHBOARD.fxmlPath());
+        assertEquals("/fxml/telas/TelaDashboard.fxml", VisaoAplicacao.DASHBOARD.fxmlPath());
         assertTrue(VisaoAplicacao.CUSTOMERS.fxmlPath().startsWith("/fxml/telas/"));
     }
 
     @Test
     void shouldKeepCanonicalRoutesInsideTelaFolder() {
-        assertEquals(16, VisaoAplicacao.values().length);
+        assertEquals(20, VisaoAplicacao.values().length);
         for (VisaoAplicacao view : VisaoAplicacao.values()) {
             assertTrue(view.fxmlPath().startsWith("/fxml/telas/"));
         }

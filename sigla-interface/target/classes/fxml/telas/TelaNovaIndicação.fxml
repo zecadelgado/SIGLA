@@ -110,7 +110,7 @@
                               <Insets top="5.0" />
                            </VBox.margin>
                         </Label>
-                        <DatePicker fx:id="dataPicker" prefHeight="30.0" prefWidth="290.0">
+                        <DatePicker fx:id="dataPicker" prefHeight="30.0" prefWidth="290.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
                            <VBox.margin>
                               <Insets right="25.0" />
                            </VBox.margin>

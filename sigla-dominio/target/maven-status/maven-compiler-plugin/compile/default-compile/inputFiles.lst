@@ -10,4 +10,6 @@ D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\financeiro\PlanoParcel
 D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\funcionarios\Funcionario.java
 D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\notificacoes\Notificacao.java
 D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\potenciaisclientes\PotencialCliente.java
+D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\servicos\OrdemServico.java
 D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\servicos\ServicoPrestado.java
+D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\usuarios\Usuario.java

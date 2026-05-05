@@ -7,6 +7,7 @@ import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import br.com.sigla.interfacegrafica.util.UtilJanela;
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.springframework.stereotype.Component;
@@ -50,6 +51,8 @@ public class ControladorNovoCadastro {
     @FXML
     private TextField observacoesField;
     @FXML
+    private ComboBox<String> tipoCombo;
+    @FXML
     private Label feedbackLabel;
 
     public ControladorNovoCadastro(
@@ -64,6 +67,10 @@ public class ControladorNovoCadastro {
 
     @FXML
     public void initialize() {
+        if (tipoCombo != null) {
+            tipoCombo.getItems().setAll("CLIENTE", "FUNCIONARIO");
+            tipoCombo.getSelectionModel().select("CLIENTE");
+        }
         setFeedback("");
     }
 
@@ -121,19 +128,22 @@ public class ControladorNovoCadastro {
         if (nome.isBlank()) {
             throw new IllegalArgumentException("Informe o nome do funcionario.");
         }
-        String id = "EMP-" + System.currentTimeMillis();
+        String contato = telefoneField.getText().isBlank() ? emailField.getText() : telefoneField.getText();
+        if (contato == null || contato.isBlank()) {
+            throw new IllegalArgumentException("Informe telefone ou e-mail do funcionario.");
+        }
+        String id = UUID.randomUUID().toString();
         casoDeUsoFuncionario.register(new CasoDeUsoFuncionario.RegisterFuncionarioCommand(
                 id,
                 nome,
                 "Equipe",
-                telefoneField.getText().isBlank() ? emailField.getText() : telefoneField.getText(),
+                contato,
                 Funcionario.FuncionarioStatus.ACTIVE
         ));
     }
 
     private boolean isCadastroFuncionario() {
-        return (razaoSocialField.getText() == null || razaoSocialField.getText().isBlank())
-                && (cnpjField.getText() == null || cnpjField.getText().isBlank());
+        return tipoCombo != null && "FUNCIONARIO".equals(tipoCombo.getValue());
     }
 
     private void setFeedback(String message) {

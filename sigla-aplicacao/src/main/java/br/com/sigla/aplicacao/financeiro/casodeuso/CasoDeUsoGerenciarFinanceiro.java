@@ -136,6 +136,91 @@ public class CasoDeUsoGerenciarFinanceiro implements CasoDeUsoFinanceiro {
     }
 
     @Override
+    public void markPaid(String transactionId, LocalDate paymentDate) {
+        LocalDate resolvedPaymentDate = paymentDate == null ? LocalDate.now() : paymentDate;
+        EntradaFinanceira entry = entryRepository.findById(transactionId).orElse(null);
+        if (entry != null) {
+            entryRepository.save(new EntradaFinanceira(
+                    entry.id(),
+                    entry.entryType(),
+                    entry.amount(),
+                    entry.entryDate(),
+                    entry.customerId(),
+                    entry.serviceProvidedId(),
+                    entry.description(),
+                    entry.category(),
+                    entry.dueDate(),
+                    resolvedPaymentDate,
+                    entry.paymentMethod(),
+                    entry.createdBy(),
+                    entry.orderReference(),
+                    EntradaFinanceira.EntryStatus.RECEIVED
+            ));
+            return;
+        }
+
+        DespesaFinanceira expense = expenseRepository.findById(transactionId)
+                .orElseThrow(() -> new IllegalArgumentException("Transacao nao encontrada."));
+        expenseRepository.save(new DespesaFinanceira(
+                expense.id(),
+                expense.category(),
+                expense.amount(),
+                expense.expenseDate(),
+                expense.responsible(),
+                expense.description(),
+                expense.dueDate(),
+                resolvedPaymentDate,
+                expense.paymentMethod(),
+                expense.createdBy(),
+                expense.orderReference(),
+                DespesaFinanceira.ExpenseStatus.PAID,
+                expense.notes()
+        ));
+    }
+
+    @Override
+    public void cancel(String transactionId) {
+        EntradaFinanceira entry = entryRepository.findById(transactionId).orElse(null);
+        if (entry != null) {
+            entryRepository.save(new EntradaFinanceira(
+                    entry.id(),
+                    entry.entryType(),
+                    entry.amount(),
+                    entry.entryDate(),
+                    entry.customerId(),
+                    entry.serviceProvidedId(),
+                    entry.description(),
+                    entry.category(),
+                    entry.dueDate(),
+                    entry.paymentDate(),
+                    entry.paymentMethod(),
+                    entry.createdBy(),
+                    entry.orderReference(),
+                    EntradaFinanceira.EntryStatus.CANCELLED
+            ));
+            return;
+        }
+
+        DespesaFinanceira expense = expenseRepository.findById(transactionId)
+                .orElseThrow(() -> new IllegalArgumentException("Transacao nao encontrada."));
+        expenseRepository.save(new DespesaFinanceira(
+                expense.id(),
+                expense.category(),
+                expense.amount(),
+                expense.expenseDate(),
+                expense.responsible(),
+                expense.description(),
+                expense.dueDate(),
+                expense.paymentDate(),
+                expense.paymentMethod(),
+                expense.createdBy(),
+                expense.orderReference(),
+                DespesaFinanceira.ExpenseStatus.CANCELLED,
+                expense.notes()
+        ));
+    }
+
+    @Override
     public List<EntradaFinanceira> listEntries() {
         return entryRepository.findAll();
     }
@@ -198,6 +283,7 @@ public class CasoDeUsoGerenciarFinanceiro implements CasoDeUsoFinanceiro {
                 .map(EntradaFinanceira::amount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal expenses = expenseRepository.findAll().stream()
+                .filter(expense -> expense.status() == DespesaFinanceira.ExpenseStatus.PAID)
                 .map(DespesaFinanceira::amount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         return entries.subtract(expenses);

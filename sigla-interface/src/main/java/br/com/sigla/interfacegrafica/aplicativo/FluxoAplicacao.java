@@ -54,7 +54,7 @@ public class FluxoAplicacao {
     }
 
     public void showShell() {
-        showView(VisaoAplicacao.DASHBOARD);
+        showView(VisaoAplicacao.SHELL);
     }
 
     public void showView(VisaoAplicacao view) {

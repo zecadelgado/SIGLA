@@ -27,7 +27,14 @@ D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\notificacoes\porta
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\potenciaisclientes\casodeuso\CasoDeUsoGerenciarPotencialCliente.java
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\potenciaisclientes\porta\entrada\CasoDeUsoPotencialCliente.java
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\potenciaisclientes\porta\saida\RepositorioPotencialCliente.java
+D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\servicos\casodeuso\CasoDeUsoGerenciarOrdemServico.java
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\servicos\casodeuso\CasoDeUsoRegistrarServicoPrestado.java
+D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\servicos\porta\entrada\CasoDeUsoOrdemServico.java
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\servicos\porta\entrada\CasoDeUsoServicoPrestado.java
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\servicos\porta\saida\PortaArmazenamentoAnexo.java
+D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\servicos\porta\saida\RepositorioOrdemServico.java
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\servicos\porta\saida\RepositorioServicoPrestado.java
+D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\usuarios\casodeuso\CasoDeUsoGerenciarUsuario.java
+D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\usuarios\porta\entrada\CasoDeUsoUsuario.java
+D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\usuarios\porta\saida\RepositorioUsuario.java
+D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\usuarios\porta\saida\ServicoSenhaUsuario.java

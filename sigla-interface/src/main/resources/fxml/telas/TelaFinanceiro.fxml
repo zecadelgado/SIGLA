@@ -159,6 +159,22 @@
                               <Font name="Ebrima Bold" size="15.0" />
                            </font>
                         </Button>
+                        <Button mnemonicParsing="false" onAction="#onMarcarPago" prefHeight="30.0" prefWidth="135.0" style="-fx-background-radius: 5; -fx-background-color: #178c1b;" text="Marcar pago" textFill="WHITE">
+                           <HBox.margin>
+                              <Insets left="20.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font name="Ebrima Bold" size="15.0" />
+                           </font>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#onCancelarTransacao" prefHeight="30.0" prefWidth="135.0" style="-fx-background-radius: 5; -fx-background-color: #a83232;" text="Cancelar" textFill="WHITE">
+                           <HBox.margin>
+                              <Insets left="5.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font name="Ebrima Bold" size="15.0" />
+                           </font>
+                        </Button>
                      </children>
                      <padding>
                         <Insets bottom="15.0" right="20.0" top="15.0" />

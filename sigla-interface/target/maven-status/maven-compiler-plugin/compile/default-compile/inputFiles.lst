@@ -30,6 +30,7 @@ D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\controlador
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\controlador\ControladorOrdemServico.java
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\controlador\ControladorPotenciaisClientes.java
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\controlador\ControladorServicos.java
+D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\controlador\ControladorUsuarios.java
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\formatador\FormatadorMascaraCpf.java
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\inicializacao\AplicacaoSpringSigla.java
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\inicializacao\InicializadorDadosDesenvolvimento.java

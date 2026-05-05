@@ -1,6 +1,7 @@
 package br.com.sigla.interfacegrafica.controlador;
 
 import br.com.sigla.aplicacao.financeiro.porta.entrada.CasoDeUsoFinanceiro;
+import br.com.sigla.interfacegrafica.aplicativo.SessaoLocalAplicacao;
 import br.com.sigla.interfacegrafica.consulta.ServicoConsultaReferencias;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
@@ -26,6 +27,7 @@ public class ControladorNovaTransacao {
     private final CasoDeUsoFinanceiro casoDeUsoFinanceiro;
     private final ServicoConsultaReferencias servicoConsultaReferencias;
     private final GerenciadorNavegacao gerenciadorNavegacao;
+    private final SessaoLocalAplicacao sessaoLocalAplicacao;
 
     @FXML
     private ComboBox<CasoDeUsoFinanceiro.TransactionType> tipoCombo;
@@ -63,11 +65,13 @@ public class ControladorNovaTransacao {
     public ControladorNovaTransacao(
             CasoDeUsoFinanceiro casoDeUsoFinanceiro,
             ServicoConsultaReferencias servicoConsultaReferencias,
-            GerenciadorNavegacao gerenciadorNavegacao
+            GerenciadorNavegacao gerenciadorNavegacao,
+            SessaoLocalAplicacao sessaoLocalAplicacao
     ) {
         this.casoDeUsoFinanceiro = casoDeUsoFinanceiro;
         this.servicoConsultaReferencias = servicoConsultaReferencias;
         this.gerenciadorNavegacao = gerenciadorNavegacao;
+        this.sessaoLocalAplicacao = sessaoLocalAplicacao;
     }
 
     @FXML
@@ -81,6 +85,9 @@ public class ControladorNovaTransacao {
         }
         if (statusField != null && statusField.getText().isBlank()) {
             statusField.setText(CasoDeUsoFinanceiro.TransactionStatus.PENDING.name());
+        }
+        if (criadoPorField != null && criadoPorField.getText().isBlank() && sessaoLocalAplicacao.usuarioAtual() != null) {
+            criadoPorField.setText(sessaoLocalAplicacao.usuarioAtual().id());
         }
         setFeedback("");
     }
@@ -105,7 +112,7 @@ public class ControladorNovaTransacao {
                     formaPagamentoField.getText(),
                     parseBoolean(parceladoField == null ? "" : parceladoField.getText()),
                     parcelasField.getText().isBlank() ? 1 : Integer.parseInt(parcelasField.getText()),
-                    criadoPorField == null ? "" : criadoPorField.getText(),
+                    resolveUsuarioAtual(),
                     observacoesField == null ? "" : observacoesField.getText(),
                     parseEnum(CasoDeUsoFinanceiro.TransactionStatus.class, statusField == null ? "" : statusField.getText(), CasoDeUsoFinanceiro.TransactionStatus.PENDING)
             ));
@@ -125,5 +132,13 @@ public class ControladorNovaTransacao {
         if (feedbackLabel != null) {
             feedbackLabel.setText(message == null ? "" : message);
         }
+    }
+
+    private String resolveUsuarioAtual() {
+        String digitado = criadoPorField == null ? "" : criadoPorField.getText();
+        if (digitado != null && !digitado.isBlank()) {
+            return digitado.trim();
+        }
+        return sessaoLocalAplicacao.usuarioAtual() == null ? "" : sessaoLocalAplicacao.usuarioAtual().id();
     }
 }

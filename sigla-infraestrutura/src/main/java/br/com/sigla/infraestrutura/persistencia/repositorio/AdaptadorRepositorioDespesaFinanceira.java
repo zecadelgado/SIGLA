@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -52,6 +53,13 @@ public class AdaptadorRepositorioDespesaFinanceira implements RepositorioDespesa
         entity.setCriadoPor(PersistenciaIds.toUuidIfValid(expense.createdBy()));
         entity.setOrdemServicoId(PersistenciaIds.toUuid(expense.orderReference()));
         repository.save(entity);
+    }
+
+    @Override
+    public Optional<DespesaFinanceira> findById(String id) {
+        return findAll().stream()
+                .filter(expense -> expense.id().equals(id))
+                .findFirst();
     }
 
     @Override
@@ -142,6 +150,11 @@ class InMemoryAdaptadorRepositorioDespesaFinanceira implements RepositorioDespes
     @Override
     public void save(DespesaFinanceira expense) {
         storage.put(expense.id(), expense);
+    }
+
+    @Override
+    public Optional<DespesaFinanceira> findById(String id) {
+        return Optional.ofNullable(storage.get(id));
     }
 
     @Override

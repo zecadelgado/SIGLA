@@ -18,6 +18,10 @@ public interface CasoDeUsoFinanceiro {
 
     void registerTransaction(RegisterTransacaoFinanceiraCommand command);
 
+    void markPaid(String transactionId, LocalDate paymentDate);
+
+    void cancel(String transactionId);
+
     List<EntradaFinanceira> listEntries();
 
     List<DespesaFinanceira> listExpenses();

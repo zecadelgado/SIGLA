@@ -3,11 +3,11 @@ package br.com.sigla.interfacegrafica.controlador;
 import br.com.sigla.aplicacao.clientes.porta.entrada.CasoDeUsoCliente;
 import br.com.sigla.aplicacao.financeiro.porta.entrada.CasoDeUsoFinanceiro;
 import br.com.sigla.aplicacao.potenciaisclientes.porta.entrada.CasoDeUsoPotencialCliente;
-import br.com.sigla.aplicacao.servicos.porta.entrada.CasoDeUsoServicoPrestado;
 import br.com.sigla.dominio.clientes.Cliente;
 import br.com.sigla.dominio.potenciaisclientes.PotencialCliente;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorData;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorMoeda;
+import br.com.sigla.interfacegrafica.consulta.ServicoConsultaOrdemServico;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -27,8 +27,8 @@ public class ControladorClientes extends ControladorComMenuPrincipal {
 
     private final CasoDeUsoCliente casoDeUsoCliente;
     private final CasoDeUsoPotencialCliente casoDeUsoPotencialCliente;
-    private final CasoDeUsoServicoPrestado casoDeUsoServicoPrestado;
     private final CasoDeUsoFinanceiro casoDeUsoFinanceiro;
+    private final ServicoConsultaOrdemServico servicoConsultaOrdemServico;
     private final GerenciadorNavegacao gerenciadorNavegacao;
     private final ApresentadorMoeda apresentadorMoeda;
     private final ApresentadorData apresentadorData;
@@ -69,8 +69,8 @@ public class ControladorClientes extends ControladorComMenuPrincipal {
     public ControladorClientes(
             CasoDeUsoCliente casoDeUsoCliente,
             CasoDeUsoPotencialCliente casoDeUsoPotencialCliente,
-            CasoDeUsoServicoPrestado casoDeUsoServicoPrestado,
             CasoDeUsoFinanceiro casoDeUsoFinanceiro,
+            ServicoConsultaOrdemServico servicoConsultaOrdemServico,
             GerenciadorNavegacao gerenciadorNavegacao,
             ApresentadorMoeda apresentadorMoeda,
             ApresentadorData apresentadorData
@@ -78,8 +78,8 @@ public class ControladorClientes extends ControladorComMenuPrincipal {
         super(gerenciadorNavegacao);
         this.casoDeUsoCliente = casoDeUsoCliente;
         this.casoDeUsoPotencialCliente = casoDeUsoPotencialCliente;
-        this.casoDeUsoServicoPrestado = casoDeUsoServicoPrestado;
         this.casoDeUsoFinanceiro = casoDeUsoFinanceiro;
+        this.servicoConsultaOrdemServico = servicoConsultaOrdemServico;
         this.gerenciadorNavegacao = gerenciadorNavegacao;
         this.apresentadorMoeda = apresentadorMoeda;
         this.apresentadorData = apresentadorData;
@@ -112,8 +112,8 @@ public class ControladorClientes extends ControladorComMenuPrincipal {
                         transaction -> transaction.customerId() == null ? "" : transaction.customerId(),
                         Collectors.reducing(BigDecimal.ZERO, CasoDeUsoFinanceiro.TransacaoFinanceiraView::amount, BigDecimal::add)
                 ));
-        Map<String, Long> servicosPorCliente = casoDeUsoServicoPrestado.listAll().stream()
-                .collect(Collectors.groupingBy(service -> service.customerId(), Collectors.counting()));
+        Map<String, Long> servicosPorCliente = servicoConsultaOrdemServico.listAll().stream()
+                .collect(Collectors.groupingBy(ServicoConsultaOrdemServico.OrdemServicoView::customerId, Collectors.counting()));
 
         if (totalClientesLabel != null) {
             totalClientesLabel.setText(String.valueOf(clientes.size()));

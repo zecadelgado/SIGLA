@@ -99,11 +99,11 @@
                <children>
                   <HBox prefHeight="106.0" prefWidth="1282.0">
                      <children>
-                        <VBox prefHeight="106.0" prefWidth="413.0">
+                        <VBox prefHeight="118.0" prefWidth="504.0">
                            <children>
-                              <Label prefHeight="52.0" prefWidth="381.0" text="Serviços Prestados" textFill="#00417e">
+                              <Label prefHeight="66.0" prefWidth="460.0" text="Serviços Prestados" textFill="#00417e">
                                  <font>
-                                    <Font name="Ebrima Bold" size="40.0" />
+                                    <Font name="Ebrima Bold" size="50.0" />
                                  </font>
                                  <VBox.margin>
                                     <Insets left="30.0" top="32.0" />
@@ -119,7 +119,7 @@
                               </Label>
                            </children>
                         </VBox>
-                        <Region prefHeight="106.0" prefWidth="619.0" />
+                        <Region prefHeight="118.0" prefWidth="542.0" />
                         <Button mnemonicParsing="false" onAction="#onNovoServico" prefHeight="42.0" prefWidth="214.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="+ Novo Serviço" textFill="WHITE">
                            <font>
                               <Font name="Ebrima Bold" size="22.0" />

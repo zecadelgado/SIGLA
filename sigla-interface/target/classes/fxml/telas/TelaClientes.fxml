@@ -106,9 +106,9 @@
                            <children>
                               <VBox prefHeight="102.0" prefWidth="603.0">
                                  <children>
-                                    <Label prefHeight="52.0" prefWidth="358.0" text="Gestão de Clientes" textFill="#00417e">
+                                    <Label prefHeight="66.0" prefWidth="440.0" text="Gestão de Clientes" textFill="#00417e">
                                        <font>
-                                          <Font name="Ebrima Bold" size="40.0" />
+                                          <Font name="Ebrima Bold" size="50.0" />
                                        </font>
                                        <VBox.margin>
                                           <Insets left="30.0" top="30.0" />
@@ -124,7 +124,7 @@
                                     </Label>
                                  </children>
                               </VBox>
-                              <Region prefHeight="102.0" prefWidth="448.0" />
+                              <Region prefHeight="116.0" prefWidth="413.0" />
                               <Button mnemonicParsing="false" onAction="#onNovaIndicacao" prefHeight="46.0" prefWidth="202.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="+ Nova Indicação" textFill="WHITE">
                                  <font>
                                     <Font name="Ebrima Bold" size="17.0" />

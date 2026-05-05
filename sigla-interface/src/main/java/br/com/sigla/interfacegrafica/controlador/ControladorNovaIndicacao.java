@@ -13,6 +13,7 @@ import javafx.scene.control.TextField;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.parseEnum;
 import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.resolveOpcional;
@@ -64,7 +65,7 @@ public class ControladorNovaIndicacao {
             var cliente = resolveOpcional(servicoConsultaReferencias.clientes(), clienteField == null ? "" : clienteField.getText());
             String customerId = cliente == null ? "" : cliente.id();
             casoDeUsoPotencialCliente.register(new CasoDeUsoPotencialCliente.RegisterPotencialClienteCommand(
-                    "LEAD-" + System.currentTimeMillis(),
+                    UUID.randomUUID().toString(),
                     nomeField.getText(),
                     telefoneField.getText(),
                     "INDICACAO:" + customerId,

@@ -113,6 +113,14 @@
                         <Insets top="20.0" />
                      </VBox.margin>
                   </VBox>
+                  <Label fx:id="errorLabel" textFill="#ffcccc" wrapText="true">
+                     <VBox.margin>
+                        <Insets left="45.0" right="45.0" top="4.0" />
+                     </VBox.margin>
+                     <font>
+                        <Font name="Ebrima Bold" size="13.0" />
+                     </font>
+                  </Label>
                </children>
                <VBox.margin>
                   <Insets top="15.0" />
@@ -138,7 +146,7 @@
                   <Insets bottom="5.0" top="5.0" />
                </padding>
             </HBox>
-            <HBox prefHeight="20.0" prefWidth="670.0">
+            <HBox managed="false" prefHeight="20.0" prefWidth="670.0" visible="false">
                <children>
                   <Region prefHeight="200.0" prefWidth="200.0" />
                   <Label text="Não tem uma conta?" textFill="WHITE">
@@ -158,10 +166,10 @@
                   <Insets top="15.0" />
                </VBox.margin>
             </HBox>
-            <HBox prefHeight="46.0" prefWidth="670.0">
+            <HBox managed="false" prefHeight="46.0" prefWidth="670.0" visible="false">
                <children>
                   <Region prefHeight="200.0" prefWidth="200.0" />
-                  <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onLogin" prefWidth="310.0" style="-fx-background-color: #94cbff; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Cradastre-se" textFill="WHITE">
+                  <Button alignment="CENTER" contentDisplay="CENTER" disable="true" managed="false" mnemonicParsing="false" prefWidth="310.0" style="-fx-background-color: #94cbff; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Cadastro administrado" textFill="WHITE" visible="false">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>

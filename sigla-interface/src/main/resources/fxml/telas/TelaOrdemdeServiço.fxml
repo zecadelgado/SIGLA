@@ -257,13 +257,27 @@
                               </ComboBox>
                            </children>
                         </VBox>
-                        <VBox prefHeight="66.0" prefWidth="250.0">
+                        <VBox prefHeight="98.0" prefWidth="250.0" spacing="6.0">
                            <children>
                                <Button mnemonicParsing="false" onAction="#onNovaOrdem" prefHeight="46.0" prefWidth="237.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 5;" text="+ Nova Ordem de Serviço" textFill="WHITE">
                                  <font>
                                     <Font name="Ebrima Bold" size="17.0" />
                                  </font>
                               </Button>
+                              <HBox spacing="6.0">
+                                 <children>
+                                    <Button mnemonicParsing="false" onAction="#onConcluirOrdem" prefHeight="28.0" prefWidth="115.0" style="-fx-background-color: #178c1b; -fx-background-radius: 5;" text="Concluir" textFill="WHITE">
+                                       <font>
+                                          <Font name="Ebrima Bold" size="13.0" />
+                                       </font>
+                                    </Button>
+                                    <Button mnemonicParsing="false" onAction="#onCancelarOrdem" prefHeight="28.0" prefWidth="115.0" style="-fx-background-color: #a83232; -fx-background-radius: 5;" text="Cancelar" textFill="WHITE">
+                                       <font>
+                                          <Font name="Ebrima Bold" size="13.0" />
+                                       </font>
+                                    </Button>
+                                 </children>
+                              </HBox>
                            </children>
                            <HBox.margin>
                               <Insets bottom="10.0" left="5.0" top="10.0" />

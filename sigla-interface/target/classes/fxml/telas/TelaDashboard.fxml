@@ -16,7 +16,7 @@
                 <Label text="Visao rapida do que importa hoje: clientes, contratos, visitas, caixa e alertas." styleClass="screen-subtitle" wrapText="true"/>
             </children>
         </VBox>
-        <GridPane styleClass="metric-grid">
+        <GridPane hgap="16.0" vgap="16.0" styleClass="metric-grid">
             <columnConstraints>
                 <ColumnConstraints percentWidth="25"/>
                 <ColumnConstraints percentWidth="25"/>

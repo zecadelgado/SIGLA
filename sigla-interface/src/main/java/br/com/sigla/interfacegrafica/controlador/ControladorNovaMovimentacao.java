@@ -2,6 +2,7 @@ package br.com.sigla.interfacegrafica.controlador;
 
 import br.com.sigla.aplicacao.estoque.porta.entrada.CasoDeUsoEstoque;
 import br.com.sigla.dominio.estoque.ItemEstoque;
+import br.com.sigla.interfacegrafica.aplicativo.SessaoLocalAplicacao;
 import br.com.sigla.interfacegrafica.consulta.ServicoConsultaReferencias;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
@@ -24,6 +25,7 @@ public class ControladorNovaMovimentacao {
     private final CasoDeUsoEstoque casoDeUsoEstoque;
     private final ServicoConsultaReferencias servicoConsultaReferencias;
     private final GerenciadorNavegacao gerenciadorNavegacao;
+    private final SessaoLocalAplicacao sessaoLocalAplicacao;
 
     @FXML
     private TextField produtoField;
@@ -51,17 +53,22 @@ public class ControladorNovaMovimentacao {
     public ControladorNovaMovimentacao(
             CasoDeUsoEstoque casoDeUsoEstoque,
             ServicoConsultaReferencias servicoConsultaReferencias,
-            GerenciadorNavegacao gerenciadorNavegacao
+            GerenciadorNavegacao gerenciadorNavegacao,
+            SessaoLocalAplicacao sessaoLocalAplicacao
     ) {
         this.casoDeUsoEstoque = casoDeUsoEstoque;
         this.servicoConsultaReferencias = servicoConsultaReferencias;
         this.gerenciadorNavegacao = gerenciadorNavegacao;
+        this.sessaoLocalAplicacao = sessaoLocalAplicacao;
     }
 
     @FXML
     public void initialize() {
         if (tipoField != null && tipoField.getText().isBlank()) {
             tipoField.setText(ItemEstoque.MovementType.OUTBOUND.name());
+        }
+        if (usuarioField != null && usuarioField.getText().isBlank() && sessaoLocalAplicacao.usuarioAtual() != null) {
+            usuarioField.setText(sessaoLocalAplicacao.usuarioAtual().id());
         }
         quantidadeField.textProperty().addListener((observable, oldValue, newValue) -> recomputeTotal());
         valorUnitarioField.textProperty().addListener((observable, oldValue, newValue) -> recomputeTotal());
@@ -86,7 +93,7 @@ public class ControladorNovaMovimentacao {
                     LocalDate.now(),
                     new BigDecimal(valorUnitarioField.getText()),
                     new BigDecimal(valorTotalField.getText()),
-                    usuarioField.getText(),
+                    resolveUsuarioAtual(),
                     cliente == null ? "" : cliente.id(),
                     ordem == null ? "" : ordem.id(),
                     destinoField.getText(),
@@ -118,5 +125,13 @@ public class ControladorNovaMovimentacao {
         if (feedbackLabel != null) {
             feedbackLabel.setText(message == null ? "" : message);
         }
+    }
+
+    private String resolveUsuarioAtual() {
+        String digitado = usuarioField == null ? "" : usuarioField.getText();
+        if (digitado != null && !digitado.isBlank()) {
+            return digitado.trim();
+        }
+        return sessaoLocalAplicacao.usuarioAtual() == null ? "" : sessaoLocalAplicacao.usuarioAtual().id();
     }
 }

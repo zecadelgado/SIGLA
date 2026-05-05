@@ -108,6 +108,30 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
         refresh();
     }
 
+    @FXML
+    private void onMarcarPago() {
+        CasoDeUsoFinanceiro.TransacaoFinanceiraView selected = transacoesTable == null
+                ? null
+                : transacoesTable.getSelectionModel().getSelectedItem();
+        if (selected == null || selected.status() == CasoDeUsoFinanceiro.TransactionStatus.PAID) {
+            return;
+        }
+        casoDeUsoFinanceiro.markPaid(selected.id(), java.time.LocalDate.now());
+        refresh();
+    }
+
+    @FXML
+    private void onCancelarTransacao() {
+        CasoDeUsoFinanceiro.TransacaoFinanceiraView selected = transacoesTable == null
+                ? null
+                : transacoesTable.getSelectionModel().getSelectedItem();
+        if (selected == null || selected.status() == CasoDeUsoFinanceiro.TransactionStatus.CANCELLED) {
+            return;
+        }
+        casoDeUsoFinanceiro.cancel(selected.id());
+        refresh();
+    }
+
     private void refresh() {
         BigDecimal receitas = casoDeUsoFinanceiro.listTransactions().stream()
                 .filter(transaction -> transaction.type() == CasoDeUsoFinanceiro.TransactionType.ENTRY)

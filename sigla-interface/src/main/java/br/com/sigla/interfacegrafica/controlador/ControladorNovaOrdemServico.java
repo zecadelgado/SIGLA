@@ -1,6 +1,8 @@
 package br.com.sigla.interfacegrafica.controlador;
 
+import br.com.sigla.aplicacao.agenda.porta.entrada.CasoDeUsoAgenda;
 import br.com.sigla.aplicacao.servicos.porta.entrada.CasoDeUsoOrdemServico;
+import br.com.sigla.dominio.agenda.VisitaAgendada;
 import br.com.sigla.dominio.servicos.OrdemServico;
 import br.com.sigla.interfacegrafica.consulta.ServicoConsultaReferencias;
 import br.com.sigla.interfacegrafica.modelo.OpcaoId;
@@ -25,6 +27,7 @@ import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.resolveO
 public class ControladorNovaOrdemServico {
 
     private final CasoDeUsoOrdemServico casoDeUsoOrdemServico;
+    private final CasoDeUsoAgenda casoDeUsoAgenda;
     private final ServicoConsultaReferencias servicoConsultaReferencias;
     private final GerenciadorNavegacao gerenciadorNavegacao;
 
@@ -59,10 +62,12 @@ public class ControladorNovaOrdemServico {
 
     public ControladorNovaOrdemServico(
             CasoDeUsoOrdemServico casoDeUsoOrdemServico,
+            CasoDeUsoAgenda casoDeUsoAgenda,
             ServicoConsultaReferencias servicoConsultaReferencias,
             GerenciadorNavegacao gerenciadorNavegacao
     ) {
         this.casoDeUsoOrdemServico = casoDeUsoOrdemServico;
+        this.casoDeUsoAgenda = casoDeUsoAgenda;
         this.servicoConsultaReferencias = servicoConsultaReferencias;
         this.gerenciadorNavegacao = gerenciadorNavegacao;
     }
@@ -95,7 +100,7 @@ public class ControladorNovaOrdemServico {
             LocalDateTime inicio = dataInicio.atTime(8, 0);
             LocalDateTime fim = dataFim.atTime(18, 0);
 
-            casoDeUsoOrdemServico.create(new CasoDeUsoOrdemServico.CreateOrdemServicoCommand(
+            OrdemServico ordemServico = casoDeUsoOrdemServico.create(new CasoDeUsoOrdemServico.CreateOrdemServicoCommand(
                     UUID.randomUUID().toString(),
                     cliente.id(),
                     tituloField == null ? "" : tituloField.getText(),
@@ -109,6 +114,23 @@ public class ControladorNovaOrdemServico {
                     onlyUuid(executadoPorField == null ? "" : executadoPorField.getText()),
                     parseMoney(valorServicoField == null ? "" : valorServicoField.getText()),
                     observacoesField == null ? "" : observacoesField.getText()
+            ));
+            casoDeUsoAgenda.schedule(new CasoDeUsoAgenda.ScheduleVisitCommand(
+                    UUID.randomUUID().toString(),
+                    cliente.id(),
+                    ordemServico.id(),
+                    VisitaAgendada.VisitType.ONE_OFF,
+                    dataAgendada,
+                    ordemServico.titulo(),
+                    ordemServico.tipoServico(),
+                    onlyUuid(chooseResponsible()),
+                    inicio,
+                    fim,
+                    false,
+                    mapStatus(ordemServico.status()),
+                    VisitaAgendada.VisitPriority.NORMAL,
+                    onlyUuid(chooseResponsible()),
+                    ordemServico.observacoes()
             ));
             gerenciadorNavegacao.navigateTo(VisaoAplicacao.SERVICE_ORDER);
             UtilJanela.fecharJanela(clienteField);
@@ -166,6 +188,16 @@ public class ControladorNovaOrdemServico {
             return java.math.BigDecimal.ZERO;
         }
         return new java.math.BigDecimal(value.trim().replace(",", "."));
+    }
+
+    private VisitaAgendada.VisitStatus mapStatus(OrdemServico.OrdemServicoStatus status) {
+        return switch (status) {
+            case EM_ANDAMENTO -> VisitaAgendada.VisitStatus.IN_PROGRESS;
+            case CONCLUIDA -> VisitaAgendada.VisitStatus.COMPLETED;
+            case CANCELADA -> VisitaAgendada.VisitStatus.CANCELLED;
+            case ATRASADA -> VisitaAgendada.VisitStatus.MISSED;
+            case AGENDADA, ABERTA -> VisitaAgendada.VisitStatus.SCHEDULED;
+        };
     }
 
     private void setFeedback(String message) {

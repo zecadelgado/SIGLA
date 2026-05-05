@@ -1,5 +1,6 @@
 package br.com.sigla.interfacegrafica.controlador;
 
+import br.com.sigla.aplicacao.servicos.porta.entrada.CasoDeUsoOrdemServico;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorData;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorMoeda;
 import br.com.sigla.interfacegrafica.consulta.ServicoConsultaOrdemServico;
@@ -20,6 +21,7 @@ import java.util.Locale;
 public class ControladorOrdemServico extends ControladorComMenuPrincipal {
 
     private final ServicoConsultaOrdemServico servicoConsultaOrdemServico;
+    private final CasoDeUsoOrdemServico casoDeUsoOrdemServico;
     private final GerenciadorNavegacao gerenciadorNavegacao;
     private final ApresentadorMoeda apresentadorMoeda;
     private final ApresentadorData apresentadorData;
@@ -53,12 +55,14 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
 
     public ControladorOrdemServico(
             ServicoConsultaOrdemServico servicoConsultaOrdemServico,
+            CasoDeUsoOrdemServico casoDeUsoOrdemServico,
             GerenciadorNavegacao gerenciadorNavegacao,
             ApresentadorMoeda apresentadorMoeda,
             ApresentadorData apresentadorData
     ) {
         super(gerenciadorNavegacao);
         this.servicoConsultaOrdemServico = servicoConsultaOrdemServico;
+        this.casoDeUsoOrdemServico = casoDeUsoOrdemServico;
         this.gerenciadorNavegacao = gerenciadorNavegacao;
         this.apresentadorMoeda = apresentadorMoeda;
         this.apresentadorData = apresentadorData;
@@ -81,6 +85,26 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
     @FXML
     private void onNovaOrdem() {
         gerenciadorNavegacao.navigateTo(VisaoAplicacao.NEW_SERVICE_ORDER);
+    }
+
+    @FXML
+    private void onConcluirOrdem() {
+        var selected = ordensTable == null ? null : ordensTable.getSelectionModel().getSelectedItem();
+        if (selected == null || "CONCLUIDA".equals(selected.status())) {
+            return;
+        }
+        casoDeUsoOrdemServico.conclude(selected.id());
+        refresh();
+    }
+
+    @FXML
+    private void onCancelarOrdem() {
+        var selected = ordensTable == null ? null : ordensTable.getSelectionModel().getSelectedItem();
+        if (selected == null || "CANCELADA".equals(selected.status())) {
+            return;
+        }
+        casoDeUsoOrdemServico.cancel(selected.id());
+        refresh();
     }
 
     private void refresh() {

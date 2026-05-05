@@ -8,8 +8,13 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import org.springframework.stereotype.Component;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 @Component
 public class ControladorLogin {
+
+    private static final Logger LOGGER = Logger.getLogger(ControladorLogin.class.getName());
 
     private final SessaoLocalAplicacao sessaoLocalAplicacao;
     private final FluxoAplicacao fluxoAplicacao;
@@ -39,13 +44,22 @@ public class ControladorLogin {
         String password = passwordField == null ? "" : passwordField.getText();
         boolean authenticated = sessaoLocalAplicacao.login(username, password);
         if (authenticated) {
-            setErrorVisible(false);
-            fluxoAplicacao.showShell();
+            try {
+                setErrorVisible(false);
+                fluxoAplicacao.showShell();
+            } catch (RuntimeException exception) {
+                LOGGER.log(Level.SEVERE, "Falha ao abrir a tela inicial apos login.", exception);
+                sessaoLocalAplicacao.logout();
+                if (errorLabel != null) {
+                    errorLabel.setText("Login validado, mas nao foi possivel abrir a tela inicial. Veja o console.");
+                }
+                setErrorVisible(true);
+            }
             return;
         }
 
         if (errorLabel != null) {
-            errorLabel.setText("Usuário ou senha inválidos.");
+            errorLabel.setText("Usuario ou senha invalidos.");
         }
         setErrorVisible(true);
     }

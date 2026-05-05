@@ -10,6 +10,7 @@ br\com\sigla\interfacegrafica\controlador\ControladorNovaIndicacao.class
 br\com\sigla\interfacegrafica\controlador\ControladorEstruturaAplicacao.class
 br\com\sigla\interfacegrafica\modelo\OpcaoId.class
 br\com\sigla\interfacegrafica\aplicativo\FluxoAplicacao.class
+br\com\sigla\interfacegrafica\controlador\ControladorUsuarios.class
 br\com\sigla\interfacegrafica\controlador\ControladorFuncionarios.class
 br\com\sigla\interfacegrafica\controlador\ControladorNovoServico.class
 br\com\sigla\interfacegrafica\controlador\ControladorNovoCadastro.class
@@ -37,10 +38,10 @@ br\com\sigla\interfacegrafica\controlador\ControladorNovaTransacao.class
 br\com\sigla\interfacegrafica\util\UtilJanela.class
 br\com\sigla\interfacegrafica\apresentacao\ApresentadorTexto.class
 br\com\sigla\interfacegrafica\formatador\FormatadorMascaraCpf.class
+br\com\sigla\interfacegrafica\controlador\ControladorNovaOrdemServico$1.class
 br\com\sigla\interfacegrafica\inicializacao\InicializadorDadosDesenvolvimento.class
 br\com\sigla\interfacegrafica\util\ResolvedorEntradaTexto.class
 br\com\sigla\interfacegrafica\controlador\ControladorNovaMovimentacao.class
-br\com\sigla\interfacegrafica\consulta\ServicoConsultaOrdemServico$1.class
 br\com\sigla\interfacegrafica\apresentacao\ApresentadorData.class
 br\com\sigla\interfacegrafica\controlador\ControladorNovaOrdemServico.class
 br\com\sigla\interfacegrafica\controlador\ControladorDashboard.class

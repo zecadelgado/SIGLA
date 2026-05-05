@@ -5,6 +5,7 @@ import br.com.sigla.aplicacao.servicos.porta.saida.RepositorioOrdemServico;
 import br.com.sigla.dominio.servicos.OrdemServico;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -35,6 +36,54 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
                 false,
                 command.valorServico(),
                 command.observacoes()
+        ));
+    }
+
+    @Override
+    public OrdemServico conclude(String id) {
+        OrdemServico ordemServico = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Ordem de servico nao encontrada."));
+        return repository.save(new OrdemServico(
+                ordemServico.id(),
+                ordemServico.numeroOs(),
+                ordemServico.clienteId(),
+                ordemServico.titulo(),
+                ordemServico.descricao(),
+                ordemServico.tipoServico(),
+                OrdemServico.OrdemServicoStatus.CONCLUIDA,
+                ordemServico.dataAgendada(),
+                ordemServico.dataInicio(),
+                ordemServico.dataFim() == null ? LocalDateTime.now() : ordemServico.dataFim(),
+                ordemServico.responsavelInternoId(),
+                ordemServico.executadoPorId(),
+                true,
+                ordemServico.pago(),
+                ordemServico.valorServico(),
+                ordemServico.observacoes()
+        ));
+    }
+
+    @Override
+    public OrdemServico cancel(String id) {
+        OrdemServico ordemServico = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Ordem de servico nao encontrada."));
+        return repository.save(new OrdemServico(
+                ordemServico.id(),
+                ordemServico.numeroOs(),
+                ordemServico.clienteId(),
+                ordemServico.titulo(),
+                ordemServico.descricao(),
+                ordemServico.tipoServico(),
+                OrdemServico.OrdemServicoStatus.CANCELADA,
+                ordemServico.dataAgendada(),
+                ordemServico.dataInicio(),
+                ordemServico.dataFim(),
+                ordemServico.responsavelInternoId(),
+                ordemServico.executadoPorId(),
+                ordemServico.foiFeito(),
+                ordemServico.pago(),
+                ordemServico.valorServico(),
+                ordemServico.observacoes()
         ));
     }
 

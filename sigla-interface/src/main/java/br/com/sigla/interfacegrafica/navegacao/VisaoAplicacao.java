@@ -3,7 +3,7 @@ package br.com.sigla.interfacegrafica.navegacao;
 public enum VisaoAplicacao {
     LOGIN("/fxml/telas/TelaDeLogin.fxml", false, "Login", ModoExibicao.PRINCIPAL),
     SHELL("/fxml/telas/TelaPrincipal.fxml", false, "Principal", ModoExibicao.PRINCIPAL),
-    DASHBOARD("/fxml/telas/TelaPrincipal.fxml", true, "Dashboard", ModoExibicao.PRINCIPAL),
+    DASHBOARD("/fxml/telas/TelaDashboard.fxml", true, "Dashboard", ModoExibicao.PRINCIPAL),
     REGISTRY("/fxml/telas/TelaCadastro.fxml", true, "Cadastros", ModoExibicao.PRINCIPAL),
     NEW_REGISTRY("/fxml/telas/TelaNovoCadastro.fxml", true, "Novo Cadastro", ModoExibicao.SOBREPOSTA),
     CUSTOMERS("/fxml/telas/TelaClientes.fxml", true, "Clientes", ModoExibicao.PRINCIPAL),
@@ -16,7 +16,11 @@ public enum VisaoAplicacao {
     SERVICES("/fxml/telas/TelaServi\u00e7os.fxml", true, "Servicos", ModoExibicao.PRINCIPAL),
     NEW_SERVICE("/fxml/telas/TelaNovoServi\u00e7o.fxml", true, "Novo Servico", ModoExibicao.SOBREPOSTA),
     SERVICE_ORDER("/fxml/telas/TelaOrdemdeServi\u00e7o.fxml", true, "Ordem de Servico", ModoExibicao.PRINCIPAL),
-    NEW_SERVICE_ORDER("/fxml/telas/TelaNovaOrdemdeServi\u00e7o.fxml", true, "Nova Ordem de Servico", ModoExibicao.SOBREPOSTA);
+    NEW_SERVICE_ORDER("/fxml/telas/TelaNovaOrdemdeServi\u00e7o.fxml", true, "Nova Ordem de Servico", ModoExibicao.SOBREPOSTA),
+    CONTRACTS("/fxml/telas/TelaContratos.fxml", true, "Contratos", ModoExibicao.PRINCIPAL),
+    CERTIFICATES("/fxml/telas/TelaCertificados.fxml", true, "Certificados", ModoExibicao.PRINCIPAL),
+    NOTIFICATIONS("/fxml/telas/TelaNotificacoes.fxml", true, "Notificacoes", ModoExibicao.PRINCIPAL),
+    USERS_ADMIN("/fxml/telas/TelaUsuarios.fxml", true, "Usuarios", ModoExibicao.PRINCIPAL);
 
     private final String fxmlPath;
     private final boolean shellContent;

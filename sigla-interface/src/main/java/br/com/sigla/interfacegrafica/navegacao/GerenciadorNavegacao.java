@@ -28,6 +28,15 @@ public class GerenciadorNavegacao {
         currentView = view;
     }
 
+    public Node loadShellContent(VisaoAplicacao view) {
+        if (!view.isShellContent()) {
+            throw new IllegalArgumentException("View is not shell content: " + view);
+        }
+        Node content = loadView(view);
+        currentView = view;
+        return content;
+    }
+
     public Node loadView(VisaoAplicacao view) {
         try {
             ResourceBundle bundle = ResourceBundle.getBundle("i18n.mensagens");

@@ -6,15 +6,18 @@ br\com\sigla\dominio\servicos\ServicoPrestado$SignatureType.class
 br\com\sigla\dominio\financeiro\DespesaFinanceira.class
 br\com\sigla\dominio\potenciaisclientes\PotencialCliente$Interaction.class
 br\com\sigla\dominio\compartilhado\ExcecaoDominio.class
+br\com\sigla\dominio\usuarios\Usuario$TipoUsuario.class
 br\com\sigla\dominio\contratos\Contrato.class
 br\com\sigla\dominio\contratos\Contrato$ContratoType.class
 br\com\sigla\dominio\servicos\ServicoPrestado$PaymentStatus.class
 br\com\sigla\dominio\financeiro\PlanoParcelamento$InstallmentStatus.class
+br\com\sigla\dominio\agenda\VisitaAgendada$VisitPriority.class
 br\com\sigla\dominio\estoque\ItemEstoque$MovementType.class
 br\com\sigla\dominio\potenciaisclientes\PotencialCliente.class
 br\com\sigla\dominio\agenda\VisitaAgendada$VisitStatus.class
 br\com\sigla\dominio\financeiro\EntradaFinanceira$EntryStatus.class
 br\com\sigla\dominio\estoque\ItemEstoque.class
+br\com\sigla\dominio\servicos\OrdemServico.class
 br\com\sigla\dominio\financeiro\PlanoParcelamento.class
 br\com\sigla\dominio\notificacoes\Notificacao$NotificacaoStatus.class
 br\com\sigla\dominio\servicos\ServicoPrestado$ServicePriority.class
@@ -35,4 +38,6 @@ br\com\sigla\dominio\funcionarios\Funcionario$FuncionarioStatus.class
 br\com\sigla\dominio\financeiro\DespesaFinanceira$ExpenseCategory.class
 br\com\sigla\dominio\contratos\Contrato$RenewalRule.class
 br\com\sigla\dominio\potenciaisclientes\PotencialCliente$PotencialClienteStatus.class
+br\com\sigla\dominio\servicos\OrdemServico$OrdemServicoStatus.class
 br\com\sigla\dominio\financeiro\EntradaFinanceira$EntryType.class
+br\com\sigla\dominio\usuarios\Usuario.class
