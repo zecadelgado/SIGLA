@@ -1,193 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="600.0" prefWidth="700.0" style="-fx-background-color: lightgrey;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.sigla.interfacegrafica.controlador.ControladorLogin">
+<AnchorPane fx:id="txtLoginInsira" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="655.0" style="-fx-background-color: #0c2a70;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.sigla.interfacegrafica.controlador.ControladorLogin">
    <children>
-      <VBox prefHeight="600.0" prefWidth="700.0" style="-fx-background-color: #0B2A6F;">
-         <children>
-            <HBox prefHeight="107.0" prefWidth="700.0">
-               <children>
-                  <VBox prefHeight="102.0" prefWidth="194.0">
-                     <children>
-                        <ImageView fitHeight="102.0" fitWidth="143.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../../../../../../../../../../Downloads/WhatsApp%20Image%202026-03-03%20at%2019.59.05%20(1)%20(1).png" />
-                           </image>
-                           <VBox.margin>
-                              <Insets left="10.0" />
-                           </VBox.margin>
-                        </ImageView>
-                     </children>
-                     <padding>
-                        <Insets left="40.0" top="5.0" />
-                     </padding>
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                  </VBox>
-                  <Label prefHeight="95.0" prefWidth="225.0" text="Login" textFill="#94cbff">
-                     <font>
-                        <Font name="Ebrima Bold" size="80.0" />
-                     </font>
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                  </Label>
-               </children>
-               <VBox.margin>
-                  <Insets top="35.0" />
-               </VBox.margin>
-            </HBox>
-            <VBox prefHeight="250.0" prefWidth="620.0">
-               <children>
-                  <VBox prefHeight="86.0" prefWidth="620.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                     <children>
-                        <Label text="Usuário" textFill="WHITE">
-                           <font>
-                              <Font size="18.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="10.0" top="5.0" />
-                           </VBox.margin>
-                        </Label>
-                        <TextField fx:id="usernameField" prefHeight="40.0" prefWidth="540.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="10.0" right="10.0" />
-                           </VBox.margin>
-                        </TextField>
-                     </children>
-                     <VBox.margin>
-                        <Insets left="40.0" right="40.0" top="20.0" />
-                     </VBox.margin>
-                     <opaqueInsets>
-                        <Insets />
-                     </opaqueInsets>
-                  </VBox>
-                  <VBox prefHeight="124.0" prefWidth="700.0">
-                     <children>
-                        <VBox prefHeight="86.0" prefWidth="100.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                           <children>
-                              <Label text="Senha" textFill="WHITE">
-                                 <font>
-                                    <Font size="18.0" />
-                                 </font>
-                                 <VBox.margin>
-                                    <Insets left="10.0" top="5.0" />
-                                 </VBox.margin>
-                              </Label>
-                              <PasswordField fx:id="passwordField" prefHeight="40.0" prefWidth="620.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5); -fx-background-radius: 5;">
-                                 <VBox.margin>
-                                    <Insets bottom="10.0" left="10.0" right="10.0" />
-                                 </VBox.margin>
-                              </PasswordField>
-                           </children>
-                           <VBox.margin>
-                              <Insets left="40.0" right="40.0" />
-                           </VBox.margin>
-                        </VBox>
-                        <Button mnemonicParsing="false" prefHeight="5.0" prefWidth="150.0" style="-fx-background-color: #0B2A6F;" text="Esqueci minha senha" textFill="WHITE">
-                           <VBox.margin>
-                              <Insets left="45.0" top="10.0" />
-                           </VBox.margin>
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Button>
-                     </children>
-                     <VBox.margin>
-                        <Insets top="20.0" />
-                     </VBox.margin>
-                  </VBox>
-                  <Label fx:id="errorLabel" textFill="#ffcccc" wrapText="true">
-                     <VBox.margin>
-                        <Insets left="45.0" right="45.0" top="4.0" />
-                     </VBox.margin>
-                     <font>
-                        <Font name="Ebrima Bold" size="13.0" />
-                     </font>
-                  </Label>
-               </children>
-               <VBox.margin>
-                  <Insets top="15.0" />
-               </VBox.margin>
-            </VBox>
-            <HBox prefHeight="46.0" prefWidth="670.0">
-               <children>
-                  <Region prefHeight="200.0" prefWidth="200.0" />
-                  <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onLogin" prefWidth="310.0" style="-fx-background-color: #1c2e94; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5); -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Entrar" textFill="WHITE">
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                     <font>
-                        <Font name="Ebrima Bold" size="22.0" />
-                     </font>
-                  </Button>
-                  <Region prefHeight="200.0" prefWidth="200.0" />
-               </children>
-               <VBox.margin>
-                  <Insets top="15.0" />
-               </VBox.margin>
-               <padding>
-                  <Insets bottom="5.0" top="5.0" />
-               </padding>
-            </HBox>
-            <HBox managed="false" prefHeight="20.0" prefWidth="670.0" visible="false">
-               <children>
-                  <Region prefHeight="200.0" prefWidth="200.0" />
-                  <Label text="Não tem uma conta?" textFill="WHITE">
-                     <font>
-                        <Font name="Ebrima" size="14.0" />
-                     </font>
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                  </Label>
-                  <Region prefHeight="200.0" prefWidth="200.0" />
-               </children>
-               <padding>
-                  <Insets bottom="5.0" top="5.0" />
-               </padding>
-               <VBox.margin>
-                  <Insets top="15.0" />
-               </VBox.margin>
-            </HBox>
-            <HBox managed="false" prefHeight="46.0" prefWidth="670.0" visible="false">
-               <children>
-                  <Region prefHeight="200.0" prefWidth="200.0" />
-                  <Button alignment="CENTER" contentDisplay="CENTER" disable="true" managed="false" mnemonicParsing="false" prefWidth="310.0" style="-fx-background-color: #94cbff; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Cadastro administrado" textFill="WHITE" visible="false">
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                     <font>
-                        <Font name="Ebrima Bold" size="22.0" />
-                     </font>
-                  </Button>
-                  <Region prefHeight="200.0" prefWidth="200.0" />
-               </children>
-               <padding>
-                  <Insets bottom="5.0" top="5.0" />
-               </padding>
-               <VBox.margin>
-                  <Insets top="-5.0" />
-               </VBox.margin>
-            </HBox>
-            <Region prefHeight="34.0" prefWidth="700.0" />
-         </children>
-      </VBox>
+      <Label fx:id="txtLoginLogin" layoutX="90.0" layoutY="26.0" prefHeight="66.0" prefWidth="123.0" text="Login" textFill="#95ccff">
+         <font>
+            <Font name="Nirmala UI Bold" size="45.0" />
+         </font>
+      </Label>
+      <TextField fx:id="usernameField" layoutX="139.0" layoutY="143.0" prefHeight="26.0" prefWidth="400.0" promptText="Usuario ou e-mail" style="-fx-border-color: #116694;" />
+      <Label layoutX="96.0" layoutY="92.0" prefHeight="26.0" prefWidth="373.0" text="Insira seus dados abaixo para realizar seu Login!" textFill="#bedefa">
+         <font>
+            <Font name="Nirmala UI Bold" size="16.0" />
+         </font>
+      </Label>
+      <Label fx:id="txtLoginNome" layoutX="90.0" layoutY="145.0" prefHeight="22.0" prefWidth="48.0" text="Nome:" textFill="#bedefa">
+         <font>
+            <Font name="Nirmala UI Bold" size="15.0" />
+         </font>
+      </Label>
+      <PasswordField fx:id="passwordField" layoutX="139.0" layoutY="206.0" prefHeight="26.0" prefWidth="400.0" promptText="Senha" style="-fx-border-color: #116694;" />
+      <Label fx:id="txtLoginSenha" layoutX="90.0" layoutY="208.0" prefHeight="22.0" prefWidth="48.0" text="Senha:" textFill="#bedefa">
+         <font>
+            <Font name="Nirmala UI Bold" size="15.0" />
+         </font>
+      </Label>
+      <Hyperlink layoutX="262.0" layoutY="240.0" onAction="#onEsqueciSenha" prefHeight="22.0" prefWidth="130.0" style="-fx-underline: #00bfff;" text="Esqueceu a Senha?" textFill="#00bfff">
+         <font>
+            <Font name="Nirmala Text Semilight" size="14.0" />
+         </font>
+      </Hyperlink>
+      <Label fx:id="errorLabel" layoutX="139.0" layoutY="263.0" prefHeight="18.0" prefWidth="400.0" textFill="#ffcccc" wrapText="true">
+         <font>
+            <Font name="Nirmala UI Bold" size="12.0" />
+         </font>
+      </Label>
+      <Button layoutX="242.0" layoutY="292.0" mnemonicParsing="false" onAction="#onLogin" prefHeight="35.0" prefWidth="171.0" style="-fx-background-color: #93cbfe;" text="Login" textFill="WHITE">
+         <font>
+            <Font name="Nirmala Text Bold" size="14.0" />
+         </font>
+      </Button>
+      <Button layoutX="241.0" layoutY="340.0" mnemonicParsing="false" onAction="#onOpenCadastroUsuario" prefHeight="35.0" prefWidth="171.0" style="-fx-background-color: #116694;" text="Criar uma Conta" textFill="WHITE">
+         <font>
+            <Font name="Nirmala Text Bold" size="14.0" />
+         </font>
+      </Button>
    </children>
 </AnchorPane>

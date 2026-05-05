@@ -22,6 +22,7 @@ br\com\sigla\interfacegrafica\controlador\ControladorContratos.class
 br\com\sigla\interfacegrafica\consulta\ServicoConsultaOrdemServico$OrdemServicoView.class
 br\com\sigla\interfacegrafica\controlador\ControladorFinanceiro.class
 br\com\sigla\interfacegrafica\controlador\ControladorNovoProduto.class
+br\com\sigla\interfacegrafica\controlador\ControladorCadastroUsuario.class
 br\com\sigla\interfacegrafica\controlador\ControladorNotificacoes.class
 br\com\sigla\interfacegrafica\controlador\ControladorClientes$ClienteRankingRow.class
 br\com\sigla\interfacegrafica\controlador\ControladorCertificados.class

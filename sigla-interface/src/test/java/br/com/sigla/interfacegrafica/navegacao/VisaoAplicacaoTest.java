@@ -16,18 +16,27 @@ class VisaoAplicacaoTest {
 
     @Test
     void shouldKeepCanonicalRoutesInsideTelaFolder() {
-        assertEquals(20, VisaoAplicacao.values().length);
+        assertEquals(21, VisaoAplicacao.values().length);
         for (VisaoAplicacao view : VisaoAplicacao.values()) {
             assertTrue(view.fxmlPath().startsWith("/fxml/telas/"));
         }
     }
 
     @Test
-    void shouldMarkLoginAndShellAsNonShellContentOnly() {
+    void shouldMarkUnauthenticatedViewsAndShellAsNonShellContentOnly() {
         assertFalse(VisaoAplicacao.LOGIN.isShellContent());
+        assertFalse(VisaoAplicacao.ACCOUNT_REGISTRATION.isShellContent());
         assertFalse(VisaoAplicacao.SHELL.isShellContent());
         assertTrue(VisaoAplicacao.DASHBOARD.isShellContent());
         assertTrue(VisaoAplicacao.NEW_SERVICE_ORDER.isShellContent());
+    }
+
+    @Test
+    void shouldAllowOnlyLoginAndAccountRegistrationBeforeAuthentication() {
+        assertFalse(VisaoAplicacao.LOGIN.requiresAuthentication());
+        assertFalse(VisaoAplicacao.ACCOUNT_REGISTRATION.requiresAuthentication());
+        assertTrue(VisaoAplicacao.SHELL.requiresAuthentication());
+        assertTrue(VisaoAplicacao.REGISTRY.requiresAuthentication());
     }
 
     @Test

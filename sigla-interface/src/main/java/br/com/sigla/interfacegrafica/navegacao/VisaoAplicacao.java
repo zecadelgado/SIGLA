@@ -1,7 +1,8 @@
 package br.com.sigla.interfacegrafica.navegacao;
 
 public enum VisaoAplicacao {
-    LOGIN("/fxml/telas/TelaDeLogin.fxml", false, "Login", ModoExibicao.PRINCIPAL),
+    LOGIN("/fxml/telas/TelaDeLogin.fxml", false, "Login", ModoExibicao.PRINCIPAL, false),
+    ACCOUNT_REGISTRATION("/fxml/telas/TelaCadastroUsuario.fxml", false, "Cadastro", ModoExibicao.PRINCIPAL, false),
     SHELL("/fxml/telas/TelaPrincipal.fxml", false, "Principal", ModoExibicao.PRINCIPAL),
     DASHBOARD("/fxml/telas/TelaDashboard.fxml", true, "Dashboard", ModoExibicao.PRINCIPAL),
     REGISTRY("/fxml/telas/TelaCadastro.fxml", true, "Cadastros", ModoExibicao.PRINCIPAL),
@@ -26,12 +27,18 @@ public enum VisaoAplicacao {
     private final boolean shellContent;
     private final String tituloJanela;
     private final ModoExibicao modoExibicao;
+    private final boolean requiresAuthentication;
 
     VisaoAplicacao(String fxmlPath, boolean shellContent, String tituloJanela, ModoExibicao modoExibicao) {
+        this(fxmlPath, shellContent, tituloJanela, modoExibicao, true);
+    }
+
+    VisaoAplicacao(String fxmlPath, boolean shellContent, String tituloJanela, ModoExibicao modoExibicao, boolean requiresAuthentication) {
         this.fxmlPath = fxmlPath;
         this.shellContent = shellContent;
         this.tituloJanela = tituloJanela;
         this.modoExibicao = modoExibicao;
+        this.requiresAuthentication = requiresAuthentication;
     }
 
     public String fxmlPath() {
@@ -48,6 +55,10 @@ public enum VisaoAplicacao {
 
     public boolean isSobreposta() {
         return modoExibicao == ModoExibicao.SOBREPOSTA;
+    }
+
+    public boolean requiresAuthentication() {
+        return requiresAuthentication;
     }
 
     private enum ModoExibicao {

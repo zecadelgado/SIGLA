@@ -58,7 +58,7 @@ public class FluxoAplicacao {
     }
 
     public void showView(VisaoAplicacao view) {
-        if (view != VisaoAplicacao.LOGIN && !sessaoLocalAplicacao.isAuthenticated()) {
+        if (view.requiresAuthentication() && !sessaoLocalAplicacao.isAuthenticated()) {
             throw new IllegalStateException("Authentication required before opening the application");
         }
         if (view.isSobreposta()) {
@@ -132,9 +132,9 @@ public class FluxoAplicacao {
 
         Rectangle2D screenBounds = resolveBounds(stage);
         stage.setResizable(true);
-        stage.setTitle(view == VisaoAplicacao.LOGIN ? "S.I.G.L.A - Login" : "S.I.G.L.A");
+        stage.setTitle(view.requiresAuthentication() ? "S.I.G.L.A" : "S.I.G.L.A - " + view.tituloJanela());
 
-        if (view == VisaoAplicacao.LOGIN) {
+        if (!view.requiresAuthentication()) {
             resizeStageToContent(stage, stage.getScene().getRoot(), screenBounds, LOGIN_MAX_WIDTH_RATIO, LOGIN_MAX_HEIGHT_RATIO);
         } else {
             double width = clamp(screenBounds.getWidth() * MAIN_WIDTH_RATIO, 960, screenBounds.getWidth());

@@ -2,6 +2,7 @@ package br.com.sigla.interfacegrafica.controlador;
 
 import br.com.sigla.interfacegrafica.aplicativo.FluxoAplicacao;
 import br.com.sigla.interfacegrafica.aplicativo.SessaoLocalAplicacao;
+import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -60,6 +61,20 @@ public class ControladorLogin {
 
         if (errorLabel != null) {
             errorLabel.setText("Usuario ou senha invalidos.");
+        }
+        setErrorVisible(true);
+    }
+
+    @FXML
+    private void onOpenCadastroUsuario() {
+        setErrorVisible(false);
+        fluxoAplicacao.showView(VisaoAplicacao.ACCOUNT_REGISTRATION);
+    }
+
+    @FXML
+    private void onEsqueciSenha() {
+        if (errorLabel != null) {
+            errorLabel.setText("Solicite a redefinicao de senha a um administrador.");
         }
         setErrorVisible(true);
     }
