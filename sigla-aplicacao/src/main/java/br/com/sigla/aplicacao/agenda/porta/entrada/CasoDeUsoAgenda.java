@@ -10,7 +10,17 @@ public interface CasoDeUsoAgenda {
 
     void schedule(ScheduleVisitCommand command);
 
+    void update(ScheduleVisitCommand command);
+
+    void reschedule(RescheduleVisitCommand command);
+
+    void cancel(ChangeVisitStatusCommand command);
+
+    void complete(ChangeVisitStatusCommand command);
+
     List<VisitaAgendada> listAll();
+
+    List<VisitaAgendada> listBetween(LocalDate start, LocalDate end);
 
     List<VisitaAgendada> upcomingVisits(LocalDate referenceDate, int days);
 
@@ -19,8 +29,11 @@ public interface CasoDeUsoAgenda {
     record ScheduleVisitCommand(
             String id,
             String customerId,
+            String orderId,
             String contractId,
+            String certificateId,
             VisitaAgendada.VisitType type,
+            VisitaAgendada.Recurrence recurrence,
             LocalDate scheduledDate,
             String title,
             String serviceType,
@@ -31,8 +44,52 @@ public interface CasoDeUsoAgenda {
             VisitaAgendada.VisitStatus status,
             VisitaAgendada.VisitPriority priority,
             String responsibleId,
+            boolean reminderActive,
+            int reminderDaysBefore,
             String notes
     ) {
+        public ScheduleVisitCommand(
+                String id,
+                String customerId,
+                String contractId,
+                String certificateId,
+                VisitaAgendada.VisitType type,
+                LocalDate scheduledDate,
+                String title,
+                String serviceType,
+                String internalResponsible,
+                LocalDateTime startAt,
+                LocalDateTime endAt,
+                boolean allDay,
+                VisitaAgendada.VisitStatus status,
+                VisitaAgendada.VisitPriority priority,
+                String responsibleId,
+                String notes
+        ) {
+            this(
+                    id,
+                    customerId,
+                    "",
+                    contractId,
+                    certificateId,
+                    type,
+                    recurrenceFromType(type),
+                    scheduledDate,
+                    title,
+                    serviceType,
+                    internalResponsible,
+                    startAt,
+                    endAt,
+                    allDay,
+                    status,
+                    priority,
+                    responsibleId,
+                    false,
+                    0,
+                    notes
+            );
+        }
+
         public ScheduleVisitCommand(
                 String id,
                 String customerId,
@@ -51,8 +108,11 @@ public interface CasoDeUsoAgenda {
             this(
                     id,
                     customerId,
+                    "",
                     contractId,
+                    "",
                     type,
+                    recurrenceFromType(type),
                     scheduledDate,
                     title,
                     serviceType,
@@ -63,6 +123,49 @@ public interface CasoDeUsoAgenda {
                     status,
                     VisitaAgendada.VisitPriority.NORMAL,
                     "",
+                    false,
+                    0,
+                    notes
+            );
+        }
+
+        public ScheduleVisitCommand(
+                String id,
+                String customerId,
+                String contractId,
+                VisitaAgendada.VisitType type,
+                LocalDate scheduledDate,
+                String title,
+                String serviceType,
+                String internalResponsible,
+                LocalDateTime startAt,
+                LocalDateTime endAt,
+                boolean allDay,
+                VisitaAgendada.VisitStatus status,
+                VisitaAgendada.VisitPriority priority,
+                String responsibleId,
+                String notes
+        ) {
+            this(
+                    id,
+                    customerId,
+                    "",
+                    contractId,
+                    "",
+                    type,
+                    recurrenceFromType(type),
+                    scheduledDate,
+                    title,
+                    serviceType,
+                    internalResponsible,
+                    startAt,
+                    endAt,
+                    allDay,
+                    status,
+                    priority,
+                    responsibleId,
+                    false,
+                    0,
                     notes
             );
         }
@@ -79,8 +182,11 @@ public interface CasoDeUsoAgenda {
             this(
                     id,
                     customerId,
+                    "",
                     contractId,
+                    "",
                     type,
+                    recurrenceFromType(type),
                     scheduledDate,
                     "",
                     "",
@@ -91,9 +197,32 @@ public interface CasoDeUsoAgenda {
                     status,
                     VisitaAgendada.VisitPriority.NORMAL,
                     "",
+                    false,
+                    0,
                     notes
             );
         }
+
+        private static VisitaAgendada.Recurrence recurrenceFromType(VisitaAgendada.VisitType type) {
+            return switch (type == null ? VisitaAgendada.VisitType.ONE_OFF : type) {
+                case MONTHLY -> VisitaAgendada.Recurrence.MONTHLY;
+                case BIWEEKLY -> VisitaAgendada.Recurrence.BIWEEKLY;
+                case ONE_OFF -> VisitaAgendada.Recurrence.NONE;
+            };
+        }
+    }
+
+    record RescheduleVisitCommand(
+            String id,
+            LocalDateTime startAt,
+            LocalDateTime endAt
+    ) {
+    }
+
+    record ChangeVisitStatusCommand(
+            String id,
+            String reason
+    ) {
     }
 }
 

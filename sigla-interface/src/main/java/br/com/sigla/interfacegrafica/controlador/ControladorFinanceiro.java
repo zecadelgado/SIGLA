@@ -2,19 +2,34 @@ package br.com.sigla.interfacegrafica.controlador;
 
 import br.com.sigla.aplicacao.clientes.porta.entrada.CasoDeUsoCliente;
 import br.com.sigla.aplicacao.financeiro.porta.entrada.CasoDeUsoFinanceiro;
-import br.com.sigla.dominio.financeiro.PlanoParcelamento;
+import br.com.sigla.dominio.financeiro.CategoriaFinanceira;
+import br.com.sigla.dominio.financeiro.FormaPagamentoFinanceira;
+import br.com.sigla.dominio.financeiro.LancamentoFinanceiro;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorData;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorMoeda;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.layout.GridPane;
+import javafx.util.StringConverter;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Optional;
 
 @Component
 public class ControladorFinanceiro extends ControladorComMenuPrincipal {
@@ -62,7 +77,7 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
     @FXML
     private TableColumn<CasoDeUsoFinanceiro.TransacaoFinanceiraView, String> statusColumn;
 
-    private CasoDeUsoFinanceiro.TransactionStatus filtroAtual;
+    private CasoDeUsoFinanceiro.FiltroFinanceiro filtroAtual;
 
     public ControladorFinanceiro(
             CasoDeUsoCliente casoDeUsoCliente,
@@ -98,74 +113,132 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
 
     @FXML
     private void onPagos() {
-        filtroAtual = CasoDeUsoFinanceiro.TransactionStatus.PAID;
+        filtroAtual = new CasoDeUsoFinanceiro.FiltroFinanceiro(null, null, null, CasoDeUsoFinanceiro.TransactionStatus.PAID, "", "", "", "", false);
         refresh();
     }
 
     @FXML
     private void onPendentes() {
-        filtroAtual = CasoDeUsoFinanceiro.TransactionStatus.PENDING;
+        filtroAtual = new CasoDeUsoFinanceiro.FiltroFinanceiro(null, null, null, CasoDeUsoFinanceiro.TransactionStatus.PENDING, "", "", "", "", false);
         refresh();
+    }
+
+    @FXML
+    private void onVencidos() {
+        filtroAtual = new CasoDeUsoFinanceiro.FiltroFinanceiro(null, null, null, null, "", "", "", "", true);
+        refresh();
+    }
+
+    @FXML
+    private void onFiltrar() {
+        abrirDialogoFiltro().ifPresent(filtro -> {
+            filtroAtual = filtro;
+            refresh();
+        });
+    }
+
+    @FXML
+    private void onEditarTransacao() {
+        var selected = selecionada();
+        if (selected == null || selected.status() == CasoDeUsoFinanceiro.TransactionStatus.CANCELLED) {
+            return;
+        }
+        abrirDialogoEdicao(selected).ifPresent(command -> executar(() -> casoDeUsoFinanceiro.updateLancamento(command)));
     }
 
     @FXML
     private void onMarcarPago() {
-        CasoDeUsoFinanceiro.TransacaoFinanceiraView selected = transacoesTable == null
-                ? null
-                : transacoesTable.getSelectionModel().getSelectedItem();
+        var selected = selecionada();
         if (selected == null || selected.status() == CasoDeUsoFinanceiro.TransactionStatus.PAID) {
             return;
         }
-        casoDeUsoFinanceiro.markPaid(selected.id(), java.time.LocalDate.now());
-        refresh();
+        executar(() -> casoDeUsoFinanceiro.markPaid(selected.id(), LocalDate.now()));
+    }
+
+    @FXML
+    private void onBaixarParcela() {
+        var selected = selecionada();
+        if (selected == null) {
+            return;
+        }
+        var parcelas = casoDeUsoFinanceiro.listParcelas(selected.id()).stream()
+                .filter(parcela -> parcela.status() != LancamentoFinanceiro.Status.PAID)
+                .filter(parcela -> parcela.status() != LancamentoFinanceiro.Status.CANCELLED)
+                .toList();
+        if (parcelas.isEmpty()) {
+            mostrar("Nao ha parcela pendente para baixar.");
+            return;
+        }
+        Dialog<LancamentoFinanceiro.ParcelaFinanceira> dialog = new Dialog<>();
+        dialog.setTitle("Baixar parcela");
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        ComboBox<LancamentoFinanceiro.ParcelaFinanceira> combo = new ComboBox<>();
+        combo.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(LancamentoFinanceiro.ParcelaFinanceira parcela) {
+                return parcela == null ? "" : parcela.numeroParcela() + " - " + apresentadorMoeda.format(parcela.valorParcela()) + " - " + apresentadorData.format(parcela.dataVencimento());
+            }
+
+            @Override
+            public LancamentoFinanceiro.ParcelaFinanceira fromString(String string) {
+                return null;
+            }
+        });
+        combo.getItems().setAll(parcelas);
+        combo.getSelectionModel().selectFirst();
+        dialog.getDialogPane().setContent(combo);
+        dialog.setResultConverter(button -> button == ButtonType.OK ? combo.getValue() : null);
+        dialog.showAndWait().ifPresent(parcela -> executar(() -> casoDeUsoFinanceiro.baixarParcela(selected.id(), parcela.id(), LocalDate.now())));
+    }
+
+    @FXML
+    private void onEstornarPagamento() {
+        var selected = selecionada();
+        if (selected == null) {
+            return;
+        }
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Estornar pagamento");
+        dialog.setHeaderText("Informe o motivo do estorno");
+        dialog.showAndWait().ifPresent(motivo -> executar(() -> casoDeUsoFinanceiro.estornarPagamento(selected.id(), motivo)));
     }
 
     @FXML
     private void onCancelarTransacao() {
-        CasoDeUsoFinanceiro.TransacaoFinanceiraView selected = transacoesTable == null
-                ? null
-                : transacoesTable.getSelectionModel().getSelectedItem();
+        var selected = selecionada();
         if (selected == null || selected.status() == CasoDeUsoFinanceiro.TransactionStatus.CANCELLED) {
             return;
         }
-        casoDeUsoFinanceiro.cancel(selected.id());
-        refresh();
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Cancelar lancamento");
+        dialog.setHeaderText("Informe o motivo do cancelamento");
+        dialog.showAndWait().ifPresent(motivo -> executar(() -> casoDeUsoFinanceiro.cancel(selected.id(), motivo)));
     }
 
     private void refresh() {
-        BigDecimal receitas = casoDeUsoFinanceiro.listTransactions().stream()
-                .filter(transaction -> transaction.type() == CasoDeUsoFinanceiro.TransactionType.ENTRY)
-                .filter(transaction -> transaction.status() == CasoDeUsoFinanceiro.TransactionStatus.PAID)
-                .map(CasoDeUsoFinanceiro.TransacaoFinanceiraView::amount)
+        var lancamentos = casoDeUsoFinanceiro.listLancamentos(null);
+        BigDecimal receitas = lancamentos.stream()
+                .filter(lancamento -> lancamento.tipo() == LancamentoFinanceiro.Tipo.ENTRY)
+                .filter(lancamento -> lancamento.status() == LancamentoFinanceiro.Status.PAID)
+                .map(LancamentoFinanceiro::valorTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal despesas = casoDeUsoFinanceiro.listTransactions().stream()
-                .filter(transaction -> transaction.type() == CasoDeUsoFinanceiro.TransactionType.EXPENSE)
-                .filter(transaction -> transaction.status() == CasoDeUsoFinanceiro.TransactionStatus.PAID)
-                .map(CasoDeUsoFinanceiro.TransacaoFinanceiraView::amount)
+        BigDecimal despesas = lancamentos.stream()
+                .filter(lancamento -> lancamento.tipo() == LancamentoFinanceiro.Tipo.EXPENSE)
+                .filter(lancamento -> lancamento.status() == LancamentoFinanceiro.Status.PAID)
+                .map(LancamentoFinanceiro::valorTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal receber = casoDeUsoFinanceiro.listPlanoParcelamentos().stream()
-                .filter(plan -> plan.status() != PlanoParcelamento.InstallmentStatus.PAID)
-                .map(PlanoParcelamento::totalAmount)
+        BigDecimal receber = lancamentos.stream()
+                .filter(lancamento -> lancamento.tipo() == LancamentoFinanceiro.Tipo.ENTRY)
+                .filter(lancamento -> lancamento.status() != LancamentoFinanceiro.Status.PAID)
+                .filter(lancamento -> lancamento.status() != LancamentoFinanceiro.Status.CANCELLED)
+                .map(lancamento -> lancamento.valorTotal().subtract(lancamento.valorPago()))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        if (receitasLabel != null) {
-            receitasLabel.setText(apresentadorMoeda.format(receitas));
-        }
-        if (despesasLabel != null) {
-            despesasLabel.setText(apresentadorMoeda.format(despesas));
-        }
-        if (saldoLabel != null) {
-            saldoLabel.setText(apresentadorMoeda.format(casoDeUsoFinanceiro.currentBalance()));
-        }
-        if (receberLabel != null) {
-            receberLabel.setText(apresentadorMoeda.format(receber));
-        }
-
-        if (transacoesTable != null) {
-            transacoesTable.getItems().setAll(casoDeUsoFinanceiro.listTransactions().stream()
-                    .filter(transaction -> filtroAtual == null || transaction.status() == filtroAtual)
-                    .toList());
-        }
+        receitasLabel.setText(apresentadorMoeda.format(receitas));
+        despesasLabel.setText(apresentadorMoeda.format(despesas));
+        saldoLabel.setText(apresentadorMoeda.format(receitas.subtract(despesas)));
+        receberLabel.setText(apresentadorMoeda.format(receber));
+        transacoesTable.getItems().setAll(casoDeUsoFinanceiro.listTransactions(filtroAtual));
     }
 
     private void configureTable() {
@@ -179,9 +252,119 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
         configureColumn(vencimentoColumn, 7, row -> apresentadorData.format(row.dueDate()));
         configureColumn(pagamentoColumn, 8, row -> apresentadorData.format(row.paymentDate()));
         configureColumn(formaPagamentoColumn, 9, row -> blankAsDash(row.paymentMethod()));
-        configureColumn(parcelasColumn, 10, row -> "-");
-        configureColumn(observacoesColumn, 11, row -> blankAsDash(row.createdBy()));
-        configureColumn(statusColumn, 12, row -> row.status().name());
+        configureColumn(parcelasColumn, 10, row -> row.installment() ? row.installmentCount() + " (" + apresentadorMoeda.format(row.paidAmount()) + " pago)" : "-");
+        configureColumn(observacoesColumn, 11, row -> blankAsDash(row.notes()));
+        configureColumn(statusColumn, 12, row -> row.overdue() && row.status() == CasoDeUsoFinanceiro.TransactionStatus.PENDING ? "OVERDUE" : row.status().name());
+    }
+
+    private Optional<CasoDeUsoFinanceiro.SalvarLancamentoFinanceiroCommand> abrirDialogoEdicao(CasoDeUsoFinanceiro.TransacaoFinanceiraView selected) {
+        Dialog<CasoDeUsoFinanceiro.SalvarLancamentoFinanceiroCommand> dialog = new Dialog<>();
+        dialog.setTitle("Editar lancamento");
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        ComboBox<CategoriaFinanceira> categoria = comboCategoria(selected.type(), selected.categoryId());
+        ComboBox<FormaPagamentoFinanceira> forma = comboForma(selected.paymentMethodId());
+        TextField descricao = new TextField(selected.description());
+        TextField valor = new TextField(selected.amount().toPlainString());
+        DatePicker emissao = new DatePicker(selected.issueDate());
+        DatePicker vencimento = new DatePicker(selected.dueDate());
+        TextArea observacoes = new TextArea(selected.notes());
+        observacoes.setPrefRowCount(3);
+        GridPane grid = grid();
+        grid.addRow(0, new Label("Categoria"), categoria);
+        grid.addRow(1, new Label("Forma"), forma);
+        grid.addRow(2, new Label("Descricao"), descricao);
+        grid.addRow(3, new Label("Valor"), valor);
+        grid.addRow(4, new Label("Emissao"), emissao);
+        grid.addRow(5, new Label("Vencimento"), vencimento);
+        grid.addRow(6, new Label("Observacoes"), observacoes);
+        dialog.getDialogPane().setContent(grid);
+        dialog.setResultConverter(button -> button == ButtonType.OK ? new CasoDeUsoFinanceiro.SalvarLancamentoFinanceiroCommand(
+                selected.id(), selected.type(), categoria.getValue().id(), forma.getValue().id(), descricao.getText(),
+                selected.customerId(), selected.orderReference(), parseMoney(valor.getText()), emissao.getValue(),
+                vencimento.getValue(), selected.paymentDate(), selected.installment(), selected.installmentCount(),
+                "", observacoes.getText(), selected.status()) : null);
+        return dialog.showAndWait();
+    }
+
+    private Optional<CasoDeUsoFinanceiro.FiltroFinanceiro> abrirDialogoFiltro() {
+        Dialog<CasoDeUsoFinanceiro.FiltroFinanceiro> dialog = new Dialog<>();
+        dialog.setTitle("Filtros financeiros");
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        DatePicker inicio = new DatePicker();
+        DatePicker fim = new DatePicker();
+        ComboBox<CasoDeUsoFinanceiro.TransactionType> tipo = new ComboBox<>();
+        tipo.getItems().setAll(CasoDeUsoFinanceiro.TransactionType.values());
+        ComboBox<CasoDeUsoFinanceiro.TransactionStatus> status = new ComboBox<>();
+        status.getItems().setAll(CasoDeUsoFinanceiro.TransactionStatus.values());
+        ComboBox<CategoriaFinanceira> categoria = comboCategoria(null, "");
+        ComboBox<FormaPagamentoFinanceira> forma = comboForma("");
+        TextField cliente = new TextField();
+        TextField texto = new TextField();
+        CheckBox vencidos = new CheckBox("Somente vencidos");
+        GridPane grid = grid();
+        grid.addRow(0, new Label("Inicio"), inicio);
+        grid.addRow(1, new Label("Fim"), fim);
+        grid.addRow(2, new Label("Tipo"), tipo);
+        grid.addRow(3, new Label("Status"), status);
+        grid.addRow(4, new Label("Categoria"), categoria);
+        grid.addRow(5, new Label("Forma"), forma);
+        grid.addRow(6, new Label("Cliente"), cliente);
+        grid.addRow(7, new Label("Texto"), texto);
+        grid.addRow(8, new Label("Vencidos"), vencidos);
+        dialog.getDialogPane().setContent(grid);
+        dialog.setResultConverter(button -> button == ButtonType.OK ? new CasoDeUsoFinanceiro.FiltroFinanceiro(
+                inicio.getValue(), fim.getValue(), tipo.getValue(), status.getValue(), cliente.getText(),
+                forma.getValue() == null ? "" : forma.getValue().id(), categoria.getValue() == null ? "" : categoria.getValue().id(),
+                texto.getText(), vencidos.isSelected()) : null);
+        return dialog.showAndWait();
+    }
+
+    private ComboBox<CategoriaFinanceira> comboCategoria(CasoDeUsoFinanceiro.TransactionType tipo, String selectedId) {
+        ComboBox<CategoriaFinanceira> combo = new ComboBox<>();
+        combo.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(CategoriaFinanceira categoria) {
+                return categoria == null ? "" : categoria.nome();
+            }
+
+            @Override
+            public CategoriaFinanceira fromString(String string) {
+                return null;
+            }
+        });
+        combo.getItems().setAll(casoDeUsoFinanceiro.listCategoriasAtivas().stream()
+                .filter(categoria -> tipo == null || (tipo == CasoDeUsoFinanceiro.TransactionType.EXPENSE
+                        ? categoria.tipo().equalsIgnoreCase("EXPENSE")
+                        : categoria.tipo().equalsIgnoreCase("ENTRY")))
+                .toList());
+        combo.getItems().stream().filter(item -> item.id().equals(selectedId)).findFirst().ifPresentOrElse(combo.getSelectionModel()::select, () -> {
+            if (!combo.getItems().isEmpty()) {
+                combo.getSelectionModel().selectFirst();
+            }
+        });
+        return combo;
+    }
+
+    private ComboBox<FormaPagamentoFinanceira> comboForma(String selectedId) {
+        ComboBox<FormaPagamentoFinanceira> combo = new ComboBox<>();
+        combo.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(FormaPagamentoFinanceira forma) {
+                return forma == null ? "" : forma.nome();
+            }
+
+            @Override
+            public FormaPagamentoFinanceira fromString(String string) {
+                return null;
+            }
+        });
+        combo.getItems().setAll(casoDeUsoFinanceiro.listFormasPagamentoAtivas());
+        combo.getItems().stream().filter(item -> item.id().equals(selectedId)).findFirst().ifPresentOrElse(combo.getSelectionModel()::select, () -> {
+            if (!combo.getItems().isEmpty()) {
+                combo.getSelectionModel().selectFirst();
+            }
+        });
+        return combo;
     }
 
     private void configureColumn(TableColumn<CasoDeUsoFinanceiro.TransacaoFinanceiraView, String> column, int fallbackIndex, java.util.function.Function<CasoDeUsoFinanceiro.TransacaoFinanceiraView, String> getter) {
@@ -197,6 +380,34 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
             return null;
         }
         return (TableColumn<CasoDeUsoFinanceiro.TransacaoFinanceiraView, String>) transacoesTable.getColumns().get(index);
+    }
+
+    private CasoDeUsoFinanceiro.TransacaoFinanceiraView selecionada() {
+        return transacoesTable == null ? null : transacoesTable.getSelectionModel().getSelectedItem();
+    }
+
+    private void executar(Runnable runnable) {
+        try {
+            runnable.run();
+            refresh();
+        } catch (Exception exception) {
+            mostrar(exception.getMessage());
+        }
+    }
+
+    private void mostrar(String message) {
+        new Alert(Alert.AlertType.WARNING, message == null ? "Acao nao realizada." : message, ButtonType.OK).showAndWait();
+    }
+
+    private GridPane grid() {
+        GridPane grid = new GridPane();
+        grid.setHgap(8);
+        grid.setVgap(8);
+        return grid;
+    }
+
+    private BigDecimal parseMoney(String value) {
+        return new BigDecimal(value == null || value.isBlank() ? "0" : value.replace(",", "."));
     }
 
     private String resolveCliente(String customerId) {

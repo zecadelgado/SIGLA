@@ -208,7 +208,7 @@
                   </HBox>
                   <HBox prefHeight="43.0" prefWidth="1221.0">
                      <children>
-                        <Button alignment="CENTER" mnemonicParsing="false" prefHeight="10.0" prefWidth="30.0" style="-fx-background-color: #00417e;" text="&lt;" textFill="WHITE">
+                        <Button fx:id="mesAnteriorButton" alignment="CENTER" mnemonicParsing="false" onAction="#onMesAnterior" prefHeight="10.0" prefWidth="30.0" style="-fx-background-color: #00417e;" text="&lt;" textFill="WHITE">
                            <font>
                               <Font name="Impact" size="18.0" />
                            </font>
@@ -216,7 +216,7 @@
                               <Insets left="520.0" right="10.0" />
                            </HBox.margin>
                         </Button>
-                        <Label alignment="CENTER" text="Abril">
+                        <Label fx:id="mesAtualLabel" alignment="CENTER" text="Abril">
                            <font>
                               <Font name="Ebrima Bold" size="28.0" />
                            </font>
@@ -224,7 +224,7 @@
                               <Insets left="15.0" right="15.0" />
                            </HBox.margin>
                         </Label>
-                        <Button alignment="CENTER" mnemonicParsing="false" prefHeight="10.0" prefWidth="30.0" style="-fx-background-color: #00417e;" text="&gt;" textFill="WHITE">
+                        <Button fx:id="proximoMesButton" alignment="CENTER" mnemonicParsing="false" onAction="#onProximoMes" prefHeight="10.0" prefWidth="30.0" style="-fx-background-color: #00417e;" text="&gt;" textFill="WHITE">
                            <font>
                               <Font name="Impact" size="18.0" />
                            </font>
@@ -237,7 +237,7 @@
                         <Insets bottom="-10.0" left="30.0" right="30.0" top="40.0" />
                      </VBox.margin>
                   </HBox>
-                  <GridPane prefHeight="398.0" prefWidth="1221.0" style="-fx-background-color: lightgrey; -fx-background-radius: 10;">
+                  <GridPane fx:id="calendarioGrid" prefHeight="398.0" prefWidth="1221.0" style="-fx-background-color: lightgrey; -fx-background-radius: 10;">
                     <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />

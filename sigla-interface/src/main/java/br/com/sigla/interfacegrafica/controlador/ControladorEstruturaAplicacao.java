@@ -23,6 +23,7 @@ public class ControladorEstruturaAplicacao {
 
     @FXML
     public void initialize() {
+        navigationManager.registerShellContentHost(contentHost);
         navigate(VisaoAplicacao.DASHBOARD);
     }
 
@@ -52,6 +53,11 @@ public class ControladorEstruturaAplicacao {
     }
 
     @FXML
+    private void onAgendaClick() {
+        navigate(VisaoAplicacao.AGENDA);
+    }
+
+    @FXML
     private void onOrdemServicoClick() {
         navigate(VisaoAplicacao.SERVICE_ORDER);
     }
@@ -62,39 +68,17 @@ public class ControladorEstruturaAplicacao {
     }
 
     @FXML
-    private void onContratosClick() {
-        navigate(VisaoAplicacao.CONTRACTS);
-    }
-
-    @FXML
-    private void onCertificadosClick() {
-        navigate(VisaoAplicacao.CERTIFICATES);
-    }
-
-    @FXML
-    private void onNotificacoesClick() {
-        navigate(VisaoAplicacao.NOTIFICATIONS);
-    }
-
-    @FXML
-    private void onUsuariosClick() {
-        navigate(VisaoAplicacao.USERS_ADMIN);
+    private void onContratosCertificadosClick() {
+        navigate(VisaoAplicacao.CONTRACTS_CERTIFICATES);
     }
 
     @FXML
     private void onLogoutClick() {
+        navigationManager.registerShellContentHost(null);
         fluxoAplicacao.showLogin();
     }
 
     private void navigate(VisaoAplicacao view) {
-        if (view.isSobreposta()) {
-            fluxoAplicacao.showView(view);
-            return;
-        }
-        if (view.isShellContent() && contentHost != null) {
-            contentHost.setCenter(navigationManager.loadShellContent(view));
-            return;
-        }
         navigationManager.navigateTo(view);
     }
 }

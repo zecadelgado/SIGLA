@@ -41,15 +41,32 @@ public class AdaptadorRepositorioPotencialCliente implements RepositorioPotencia
         return repository.findById(PersistenciaIds.toUuid(id)).map(this::toDomain);
     }
 
+    @Override
+    public Optional<PotencialCliente> findConvertedByClienteId(String clienteId) {
+        if (clienteId == null || clienteId.isBlank()) {
+            return Optional.empty();
+        }
+        return repository.findAll().stream()
+                .map(this::toDomain)
+                .filter(lead -> lead.status().isConvertido())
+                .filter(lead -> lead.observacoes().contains("Cliente gerado: " + clienteId))
+                .findFirst();
+    }
+
     private PotencialCliente toDomain(PotencialClienteEntidade entity) {
         LocalDate data = entity.getDataIndicacao() == null ? LocalDate.now() : entity.getDataIndicacao();
+        String indicadorId = PersistenciaIds.toString(entity.getClienteIndicadorId());
+        String observacoes = entity.getObservacoes() == null ? "" : entity.getObservacoes();
         return new PotencialCliente(
                 PersistenciaIds.toString(entity.getId()),
                 entity.getNomeIndicado(),
                 entity.getTelefone() == null ? "" : entity.getTelefone(),
-                "INDICACAO:" + PersistenciaIds.toString(entity.getClienteIndicadorId()),
+                indicadorId.isBlank() ? "INDICACAO" : "INDICACAO:" + indicadorId,
                 parseStatus(entity.getStatus()),
-                List.of(new PotencialCliente.Interaction(data, "Indicacao", entity.getObservacoes() == null ? "Indicacao cadastrada." : entity.getObservacoes()))
+                List.of(new PotencialCliente.Interaction(data, "Indicacao", observacoes.isBlank() ? "Indicacao cadastrada." : observacoes)),
+                indicadorId,
+                data,
+                observacoes
         );
     }
 
@@ -59,9 +76,9 @@ public class AdaptadorRepositorioPotencialCliente implements RepositorioPotencia
         entity.setNomeIndicado(lead.name());
         entity.setTelefone(lead.contact());
         entity.setClienteIndicadorId(PersistenciaIds.toUuid(extractCustomerId(lead.origin())));
-        entity.setDataIndicacao(lead.interactionHistory().isEmpty() ? LocalDate.now() : lead.interactionHistory().getFirst().interactionDate());
-        entity.setStatus(lead.status().name());
-        entity.setObservacoes(lead.interactionHistory().isEmpty() ? "" : lead.interactionHistory().getFirst().notes());
+        entity.setDataIndicacao(lead.dataIndicacao());
+        entity.setStatus(PotencialCliente.PotencialClienteStatus.normalizar(lead.status()).name().toLowerCase());
+        entity.setObservacoes(lead.observacoes());
         return entity;
     }
 
@@ -77,9 +94,9 @@ public class AdaptadorRepositorioPotencialCliente implements RepositorioPotencia
             return PotencialCliente.PotencialClienteStatus.NEW;
         }
         try {
-            return PotencialCliente.PotencialClienteStatus.valueOf(value.trim().toUpperCase());
+            return PotencialCliente.PotencialClienteStatus.from(value);
         } catch (IllegalArgumentException exception) {
-            return PotencialCliente.PotencialClienteStatus.NEW;
+            return PotencialCliente.PotencialClienteStatus.NOVO;
         }
     }
 }
@@ -103,6 +120,14 @@ class InMemoryAdaptadorRepositorioPotencialCliente implements RepositorioPotenci
     @Override
     public Optional<PotencialCliente> findById(String id) {
         return Optional.ofNullable(storage.get(id));
+    }
+
+    @Override
+    public Optional<PotencialCliente> findConvertedByClienteId(String clienteId) {
+        return storage.values().stream()
+                .filter(lead -> lead.status().isConvertido())
+                .filter(lead -> lead.observacoes().contains("Cliente gerado: " + clienteId))
+                .findFirst();
     }
 }
 

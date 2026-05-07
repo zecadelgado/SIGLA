@@ -1,87 +1,299 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="br.com.sigla.interfacegrafica.controlador.ControladorDashboard"
-      styleClass="screen-root">
-    <children>
-        <VBox styleClass="screen-header">
-            <children>
-                <Label text="Dashboard operacional" styleClass="screen-title-large"/>
-                <Label text="Visao rapida do que importa hoje: clientes, contratos, visitas, caixa e alertas." styleClass="screen-subtitle" wrapText="true"/>
-            </children>
-        </VBox>
-        <GridPane hgap="16.0" vgap="16.0" styleClass="metric-grid">
-            <columnConstraints>
-                <ColumnConstraints percentWidth="25"/>
-                <ColumnConstraints percentWidth="25"/>
-                <ColumnConstraints percentWidth="25"/>
-                <ColumnConstraints percentWidth="25"/>
-            </columnConstraints>
-            <children>
-                <VBox GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="metric-card">
-                    <children>
-                        <Label text="Clientes ativos" styleClass="metric-label"/>
-                        <Label fx:id="totalClientesLabel" styleClass="metric-value"/>
-                    </children>
-                </VBox>
-                <VBox GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="metric-card">
-                    <children>
-                        <Label text="Contratos proximos" styleClass="metric-label"/>
-                        <Label fx:id="contratosProximosLabel" styleClass="metric-value"/>
-                    </children>
-                </VBox>
-                <VBox GridPane.columnIndex="2" GridPane.rowIndex="0" styleClass="metric-card">
-                    <children>
-                        <Label text="Visitas na semana" styleClass="metric-label"/>
-                        <Label fx:id="visitasProximasLabel" styleClass="metric-value"/>
-                    </children>
-                </VBox>
-                <VBox GridPane.columnIndex="3" GridPane.rowIndex="0" styleClass="metric-card">
-                    <children>
-                        <Label text="Visitas atrasadas" styleClass="metric-label"/>
-                        <Label fx:id="visitasAtrasadasLabel" styleClass="metric-value"/>
-                    </children>
-                </VBox>
-                <VBox GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="metric-card">
-                    <children>
-                        <Label text="Saldo atual" styleClass="metric-label"/>
-                        <Label fx:id="saldoAtualLabel" styleClass="metric-value"/>
-                    </children>
-                </VBox>
-                <VBox GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="metric-card">
-                    <children>
-                        <Label text="Itens em baixa" styleClass="metric-label"/>
-                        <Label fx:id="estoqueBaixoLabel" styleClass="metric-value"/>
-                    </children>
-                </VBox>
-                <VBox GridPane.columnIndex="2" GridPane.rowIndex="1" styleClass="metric-card">
-                    <children>
-                        <Label text="Certificados vencendo" styleClass="metric-label"/>
-                        <Label fx:id="certificadosLabel" styleClass="metric-value"/>
-                    </children>
-                </VBox>
-                <VBox GridPane.columnIndex="3" GridPane.rowIndex="1" styleClass="metric-card">
-                    <children>
-                        <Label text="Notificacoes abertas" styleClass="metric-label"/>
-                        <Label fx:id="notificacoesLabel" styleClass="metric-value"/>
-                    </children>
-                </VBox>
-            </children>
-        </GridPane>
-        <VBox styleClass="content-card">
-            <children>
-                <Label text="Leitura do dia" styleClass="section-title"/>
-                <Label text="Se algum numero subir torto aqui, o resto da operacao vai chiar logo adiante. Esse painel serve justamente pra pegar o folego do sistema antes do problema virar baile." wrapText="true" styleClass="screen-subtitle"/>
-            </children>
-            <padding>
-                <Insets top="4" right="4" bottom="4" left="4"/>
-            </padding>
-        </VBox>
-    </children>
+<VBox prefHeight="200.0" prefWidth="100.0" spacing="20.0" style="-fx-background-color: lightgrey;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.sigla.interfacegrafica.controlador.ControladorDashboard">
+   <padding>
+      <Insets top="20.0" />
+   </padding>
+   <children>
+      <Label text="Dashboard" textFill="#00417e">
+         <font>
+            <Font name="Ebrima Bold" size="50.0" />
+         </font>
+         <padding>
+            <Insets left="25.0" top="15.0" />
+         </padding>
+         <VBox.margin>
+            <Insets top="-1.0" />
+         </VBox.margin>
+      </Label>
+      <Label prefHeight="20.0" prefWidth="194.0" text="Visão geral do sistema" textFill="#303030">
+         <font>
+            <Font size="14.0" />
+         </font>
+         <padding>
+            <Insets left="25.0" />
+         </padding>
+         <VBox.margin>
+            <Insets left="3.0" top="-25.0" />
+         </VBox.margin>
+      </Label>
+      <Label text="Relatório Mensal:" textFill="#00417e">
+         <font>
+            <Font name="Ebrima Bold" size="30.0" />
+         </font>
+         <padding>
+            <Insets left="25.0" top="15.0" />
+         </padding>
+      </Label>
+      <GridPane hgap="12.0" prefHeight="150.0" prefWidth="1205.0" vgap="12.0">
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="70.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="70.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <children>
+            <VBox prefHeight="65.0" prefWidth="200.0" style="-fx-background-color: white; -fx-background-radius: 8; -fx-padding: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 18,0,0,5); -fx-border-color: #2563EB; -fx-border-width: 0 0 0 4; -fx-border-radius: 8;">
+               <children>
+                  <Label text="OS abertas" textFill="#303030" />
+                  <Label fx:id="osAbertasLabel" text="0" textFill="#00417e">
+                     <font>
+                        <Font name="Ebrima Bold" size="20.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            <VBox prefHeight="65.0" prefWidth="200.0" style="-fx-background-color: white; -fx-background-radius: 8; -fx-padding: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 18,0,0,5); -fx-border-color: #2563EB; -fx-border-width: 0 0 0 4; -fx-border-radius: 8;" GridPane.columnIndex="1">
+               <children>
+                  <Label text="ServiÃ§os atrasados" textFill="#303030" />
+                  <Label fx:id="servicosAtrasadosLabel" text="0" textFill="#00417e">
+                     <font>
+                        <Font name="Ebrima Bold" size="20.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            <VBox prefHeight="65.0" prefWidth="200.0" style="-fx-background-color: white; -fx-background-radius: 8; -fx-padding: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 18,0,0,5); -fx-border-color: #2563EB; -fx-border-width: 0 0 0 4; -fx-border-radius: 8;" GridPane.columnIndex="2">
+               <children>
+                  <Label text="Contas vencidas" textFill="#303030" />
+                  <Label fx:id="contasVencidasLabel" text="0" textFill="#00417e">
+                     <font>
+                        <Font name="Ebrima Bold" size="20.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            <VBox prefHeight="65.0" prefWidth="200.0" style="-fx-background-color: white; -fx-background-radius: 8; -fx-padding: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 18,0,0,5); -fx-border-color: #2563EB; -fx-border-width: 0 0 0 4; -fx-border-radius: 8;" GridPane.columnIndex="3">
+               <children>
+                  <Label text="Estoque baixo" textFill="#303030" />
+                  <Label fx:id="estoqueBaixoLabel" text="0" textFill="#00417e">
+                     <font>
+                        <Font name="Ebrima Bold" size="20.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            <VBox prefHeight="65.0" prefWidth="200.0" style="-fx-background-color: white; -fx-background-radius: 8; -fx-padding: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 18,0,0,5); -fx-border-color: #2563EB; -fx-border-width: 0 0 0 4; -fx-border-radius: 8;" GridPane.columnIndex="4">
+               <children>
+                  <Label text="IndicaÃ§Ãµes pendentes" textFill="#303030" />
+                  <Label fx:id="indicacoesPendentesLabel" text="0" textFill="#00417e">
+                     <font>
+                        <Font name="Ebrima Bold" size="20.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            <VBox prefHeight="65.0" prefWidth="200.0" style="-fx-background-color: white; -fx-background-radius: 8; -fx-padding: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 18,0,0,5); -fx-border-color: #2563EB; -fx-border-width: 0 0 0 4; -fx-border-radius: 8;" GridPane.rowIndex="1">
+               <children>
+                  <Label text="Receitas do mÃªs" textFill="#303030" />
+                  <Label fx:id="receitasPeriodoLabel" text="R$ 0,00" textFill="#00417e">
+                     <font>
+                        <Font name="Ebrima Bold" size="20.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            <VBox prefHeight="65.0" prefWidth="200.0" style="-fx-background-color: white; -fx-background-radius: 8; -fx-padding: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 18,0,0,5); -fx-border-color: #2563EB; -fx-border-width: 0 0 0 4; -fx-border-radius: 8;" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <children>
+                  <Label text="Despesas do mÃªs" textFill="#303030" />
+                  <Label fx:id="despesasPeriodoLabel" text="R$ 0,00" textFill="#00417e">
+                     <font>
+                        <Font name="Ebrima Bold" size="20.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            <VBox prefHeight="65.0" prefWidth="200.0" style="-fx-background-color: white; -fx-background-radius: 8; -fx-padding: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 18,0,0,5); -fx-border-color: #2563EB; -fx-border-width: 0 0 0 4; -fx-border-radius: 8;" GridPane.columnIndex="2" GridPane.rowIndex="1">
+               <children>
+                  <Label text="Saldo atual" textFill="#303030" />
+                  <Label fx:id="saldoAtualLabel" text="R$ 0,00" textFill="#00417e">
+                     <font>
+                        <Font name="Ebrima Bold" size="20.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            <VBox prefHeight="65.0" prefWidth="200.0" style="-fx-background-color: white; -fx-background-radius: 8; -fx-padding: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 18,0,0,5); -fx-border-color: #2563EB; -fx-border-width: 0 0 0 4; -fx-border-radius: 8;" GridPane.columnIndex="3" GridPane.rowIndex="1">
+               <children>
+                  <Label text="A receber" textFill="#303030" />
+                  <Label fx:id="receberLabel" text="R$ 0,00" textFill="#00417e">
+                     <font>
+                        <Font name="Ebrima Bold" size="20.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            <VBox prefHeight="65.0" prefWidth="200.0" style="-fx-background-color: white; -fx-background-radius: 8; -fx-padding: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 18,0,0,5); -fx-border-color: #2563EB; -fx-border-width: 0 0 0 4; -fx-border-radius: 8;" GridPane.columnIndex="4" GridPane.rowIndex="1">
+               <children>
+                  <Label text="A pagar" textFill="#303030" />
+                  <Label fx:id="pagarLabel" text="R$ 0,00" textFill="#00417e">
+                     <font>
+                        <Font name="Ebrima Bold" size="20.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+         </children>
+         <VBox.margin>
+            <Insets left="25.0" right="25.0" top="-5.0" />
+         </VBox.margin>
+      </GridPane>
+      <GridPane hgap="25.0" prefHeight="450.0" prefWidth="1205.0" vgap="30.0">
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <children>
+            <VBox layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15; -fx-spacing: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 30,0,0,10); -fx-border-color: #2563EB; -fx-border-width: 0 0 0 5; -fx-border-radius: 10;" GridPane.columnIndex="2">
+               <children>
+                  <Label prefHeight="21.0" prefWidth="108.0" text="Serviços" textFill="#00417e">
+                     <font>
+                        <Font name="Ebrima Bold" size="24.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets left="5.0" />
+                     </VBox.margin>
+                  </Label>
+                  <BarChart fx:id="servicosChart" animated="false" legendVisible="false">
+                    <xAxis>
+                      <CategoryAxis side="BOTTOM" />
+                    </xAxis>
+                    <yAxis>
+                      <NumberAxis side="LEFT" upperBound="50.0">
+                           <tickLabelFont>
+                              <Font size="12.0" />
+                           </tickLabelFont>
+                        </NumberAxis>
+                    </yAxis>
+                     <VBox.margin>
+                        <Insets left="-10.0" top="-5.0" />
+                     </VBox.margin>
+                  </BarChart>
+                  <Button mnemonicParsing="false" onAction="#onAcessarServicos" prefHeight="20.0" prefWidth="134.0" style="-fx-background-color: white;" text="Acessar módulo →" textFill="#3b5fd4">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                     <padding>
+                        <Insets left="5.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets top="-15.0" />
+                     </VBox.margin>
+                  </Button>
+               </children>
+            </VBox>
+            <VBox layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15; -fx-spacing: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 30,0,0,10); -fx-border-color: #2563EB; -fx-border-width: 0 0 0 5; -fx-border-radius: 10;">
+               <children>
+                  <Label prefHeight="31.0" prefWidth="118.0" text="Financeiro" textFill="#00417e">
+                     <font>
+                        <Font name="Ebrima Bold" size="24.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets left="5.0" />
+                     </VBox.margin>
+                  </Label>
+                  <LineChart fx:id="financeiroChart" animated="false" legendVisible="false">
+                    <xAxis>
+                      <CategoryAxis side="TOP" />
+                    </xAxis>
+                    <yAxis>
+                      <NumberAxis minorTickCount="2" side="LEFT" tickLabelGap="1.0" tickLength="10.0" tickUnit="2.0" upperBound="14000.0">
+                           <tickLabelFont>
+                              <Font size="12.0" />
+                           </tickLabelFont>
+                        </NumberAxis>
+                    </yAxis>
+                     <VBox.margin>
+                        <Insets left="-10.0" top="-10.0" />
+                     </VBox.margin>
+                  </LineChart>
+                  <Button mnemonicParsing="false" onAction="#onAcessarFinanceiro" prefHeight="20.0" prefWidth="139.0" style="-fx-background-color: white;" text="Acessar módulo →" textFill="#3b5fd4">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                     <padding>
+                        <Insets left="5.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets top="-5.0" />
+                     </VBox.margin>
+                  </Button>
+               </children>
+            </VBox>
+            <VBox layoutX="420.0" layoutY="10.0" prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15; -fx-spacing: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 30,0,0,10); -fx-border-color: #2563EB; -fx-border-width: 0 0 0 5; -fx-border-radius: 10;" GridPane.columnIndex="1">
+               <children>
+                  <Label prefHeight="21.0" prefWidth="108.0" text="Estoque" textFill="#00417e">
+                     <font>
+                        <Font name="Ebrima Bold" size="24.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets left="5.0" />
+                     </VBox.margin>
+                  </Label>
+                  <BarChart fx:id="estoqueChart" animated="false" legendVisible="false">
+                    <xAxis>
+                      <CategoryAxis side="BOTTOM" />
+                    </xAxis>
+                    <yAxis>
+                      <NumberAxis side="LEFT">
+                           <tickLabelFont>
+                              <Font size="12.0" />
+                           </tickLabelFont>
+                        </NumberAxis>
+                    </yAxis>
+                     <VBox.margin>
+                        <Insets left="-10.0" top="-5.0" />
+                     </VBox.margin>
+                  </BarChart>
+                  <Button mnemonicParsing="false" onAction="#onAcessarEstoque" prefHeight="20.0" prefWidth="138.0" style="-fx-background-color: white;" text="Acessar módulo →" textFill="#3b5fd4">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                     <padding>
+                        <Insets left="5.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets top="-15.0" />
+                     </VBox.margin>
+                  </Button>
+               </children>
+            </VBox>
+         </children>
+         <VBox.margin>
+            <Insets bottom="20.0" left="25.0" right="25.0" />
+         </VBox.margin>
+      </GridPane>
+   </children>
 </VBox>

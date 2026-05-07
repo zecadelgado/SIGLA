@@ -5,6 +5,7 @@ import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import br.com.sigla.interfacegrafica.util.UtilJanela;
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.springframework.stereotype.Component;
@@ -23,6 +24,10 @@ public class ControladorNovoProduto {
     @FXML
     private TextField descricaoField;
     @FXML
+    private TextField skuField;
+    @FXML
+    private ComboBox<String> unidadeCombo;
+    @FXML
     private TextField valorCustoField;
     @FXML
     private TextField valorVendaField;
@@ -40,6 +45,10 @@ public class ControladorNovoProduto {
 
     @FXML
     public void initialize() {
+        if (unidadeCombo != null) {
+            unidadeCombo.getItems().setAll("un", "litro", "kg", "caixa", "pacote", "frasco");
+            unidadeCombo.getSelectionModel().select("un");
+        }
         setFeedback("");
     }
 
@@ -50,11 +59,13 @@ public class ControladorNovoProduto {
                     UUID.randomUUID().toString(),
                     nomeField.getText(),
                     descricaoField.getText(),
+                    skuField == null ? "" : skuField.getText(),
                     new BigDecimal(valorCustoField.getText()),
                     new BigDecimal(valorVendaField.getText()),
                     Integer.parseInt(quantidadeField.getText()),
                     Integer.parseInt(quantidadeMinimaField.getText()),
-                    "un"
+                    unidadeCombo == null || unidadeCombo.getValue() == null ? "un" : unidadeCombo.getValue(),
+                    true
             ));
             gerenciadorNavegacao.navigateTo(VisaoAplicacao.INVENTORY);
             UtilJanela.fecharJanela(nomeField);

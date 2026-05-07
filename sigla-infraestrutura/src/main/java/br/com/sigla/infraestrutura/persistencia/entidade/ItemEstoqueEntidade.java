@@ -79,6 +79,14 @@ public class ItemEstoqueEntidade {
         this.descricao = descricao;
     }
 
+    public String getSku() {
+        return sku;
+    }
+
+    public void setSku(String sku) {
+        this.sku = sku;
+    }
+
     public BigDecimal getCostPrice() {
         return valorCusto;
     }
@@ -119,6 +127,14 @@ public class ItemEstoqueEntidade {
         this.unidade = unidade;
     }
 
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+    }
+
     public List<MovementEmbeddable> getMovements() {
         return movements;
     }
@@ -151,6 +167,9 @@ public class ItemEstoqueEntidade {
         @Column(name = "usuario_id")
         private UUID createdBy;
 
+        @Column(name = "funcionario_id")
+        private UUID funcionarioId;
+
         @Column(name = "cliente_id")
         private UUID customerId;
 
@@ -159,6 +178,12 @@ public class ItemEstoqueEntidade {
 
         @Column(name = "destino_descricao")
         private String destinationDescription;
+
+        @Column(name = "quem_pegou")
+        private String quemPegou;
+
+        @Column(name = "quem_comprou")
+        private String quemComprou;
 
         @Column(name = "observacoes")
         private String notes;
@@ -227,6 +252,14 @@ public class ItemEstoqueEntidade {
             this.customerId = customerId;
         }
 
+        public UUID getFuncionarioId() {
+            return funcionarioId;
+        }
+
+        public void setFuncionarioId(UUID funcionarioId) {
+            this.funcionarioId = funcionarioId;
+        }
+
         public UUID getOrderReference() {
             return orderReference;
         }
@@ -241,6 +274,22 @@ public class ItemEstoqueEntidade {
 
         public void setDestinationDescription(String destinationDescription) {
             this.destinationDescription = destinationDescription;
+        }
+
+        public String getQuemPegou() {
+            return quemPegou;
+        }
+
+        public void setQuemPegou(String quemPegou) {
+            this.quemPegou = quemPegou;
+        }
+
+        public String getQuemComprou() {
+            return quemComprou;
+        }
+
+        public void setQuemComprou(String quemComprou) {
+            this.quemComprou = quemComprou;
         }
 
         public String getNotes() {

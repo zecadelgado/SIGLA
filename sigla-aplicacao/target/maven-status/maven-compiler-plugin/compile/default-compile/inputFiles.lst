@@ -1,6 +1,8 @@
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\agenda\casodeuso\CasoDeUsoGerenciarAgenda.java
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\agenda\porta\entrada\CasoDeUsoAgenda.java
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\agenda\porta\saida\RepositorioAgenda.java
+D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\auditoria\casodeuso\ServicoAuditoriaFuncional.java
+D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\auditoria\porta\saida\RepositorioAuditoriaFuncional.java
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\certificados\casodeuso\CasoDeUsoGerenciarCertificado.java
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\certificados\porta\entrada\CasoDeUsoCertificado.java
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\certificados\porta\saida\RepositorioCertificado.java
@@ -17,12 +19,14 @@ D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\financeiro\casodeu
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\financeiro\porta\entrada\CasoDeUsoFinanceiro.java
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\financeiro\porta\saida\RepositorioDespesaFinanceira.java
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\financeiro\porta\saida\RepositorioEntradaFinanceira.java
+D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\financeiro\porta\saida\RepositorioLancamentoFinanceiro.java
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\financeiro\porta\saida\RepositorioPlanoParcelamento.java
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\funcionarios\casodeuso\CasoDeUsoGerenciarFuncionario.java
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\funcionarios\porta\entrada\CasoDeUsoFuncionario.java
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\funcionarios\porta\saida\RepositorioFuncionario.java
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\notificacoes\casodeuso\CasoDeUsoAtualizarNotificacao.java
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\notificacoes\porta\entrada\CasoDeUsoNotificacao.java
+D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\notificacoes\porta\saida\PortaWebhookNotificacao.java
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\notificacoes\porta\saida\RepositorioNotificacao.java
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\potenciaisclientes\casodeuso\CasoDeUsoGerenciarPotencialCliente.java
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\potenciaisclientes\porta\entrada\CasoDeUsoPotencialCliente.java

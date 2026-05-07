@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
@@ -45,6 +47,7 @@ public class AdaptadorRepositorioOrdemServico implements RepositorioOrdemServico
                 PersistenciaIds.toString(entity.getId()),
                 entity.getNumeroOs(),
                 PersistenciaIds.toString(entity.getClienteId()),
+                PersistenciaIds.toString(entity.getContratoId()),
                 entity.getTitulo(),
                 entity.getDescricao(),
                 entity.getTipoServico(),
@@ -57,6 +60,29 @@ public class AdaptadorRepositorioOrdemServico implements RepositorioOrdemServico
                 entity.isFoiFeito(),
                 entity.isPago(),
                 entity.getValorServico(),
+                entity.isAssinaturaCliente(),
+                entity.getProdutos().stream()
+                        .map(produto -> new OrdemServico.ProdutoUsado(
+                                PersistenciaIds.toString(produto.getId()),
+                                PersistenciaIds.toString(produto.getProdutoId()),
+                                "",
+                                produto.getQuantidade() == null ? 0 : produto.getQuantidade().intValue(),
+                                produto.getValorUnitario(),
+                                produto.getValorTotal()
+                        ))
+                        .toList(),
+                entity.getAnexos().stream()
+                        .map(anexo -> new OrdemServico.Anexo(
+                                PersistenciaIds.toString(anexo.getId()),
+                                OrdemServico.TipoAnexo.from(anexo.getTipoAnexo()),
+                                anexo.getNomeArquivo(),
+                                anexo.getCaminhoStorage(),
+                                anexo.getMimeType(),
+                                anexo.getTamanhoBytes(),
+                                anexo.getDescricao(),
+                                PersistenciaIds.toString(anexo.getUploadedBy())
+                        ))
+                        .toList(),
                 entity.getObservacoes()
         );
     }
@@ -65,6 +91,7 @@ public class AdaptadorRepositorioOrdemServico implements RepositorioOrdemServico
         OrdemServicoEntidade entity = new OrdemServicoEntidade();
         entity.setId(PersistenciaIds.toUuid(ordemServico.id()));
         entity.setClienteId(PersistenciaIds.toUuid(ordemServico.clienteId()));
+        entity.setContratoId(PersistenciaIds.toUuid(ordemServico.contratoId()));
         entity.setTitulo(ordemServico.titulo());
         entity.setDescricao(ordemServico.descricao());
         entity.setTipoServico(ordemServico.tipoServico());
@@ -77,7 +104,33 @@ public class AdaptadorRepositorioOrdemServico implements RepositorioOrdemServico
         entity.setFoiFeito(ordemServico.foiFeito());
         entity.setPago(ordemServico.pago());
         entity.setValorServico(ordemServico.valorServico());
+        entity.setAssinaturaCliente(ordemServico.assinaturaCliente());
         entity.setObservacoes(ordemServico.observacoes());
+        List<OrdemServicoEntidade.ProdutoEntidade> produtos = new ArrayList<>();
+        for (OrdemServico.ProdutoUsado produto : ordemServico.produtos()) {
+            OrdemServicoEntidade.ProdutoEntidade produtoEntidade = new OrdemServicoEntidade.ProdutoEntidade();
+            produtoEntidade.setId(PersistenciaIds.toUuid(produto.id().isBlank() ? UUID.randomUUID().toString() : produto.id()));
+            produtoEntidade.setProdutoId(PersistenciaIds.toUuid(produto.produtoId()));
+            produtoEntidade.setQuantidade(BigDecimal.valueOf(produto.quantidade()));
+            produtoEntidade.setValorUnitario(produto.valorUnitario());
+            produtoEntidade.setValorTotal(produto.valorTotal());
+            produtos.add(produtoEntidade);
+        }
+        entity.setProdutos(produtos);
+        List<OrdemServicoEntidade.AnexoEntidade> anexos = new ArrayList<>();
+        for (OrdemServico.Anexo anexo : ordemServico.anexos()) {
+            OrdemServicoEntidade.AnexoEntidade anexoEntidade = new OrdemServicoEntidade.AnexoEntidade();
+            anexoEntidade.setId(PersistenciaIds.toUuid(anexo.id().isBlank() ? UUID.randomUUID().toString() : anexo.id()));
+            anexoEntidade.setTipoAnexo(anexo.tipo().name().toLowerCase());
+            anexoEntidade.setNomeArquivo(anexo.nomeArquivo());
+            anexoEntidade.setCaminhoStorage(anexo.caminhoStorage());
+            anexoEntidade.setMimeType(anexo.mimeType());
+            anexoEntidade.setTamanhoBytes(anexo.tamanhoBytes());
+            anexoEntidade.setDescricao(anexo.descricao());
+            anexoEntidade.setUploadedBy(PersistenciaIds.toUuidIfValid(anexo.uploadedBy()));
+            anexos.add(anexoEntidade);
+        }
+        entity.setAnexos(anexos);
         return entity;
     }
 

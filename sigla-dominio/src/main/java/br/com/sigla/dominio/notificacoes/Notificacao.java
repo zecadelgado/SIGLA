@@ -32,7 +32,10 @@ public record Notificacao(
 
     public enum NotificacaoStatus {
         OPEN,
-        RESOLVED
+        RESOLVED,
+        PENDING,
+        SENT,
+        FAILED
     }
 
     private static String requireText(String value, String fieldName) {

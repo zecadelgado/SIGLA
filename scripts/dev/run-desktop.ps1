@@ -1,2 +1,2 @@
-﻿./mvnw.cmd -pl sigla-interface -am spring-boot:run
-
+.\mvnw.cmd -pl sigla-interface -am -DskipTests install
+.\mvnw.cmd -pl sigla-interface spring-boot:run

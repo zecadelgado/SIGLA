@@ -31,11 +31,20 @@ public class CertificadoEntidade {
     @Column(name = "data_validade")
     private LocalDate validUntil;
 
+    @Column(name = "intervalo_meses")
+    private int intervaloMeses = 6;
+
+    @Column(name = "alerta_ativo")
+    private boolean alertaAtivo = true;
+
     @Column(name = "dias_alerta")
     private int renewalAlertDays;
 
     @Column(name = "status")
     private String status;
+
+    @Column(name = "observacoes")
+    private String observacoes;
 
     public UUID getId() {
         return id;
@@ -85,6 +94,22 @@ public class CertificadoEntidade {
         this.validUntil = validUntil;
     }
 
+    public int getIntervaloMeses() {
+        return intervaloMeses;
+    }
+
+    public void setIntervaloMeses(int intervaloMeses) {
+        this.intervaloMeses = intervaloMeses;
+    }
+
+    public boolean isAlertaAtivo() {
+        return alertaAtivo;
+    }
+
+    public void setAlertaAtivo(boolean alertaAtivo) {
+        this.alertaAtivo = alertaAtivo;
+    }
+
     public int getRenewalAlertDays() {
         return renewalAlertDays;
     }
@@ -99,5 +124,13 @@ public class CertificadoEntidade {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getObservacoes() {
+        return observacoes;
+    }
+
+    public void setObservacoes(String observacoes) {
+        this.observacoes = observacoes;
     }
 }

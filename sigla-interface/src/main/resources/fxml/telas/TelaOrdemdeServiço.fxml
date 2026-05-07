@@ -257,27 +257,13 @@
                               </ComboBox>
                            </children>
                         </VBox>
-                        <VBox prefHeight="98.0" prefWidth="250.0" spacing="6.0">
+                        <VBox prefHeight="66.0" prefWidth="250.0">
                            <children>
                                <Button mnemonicParsing="false" onAction="#onNovaOrdem" prefHeight="46.0" prefWidth="237.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 5;" text="+ Nova Ordem de Serviço" textFill="WHITE">
                                  <font>
                                     <Font name="Ebrima Bold" size="17.0" />
                                  </font>
                               </Button>
-                              <HBox spacing="6.0">
-                                 <children>
-                                    <Button mnemonicParsing="false" onAction="#onConcluirOrdem" prefHeight="28.0" prefWidth="115.0" style="-fx-background-color: #178c1b; -fx-background-radius: 5;" text="Concluir" textFill="WHITE">
-                                       <font>
-                                          <Font name="Ebrima Bold" size="13.0" />
-                                       </font>
-                                    </Button>
-                                    <Button mnemonicParsing="false" onAction="#onCancelarOrdem" prefHeight="28.0" prefWidth="115.0" style="-fx-background-color: #a83232; -fx-background-radius: 5;" text="Cancelar" textFill="WHITE">
-                                       <font>
-                                          <Font name="Ebrima Bold" size="13.0" />
-                                       </font>
-                                    </Button>
-                                 </children>
-                              </HBox>
                            </children>
                            <HBox.margin>
                               <Insets bottom="10.0" left="5.0" top="10.0" />
@@ -291,12 +277,12 @@
                            <children>
                               <TableView fx:id="ordensTable" prefHeight="355.0" prefWidth="1223.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5); -fx-background-radius: 10;">
                                 <columns>
-                                  <TableColumn prefWidth="220.0" style="-fx-background-color: white;" text="Número" />
-                                  <TableColumn prefWidth="250.0" style="-fx-background-color: white;" text="Cliente" />
-                                    <TableColumn prefWidth="200.0" style="-fx-background-color: white;" text="Responsável" />
-                                    <TableColumn prefWidth="170.0" style="-fx-background-color: white;" text="Data de emissão" />
-                                    <TableColumn prefWidth="200.0" style="-fx-background-color: white;" text="Valor total" />
-                                    <TableColumn prefWidth="180.0" style="-fx-background-color: white;" text="Status" />
+                                  <TableColumn fx:id="numeroColumn" prefWidth="220.0" style="-fx-background-color: white;" text="Número" />
+                                  <TableColumn fx:id="clienteColumn" prefWidth="250.0" style="-fx-background-color: white;" text="Cliente" />
+                                    <TableColumn fx:id="responsavelColumn" prefWidth="200.0" style="-fx-background-color: white;" text="Responsável" />
+                                    <TableColumn fx:id="emissaoColumn" prefWidth="170.0" style="-fx-background-color: white;" text="Data de emissão" />
+                                    <TableColumn fx:id="valorColumn" prefWidth="200.0" style="-fx-background-color: white;" text="Valor total" />
+                                    <TableColumn fx:id="statusColumn" prefWidth="180.0" style="-fx-background-color: white;" text="Status" />
                                 </columns>
                                  <VBox.margin>
                                     <Insets />

@@ -42,6 +42,7 @@ public class ServicoConsultaReferencias {
 
     public List<OpcaoId> produtos() {
         return casoDeUsoEstoque.listAll().stream()
+                .filter(item -> item.ativo())
                 .map(item -> new OpcaoId(item.id(), item.name()))
                 .toList();
     }

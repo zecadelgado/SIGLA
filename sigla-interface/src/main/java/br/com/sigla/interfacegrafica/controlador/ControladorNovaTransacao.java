@@ -1,6 +1,8 @@
 package br.com.sigla.interfacegrafica.controlador;
 
 import br.com.sigla.aplicacao.financeiro.porta.entrada.CasoDeUsoFinanceiro;
+import br.com.sigla.dominio.financeiro.CategoriaFinanceira;
+import br.com.sigla.dominio.financeiro.FormaPagamentoFinanceira;
 import br.com.sigla.interfacegrafica.aplicativo.SessaoLocalAplicacao;
 import br.com.sigla.interfacegrafica.consulta.ServicoConsultaReferencias;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
@@ -11,14 +13,13 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.util.StringConverter;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
-import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.parseBoolean;
-import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.parseEnum;
 import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.resolveOpcional;
 
 @Component
@@ -32,7 +33,7 @@ public class ControladorNovaTransacao {
     @FXML
     private ComboBox<CasoDeUsoFinanceiro.TransactionType> tipoCombo;
     @FXML
-    private TextField categoriaField;
+    private ComboBox<CategoriaFinanceira> categoriaCombo;
     @FXML
     private TextField descricaoField;
     @FXML
@@ -48,9 +49,9 @@ public class ControladorNovaTransacao {
     @FXML
     private DatePicker pagamentoPicker;
     @FXML
-    private TextField formaPagamentoField;
+    private ComboBox<FormaPagamentoFinanceira> formaPagamentoCombo;
     @FXML
-    private TextField parceladoField;
+    private ComboBox<Boolean> parceladoCombo;
     @FXML
     private TextField parcelasField;
     @FXML
@@ -58,7 +59,7 @@ public class ControladorNovaTransacao {
     @FXML
     private TextField criadoPorField;
     @FXML
-    private TextField statusField;
+    private ComboBox<CasoDeUsoFinanceiro.TransactionStatus> statusCombo;
     @FXML
     private Label feedbackLabel;
 
@@ -79,12 +80,12 @@ public class ControladorNovaTransacao {
         if (tipoCombo != null) {
             tipoCombo.getItems().setAll(CasoDeUsoFinanceiro.TransactionType.values());
             tipoCombo.getSelectionModel().select(CasoDeUsoFinanceiro.TransactionType.ENTRY);
+            tipoCombo.valueProperty().addListener((observable, oldValue, newValue) -> carregarCategorias());
         }
+        configurarCombos();
+        carregarCategorias();
         if (emissaoPicker != null) {
             emissaoPicker.setValue(LocalDate.now());
-        }
-        if (statusField != null && statusField.getText().isBlank()) {
-            statusField.setText(CasoDeUsoFinanceiro.TransactionStatus.PENDING.name());
         }
         if (criadoPorField != null && criadoPorField.getText().isBlank() && sessaoLocalAplicacao.usuarioAtual() != null) {
             criadoPorField.setText(sessaoLocalAplicacao.usuarioAtual().id());
@@ -100,7 +101,7 @@ public class ControladorNovaTransacao {
             casoDeUsoFinanceiro.registerTransaction(new CasoDeUsoFinanceiro.RegisterTransacaoFinanceiraCommand(
                     UUID.randomUUID().toString(),
                     tipoCombo == null || tipoCombo.getValue() == null ? CasoDeUsoFinanceiro.TransactionType.ENTRY : tipoCombo.getValue(),
-                    categoriaField.getText(),
+                    categoriaCombo == null || categoriaCombo.getValue() == null ? "" : categoriaCombo.getValue().id(),
                     descricaoField.getText(),
                     cliente == null ? "" : cliente.id(),
                     "",
@@ -109,12 +110,12 @@ public class ControladorNovaTransacao {
                     emissaoPicker == null ? LocalDate.now() : emissaoPicker.getValue(),
                     vencimentoPicker == null ? null : vencimentoPicker.getValue(),
                     pagamentoPicker == null ? null : pagamentoPicker.getValue(),
-                    formaPagamentoField.getText(),
-                    parseBoolean(parceladoField == null ? "" : parceladoField.getText()),
+                    formaPagamentoCombo == null || formaPagamentoCombo.getValue() == null ? "" : formaPagamentoCombo.getValue().id(),
+                    parceladoCombo != null && Boolean.TRUE.equals(parceladoCombo.getValue()),
                     parcelasField.getText().isBlank() ? 1 : Integer.parseInt(parcelasField.getText()),
                     resolveUsuarioAtual(),
                     observacoesField == null ? "" : observacoesField.getText(),
-                    parseEnum(CasoDeUsoFinanceiro.TransactionStatus.class, statusField == null ? "" : statusField.getText(), CasoDeUsoFinanceiro.TransactionStatus.PENDING)
+                    statusCombo == null || statusCombo.getValue() == null ? CasoDeUsoFinanceiro.TransactionStatus.PENDING : statusCombo.getValue()
             ));
             gerenciadorNavegacao.navigateTo(VisaoAplicacao.FINANCE);
             UtilJanela.fecharJanela(tipoCombo);
@@ -140,5 +141,63 @@ public class ControladorNovaTransacao {
             return digitado.trim();
         }
         return sessaoLocalAplicacao.usuarioAtual() == null ? "" : sessaoLocalAplicacao.usuarioAtual().id();
+    }
+
+    private void configurarCombos() {
+        if (categoriaCombo != null) {
+            categoriaCombo.setConverter(new StringConverter<>() {
+                @Override
+                public String toString(CategoriaFinanceira categoria) {
+                    return categoria == null ? "" : categoria.nome();
+                }
+
+                @Override
+                public CategoriaFinanceira fromString(String string) {
+                    return null;
+                }
+            });
+        }
+        if (formaPagamentoCombo != null) {
+            formaPagamentoCombo.setConverter(new StringConverter<>() {
+                @Override
+                public String toString(FormaPagamentoFinanceira forma) {
+                    return forma == null ? "" : forma.nome();
+                }
+
+                @Override
+                public FormaPagamentoFinanceira fromString(String string) {
+                    return null;
+                }
+            });
+            formaPagamentoCombo.getItems().setAll(casoDeUsoFinanceiro.listFormasPagamentoAtivas());
+            if (!formaPagamentoCombo.getItems().isEmpty()) {
+                formaPagamentoCombo.getSelectionModel().selectFirst();
+            }
+        }
+        if (parceladoCombo != null) {
+            parceladoCombo.getItems().setAll(Boolean.FALSE, Boolean.TRUE);
+            parceladoCombo.getSelectionModel().select(Boolean.FALSE);
+        }
+        if (statusCombo != null) {
+            statusCombo.getItems().setAll(CasoDeUsoFinanceiro.TransactionStatus.PENDING, CasoDeUsoFinanceiro.TransactionStatus.PAID);
+            statusCombo.getSelectionModel().select(CasoDeUsoFinanceiro.TransactionStatus.PENDING);
+        }
+    }
+
+    private void carregarCategorias() {
+        if (categoriaCombo == null) {
+            return;
+        }
+        CasoDeUsoFinanceiro.TransactionType tipo = tipoCombo == null || tipoCombo.getValue() == null
+                ? CasoDeUsoFinanceiro.TransactionType.ENTRY
+                : tipoCombo.getValue();
+        categoriaCombo.getItems().setAll(casoDeUsoFinanceiro.listCategoriasAtivas().stream()
+                .filter(categoria -> tipo == CasoDeUsoFinanceiro.TransactionType.EXPENSE
+                        ? categoria.tipo().equalsIgnoreCase("EXPENSE")
+                        : categoria.tipo().equalsIgnoreCase("ENTRY"))
+                .toList());
+        if (!categoriaCombo.getItems().isEmpty()) {
+            categoriaCombo.getSelectionModel().selectFirst();
+        }
     }
 }

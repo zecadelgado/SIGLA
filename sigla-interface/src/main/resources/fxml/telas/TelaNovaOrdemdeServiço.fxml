@@ -320,7 +320,7 @@
                   </HBox>
                   <VBox prefHeight="270.0" prefWidth="790.0">
                      <children>
-                        <Label text="Assinatura Cliente:">
+                        <Label text="Inserir Assinatura do Cliente:">
                            <font>
                               <Font size="16.0" />
                            </font>
@@ -358,6 +358,11 @@
                         </StackPane>
                      </children>
                   </VBox>
+                  <Label fx:id="feedbackLabel" prefHeight="20.0" prefWidth="700.0" textFill="#0B2A6F">
+                     <VBox.margin>
+                        <Insets left="60.0" top="5.0" />
+                     </VBox.margin>
+                  </Label>
                   <HBox prefHeight="46.0" prefWidth="670.0">
                      <children>
                         <Button mnemonicParsing="false" onAction="#onConfirmar" prefHeight="40.0" prefWidth="310.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Cadastrar" textFill="WHITE">

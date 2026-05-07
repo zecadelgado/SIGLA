@@ -24,8 +24,12 @@ public class AdaptadorRepositorioNotificacao implements RepositorioNotificacao {
 
     @Override
     public void replaceAll(List<Notificacao> notificacoes) {
-        repository.deleteAllInBatch();
         repository.saveAll(notificacoes.stream().map(this::toEntity).toList());
+    }
+
+    @Override
+    public void save(Notificacao notificacao) {
+        repository.save(toEntity(notificacao));
     }
 
     @Override
@@ -66,10 +70,14 @@ class InMemoryAdaptadorRepositorioNotificacao implements RepositorioNotificacao 
 
     @Override
     public void replaceAll(List<Notificacao> notificacoes) {
-        storage.clear();
         for (Notificacao notification : notificacoes) {
             storage.put(notification.id(), notification);
         }
+    }
+
+    @Override
+    public void save(Notificacao notificacao) {
+        storage.put(notificacao.id(), notificacao);
     }
 
     @Override

@@ -10,24 +10,45 @@ public interface CasoDeUsoEstoque {
 
     void registerItem(RegisterItemEstoqueCommand command);
 
+    void updateItem(RegisterItemEstoqueCommand command);
+
+    void inativarItem(String id);
+
     void recordMovement(RecordInventoryMovementCommand command);
 
     List<ItemEstoque> listAll();
 
     List<InventoryMovementView> listMovements();
 
+    List<ItemEstoque> listLowStock();
+
     record RegisterItemEstoqueCommand(
             String id,
             String name,
             String description,
+            String sku,
             BigDecimal costPrice,
             BigDecimal salePrice,
             int quantity,
             int minimumQuantity,
-            String unit
+            String unit,
+            boolean ativo
     ) {
+        public RegisterItemEstoqueCommand(
+                String id,
+                String name,
+                String description,
+                BigDecimal costPrice,
+                BigDecimal salePrice,
+                int quantity,
+                int minimumQuantity,
+                String unit
+        ) {
+            this(id, name, description, "", costPrice, salePrice, quantity, minimumQuantity, unit, true);
+        }
+
         public RegisterItemEstoqueCommand(String id, String name, int quantity, String unit) {
-            this(id, name, "", BigDecimal.ZERO, BigDecimal.ZERO, quantity, 0, unit);
+            this(id, name, "", "", BigDecimal.ZERO, BigDecimal.ZERO, quantity, 0, unit, true);
         }
     }
 
@@ -43,8 +64,28 @@ public interface CasoDeUsoEstoque {
             String customerId,
             String orderReference,
             String destinationDescription,
+            String funcionarioId,
+            String quemPegou,
+            String quemComprou,
             String notes
     ) {
+        public RecordInventoryMovementCommand(
+                String itemId,
+                String movementId,
+                ItemEstoque.MovementType type,
+                int amount,
+                LocalDate occurredOn,
+                BigDecimal unitPrice,
+                BigDecimal totalPrice,
+                String createdBy,
+                String customerId,
+                String orderReference,
+                String destinationDescription,
+                String notes
+        ) {
+            this(itemId, movementId, type, amount, occurredOn, unitPrice, totalPrice, createdBy, customerId, orderReference, destinationDescription, "", "", "", notes);
+        }
+
         public RecordInventoryMovementCommand(
                 String itemId,
                 String movementId,
@@ -68,6 +109,9 @@ public interface CasoDeUsoEstoque {
                     purchasedBy,
                     null,
                     storedBy,
+                    "",
+                    handledBy,
+                    purchasedBy,
                     notes
             );
         }
@@ -86,6 +130,9 @@ public interface CasoDeUsoEstoque {
             String customerId,
             String orderReference,
             String destinationDescription,
+            String funcionarioId,
+            String quemPegou,
+            String quemComprou,
             String notes
     ) {
     }

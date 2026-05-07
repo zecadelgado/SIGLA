@@ -50,17 +50,24 @@ public class ServicoConsultaOrdemServico {
                 order.id(),
                 order.numeroOs() == null ? order.id() : String.valueOf(order.numeroOs()),
                 order.titulo(),
+                order.descricao(),
                 clientes.getOrDefault(order.clienteId(), order.clienteId()),
                 blankAsDash(order.responsavelInternoId()),
                 order.dataAgendada() == null ? LocalDate.now() : order.dataAgendada().toLocalDate(),
                 order.status().name(),
-                order.valorServico() == null ? BigDecimal.ZERO : order.valorServico(),
+                order.totalGeral(),
                 order.clienteId(),
-                "",
+                order.contratoId(),
                 order.tipoServico(),
                 order.dataInicio(),
                 order.dataFim(),
-                blankAsDash(order.observacoes())
+                blankAsDash(order.observacoes()),
+                order.foiFeito(),
+                order.pago(),
+                order.assinaturaCliente(),
+                order.totalProdutos(),
+                order.produtos().size(),
+                order.anexos().size()
         );
     }
 
@@ -68,6 +75,7 @@ public class ServicoConsultaOrdemServico {
             String id,
             String numero,
             String title,
+            String description,
             String customerName,
             String responsible,
             LocalDate emissionDate,
@@ -78,7 +86,13 @@ public class ServicoConsultaOrdemServico {
             String serviceType,
             java.time.LocalDateTime startAt,
             java.time.LocalDateTime endAt,
-            String notes
+            String notes,
+            boolean done,
+            boolean paid,
+            boolean signed,
+            BigDecimal productTotal,
+            int productCount,
+            int attachmentCount
     ) {
     }
 

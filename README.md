@@ -24,6 +24,7 @@ Sistema Integrado de Gestao Logistica e Administrativa para operacao de detetiza
 
 ```bash
 ./mvnw clean test
+./mvnw -pl sigla-interface -am -DskipTests install
 ./mvnw -pl sigla-interface spring-boot:run
 ```
 
@@ -31,6 +32,7 @@ No Windows PowerShell:
 
 ```powershell
 .\mvnw.cmd clean test
+.\mvnw.cmd -pl sigla-interface -am -DskipTests install
 .\mvnw.cmd -pl sigla-interface spring-boot:run
 ```
 

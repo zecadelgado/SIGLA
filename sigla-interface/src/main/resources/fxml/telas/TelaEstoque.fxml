@@ -232,7 +232,7 @@
                                     <Insets left="10.0" top="2.0" />
                                  </VBox.margin>
                               </Label>
-                              <Label prefHeight="20.0" prefWidth="314.0" text="• Produto: 25 unidades (Mínimo: 30)" textFill="#891111">
+                              <Label fx:id="alertaLabel" prefHeight="20.0" prefWidth="314.0" text="• Produto: 25 unidades (Mínimo: 30)" textFill="#891111">
                                  <font>
                                     <Font name="Ebrima" size="14.0" />
                                  </font>
@@ -259,12 +259,13 @@
                                     </Label>
                                     <TableView fx:id="produtosTable" prefHeight="400.0" prefWidth="1192.0" style="-fx-background-radius: 10;">
                                        <columns>
-                                          <TableColumn prefWidth="198.0" style="-fx-background-color: white;" text="Nome" />
-                                          <TableColumn prefWidth="198.0" style="-fx-background-color: white;" text="Descrição" />
-                                          <TableColumn prefWidth="198.0" style="-fx-background-color: white;" text="Valor Custo" />
-                                          <TableColumn prefWidth="198.0" style="-fx-background-color: white;" text="Valor Venda" />
-                                          <TableColumn prefWidth="198.0" style="-fx-background-color: white;" text="Quantidade Atual" />
-                                          <TableColumn prefWidth="198.0" style="-fx-background-color: white;" text="Quantidade Mínima" />
+                                          <TableColumn fx:id="produtoNomeColumn" prefWidth="198.0" style="-fx-background-color: white;" text="Nome" />
+                                          <TableColumn fx:id="produtoDescricaoColumn" prefWidth="198.0" style="-fx-background-color: white;" text="Descrição" />
+                                          <TableColumn fx:id="produtoCustoColumn" prefWidth="198.0" style="-fx-background-color: white;" text="Valor Custo" />
+                                          <TableColumn fx:id="produtoVendaColumn" prefWidth="198.0" style="-fx-background-color: white;" text="Valor Venda" />
+                                          <TableColumn fx:id="produtoQuantidadeColumn" prefWidth="198.0" style="-fx-background-color: white;" text="Quantidade Atual" />
+                                          <TableColumn fx:id="produtoMinimoColumn" prefWidth="198.0" style="-fx-background-color: white;" text="Quantidade Mínima" />
+                                          <TableColumn fx:id="produtoStatusColumn" prefWidth="198.0" style="-fx-background-color: white;" text="Status" />
                                        </columns>
                                        <VBox.margin>
                                           <Insets bottom="10.0" left="15.0" right="15.0" />
@@ -294,16 +295,16 @@
                                     </Label>
                                     <TableView fx:id="movimentacoesTable" prefHeight="400.0" prefWidth="1000.0" style="-fx-background-radius: 10;">
                                        <columns>
-                                          <TableColumn prefWidth="170.0" style="-fx-background-color: white;" text="Produto" />
-                                          <TableColumn prefWidth="170.0" style="-fx-background-color: white;" text="Tipo Movimentação" />
-                                          <TableColumn prefWidth="170.0" style="-fx-background-color: white;" text="Quantidade" />
-                                          <TableColumn prefWidth="170.0" style="-fx-background-color: white;" text="Valor Unitário" />
+                                          <TableColumn fx:id="movimentoProdutoColumn" prefWidth="170.0" style="-fx-background-color: white;" text="Produto" />
+                                          <TableColumn fx:id="movimentoTipoColumn" prefWidth="170.0" style="-fx-background-color: white;" text="Tipo Movimentação" />
+                                          <TableColumn fx:id="movimentoQuantidadeColumn" prefWidth="170.0" style="-fx-background-color: white;" text="Quantidade" />
+                                          <TableColumn fx:id="movimentoValorColumn" prefWidth="170.0" style="-fx-background-color: white;" text="Valor Unitário" />
                                           <TableColumn prefWidth="170.0" style="-fx-background-color: white;" text="Valor Total" />
-                                          <TableColumn prefWidth="170.0" style="-fx-background-color: white;" text="Usuário" />
-                                          <TableColumn prefWidth="170.0" style="-fx-background-color: white;" text="Cliente" />
-                                          <TableColumn prefWidth="170.0" style="-fx-background-color: white;" text="Ordem Serviço" />
-                                          <TableColumn prefWidth="170.0" style="-fx-background-color: white;" text="Destino Descrição" />
-                                          <TableColumn prefWidth="170.0" style="-fx-background-color: white;" text="Observações" />
+                                          <TableColumn fx:id="movimentoUsuarioColumn" prefWidth="170.0" style="-fx-background-color: white;" text="Usuário" />
+                                          <TableColumn fx:id="movimentoClienteColumn" prefWidth="170.0" style="-fx-background-color: white;" text="Cliente" />
+                                          <TableColumn fx:id="movimentoOrdemColumn" prefWidth="170.0" style="-fx-background-color: white;" text="Ordem Serviço" />
+                                          <TableColumn fx:id="movimentoDestinoColumn" prefWidth="170.0" style="-fx-background-color: white;" text="Destino Descrição" />
+                                          <TableColumn fx:id="movimentoObservacoesColumn" prefWidth="170.0" style="-fx-background-color: white;" text="Observações" />
                                        </columns>
                                        <VBox.margin>
                                           <Insets bottom="10.0" left="15.0" right="15.0" />

@@ -3,6 +3,10 @@ package br.com.sigla.aplicacao.financeiro.porta.entrada;
 import br.com.sigla.dominio.financeiro.EntradaFinanceira;
 import br.com.sigla.dominio.financeiro.DespesaFinanceira;
 import br.com.sigla.dominio.financeiro.PlanoParcelamento;
+import br.com.sigla.dominio.financeiro.CategoriaFinanceira;
+import br.com.sigla.dominio.financeiro.FormaPagamentoFinanceira;
+import br.com.sigla.dominio.financeiro.LancamentoFinanceiro;
+import br.com.sigla.dominio.servicos.OrdemServico;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -22,6 +26,18 @@ public interface CasoDeUsoFinanceiro {
 
     void cancel(String transactionId);
 
+    void cancel(String transactionId, String motivo);
+
+    void estornarPagamento(String transactionId, String motivo);
+
+    void baixarParcela(String lancamentoId, String parcelaId, LocalDate paymentDate);
+
+    LancamentoFinanceiro saveLancamento(SalvarLancamentoFinanceiroCommand command);
+
+    LancamentoFinanceiro updateLancamento(SalvarLancamentoFinanceiroCommand command);
+
+    LancamentoFinanceiro gerarContaReceberOrdemServico(OrdemServico ordemServico);
+
     List<EntradaFinanceira> listEntries();
 
     List<DespesaFinanceira> listExpenses();
@@ -29,6 +45,16 @@ public interface CasoDeUsoFinanceiro {
     List<PlanoParcelamento> listPlanoParcelamentos();
 
     List<TransacaoFinanceiraView> listTransactions();
+
+    List<TransacaoFinanceiraView> listTransactions(FiltroFinanceiro filtro);
+
+    List<LancamentoFinanceiro> listLancamentos(FiltroFinanceiro filtro);
+
+    List<LancamentoFinanceiro.ParcelaFinanceira> listParcelas(String lancamentoId);
+
+    List<CategoriaFinanceira> listCategoriasAtivas();
+
+    List<FormaPagamentoFinanceira> listFormasPagamentoAtivas();
 
     BigDecimal currentBalance();
 
@@ -151,6 +177,39 @@ public interface CasoDeUsoFinanceiro {
     ) {
     }
 
+    record SalvarLancamentoFinanceiroCommand(
+            String id,
+            TransactionType type,
+            String categoriaId,
+            String formaPagamentoId,
+            String descricao,
+            String customerId,
+            String orderReference,
+            BigDecimal amount,
+            LocalDate issueDate,
+            LocalDate dueDate,
+            LocalDate paymentDate,
+            boolean installment,
+            int installmentCount,
+            String createdBy,
+            String notes,
+            TransactionStatus status
+    ) {
+    }
+
+    record FiltroFinanceiro(
+            LocalDate inicio,
+            LocalDate fim,
+            TransactionType type,
+            TransactionStatus status,
+            String customerId,
+            String formaPagamentoId,
+            String categoriaId,
+            String texto,
+            boolean apenasVencidos
+    ) {
+    }
+
     record TransacaoFinanceiraView(
             String id,
             TransactionType type,
@@ -164,6 +223,13 @@ public interface CasoDeUsoFinanceiro {
             LocalDate paymentDate,
             String paymentMethod,
             String createdBy,
+            String notes,
+            boolean installment,
+            int installmentCount,
+            BigDecimal paidAmount,
+            boolean overdue,
+            String categoryId,
+            String paymentMethodId,
             TransactionStatus status
     ) {
     }
@@ -176,7 +242,9 @@ public interface CasoDeUsoFinanceiro {
     enum TransactionStatus {
         PENDING,
         PAID,
-        CANCELLED
+        CANCELLED,
+        PARTIAL,
+        OVERDUE
     }
 }
 

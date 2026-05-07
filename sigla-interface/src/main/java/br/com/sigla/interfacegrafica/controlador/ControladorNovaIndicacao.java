@@ -9,6 +9,7 @@ import br.com.sigla.interfacegrafica.util.UtilJanela;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import org.springframework.stereotype.Component;
 
@@ -36,6 +37,8 @@ public class ControladorNovaIndicacao {
     @FXML
     private TextField statusField;
     @FXML
+    private TextArea observacoesArea;
+    @FXML
     private Label feedbackLabel;
 
     public ControladorNovaIndicacao(
@@ -54,7 +57,7 @@ public class ControladorNovaIndicacao {
             dataPicker.setValue(LocalDate.now());
         }
         if (statusField != null && statusField.getText().isBlank()) {
-            statusField.setText(PotencialCliente.PotencialClienteStatus.NEW.name());
+            statusField.setText(PotencialCliente.PotencialClienteStatus.NOVO.name());
         }
         setFeedback("");
     }
@@ -69,10 +72,11 @@ public class ControladorNovaIndicacao {
                     nomeField.getText(),
                     telefoneField.getText(),
                     "INDICACAO:" + customerId,
-                    parseEnum(PotencialCliente.PotencialClienteStatus.class, statusField == null ? "" : statusField.getText(), PotencialCliente.PotencialClienteStatus.NEW),
+                    customerId,
+                    parseEnum(PotencialCliente.PotencialClienteStatus.class, statusField == null ? "" : statusField.getText(), PotencialCliente.PotencialClienteStatus.NOVO),
                     dataPicker == null ? LocalDate.now() : dataPicker.getValue(),
                     "Indicacao",
-                    ""
+                    observacoesArea == null ? "" : observacoesArea.getText()
             ));
             gerenciadorNavegacao.navigateTo(VisaoAplicacao.CUSTOMERS);
             UtilJanela.fecharJanela(nomeField);

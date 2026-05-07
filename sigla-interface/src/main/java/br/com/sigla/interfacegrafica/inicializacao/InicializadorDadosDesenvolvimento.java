@@ -27,6 +27,7 @@ import org.springframework.context.annotation.Profile;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Configuration
@@ -58,7 +59,7 @@ public class InicializadorDadosDesenvolvimento {
                     "CUS-001",
                     "Restaurante Fumaca Braba",
                     "Rua do Porto, 77",
-                    "12.345.678/0001-90",
+                    "11.222.333/0001-81",
                     "(51) 99999-0001",
                     List.of(
                             new CasoDeUsoCliente.ContactCommand("Marina", "Gerente", "(51) 99999-1001"),
@@ -90,9 +91,15 @@ public class InicializadorDadosDesenvolvimento {
             agendaUseCase.schedule(new CasoDeUsoAgenda.ScheduleVisitCommand(
                     "VIS-001",
                     "CUS-001",
-                    "",
+                    "CTR-001",
                     VisitaAgendada.VisitType.MONTHLY,
                     today.plusDays(3),
+                    "Visita preventiva mensal",
+                    "Controle de pragas",
+                    "Carlos Detetizador",
+                    LocalDateTime.of(today.plusDays(3), java.time.LocalTime.of(9, 0)),
+                    LocalDateTime.of(today.plusDays(3), java.time.LocalTime.of(10, 0)),
+                    false,
                     VisitaAgendada.VisitStatus.SCHEDULED,
                     "Visita preventiva mensal."
             ));
@@ -100,9 +107,15 @@ public class InicializadorDadosDesenvolvimento {
             agendaUseCase.schedule(new CasoDeUsoAgenda.ScheduleVisitCommand(
                     "VIS-002",
                     "CUS-001",
-                    "",
+                    "CTR-001",
                     VisitaAgendada.VisitType.MONTHLY,
                     today.minusDays(2),
+                    "Retorno pendente",
+                    "Controle de pragas",
+                    "Carlos Detetizador",
+                    LocalDateTime.of(today.minusDays(2), java.time.LocalTime.of(14, 0)),
+                    LocalDateTime.of(today.minusDays(2), java.time.LocalTime.of(15, 0)),
+                    false,
                     VisitaAgendada.VisitStatus.SCHEDULED,
                     "Visita nao concluida, precisa retorno."
             ));
@@ -124,40 +137,73 @@ public class InicializadorDadosDesenvolvimento {
                     "Cliente solicitou reforco no proximo ciclo."
             ));
 
-            financeiroUseCase.registerEntry(new CasoDeUsoFinanceiro.RegisterEntradaFinanceiraCommand(
+            financeiroUseCase.registerTransaction(new CasoDeUsoFinanceiro.RegisterTransacaoFinanceiraCommand(
                     "ENT-001",
-                    EntradaFinanceira.EntryType.PIX,
-                    new BigDecimal("500.00"),
-                    today.minusDays(1),
+                    CasoDeUsoFinanceiro.TransactionType.ENTRY,
+                    "SERVICOS",
+                    "Recebimento parcial do servico SRV-001",
                     "CUS-001",
                     "SRV-001",
-                    EntradaFinanceira.EntryStatus.RECEIVED
-            ));
-
-            financeiroUseCase.registerExpense(new CasoDeUsoFinanceiro.RegisterDespesaFinanceiraCommand(
-                    "EXP-001",
-                    DespesaFinanceira.ExpenseCategory.FUEL,
-                    new BigDecimal("120.00"),
+                    "",
+                    new BigDecimal("500.00"),
                     today.minusDays(1),
-                    "Carlos Detetizador",
-                    "Abastecimento da rota sul."
+                    today.minusDays(1),
+                    today.minusDays(1),
+                    "PIX",
+                    false,
+                    1,
+                    "EMP-001",
+                    "Pagamento recebido por PIX.",
+                    CasoDeUsoFinanceiro.TransactionStatus.PAID
             ));
 
-            financeiroUseCase.registerPlanoParcelamento(new CasoDeUsoFinanceiro.RegisterPlanoParcelamentoCommand(
+            if (categoriaAtiva(financeiroUseCase, CasoDeUsoFinanceiro.TransactionType.EXPENSE, "COMBUSTIVEL")) {
+                financeiroUseCase.registerTransaction(new CasoDeUsoFinanceiro.RegisterTransacaoFinanceiraCommand(
+                        "EXP-001",
+                        CasoDeUsoFinanceiro.TransactionType.EXPENSE,
+                        "COMBUSTIVEL",
+                        "Abastecimento da rota sul.",
+                        "",
+                        "",
+                        "",
+                        new BigDecimal("120.00"),
+                        today.minusDays(1),
+                        today.minusDays(1),
+                        today.minusDays(1),
+                        "PIX",
+                        false,
+                        1,
+                        "EMP-001",
+                        "Carlos Detetizador",
+                        CasoDeUsoFinanceiro.TransactionStatus.PAID
+                ));
+            }
+
+            financeiroUseCase.registerTransaction(new CasoDeUsoFinanceiro.RegisterTransacaoFinanceiraCommand(
                     "REC-001",
+                    CasoDeUsoFinanceiro.TransactionType.ENTRY,
+                    "SERVICOS",
+                    "Saldo parcelado do servico SRV-001",
                     "CUS-001",
+                    "SRV-001",
+                    "",
                     new BigDecimal("850.00"),
+                    today.minusDays(10),
+                    today.minusDays(4),
+                    null,
+                    "BOLETO",
+                    true,
                     3,
-                    1,
-                    PlanoParcelamento.InstallmentStatus.OVERDUE,
-                    today.minusDays(4)
+                    "EMP-001",
+                    "Parcelamento demo com parcela vencida.",
+                    CasoDeUsoFinanceiro.TransactionStatus.PENDING
             ));
 
             estoqueUseCase.registerItem(new CasoDeUsoEstoque.RegisterItemEstoqueCommand(
                     "INV-001",
                     "Inseticida concentrado",
                     14,
-                    "litros"
+                    "litro"
             ));
 
             estoqueUseCase.recordMovement(new CasoDeUsoEstoque.RecordInventoryMovementCommand(
@@ -194,6 +240,18 @@ public class InicializadorDadosDesenvolvimento {
 
             notificationUseCase.refresh(today);
         };
+    }
+
+    private boolean categoriaAtiva(
+            CasoDeUsoFinanceiro financeiroUseCase,
+            CasoDeUsoFinanceiro.TransactionType tipo,
+            String nome
+    ) {
+        String tipoEsperado = tipo == CasoDeUsoFinanceiro.TransactionType.EXPENSE ? "EXPENSE" : "ENTRY";
+        return financeiroUseCase.listCategoriasAtivas().stream()
+                .anyMatch(categoria -> categoria.ativo()
+                        && categoria.tipo().equalsIgnoreCase(tipoEsperado)
+                        && categoria.nome().equalsIgnoreCase(nome));
     }
 }
 

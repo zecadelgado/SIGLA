@@ -32,7 +32,7 @@
             <Font name="Nirmala UI Bold" size="15.0" />
          </font>
       </Label>
-      <Hyperlink layoutX="262.0" layoutY="240.0" onAction="#onEsqueciSenha" prefHeight="22.0" prefWidth="130.0" style="-fx-underline: #00bfff;" text="Esqueceu a Senha?" textFill="#00bfff">
+      <Hyperlink layoutX="262.0" layoutY="240.0" onAction="#onEsqueciSenha" prefHeight="22.0" prefWidth="130.0" style="-fx-underline: true;" text="Esqueceu a senha?" textFill="#00bfff">
          <font>
             <Font name="Nirmala Text Semilight" size="14.0" />
          </font>

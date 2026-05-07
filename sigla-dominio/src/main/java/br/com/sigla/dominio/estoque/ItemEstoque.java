@@ -13,12 +13,46 @@ public final class ItemEstoque {
     private final String id;
     private final String name;
     private final String description;
+    private final String sku;
     private final BigDecimal costPrice;
     private final BigDecimal salePrice;
     private final int minimumQuantity;
     private final String unit;
+    private final boolean ativo;
     private final List<InventoryMovement> movements;
     private int quantity;
+
+    public ItemEstoque(
+            String id,
+            String name,
+            String description,
+            String sku,
+            BigDecimal costPrice,
+            BigDecimal salePrice,
+            int quantity,
+            int minimumQuantity,
+            String unit,
+            boolean ativo,
+            List<InventoryMovement> movements
+    ) {
+        this.id = requireText(id, "id");
+        this.name = requireText(name, "name");
+        this.description = normalizeOptional(description);
+        this.sku = normalizeOptional(sku);
+        this.costPrice = requireMoney(costPrice, "costPrice");
+        this.salePrice = requireMoney(salePrice, "salePrice");
+        if (minimumQuantity < 0) {
+            throw new ExcecaoDominio("Minimum quantity cannot be negative");
+        }
+        this.minimumQuantity = minimumQuantity;
+        this.unit = requireText(unit, "unit");
+        if (quantity < 0) {
+            throw new ExcecaoDominio("Initial quantity cannot be negative");
+        }
+        this.quantity = quantity;
+        this.ativo = ativo;
+        this.movements = new ArrayList<>(Objects.requireNonNullElse(movements, List.of()));
+    }
 
     public ItemEstoque(
             String id,
@@ -31,25 +65,11 @@ public final class ItemEstoque {
             String unit,
             List<InventoryMovement> movements
     ) {
-        this.id = requireText(id, "id");
-        this.name = requireText(name, "name");
-        this.description = normalizeOptional(description);
-        this.costPrice = requireMoney(costPrice, "costPrice");
-        this.salePrice = requireMoney(salePrice, "salePrice");
-        if (minimumQuantity < 0) {
-            throw new ExcecaoDominio("Minimum quantity cannot be negative");
-        }
-        this.minimumQuantity = minimumQuantity;
-        this.unit = requireText(unit, "unit");
-        if (quantity < 0) {
-            throw new ExcecaoDominio("Initial quantity cannot be negative");
-        }
-        this.quantity = quantity;
-        this.movements = new ArrayList<>(Objects.requireNonNullElse(movements, List.of()));
+        this(id, name, description, "", costPrice, salePrice, quantity, minimumQuantity, unit, true, movements);
     }
 
     public ItemEstoque(String id, String name, int quantity, String unit, List<InventoryMovement> movements) {
-        this(id, name, "", BigDecimal.ZERO, BigDecimal.ZERO, quantity, 0, unit, movements);
+        this(id, name, "", "", BigDecimal.ZERO, BigDecimal.ZERO, quantity, 0, unit, true, movements);
     }
 
     public String id() {
@@ -62,6 +82,10 @@ public final class ItemEstoque {
 
     public String description() {
         return description;
+    }
+
+    public String sku() {
+        return sku;
     }
 
     public BigDecimal costPrice() {
@@ -80,6 +104,10 @@ public final class ItemEstoque {
         return unit;
     }
 
+    public boolean ativo() {
+        return ativo;
+    }
+
     public int minimumQuantity() {
         return minimumQuantity;
     }
@@ -94,7 +122,7 @@ public final class ItemEstoque {
 
     public void recordMovement(InventoryMovement movement) {
         Objects.requireNonNull(movement, "movement is required");
-        if (movement.type() == MovementType.INBOUND) {
+        if (movement.type().increasesStock()) {
             quantity += movement.amount();
         } else {
             if (quantity - movement.amount() < 0) {
@@ -113,10 +141,13 @@ public final class ItemEstoque {
             BigDecimal unitPrice,
             BigDecimal totalPrice,
             String createdBy,
-            String customerId,
-            String orderReference,
-            String destinationDescription,
-            String notes
+        String customerId,
+        String orderReference,
+        String destinationDescription,
+        String funcionarioId,
+        String quemPegou,
+        String quemComprou,
+        String notes
     ) {
         public InventoryMovement {
             id = requireText(id, "id");
@@ -131,7 +162,30 @@ public final class ItemEstoque {
             customerId = normalizeOptional(customerId);
             orderReference = normalizeOptional(orderReference);
             destinationDescription = normalizeOptional(destinationDescription);
+            funcionarioId = normalizeOptional(funcionarioId);
+            quemPegou = normalizeOptional(quemPegou);
+            quemComprou = normalizeOptional(quemComprou);
             notes = normalizeOptional(notes);
+            totalPrice = unitPrice.multiply(BigDecimal.valueOf(amount));
+            if (type == MovementType.AJUSTE && notes.isBlank()) {
+                throw new ExcecaoDominio("Adjustment movement requires notes");
+            }
+        }
+
+        public InventoryMovement(
+                String id,
+                MovementType type,
+                int amount,
+                LocalDate occurredOn,
+                BigDecimal unitPrice,
+                BigDecimal totalPrice,
+                String createdBy,
+                String customerId,
+                String orderReference,
+                String destinationDescription,
+                String notes
+        ) {
+            this(id, type, amount, occurredOn, unitPrice, totalPrice, createdBy, customerId, orderReference, destinationDescription, "", "", "", notes);
         }
 
         public InventoryMovement(
@@ -155,6 +209,9 @@ public final class ItemEstoque {
                     purchasedBy,
                     null,
                     storedBy,
+                    "",
+                    handledBy,
+                    purchasedBy,
                     notes
             );
         }
@@ -162,7 +219,35 @@ public final class ItemEstoque {
 
     public enum MovementType {
         INBOUND,
-        OUTBOUND
+        OUTBOUND,
+        ENTRADA,
+        SAIDA,
+        AJUSTE,
+        COMPRA,
+        USO_OS;
+
+        public boolean increasesStock() {
+            return this == INBOUND || this == ENTRADA || this == COMPRA;
+        }
+
+        public boolean decreasesStock() {
+            return this == OUTBOUND || this == SAIDA || this == USO_OS || this == AJUSTE;
+        }
+
+        public static MovementType from(String value) {
+            if (value == null || value.isBlank()) {
+                return SAIDA;
+            }
+            String normalized = value.trim().toUpperCase().replace('-', '_');
+            return switch (normalized) {
+                case "INBOUND", "ENTRADA" -> ENTRADA;
+                case "OUTBOUND", "SAIDA", "SAÍDA" -> SAIDA;
+                case "AJUSTE" -> AJUSTE;
+                case "COMPRA" -> COMPRA;
+                case "USO_OS", "USO_EM_OS" -> USO_OS;
+                default -> valueOf(normalized);
+            };
+        }
     }
 
     private static String requireText(String value, String fieldName) {

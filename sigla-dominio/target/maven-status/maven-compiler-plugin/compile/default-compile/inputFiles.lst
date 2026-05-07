@@ -1,11 +1,15 @@
 D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\agenda\VisitaAgendada.java
+D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\auditoria\EventoAuditoria.java
 D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\certificados\Certificado.java
 D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\clientes\Cliente.java
 D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\compartilhado\ExcecaoDominio.java
 D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\contratos\Contrato.java
 D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\estoque\ItemEstoque.java
+D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\financeiro\CategoriaFinanceira.java
 D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\financeiro\DespesaFinanceira.java
 D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\financeiro\EntradaFinanceira.java
+D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\financeiro\FormaPagamentoFinanceira.java
+D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\financeiro\LancamentoFinanceiro.java
 D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\financeiro\PlanoParcelamento.java
 D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\funcionarios\Funcionario.java
 D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\notificacoes\Notificacao.java

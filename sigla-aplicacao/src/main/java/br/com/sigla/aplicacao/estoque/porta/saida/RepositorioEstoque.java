@@ -12,5 +12,9 @@ public interface RepositorioEstoque {
     List<ItemEstoque> findAll();
 
     Optional<ItemEstoque> findById(String id);
+
+    boolean existsActiveSku(String sku, String exceptId);
+
+    boolean existsMovementForOrder(String orderId);
 }
 

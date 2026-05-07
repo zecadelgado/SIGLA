@@ -65,7 +65,7 @@ public class ControladorNovaMovimentacao {
     @FXML
     public void initialize() {
         if (tipoField != null && tipoField.getText().isBlank()) {
-            tipoField.setText(ItemEstoque.MovementType.OUTBOUND.name());
+            tipoField.setText(ItemEstoque.MovementType.SAIDA.name());
         }
         if (usuarioField != null && usuarioField.getText().isBlank() && sessaoLocalAplicacao.usuarioAtual() != null) {
             usuarioField.setText(sessaoLocalAplicacao.usuarioAtual().id());
@@ -88,15 +88,18 @@ public class ControladorNovaMovimentacao {
             casoDeUsoEstoque.recordMovement(new CasoDeUsoEstoque.RecordInventoryMovementCommand(
                     produto.id(),
                     UUID.randomUUID().toString(),
-                    parseEnum(ItemEstoque.MovementType.class, tipoField == null ? "" : tipoField.getText(), ItemEstoque.MovementType.OUTBOUND),
+                    ItemEstoque.MovementType.from(tipoField == null ? "" : tipoField.getText()),
                     Integer.parseInt(quantidadeField.getText()),
                     LocalDate.now(),
                     new BigDecimal(valorUnitarioField.getText()),
-                    new BigDecimal(valorTotalField.getText()),
+                    BigDecimal.ZERO,
                     resolveUsuarioAtual(),
                     cliente == null ? "" : cliente.id(),
                     ordem == null ? "" : ordem.id(),
                     destinoField.getText(),
+                    "",
+                    usuarioField == null ? "" : usuarioField.getText(),
+                    tipoField != null && ItemEstoque.MovementType.from(tipoField.getText()) == ItemEstoque.MovementType.COMPRA ? usuarioField.getText() : "",
                     observacoesField == null ? "" : observacoesField.getText()
             ));
             gerenciadorNavegacao.navigateTo(VisaoAplicacao.INVENTORY);

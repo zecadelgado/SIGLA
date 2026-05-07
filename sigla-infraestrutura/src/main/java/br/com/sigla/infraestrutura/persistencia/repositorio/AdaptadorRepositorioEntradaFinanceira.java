@@ -169,6 +169,8 @@ class InMemoryAdaptadorRepositorioEntradaFinanceira implements RepositorioEntrad
 
 interface SpringDataRepositorioFinanceiroLancamento extends JpaRepository<FinanceiroLancamentoEntidade, UUID> {
     List<FinanceiroLancamentoEntidade> findByTipo(String tipo);
+
+    Optional<FinanceiroLancamentoEntidade> findByOrdemServicoId(UUID ordemServicoId);
 }
 
 interface SpringDataRepositorioFinanceiroCategoria extends JpaRepository<FinanceiroCategoriaEntidade, UUID> {
