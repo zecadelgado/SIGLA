@@ -3,6 +3,7 @@ package br.com.sigla.interfacegrafica.controlador;
 import br.com.sigla.aplicacao.clientes.porta.entrada.CasoDeUsoCliente;
 import br.com.sigla.aplicacao.funcionarios.porta.entrada.CasoDeUsoFuncionario;
 import br.com.sigla.dominio.funcionarios.Funcionario;
+import br.com.sigla.interfacegrafica.formatador.FormatadorMascaraCpf;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import br.com.sigla.interfacegrafica.util.UtilJanela;
@@ -21,6 +22,7 @@ public class ControladorNovoCadastro {
     private final CasoDeUsoCliente casoDeUsoCliente;
     private final CasoDeUsoFuncionario casoDeUsoFuncionario;
     private final GerenciadorNavegacao gerenciadorNavegacao;
+    private final FormatadorMascaraCpf formatadorMascaraCpf;
 
     @FXML
     private TextField nomeField;
@@ -58,11 +60,13 @@ public class ControladorNovoCadastro {
     public ControladorNovoCadastro(
             CasoDeUsoCliente casoDeUsoCliente,
             CasoDeUsoFuncionario casoDeUsoFuncionario,
-            GerenciadorNavegacao gerenciadorNavegacao
+            GerenciadorNavegacao gerenciadorNavegacao,
+            FormatadorMascaraCpf formatadorMascaraCpf
     ) {
         this.casoDeUsoCliente = casoDeUsoCliente;
         this.casoDeUsoFuncionario = casoDeUsoFuncionario;
         this.gerenciadorNavegacao = gerenciadorNavegacao;
+        this.formatadorMascaraCpf = formatadorMascaraCpf;
     }
 
     @FXML
@@ -71,6 +75,9 @@ public class ControladorNovoCadastro {
             tipoCombo.getItems().setAll("CLIENTE", "FUNCIONARIO");
             tipoCombo.getSelectionModel().select("CLIENTE");
         }
+        formatadorMascaraCpf.aplicarCpf(cpfField);
+        formatadorMascaraCpf.aplicarCnpj(cnpjField);
+        formatadorMascaraCpf.aplicarTelefone(telefoneField);
         setFeedback("");
     }
 

@@ -165,3 +165,20 @@
     -fx-text-fill: #4f5c6b;
     -fx-wrap-text: true;
 }
+
+.registry-table .table-row-cell:selected,
+.registry-table .table-row-cell:focused:selected {
+    -fx-background-color: #0b6fd3;
+    -fx-table-cell-border-color: #58a9f5;
+}
+
+.registry-table .table-row-cell:selected .table-cell,
+.registry-table .table-row-cell:focused:selected .table-cell {
+    -fx-background-color: #0b6fd3;
+    -fx-text-fill: #ffffff;
+}
+
+.registry-table .table-row-cell:selected .text,
+.registry-table .table-row-cell:focused:selected .text {
+    -fx-fill: #ffffff;
+}

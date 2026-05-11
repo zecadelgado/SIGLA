@@ -4,6 +4,7 @@ import br.com.sigla.aplicacao.servicos.porta.entrada.CasoDeUsoOrdemServico;
 import br.com.sigla.dominio.servicos.OrdemServico;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorData;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorMoeda;
+import br.com.sigla.interfacegrafica.consulta.ContextoDetalheOrdemServico;
 import br.com.sigla.interfacegrafica.consulta.ServicoConsultaOrdemServico;
 import br.com.sigla.interfacegrafica.consulta.ServicoConsultaReferencias;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
@@ -35,6 +36,7 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
     private final CasoDeUsoOrdemServico casoDeUsoOrdemServico;
     private final ServicoConsultaReferencias servicoConsultaReferencias;
     private final GerenciadorNavegacao gerenciadorNavegacao;
+    private final ContextoDetalheOrdemServico contextoDetalheOrdemServico;
     private final ApresentadorMoeda apresentadorMoeda;
     private final ApresentadorData apresentadorData;
 
@@ -57,11 +59,17 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
     @FXML
     private TableColumn<ServicoConsultaOrdemServico.OrdemServicoView, String> clienteColumn;
     @FXML
+    private TableColumn<ServicoConsultaOrdemServico.OrdemServicoView, String> tituloColumn;
+    @FXML
+    private TableColumn<ServicoConsultaOrdemServico.OrdemServicoView, String> tipoColumn;
+    @FXML
     private TableColumn<ServicoConsultaOrdemServico.OrdemServicoView, String> responsavelColumn;
     @FXML
     private TableColumn<ServicoConsultaOrdemServico.OrdemServicoView, String> emissaoColumn;
     @FXML
     private TableColumn<ServicoConsultaOrdemServico.OrdemServicoView, String> valorColumn;
+    @FXML
+    private TableColumn<ServicoConsultaOrdemServico.OrdemServicoView, String> pagoColumn;
     @FXML
     private TableColumn<ServicoConsultaOrdemServico.OrdemServicoView, String> statusColumn;
 
@@ -70,6 +78,7 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
             CasoDeUsoOrdemServico casoDeUsoOrdemServico,
             ServicoConsultaReferencias servicoConsultaReferencias,
             GerenciadorNavegacao gerenciadorNavegacao,
+            ContextoDetalheOrdemServico contextoDetalheOrdemServico,
             ApresentadorMoeda apresentadorMoeda,
             ApresentadorData apresentadorData
     ) {
@@ -78,6 +87,7 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
         this.casoDeUsoOrdemServico = casoDeUsoOrdemServico;
         this.servicoConsultaReferencias = servicoConsultaReferencias;
         this.gerenciadorNavegacao = gerenciadorNavegacao;
+        this.contextoDetalheOrdemServico = contextoDetalheOrdemServico;
         this.apresentadorMoeda = apresentadorMoeda;
         this.apresentadorData = apresentadorData;
     }
@@ -93,6 +103,13 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
             searchField.textProperty().addListener((observable, oldValue, newValue) -> refresh());
         }
         configureTable();
+        if (ordensTable != null) {
+            ordensTable.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2) {
+                    onDetalharOrdem();
+                }
+            });
+        }
         refresh();
     }
 
@@ -184,17 +201,8 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
         if (selected == null) {
             return;
         }
-        String detalhes = "OS: " + selected.numero()
-                + "\nCliente: " + selected.customerName()
-                + "\nStatus: " + selected.status()
-                + "\nTipo: " + selected.serviceType()
-                + "\nValor total: " + apresentadorMoeda.format(selected.amount())
-                + "\nProdutos: " + selected.productCount() + " (" + apresentadorMoeda.format(selected.productTotal()) + ")"
-                + "\nPago: " + (selected.paid() ? "Sim" : "Nao")
-                + "\nAssinatura: " + (selected.signed() ? "Sim" : "Nao")
-                + "\nAnexos: " + selected.attachmentCount()
-                + "\nObservacoes: " + selected.notes();
-        new Alert(Alert.AlertType.INFORMATION, detalhes, ButtonType.OK).showAndWait();
+        contextoDetalheOrdemServico.selecionarOrdem(selected.emissionDate(), selected.id());
+        gerenciadorNavegacao.navigateTo(VisaoAplicacao.SERVICE_DAY_DETAILS);
     }
 
     private void refresh() {
@@ -219,6 +227,7 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
                             || order.id().toLowerCase(Locale.ROOT).contains(termo)
                             || order.customerName().toLowerCase(Locale.ROOT).contains(termo)
                             || order.responsible().toLowerCase(Locale.ROOT).contains(termo)
+                            || order.serviceType().toLowerCase(Locale.ROOT).contains(termo)
                             || order.title().toLowerCase(Locale.ROOT).contains(termo))
                     .filter(order -> "Todos".equals(filtroStatus) || order.status().equals(filtroStatus))
                     .toList());
@@ -228,10 +237,13 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
     private void configureTable() {
         configureColumn(numeroColumn, 0, row -> row.numero());
         configureColumn(clienteColumn, 1, row -> row.customerName());
-        configureColumn(responsavelColumn, 2, row -> row.responsible());
-        configureColumn(emissaoColumn, 3, row -> apresentadorData.format(row.emissionDate()));
-        configureColumn(valorColumn, 4, row -> apresentadorMoeda.format(row.amount()));
-        configureColumn(statusColumn, 5, row -> row.status());
+        configureColumn(tituloColumn, 2, row -> row.title());
+        configureColumn(tipoColumn, 3, row -> row.serviceType());
+        configureColumn(responsavelColumn, 4, row -> row.responsible());
+        configureColumn(emissaoColumn, 5, row -> apresentadorData.format(row.emissionDate()));
+        configureColumn(valorColumn, 6, row -> apresentadorMoeda.format(row.amount()));
+        configureColumn(pagoColumn, 7, row -> row.paid() ? "Sim" : "Nao");
+        configureColumn(statusColumn, 8, row -> row.status());
     }
 
     private ServicoConsultaOrdemServico.OrdemServicoView selecionada() {

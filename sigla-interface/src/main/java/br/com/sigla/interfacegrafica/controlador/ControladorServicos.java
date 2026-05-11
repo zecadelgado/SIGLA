@@ -1,17 +1,14 @@
 package br.com.sigla.interfacegrafica.controlador;
 
-import br.com.sigla.aplicacao.agenda.porta.entrada.CasoDeUsoAgenda;
-import br.com.sigla.aplicacao.certificados.porta.entrada.CasoDeUsoCertificado;
-import br.com.sigla.aplicacao.contratos.porta.entrada.CasoDeUsoContrato;
-import br.com.sigla.dominio.agenda.VisitaAgendada;
-import br.com.sigla.dominio.certificados.Certificado;
-import br.com.sigla.dominio.contratos.Contrato;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorMoeda;
+import br.com.sigla.interfacegrafica.consulta.ContextoDetalheOrdemServico;
+import br.com.sigla.interfacegrafica.consulta.ServicoConsultaOrdemServico;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
@@ -26,7 +23,6 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -39,7 +35,6 @@ import java.util.stream.Collectors;
 public class ControladorServicos extends ControladorComMenuPrincipal {
 
     private static final Locale LOCALE_PT_BR = Locale.of("pt", "BR");
-    private static final DateTimeFormatter HORA_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
     private static final String ESTILO_CELULA_BASE = "-fx-background-color: white; -fx-border-color: #1f1f1f; "
             + "-fx-background-radius: 10; -fx-border-radius: 10;";
     private static final String ESTILO_CELULA_HOJE = "-fx-background-color: #eaf5ff; -fx-border-color: #00417e; "
@@ -47,9 +42,8 @@ public class ControladorServicos extends ControladorComMenuPrincipal {
     private static final String ESTILO_CELULA_FORA_DO_MES = "-fx-background-color: #f3f3f3; -fx-border-color: #b5b5b5; "
             + "-fx-background-radius: 10; -fx-border-radius: 10;";
 
-    private final CasoDeUsoAgenda casoDeUsoAgenda;
-    private final CasoDeUsoContrato casoDeUsoContrato;
-    private final CasoDeUsoCertificado casoDeUsoCertificado;
+    private final ServicoConsultaOrdemServico servicoConsultaOrdemServico;
+    private final ContextoDetalheOrdemServico contextoDetalheOrdemServico;
     private final GerenciadorNavegacao gerenciadorNavegacao;
     private final ApresentadorMoeda apresentadorMoeda;
     private YearMonth mesExibido = YearMonth.now();
@@ -70,16 +64,14 @@ public class ControladorServicos extends ControladorComMenuPrincipal {
     private GridPane calendarioGrid;
 
     public ControladorServicos(
-            CasoDeUsoAgenda casoDeUsoAgenda,
-            CasoDeUsoContrato casoDeUsoContrato,
-            CasoDeUsoCertificado casoDeUsoCertificado,
+            ServicoConsultaOrdemServico servicoConsultaOrdemServico,
+            ContextoDetalheOrdemServico contextoDetalheOrdemServico,
             GerenciadorNavegacao gerenciadorNavegacao,
             ApresentadorMoeda apresentadorMoeda
     ) {
         super(gerenciadorNavegacao);
-        this.casoDeUsoAgenda = casoDeUsoAgenda;
-        this.casoDeUsoContrato = casoDeUsoContrato;
-        this.casoDeUsoCertificado = casoDeUsoCertificado;
+        this.servicoConsultaOrdemServico = servicoConsultaOrdemServico;
+        this.contextoDetalheOrdemServico = contextoDetalheOrdemServico;
         this.gerenciadorNavegacao = gerenciadorNavegacao;
         this.apresentadorMoeda = apresentadorMoeda;
     }
@@ -87,11 +79,6 @@ public class ControladorServicos extends ControladorComMenuPrincipal {
     @FXML
     public void initialize() {
         refresh();
-    }
-
-    @FXML
-    private void onNovoServico() {
-        gerenciadorNavegacao.navigateTo(VisaoAplicacao.NEW_SERVICE);
     }
 
     @FXML
@@ -107,15 +94,21 @@ public class ControladorServicos extends ControladorComMenuPrincipal {
     }
 
     private void refresh() {
-        var services = casoDeUsoAgenda.listAll();
-        totalServicosLabel.setText(String.valueOf(services.size()));
+        var ordens = servicoConsultaOrdemServico.listAll().stream()
+                .filter(ordem -> !"CANCELADA".equals(ordem.status()))
+                .toList();
+        totalServicosLabel.setText(String.valueOf(ordens.size()));
 
-        BigDecimal recebidos = BigDecimal.ZERO;
+        BigDecimal recebidos = ordens.stream()
+                .filter(ServicoConsultaOrdemServico.OrdemServicoView::paid)
+                .map(ServicoConsultaOrdemServico.OrdemServicoView::amount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
         recebidosLabel.setText(apresentadorMoeda.format(recebidos));
 
-        BigDecimal pendentes = BigDecimal.valueOf(services.stream()
-                .filter(service -> service.status() != VisitaAgendada.VisitStatus.COMPLETED)
-                .count());
+        BigDecimal pendentes = ordens.stream()
+                .filter(ordem -> !ordem.paid())
+                .map(ServicoConsultaOrdemServico.OrdemServicoView::amount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
         pendentesLabel.setText(apresentadorMoeda.format(pendentes));
         renderizarCalendario();
     }
@@ -174,7 +167,7 @@ public class ControladorServicos extends ControladorComMenuPrincipal {
     }
 
     private void adicionarCabecalhoDiasSemana() {
-        String[] dias = {"Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"};
+        String[] dias = {"Domingo", "Segunda-feira", "Terca-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sabado"};
         for (int coluna = 0; coluna < dias.length; coluna++) {
             Label label = new Label(dias[coluna]);
             label.setMaxWidth(Double.MAX_VALUE);
@@ -198,8 +191,7 @@ public class ControladorServicos extends ControladorComMenuPrincipal {
         celula.getChildren().add(numeroDia);
 
         if (data.equals(LocalDate.now())) {
-            Label hoje = criarEtiqueta("Hoje", "#00417e", "#d7ecff");
-            celula.getChildren().add(hoje);
+            celula.getChildren().add(criarEtiqueta("Hoje", "#00417e", "#d7ecff"));
         }
 
         int limite = data.equals(LocalDate.now()) ? 2 : 3;
@@ -207,7 +199,16 @@ public class ControladorServicos extends ControladorComMenuPrincipal {
         if (itens.size() > limite) {
             celula.getChildren().add(criarEtiqueta("+" + (itens.size() - limite) + " itens", "#4b5563", "#e5e7eb"));
         }
+        if (!itens.isEmpty()) {
+            celula.setCursor(Cursor.HAND);
+            celula.setOnMouseClicked(event -> abrirDetalhesDoDia(data));
+        }
         return celula;
+    }
+
+    private void abrirDetalhesDoDia(LocalDate data) {
+        contextoDetalheOrdemServico.selecionarData(data);
+        gerenciadorNavegacao.navigateTo(VisaoAplicacao.SERVICE_DAY_DETAILS);
     }
 
     private String estiloCelula(LocalDate data, boolean pertenceAoMes) {
@@ -231,32 +232,13 @@ public class ControladorServicos extends ControladorComMenuPrincipal {
     }
 
     private Map<LocalDate, List<ItemCalendario>> carregarItensCalendario(LocalDate inicio, LocalDate fim) {
-        List<ItemCalendario> itens = new ArrayList<>();
-        casoDeUsoAgenda.listBetween(inicio, fim).stream()
-                .filter(visita -> visita.status() != VisitaAgendada.VisitStatus.CANCELLED)
-                .forEach(visita -> itens.add(ItemCalendario.servico(visita)));
-
-        casoDeUsoContrato.listAll().stream()
-                .filter(this::contratoVisivelNoCalendario)
-                .filter(contrato -> isNoPeriodo(contrato.endDate(), inicio, fim))
-                .forEach(contrato -> itens.add(ItemCalendario.contrato(contrato)));
-
-        casoDeUsoCertificado.listAll().stream()
-                .filter(this::certificadoVisivelNoCalendario)
-                .filter(certificado -> isNoPeriodo(certificado.validUntil(), inicio, fim))
-                .forEach(certificado -> itens.add(ItemCalendario.certificado(certificado)));
-
-        return itens.stream()
+        return servicoConsultaOrdemServico.listAll().stream()
+                .filter(ordem -> ordem.emissionDate() != null)
+                .filter(ordem -> !"CANCELADA".equals(ordem.status()))
+                .filter(ordem -> isNoPeriodo(ordem.emissionDate(), inicio, fim))
+                .map(ItemCalendario::ordemServico)
                 .sorted(Comparator.comparing(ItemCalendario::ordem).thenComparing(ItemCalendario::texto))
                 .collect(Collectors.groupingBy(ItemCalendario::data));
-    }
-
-    private boolean contratoVisivelNoCalendario(Contrato contrato) {
-        return contrato.status() != Contrato.ContratoStatus.CANCELLED;
-    }
-
-    private boolean certificadoVisivelNoCalendario(Certificado certificado) {
-        return certificado.status() != Certificado.CertificadoStatus.REPLACED;
     }
 
     private boolean isNoPeriodo(LocalDate data, LocalDate inicio, LocalDate fim) {
@@ -275,20 +257,10 @@ public class ControladorServicos extends ControladorComMenuPrincipal {
             String corFundo,
             int ordem
     ) {
-        private static ItemCalendario servico(VisitaAgendada visita) {
-            String horario = visita.startAt() == null || visita.allDay() ? "" : HORA_FORMATTER.format(visita.startAt()) + " ";
-            String descricao = primeiroTexto(visita.title(), visita.serviceType(), visita.id());
-            return new ItemCalendario(visita.scheduledDate(), horario + "Serviço: " + descricao, "#075985", "#e0f2fe", 1);
-        }
-
-        private static ItemCalendario contrato(Contrato contrato) {
-            String descricao = primeiroTexto(contrato.description(), contrato.id());
-            return new ItemCalendario(contrato.endDate(), "Contrato: " + descricao, "#92400e", "#fef3c7", 2);
-        }
-
-        private static ItemCalendario certificado(Certificado certificado) {
-            String descricao = primeiroTexto(certificado.description(), certificado.id());
-            return new ItemCalendario(certificado.validUntil(), "Certificado: " + descricao, "#166534", "#dcfce7", 3);
+        private static ItemCalendario ordemServico(ServicoConsultaOrdemServico.OrdemServicoView ordem) {
+            String numero = ordem.numero() == null || ordem.numero().isBlank() ? ordem.id() : ordem.numero();
+            String descricao = primeiroTexto(ordem.customerName(), ordem.title(), ordem.serviceType(), ordem.id());
+            return new ItemCalendario(ordem.emissionDate(), "OS " + numero + " - " + descricao + " (" + ordem.status() + ")", "#075985", "#e0f2fe", 1);
         }
 
         private static String primeiroTexto(String... valores) {

@@ -20,6 +20,7 @@ public class GerenciadorNavegacao {
     private final br.com.sigla.interfacegrafica.aplicativo.FluxoAplicacao fluxoAplicacao;
     private VisaoAplicacao currentView;
     private BorderPane shellContentHost;
+    private Node shellMenu;
 
     public GerenciadorNavegacao(
             ConfigurableApplicationContext context,
@@ -30,6 +31,11 @@ public class GerenciadorNavegacao {
     }
 
     public void navigateTo(VisaoAplicacao view) {
+        if (view.isSobreposta()) {
+            fluxoAplicacao.showView(view);
+            currentView = view;
+            return;
+        }
         if (view.isShellContent() && shellContentHost != null) {
             shellContentHost.setCenter(loadShellContent(view));
             return;
@@ -40,6 +46,21 @@ public class GerenciadorNavegacao {
 
     public void registerShellContentHost(BorderPane shellContentHost) {
         this.shellContentHost = shellContentHost;
+    }
+
+    public void registerShellMenu(Node shellMenu) {
+        this.shellMenu = shellMenu;
+    }
+
+    public void alternarMenuLateral() {
+        if (shellContentHost == null || shellMenu == null) {
+            return;
+        }
+        if (shellContentHost.getLeft() == null) {
+            shellContentHost.setLeft(shellMenu);
+        } else {
+            shellContentHost.setLeft(null);
+        }
     }
 
     public Node loadShellContent(VisaoAplicacao view) {

@@ -14,7 +14,7 @@
             <Font name="Nirmala UI Bold" size="45.0" />
          </font>
       </Label>
-      <TextField fx:id="nomeField" layoutX="139.0" layoutY="143.0" prefHeight="26.0" prefWidth="400.0" promptText="Usuario" style="-fx-border-color: #116694;" />
+      <TextField fx:id="nomeField" layoutX="139.0" layoutY="143.0" prefHeight="26.0" prefWidth="400.0" promptText="Usuário" style="-fx-border-color: #116694;" />
       <Label layoutX="90.0" layoutY="91.0" prefHeight="26.0" prefWidth="400.0" text="Insira seus dados abaixo para realizar seu Cadastro!" textFill="#0e8fff">
          <font>
             <Font name="Nirmala UI Bold" size="16.0" />

@@ -26,11 +26,11 @@ br\com\sigla\interfacegrafica\controlador\ControladorCadastro$CadastroRow.class
 br\com\sigla\interfacegrafica\navegacao\VisaoAplicacao$ModoExibicao.class
 br\com\sigla\interfacegrafica\inicializacao\AplicacaoSpringSigla.class
 br\com\sigla\interfacegrafica\inicializacao\AgendadorNotificacoesVencimento.class
+br\com\sigla\interfacegrafica\consulta\ContextoDetalheOrdemServico.class
 br\com\sigla\interfacegrafica\controlador\ControladorClientes$IndicacaoRow.class
 br\com\sigla\interfacegrafica\controlador\ControladorNovaTransacao.class
 br\com\sigla\interfacegrafica\controlador\ControladorAgenda$1.class
 br\com\sigla\interfacegrafica\formatador\FormatadorMascaraCpf.class
-br\com\sigla\interfacegrafica\controlador\ControladorNovaOrdemServico$1.class
 br\com\sigla\interfacegrafica\inicializacao\InicializadorDadosDesenvolvimento.class
 br\com\sigla\interfacegrafica\util\ResolvedorEntradaTexto.class
 br\com\sigla\interfacegrafica\controlador\ControladorNovaOrdemServico.class
@@ -43,6 +43,7 @@ br\com\sigla\interfacegrafica\aplicativo\AplicacaoDesktopSigla.class
 br\com\sigla\interfacegrafica\aplicativo\EstruturaAplicacao.class
 br\com\sigla\interfacegrafica\controlador\ControladorEstoque$ProdutoRow.class
 br\com\sigla\interfacegrafica\controlador\ControladorNovaIndicacao.class
+br\com\sigla\interfacegrafica\controlador\ControladorDetalhesServicosDia.class
 br\com\sigla\interfacegrafica\aplicativo\FluxoAplicacao.class
 br\com\sigla\interfacegrafica\controlador\ControladorContratosCertificados$ClienteOption.class
 br\com\sigla\interfacegrafica\controlador\ControladorUsuarios.class

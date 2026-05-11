@@ -73,7 +73,7 @@
             </VBox>
             <VBox prefHeight="65.0" prefWidth="200.0" style="-fx-background-color: white; -fx-background-radius: 8; -fx-padding: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 18,0,0,5); -fx-border-color: #2563EB; -fx-border-width: 0 0 0 4; -fx-border-radius: 8;" GridPane.columnIndex="1">
                <children>
-                  <Label text="ServiÃ§os atrasados" textFill="#303030" />
+                  <Label text="Serviços atrasados" textFill="#303030" />
                   <Label fx:id="servicosAtrasadosLabel" text="0" textFill="#00417e">
                      <font>
                         <Font name="Ebrima Bold" size="20.0" />
@@ -103,7 +103,7 @@
             </VBox>
             <VBox prefHeight="65.0" prefWidth="200.0" style="-fx-background-color: white; -fx-background-radius: 8; -fx-padding: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 18,0,0,5); -fx-border-color: #2563EB; -fx-border-width: 0 0 0 4; -fx-border-radius: 8;" GridPane.columnIndex="4">
                <children>
-                  <Label text="IndicaÃ§Ãµes pendentes" textFill="#303030" />
+                  <Label text="Indicações pendentes" textFill="#303030" />
                   <Label fx:id="indicacoesPendentesLabel" text="0" textFill="#00417e">
                      <font>
                         <Font name="Ebrima Bold" size="20.0" />
@@ -113,7 +113,7 @@
             </VBox>
             <VBox prefHeight="65.0" prefWidth="200.0" style="-fx-background-color: white; -fx-background-radius: 8; -fx-padding: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 18,0,0,5); -fx-border-color: #2563EB; -fx-border-width: 0 0 0 4; -fx-border-radius: 8;" GridPane.rowIndex="1">
                <children>
-                  <Label text="Receitas do mÃªs" textFill="#303030" />
+                  <Label text="Receitas do mês" textFill="#303030" />
                   <Label fx:id="receitasPeriodoLabel" text="R$ 0,00" textFill="#00417e">
                      <font>
                         <Font name="Ebrima Bold" size="20.0" />
@@ -123,7 +123,7 @@
             </VBox>
             <VBox prefHeight="65.0" prefWidth="200.0" style="-fx-background-color: white; -fx-background-radius: 8; -fx-padding: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 18,0,0,5); -fx-border-color: #2563EB; -fx-border-width: 0 0 0 4; -fx-border-radius: 8;" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <children>
-                  <Label text="Despesas do mÃªs" textFill="#303030" />
+                  <Label text="Despesas do mês" textFill="#303030" />
                   <Label fx:id="despesasPeriodoLabel" text="R$ 0,00" textFill="#00417e">
                      <font>
                         <Font name="Ebrima Bold" size="20.0" />

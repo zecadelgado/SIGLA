@@ -22,7 +22,7 @@
          <children>
             <BorderPane prefHeight="1100.0" prefWidth="1510.0" style="-fx-background-color: lightgrey;">
                <left>
-                  <VBox prefHeight="950.0" prefWidth="250.0" spacing="15.0" style="-fx-background-color: #0B2A6F;" BorderPane.alignment="CENTER">
+                  <VBox fx:id="menuLateral" prefHeight="950.0" prefWidth="250.0" spacing="15.0" style="-fx-background-color: #0B2A6F;" BorderPane.alignment="CENTER">
                      <children>
                         <Label text="Sigla" textFill="#a6d3ff">
                            <font>
@@ -107,7 +107,7 @@
                      <children>
                         <HBox prefHeight="100.0" prefWidth="200.0">
                            <children>
-                              <VBox prefHeight="102.0" prefWidth="603.0">
+<VBox prefHeight="102.0" prefWidth="603.0">
                                  <children>
                                     <Label prefHeight="66.0" prefWidth="440.0" text="Gestão de Clientes" textFill="#00417e">
                                        <font>

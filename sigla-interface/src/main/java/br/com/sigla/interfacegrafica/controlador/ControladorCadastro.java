@@ -3,6 +3,7 @@ package br.com.sigla.interfacegrafica.controlador;
 import br.com.sigla.aplicacao.clientes.porta.entrada.CasoDeUsoCliente;
 import br.com.sigla.aplicacao.funcionarios.porta.entrada.CasoDeUsoFuncionario;
 import br.com.sigla.dominio.clientes.Cliente;
+import br.com.sigla.interfacegrafica.formatador.FormatadorMascaraCpf;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -32,6 +33,7 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
     private final CasoDeUsoCliente casoDeUsoCliente;
     private final CasoDeUsoFuncionario casoDeUsoFuncionario;
     private final GerenciadorNavegacao gerenciadorNavegacao;
+    private final FormatadorMascaraCpf formatadorMascaraCpf;
 
     @FXML
     private TextField searchField;
@@ -76,12 +78,14 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
     public ControladorCadastro(
             CasoDeUsoCliente casoDeUsoCliente,
             CasoDeUsoFuncionario casoDeUsoFuncionario,
-            GerenciadorNavegacao gerenciadorNavegacao
+            GerenciadorNavegacao gerenciadorNavegacao,
+            FormatadorMascaraCpf formatadorMascaraCpf
     ) {
         super(gerenciadorNavegacao);
         this.casoDeUsoCliente = casoDeUsoCliente;
         this.casoDeUsoFuncionario = casoDeUsoFuncionario;
         this.gerenciadorNavegacao = gerenciadorNavegacao;
+        this.formatadorMascaraCpf = formatadorMascaraCpf;
     }
 
     @FXML
@@ -350,6 +354,9 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
         TextField cpf = field(cliente.cpf());
         TextField cnpj = field(cliente.cnpj());
         TextField telefone = field(cliente.phone());
+        formatadorMascaraCpf.aplicarCpf(cpf);
+        formatadorMascaraCpf.aplicarCnpj(cnpj);
+        formatadorMascaraCpf.aplicarTelefone(telefone);
         TextField email = field(cliente.email());
         TextArea observacoes = new TextArea(cliente.notes());
         observacoes.setPrefRowCount(3);
@@ -381,6 +388,7 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
         TextField nome = field(existente == null ? "" : existente.nome());
         TextField cargo = field(existente == null ? "" : existente.cargo());
         TextField telefone = field(existente == null ? "" : existente.telefone());
+        formatadorMascaraCpf.aplicarTelefone(telefone);
         TextField email = field(existente == null ? "" : existente.email());
         CheckBox principal = new CheckBox("Principal");
         principal.setSelected(existente != null && existente.principal());
@@ -455,11 +463,7 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
         if (text == null) {
             return "";
         }
-        String value = text.trim();
-        if (value.equalsIgnoreCase("Buscar por nome ou CPF/CNPJ...")) {
-            return "";
-        }
-        return value.toLowerCase(Locale.ROOT);
+        return text.trim().toLowerCase(Locale.ROOT);
     }
 
     private String extractCidade(String location) {

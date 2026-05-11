@@ -218,7 +218,7 @@
                <children>
                   <VBox prefHeight="74.0" prefWidth="674.0">
                      <children>
-                        <Label text="Destino Descriçao">
+                        <Label text="Destino Descrição">
                            <font>
                               <Font size="16.0" />
                            </font>

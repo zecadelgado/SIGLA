@@ -16,7 +16,7 @@ class VisaoAplicacaoTest {
 
     @Test
     void shouldKeepCanonicalRoutesInsideTelaFolder() {
-        assertEquals(19, VisaoAplicacao.values().length);
+        assertEquals(20, VisaoAplicacao.values().length);
         for (VisaoAplicacao view : VisaoAplicacao.values()) {
             assertTrue(view.fxmlPath().startsWith("/fxml/telas/"));
         }

@@ -8,6 +8,7 @@ import br.com.sigla.dominio.potenciaisclientes.PotencialCliente;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorData;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorMoeda;
 import br.com.sigla.interfacegrafica.consulta.ServicoConsultaOrdemServico;
+import br.com.sigla.interfacegrafica.formatador.FormatadorMascaraCpf;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -44,6 +45,7 @@ public class ControladorClientes extends ControladorComMenuPrincipal {
     private final GerenciadorNavegacao gerenciadorNavegacao;
     private final ApresentadorMoeda apresentadorMoeda;
     private final ApresentadorData apresentadorData;
+    private final FormatadorMascaraCpf formatadorMascaraCpf;
 
     @FXML
     private Label totalClientesLabel;
@@ -95,7 +97,8 @@ public class ControladorClientes extends ControladorComMenuPrincipal {
             ServicoConsultaOrdemServico servicoConsultaOrdemServico,
             GerenciadorNavegacao gerenciadorNavegacao,
             ApresentadorMoeda apresentadorMoeda,
-            ApresentadorData apresentadorData
+            ApresentadorData apresentadorData,
+            FormatadorMascaraCpf formatadorMascaraCpf
     ) {
         super(gerenciadorNavegacao);
         this.casoDeUsoCliente = casoDeUsoCliente;
@@ -105,6 +108,7 @@ public class ControladorClientes extends ControladorComMenuPrincipal {
         this.gerenciadorNavegacao = gerenciadorNavegacao;
         this.apresentadorMoeda = apresentadorMoeda;
         this.apresentadorData = apresentadorData;
+        this.formatadorMascaraCpf = formatadorMascaraCpf;
     }
 
     @FXML
@@ -300,6 +304,7 @@ public class ControladorClientes extends ControladorComMenuPrincipal {
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         TextField nome = field(lead.name());
         TextField telefone = field(lead.contact());
+        formatadorMascaraCpf.aplicarTelefone(telefone);
         TextField indicador = field(lead.clienteIndicadorId());
         DatePicker data = new DatePicker(lead.dataIndicacao());
         ComboBox<PotencialCliente.PotencialClienteStatus> status = new ComboBox<>();
@@ -355,6 +360,9 @@ public class ControladorClientes extends ControladorComMenuPrincipal {
         TextField cpf = field("");
         TextField cnpj = field("");
         TextField telefone = field(lead.contact());
+        formatadorMascaraCpf.aplicarCpf(cpf);
+        formatadorMascaraCpf.aplicarCnpj(cnpj);
+        formatadorMascaraCpf.aplicarTelefone(telefone);
         TextField email = field("");
         TextArea observacoes = new TextArea("Cliente convertido da indicacao " + lead.id());
         observacoes.setPrefRowCount(3);

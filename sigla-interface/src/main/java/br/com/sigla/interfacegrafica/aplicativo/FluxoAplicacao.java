@@ -100,6 +100,11 @@ public class FluxoAplicacao {
     private void showFloatingView(VisaoAplicacao view) {
         Stage existingStage = floatingStages.get(view);
         if (existingStage != null && existingStage.isShowing()) {
+            Parent root = loadRoot(view);
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("/css/base.css").toExternalForm());
+            existingStage.setScene(scene);
+            resizeFloatingStage(existingStage, root);
             existingStage.toFront();
             existingStage.requestFocus();
             return;

@@ -12,17 +12,32 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="775.0" prefWidth="1800.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/25" fx:controller="br.com.sigla.interfacegrafica.controlador.ControladorEstruturaAplicacao">
+<ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="775.0" prefWidth="1530.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/25" fx:controller="br.com.sigla.interfacegrafica.controlador.ControladorEstruturaAplicacao">
    <content>
-      <AnchorPane prefHeight="775.0" prefWidth="1800.0">
+      <AnchorPane prefHeight="775.0" prefWidth="1530.0">
          <children>
-            <BorderPane fx:id="contentHost" prefHeight="775.0" prefWidth="1800.0" style="-fx-background-color: lightgray;">
+            <BorderPane fx:id="contentHost" prefHeight="775.0" prefWidth="1530.0" style="-fx-background-color: lightgray;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <top>
+                  <HBox prefHeight="44.0" prefWidth="1530.0" style="-fx-background-color: lightgrey;" BorderPane.alignment="CENTER_LEFT">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#onAlternarMenuLateral" prefHeight="30.0" prefWidth="92.0" style="-fx-background-color: white; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 12,0,0,4);" text="Menu" textFill="#0B2A6F">
+                           <font>
+                              <Font name="Ebrima Bold" size="14.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets left="18.0" top="7.0" />
+                           </HBox.margin>
+                        </Button>
+                     </children>
+                  </HBox>
+               </top>
                <left>
-                  <VBox prefHeight="765.0" prefWidth="260.0" spacing="15.0" style="-fx-background-color: #0B2A6F;" BorderPane.alignment="CENTER">
+                  <VBox fx:id="menuLateral" prefHeight="765.0" prefWidth="260.0" spacing="15.0" style="-fx-background-color: #0B2A6F;" BorderPane.alignment="CENTER">
                      <children>
                         <Label text="Sigla" textFill="#a6d3ff">
                            <font>
@@ -83,7 +98,7 @@
                               <Insets left="15.0" top="10.0" />
                            </VBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#onServicosClick" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Ordem de Serviço" textFill="WHITE">
+                        <Button mnemonicParsing="false" onAction="#onOrdemServicoClick" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Ordem de Serviço" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="20.0" />
                            </font>

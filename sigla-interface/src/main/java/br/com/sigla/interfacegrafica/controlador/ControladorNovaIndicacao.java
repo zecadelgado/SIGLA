@@ -3,6 +3,7 @@ package br.com.sigla.interfacegrafica.controlador;
 import br.com.sigla.aplicacao.potenciaisclientes.porta.entrada.CasoDeUsoPotencialCliente;
 import br.com.sigla.dominio.potenciaisclientes.PotencialCliente;
 import br.com.sigla.interfacegrafica.consulta.ServicoConsultaReferencias;
+import br.com.sigla.interfacegrafica.formatador.FormatadorMascaraCpf;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import br.com.sigla.interfacegrafica.util.UtilJanela;
@@ -25,6 +26,7 @@ public class ControladorNovaIndicacao {
     private final CasoDeUsoPotencialCliente casoDeUsoPotencialCliente;
     private final ServicoConsultaReferencias servicoConsultaReferencias;
     private final GerenciadorNavegacao gerenciadorNavegacao;
+    private final FormatadorMascaraCpf formatadorMascaraCpf;
 
     @FXML
     private TextField nomeField;
@@ -44,11 +46,13 @@ public class ControladorNovaIndicacao {
     public ControladorNovaIndicacao(
             CasoDeUsoPotencialCliente casoDeUsoPotencialCliente,
             ServicoConsultaReferencias servicoConsultaReferencias,
-            GerenciadorNavegacao gerenciadorNavegacao
+            GerenciadorNavegacao gerenciadorNavegacao,
+            FormatadorMascaraCpf formatadorMascaraCpf
     ) {
         this.casoDeUsoPotencialCliente = casoDeUsoPotencialCliente;
         this.servicoConsultaReferencias = servicoConsultaReferencias;
         this.gerenciadorNavegacao = gerenciadorNavegacao;
+        this.formatadorMascaraCpf = formatadorMascaraCpf;
     }
 
     @FXML
@@ -59,6 +63,7 @@ public class ControladorNovaIndicacao {
         if (statusField != null && statusField.getText().isBlank()) {
             statusField.setText(PotencialCliente.PotencialClienteStatus.NOVO.name());
         }
+        formatadorMascaraCpf.aplicarTelefone(telefoneField);
         setFeedback("");
     }
 

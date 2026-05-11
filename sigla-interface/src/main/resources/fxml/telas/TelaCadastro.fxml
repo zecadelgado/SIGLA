@@ -18,7 +18,7 @@
    <children>
       <HBox prefHeight="870.0" prefWidth="1530.0">
          <children>
-            <VBox prefHeight="870.0" prefWidth="270.0" spacing="15.0" style="-fx-background-color: #0B2A6F;">
+            <VBox fx:id="menuLateral" prefHeight="870.0" prefWidth="270.0" spacing="15.0" style="-fx-background-color: #0B2A6F;">
                <children>
                   <Label text="Sigla" textFill="#a6d3ff">
                      <font>
@@ -97,11 +97,11 @@
                   <Insets bottom="20.0" left="15.0" right="15.0" top="20.0" />
                </padding>
             </VBox>
-            <VBox prefHeight="870.0" prefWidth="1306.0" style="-fx-background-color: lightgrey;">
+            <VBox prefHeight="870.0" prefWidth="1306.0" style="-fx-background-color: lightgrey;" HBox.hgrow="ALWAYS">
                <children>
                   <HBox alignment="CENTER_LEFT" prefHeight="120.0" prefWidth="1333.0" spacing="10.0">
                      <children>
-                        <VBox prefHeight="120.0" prefWidth="378.0">
+<VBox prefHeight="120.0" prefWidth="378.0">
                            <children>
                               <Label text="Cadastros" textFill="#00417e">
                                  <font>
@@ -134,7 +134,7 @@
                   </HBox>
                   <HBox prefHeight="58.0" prefWidth="1257.0" spacing="10.0" style="-fx-background-color: WHITE; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
                      <children>
-                        <TextField fx:id="searchField" prefHeight="30.0" prefWidth="760.0" style="-fx-background-radius: 5; -fx-padding: 5;" text="Buscar por nome ou CPF/CNPJ...">
+                        <TextField fx:id="searchField" prefHeight="30.0" prefWidth="760.0" promptText="Buscar por nome ou CPF/CNPJ..." style="-fx-background-radius: 5; -fx-padding: 5;">
                            <HBox.margin>
                               <Insets left="25.0" right="5.0" top="15.0" />
                            </HBox.margin>
@@ -210,17 +210,17 @@
                                     <Insets left="5.0" top="5.0" />
                                  </VBox.margin>
                               </HBox>
-                              <TableView fx:id="cadastroTable" prefHeight="550.0" prefWidth="1458.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5); -fx-background-radius: 10;">
+                              <TableView fx:id="cadastroTable" prefHeight="550.0" prefWidth="1458.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5); -fx-background-radius: 10;" styleClass="registry-table">
                                  <columns>
-                                    <TableColumn fx:id="nomeColumn" minWidth="20.0" prefWidth="220.0" style="-fx-background-color: white;" text="Nome" />
-                                    <TableColumn fx:id="cpfColumn" prefWidth="200.0" style="-fx-background-color: white;" text="CPF" />
-                                    <TableColumn fx:id="cnpjColumn" prefWidth="200.0" style="-fx-background-color: white;" text="CNPJ" />
-                                    <TableColumn fx:id="razaoSocialColumn" prefWidth="200.0" style="-fx-background-color: white;" text="Razão Social" />
-                                    <TableColumn fx:id="telefoneColumn" prefWidth="200.0" style="-fx-background-color: white;" text="Telefone" />
-                                    <TableColumn fx:id="emailColumn" prefWidth="230.0" style="-fx-background-color: white;" text="Email" />
-                                    <TableColumn fx:id="cepColumn" prefWidth="200.0" style="-fx-background-color: white;" text="CEP" />
-                                    <TableColumn fx:id="cidadeColumn" prefWidth="200.0" style="-fx-background-color: white;" text="Cidade" />
-                                    <TableColumn fx:id="statusColumn" prefWidth="160.0" style="-fx-background-color: white;" text="Status" />
+                                    <TableColumn fx:id="nomeColumn" minWidth="20.0" prefWidth="220.0" text="Nome" />
+                                    <TableColumn fx:id="cpfColumn" prefWidth="200.0" text="CPF" />
+                                    <TableColumn fx:id="cnpjColumn" prefWidth="200.0" text="CNPJ" />
+                                    <TableColumn fx:id="razaoSocialColumn" prefWidth="200.0" text="Razão Social" />
+                                    <TableColumn fx:id="telefoneColumn" prefWidth="200.0" text="Telefone" />
+                                    <TableColumn fx:id="emailColumn" prefWidth="230.0" text="Email" />
+                                    <TableColumn fx:id="cepColumn" prefWidth="200.0" text="CEP" />
+                                    <TableColumn fx:id="cidadeColumn" prefWidth="200.0" text="Cidade" />
+                                    <TableColumn fx:id="statusColumn" prefWidth="160.0" text="Status" />
                                  </columns>
                                  <VBox.margin>
                                     <Insets />
@@ -242,13 +242,13 @@
                                           <Button mnemonicParsing="false" onAction="#onMarcarResponsavelPrincipal" prefHeight="30.0" prefWidth="130.0" style="-fx-background-color: white; -fx-background-radius: 5;" text="Principal" textFill="#0B2A6F" />
                                        </children>
                                     </HBox>
-                                    <TableView fx:id="responsaveisTable" prefHeight="145.0" prefWidth="1420.0" style="-fx-background-radius: 10;">
+                                    <TableView fx:id="responsaveisTable" prefHeight="145.0" prefWidth="1420.0" style="-fx-background-radius: 10;" styleClass="registry-table">
                                        <columns>
-                                          <TableColumn fx:id="responsavelNomeColumn" prefWidth="280.0" style="-fx-background-color: white;" text="Nome" />
-                                          <TableColumn fx:id="responsavelCargoColumn" prefWidth="240.0" style="-fx-background-color: white;" text="Cargo" />
-                                          <TableColumn fx:id="responsavelTelefoneColumn" prefWidth="220.0" style="-fx-background-color: white;" text="Telefone" />
-                                          <TableColumn fx:id="responsavelEmailColumn" prefWidth="340.0" style="-fx-background-color: white;" text="Email" />
-                                          <TableColumn fx:id="responsavelPrincipalColumn" prefWidth="160.0" style="-fx-background-color: white;" text="Principal" />
+                                          <TableColumn fx:id="responsavelNomeColumn" prefWidth="280.0" text="Nome" />
+                                          <TableColumn fx:id="responsavelCargoColumn" prefWidth="240.0" text="Cargo" />
+                                          <TableColumn fx:id="responsavelTelefoneColumn" prefWidth="220.0" text="Telefone" />
+                                          <TableColumn fx:id="responsavelEmailColumn" prefWidth="340.0" text="Email" />
+                                          <TableColumn fx:id="responsavelPrincipalColumn" prefWidth="160.0" text="Principal" />
                                        </columns>
                                     </TableView>
                                  </children>

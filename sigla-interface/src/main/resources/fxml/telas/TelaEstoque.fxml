@@ -18,7 +18,7 @@
          <children>
             <HBox prefHeight="1400.0" prefWidth="1530.0">
                <children>
-                  <VBox prefHeight="765.0" prefWidth="250.0" spacing="15.0" style="-fx-background-color: #0B2A6F;">
+                  <VBox fx:id="menuLateral" prefHeight="765.0" prefWidth="250.0" spacing="15.0" style="-fx-background-color: #0B2A6F;">
                      <children>
                         <Label text="Sigla" textFill="#a6d3ff">
                            <font>
@@ -97,11 +97,11 @@
                         <Insets bottom="20.0" left="15.0" right="15.0" top="20.0" />
                      </padding>
                   </VBox>
-                  <VBox prefHeight="790.0" prefWidth="1286.0">
+                  <VBox prefHeight="790.0" prefWidth="1286.0" HBox.hgrow="ALWAYS">
                      <children>
                         <HBox prefHeight="100.0" prefWidth="200.0">
                            <children>
-                              <VBox prefHeight="100.0" prefWidth="458.0">
+<VBox prefHeight="100.0" prefWidth="458.0">
                                  <children>
                                     <Label prefHeight="52.0" prefWidth="358.0" text="Estoque" textFill="#00417e">
                                        <font>

@@ -5,6 +5,7 @@ import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import javafx.fxml.FXML;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Region;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,6 +16,8 @@ public class ControladorEstruturaAplicacao {
 
     @FXML
     private BorderPane contentHost;
+    @FXML
+    private Region menuLateral;
 
     public ControladorEstruturaAplicacao(GerenciadorNavegacao navigationManager, FluxoAplicacao fluxoAplicacao) {
         this.navigationManager = navigationManager;
@@ -24,7 +27,13 @@ public class ControladorEstruturaAplicacao {
     @FXML
     public void initialize() {
         navigationManager.registerShellContentHost(contentHost);
+        navigationManager.registerShellMenu(menuLateral);
         navigate(VisaoAplicacao.DASHBOARD);
+    }
+
+    @FXML
+    private void onAlternarMenuLateral() {
+        navigationManager.alternarMenuLateral();
     }
 
     @FXML
