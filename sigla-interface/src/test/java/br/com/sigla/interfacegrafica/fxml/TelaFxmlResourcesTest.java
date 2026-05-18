@@ -112,6 +112,30 @@ class TelaFxmlResourcesTest {
         }
     }
 
+    @Test
+    void shouldExposeEveryShellNavigationActionInMainMenu() throws IOException {
+        try (InputStream stream = VisaoAplicacao.class.getResourceAsStream(VisaoAplicacao.SHELL.fxmlPath())) {
+            assertNotNull(stream, "Missing FXML for " + VisaoAplicacao.SHELL);
+            String content = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
+            List<String> requiredActions = List.of(
+                    "onDashboardClick",
+                    "onCadastrosClick",
+                    "onFinanceiroClick",
+                    "onClientesClick",
+                    "onServicosClick",
+                    "onAgendaClick",
+                    "onOrdemServicoClick",
+                    "onEstoqueClick",
+                    "onContratosCertificadosClick",
+                    "onLogoutClick"
+            );
+
+            for (String action : requiredActions) {
+                assertTrue(content.contains("onAction=\"#" + action + "\""), "Missing shell menu action " + action);
+            }
+        }
+    }
+
     private boolean hasField(Class<?> type, String name) {
         Class<?> current = type;
         while (current != null) {

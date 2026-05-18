@@ -37,7 +37,7 @@
                   </HBox>
                </top>
                <left>
-                  <VBox fx:id="menuLateral" prefHeight="765.0" prefWidth="260.0" spacing="15.0" style="-fx-background-color: #0B2A6F;" BorderPane.alignment="CENTER">
+                  <VBox fx:id="menuLateral" prefHeight="765.0" prefWidth="260.0" spacing="8.0" style="-fx-background-color: #0B2A6F;" BorderPane.alignment="CENTER">
                      <children>
                         <Label text="Sigla" textFill="#a6d3ff">
                            <font>
@@ -55,63 +55,87 @@
                               <Font size="14.0" />
                            </font>
                            <padding>
-                              <Insets left="15.0" top="-15.0" />
+                              <Insets left="15.0" top="0.0" />
                            </padding>
                         </Label>
-                        <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onDashboardClick" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #1c2e94; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Dashboard" textFill="WHITE" textOverrun="CENTER_ELLIPSIS">
+                        <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onDashboardClick" prefHeight="34.0" prefWidth="200.0" style="-fx-background-color: #1c2e94; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Dashboard" textFill="WHITE" textOverrun="CENTER_ELLIPSIS">
                            <font>
-                              <Font name="System Bold" size="20.0" />
+                              <Font name="System Bold" size="17.0" />
                            </font>
                            <VBox.margin>
-                              <Insets left="15.0" right="10.0" top="25.0" />
+                              <Insets left="15.0" right="10.0" top="12.0" />
                            </VBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#onCadastrosClick" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Cadastros" textFill="WHITE">
+                        <Button mnemonicParsing="false" onAction="#onCadastrosClick" prefHeight="34.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Cadastros" textFill="WHITE">
                            <font>
-                              <Font name="System Bold" size="20.0" />
+                              <Font name="System Bold" size="17.0" />
                            </font>
                            <VBox.margin>
-                              <Insets left="15.0" top="10.0" />
+                              <Insets left="15.0" top="4.0" />
                            </VBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#onFinanceiroClick" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Financeiro" textFill="WHITE">
+                        <Button mnemonicParsing="false" onAction="#onFinanceiroClick" prefHeight="34.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Financeiro" textFill="WHITE">
                            <font>
-                              <Font name="System Bold" size="20.0" />
+                              <Font name="System Bold" size="17.0" />
                            </font>
                            <VBox.margin>
-                              <Insets left="15.0" top="10.0" />
+                              <Insets left="15.0" top="4.0" />
                            </VBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#onClientesClick" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Clientes" textFill="WHITE">
+                        <Button mnemonicParsing="false" onAction="#onClientesClick" prefHeight="34.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Clientes" textFill="WHITE">
                            <font>
-                              <Font name="System Bold" size="20.0" />
+                              <Font name="System Bold" size="17.0" />
                            </font>
                            <VBox.margin>
-                              <Insets left="15.0" top="10.0" />
+                              <Insets left="15.0" top="4.0" />
                            </VBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#onServicosClick" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Serviços" textFill="WHITE">
+                        <Button mnemonicParsing="false" onAction="#onServicosClick" prefHeight="34.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Serviços" textFill="WHITE">
                            <font>
-                              <Font name="System Bold" size="20.0" />
+                              <Font name="System Bold" size="17.0" />
                            </font>
                            <VBox.margin>
-                              <Insets left="15.0" top="10.0" />
+                              <Insets left="15.0" top="4.0" />
                            </VBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#onOrdemServicoClick" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Ordem de Serviço" textFill="WHITE">
+                        <Button mnemonicParsing="false" onAction="#onAgendaClick" prefHeight="34.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Agenda" textFill="WHITE">
                            <font>
-                              <Font name="System Bold" size="20.0" />
+                              <Font name="System Bold" size="17.0" />
                            </font>
                            <VBox.margin>
-                              <Insets left="15.0" top="10.0" />
+                              <Insets left="15.0" top="4.0" />
                            </VBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#onEstoqueClick" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Estoque" textFill="WHITE">
+                        <Button mnemonicParsing="false" onAction="#onOrdemServicoClick" prefHeight="34.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Ordem de Serviço" textFill="WHITE">
                            <font>
-                              <Font name="System Bold" size="20.0" />
+                              <Font name="System Bold" size="17.0" />
                            </font>
                            <VBox.margin>
-                              <Insets left="15.0" top="10.0" />
+                              <Insets left="15.0" top="4.0" />
+                           </VBox.margin>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#onEstoqueClick" prefHeight="34.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Estoque" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="17.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets left="15.0" top="4.0" />
+                           </VBox.margin>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#onContratosCertificadosClick" prefHeight="34.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Contratos/Certificados" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets left="15.0" top="4.0" />
+                           </VBox.margin>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#onLogoutClick" prefHeight="34.0" prefWidth="200.0" style="-fx-background-color: rgba(0,0,0,0.18); -fx-background-radius: 10;" text="Sair" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="17.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets left="15.0" top="16.0" />
                            </VBox.margin>
                         </Button>
                      </children>

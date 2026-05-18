@@ -19,10 +19,15 @@ Sistema Integrado de Gestao Logistica e Administrativa para operacao de detetiza
 
 - Java 25
 - Maven Wrapper (`mvnw` / `mvnw.cmd`)
+- Docker com Docker Compose, para subir o PostgreSQL local
 
 ## Build rapido
 
+O perfil padrao usa PostgreSQL em `localhost:5432`, com banco, usuario e senha `sigla`.
+Suba o banco antes de iniciar a aplicacao:
+
 ```bash
+docker compose up -d postgres
 ./mvnw clean test
 ./mvnw -pl sigla-interface -am -DskipTests install
 ./mvnw -pl sigla-interface spring-boot:run
@@ -31,8 +36,21 @@ Sistema Integrado de Gestao Logistica e Administrativa para operacao de detetiza
 No Windows PowerShell:
 
 ```powershell
+docker compose up -d postgres
 .\mvnw.cmd clean test
 .\mvnw.cmd -pl sigla-interface -am -DskipTests install
 .\mvnw.cmd -pl sigla-interface spring-boot:run
+```
+
+Tambem e possivel usar os scripts de desenvolvimento, que sobem o PostgreSQL e aguardam o banco ficar pronto:
+
+```bash
+./scripts/dev/run-desktop.sh
+```
+
+No Windows PowerShell:
+
+```powershell
+.\scripts\dev\run-desktop.ps1
 ```
 

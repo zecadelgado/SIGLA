@@ -16,7 +16,7 @@
 .shell-brand-subtitle {
     -fx-font-size: 14px;
     -fx-text-fill: #c8e2f2;
-    -fx-padding: -10 0 12 0;
+    -fx-padding: 0 0 12 0;
 }
 
 .shell-sidebar .button,

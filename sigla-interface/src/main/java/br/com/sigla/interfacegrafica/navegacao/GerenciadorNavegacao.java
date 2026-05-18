@@ -68,6 +68,7 @@ public class GerenciadorNavegacao {
             throw new IllegalArgumentException("View is not shell content: " + view);
         }
         Node content = extractShellContent(loadView(view));
+        configureResponsiveContent(content);
         currentView = view;
         return content;
     }
@@ -110,16 +111,26 @@ public class GerenciadorNavegacao {
         return viewRoot;
     }
 
+    void configureResponsiveContent(Node content) {
+        if (content instanceof ScrollPane scrollPane) {
+            scrollPane.setFitToWidth(true);
+            scrollPane.setFitToHeight(true);
+            configureResponsiveContent(scrollPane.getContent());
+        }
+        if (content instanceof Region region) {
+            region.setMinWidth(0.0);
+            region.setMinHeight(0.0);
+            region.setMaxWidth(Double.MAX_VALUE);
+            region.setMaxHeight(Double.MAX_VALUE);
+        }
+    }
+
     private Node extractContentFromMenuLayout(HBox hBox) {
         if (hBox.getChildren().size() < 2 || !looksLikeEmbeddedMenu(hBox.getChildren().getFirst())) {
             return hBox;
         }
         Node content = hBox.getChildren().get(1);
         hBox.getChildren().remove(content);
-        if (content instanceof Region region) {
-            region.setMaxWidth(Double.MAX_VALUE);
-            region.setMaxHeight(Double.MAX_VALUE);
-        }
         return content;
     }
 
@@ -130,10 +141,6 @@ public class GerenciadorNavegacao {
             return borderPane;
         }
         borderPane.setCenter(null);
-        if (center instanceof Region region) {
-            region.setMaxWidth(Double.MAX_VALUE);
-            region.setMaxHeight(Double.MAX_VALUE);
-        }
         return center;
     }
 
