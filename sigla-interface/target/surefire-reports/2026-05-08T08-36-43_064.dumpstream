@@ -1,0 +1,5 @@
+# Created at 2026-05-08T08:36:47.419
+Boot Manifest-JAR contains absolute paths in classpath 'D:\SIGLA\sigla-interface\target\test-classes'
+Hint: <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
+'other' has different root
+
