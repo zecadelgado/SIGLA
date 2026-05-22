@@ -7,6 +7,7 @@ import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import br.com.sigla.interfacegrafica.util.UtilJanela;
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,8 @@ public class ControladorNovoCadastro {
     private final CasoDeUsoFuncionario casoDeUsoFuncionario;
     private final GerenciadorNavegacao gerenciadorNavegacao;
 
+    @FXML
+    private ComboBox<String> tipoCadastroCombo;
     @FXML
     private TextField nomeField;
     @FXML
@@ -64,6 +67,10 @@ public class ControladorNovoCadastro {
 
     @FXML
     public void initialize() {
+        if (tipoCadastroCombo != null) {
+            tipoCadastroCombo.getItems().setAll("CLIENTE", "FUNCIONARIO");
+            tipoCadastroCombo.getSelectionModel().select("CLIENTE");
+        }
         setFeedback("");
     }
 
@@ -132,8 +139,7 @@ public class ControladorNovoCadastro {
     }
 
     private boolean isCadastroFuncionario() {
-        return (razaoSocialField.getText() == null || razaoSocialField.getText().isBlank())
-                && (cnpjField.getText() == null || cnpjField.getText().isBlank());
+        return tipoCadastroCombo != null && "FUNCIONARIO".equals(tipoCadastroCombo.getValue());
     }
 
     private void setFeedback(String message) {

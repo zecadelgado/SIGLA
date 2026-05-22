@@ -7,8 +7,10 @@ import java.util.Objects;
 public record VisitaAgendada(
         String id,
         String customerId,
+        String orderId,
         String contractId,
         VisitType type,
+        Recurrence recurrence,
         LocalDate scheduledDate,
         String title,
         String serviceType,
@@ -19,13 +21,17 @@ public record VisitaAgendada(
         VisitStatus status,
         VisitPriority priority,
         String responsibleId,
+        boolean reminderActive,
+        int daysBeforeReminder,
         String notes
 ) {
     public VisitaAgendada {
         id = requireText(id, "id");
-        customerId = requireText(customerId, "customerId");
+        customerId = normalizeOptional(customerId);
+        orderId = normalizeOptional(orderId);
         contractId = normalizeOptional(contractId);
         type = Objects.requireNonNull(type, "type is required");
+        recurrence = Objects.requireNonNullElse(recurrence, Recurrence.NONE);
         scheduledDate = Objects.requireNonNull(scheduledDate, "scheduledDate is required");
         title = normalizeOptional(title);
         serviceType = normalizeOptional(serviceType);
@@ -36,7 +42,50 @@ public record VisitaAgendada(
         status = Objects.requireNonNull(status, "status is required");
         priority = Objects.requireNonNullElse(priority, VisitPriority.NORMAL);
         responsibleId = normalizeOptional(responsibleId);
+        if (daysBeforeReminder < 0) {
+            throw new IllegalArgumentException("daysBeforeReminder must not be negative");
+        }
         notes = normalizeOptional(notes);
+    }
+
+    public VisitaAgendada(
+            String id,
+            String customerId,
+            String contractId,
+            VisitType type,
+            LocalDate scheduledDate,
+            String title,
+            String serviceType,
+            String internalResponsible,
+            LocalDateTime startAt,
+            LocalDateTime endAt,
+            boolean allDay,
+            VisitStatus status,
+            VisitPriority priority,
+            String responsibleId,
+            String notes
+    ) {
+        this(
+                id,
+                customerId,
+                "",
+                contractId,
+                type,
+                Recurrence.NONE,
+                scheduledDate,
+                title,
+                serviceType,
+                internalResponsible,
+                startAt,
+                endAt,
+                allDay,
+                status,
+                priority,
+                responsibleId,
+                false,
+                1,
+                notes
+        );
     }
 
     public VisitaAgendada(
@@ -57,8 +106,10 @@ public record VisitaAgendada(
         this(
                 id,
                 customerId,
+                "",
                 contractId,
                 type,
+                Recurrence.NONE,
                 scheduledDate,
                 title,
                 serviceType,
@@ -69,6 +120,8 @@ public record VisitaAgendada(
                 status,
                 VisitPriority.NORMAL,
                 "",
+                false,
+                1,
                 notes
         );
     }
@@ -85,8 +138,10 @@ public record VisitaAgendada(
         this(
                 id,
                 customerId,
+                "",
                 contractId,
                 type,
+                Recurrence.NONE,
                 scheduledDate,
                 "",
                 "",
@@ -95,6 +150,10 @@ public record VisitaAgendada(
                 scheduledDate.atStartOfDay(),
                 true,
                 status,
+                VisitPriority.NORMAL,
+                "",
+                false,
+                1,
                 notes
         );
     }
@@ -117,6 +176,12 @@ public record VisitaAgendada(
         MONTHLY,
         BIWEEKLY,
         ONE_OFF
+    }
+
+    public enum Recurrence {
+        NONE,
+        MONTHLY,
+        BIWEEKLY
     }
 
     public enum VisitStatus {

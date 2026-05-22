@@ -16,7 +16,7 @@ class VisaoAplicacaoTest {
 
     @Test
     void shouldKeepCanonicalRoutesInsideTelaFolder() {
-        assertEquals(16, VisaoAplicacao.values().length);
+        assertEquals(21, VisaoAplicacao.values().length);
         for (VisaoAplicacao view : VisaoAplicacao.values()) {
             assertTrue(view.fxmlPath().startsWith("/fxml/telas/"));
         }
@@ -34,6 +34,8 @@ class VisaoAplicacaoTest {
     void shouldMarkNewViewsAsFloatingWindows() {
         assertTrue(VisaoAplicacao.NEW_REGISTRY.isSobreposta());
         assertTrue(VisaoAplicacao.NEW_TRANSACTION.isSobreposta());
+        assertTrue(VisaoAplicacao.NEW_CONTRACT.isSobreposta());
+        assertTrue(VisaoAplicacao.NEW_EVENT.isSobreposta());
         assertFalse(VisaoAplicacao.LOGIN.isSobreposta());
         assertFalse(VisaoAplicacao.CUSTOMERS.isSobreposta());
     }

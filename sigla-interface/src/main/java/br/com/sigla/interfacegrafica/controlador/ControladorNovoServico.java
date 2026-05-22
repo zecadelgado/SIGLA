@@ -6,8 +6,10 @@ import br.com.sigla.interfacegrafica.consulta.ServicoConsultaReferencias;
 import br.com.sigla.interfacegrafica.modelo.OpcaoId;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
+import br.com.sigla.interfacegrafica.util.UtilComboBox;
 import br.com.sigla.interfacegrafica.util.UtilJanela;
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -15,9 +17,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.UUID;
-
-import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.parseEnum;
-import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.resolveOpcional;
 
 @Component
 public class ControladorNovoServico {
@@ -27,9 +26,9 @@ public class ControladorNovoServico {
     private final GerenciadorNavegacao gerenciadorNavegacao;
 
     @FXML
-    private TextField clienteField;
+    private ComboBox<OpcaoId> clienteCombo;
     @FXML
-    private TextField ordemField;
+    private ComboBox<OpcaoId> ordemCombo;
     @FXML
     private TextField tituloField;
     @FXML
@@ -41,11 +40,11 @@ public class ControladorNovoServico {
     @FXML
     private DatePicker diaInteiroPicker;
     @FXML
-    private TextField statusField;
+    private ComboBox<VisitaAgendada.VisitStatus> statusCombo;
     @FXML
-    private TextField prioridadeField;
+    private ComboBox<VisitaAgendada.VisitPriority> prioridadeCombo;
     @FXML
-    private TextField responsavelField;
+    private ComboBox<OpcaoId> responsavelCombo;
     @FXML
     private Label feedbackLabel;
 
@@ -68,11 +67,22 @@ public class ControladorNovoServico {
         if (dataFimPicker != null && dataFimPicker.getValue() == null) {
             dataFimPicker.setValue(hoje);
         }
-        if (statusField != null && statusField.getText().isBlank()) {
-            statusField.setText(VisitaAgendada.VisitStatus.SCHEDULED.name());
+        UtilComboBox.preencher(clienteCombo, servicoConsultaReferencias.clientes(), true);
+        UtilComboBox.preencher(ordemCombo, servicoConsultaReferencias.ordensServico(), true);
+        UtilComboBox.preencher(responsavelCombo, servicoConsultaReferencias.funcionarios(), true);
+        if (clienteCombo != null) {
+            clienteCombo.valueProperty().addListener((observable, oldValue, newValue) -> atualizarOrdensPorCliente());
         }
-        if (prioridadeField != null && prioridadeField.getText().isBlank()) {
-            prioridadeField.setText(VisitaAgendada.VisitPriority.NORMAL.name());
+        if (ordemCombo != null) {
+            ordemCombo.valueProperty().addListener((observable, oldValue, newValue) -> sincronizarClientePorOrdem());
+        }
+        if (statusCombo != null) {
+            statusCombo.getItems().setAll(VisitaAgendada.VisitStatus.values());
+            statusCombo.getSelectionModel().select(VisitaAgendada.VisitStatus.SCHEDULED);
+        }
+        if (prioridadeCombo != null) {
+            prioridadeCombo.getItems().setAll(VisitaAgendada.VisitPriority.values());
+            prioridadeCombo.getSelectionModel().select(VisitaAgendada.VisitPriority.NORMAL);
         }
         setFeedback("");
     }
@@ -80,16 +90,18 @@ public class ControladorNovoServico {
     @FXML
     private void onConfirmar() {
         try {
-            OpcaoId cliente = requiredOption(resolveOpcional(servicoConsultaReferencias.clientes(), clienteField == null ? "" : clienteField.getText()), "Selecione um cliente.");
-            OpcaoId ordem = resolveOpcional(servicoConsultaReferencias.ordensServico(), ordemField == null ? "" : ordemField.getText());
+            String clienteId = UtilComboBox.idSelecionado(clienteCombo);
+            String ordemId = UtilComboBox.idSelecionado(ordemCombo);
             LocalDate dataInicio = dataInicioPicker == null || dataInicioPicker.getValue() == null ? LocalDate.now() : dataInicioPicker.getValue();
             LocalDate dataFim = dataFimPicker == null || dataFimPicker.getValue() == null ? dataInicio : dataFimPicker.getValue();
 
             casoDeUsoAgenda.schedule(new CasoDeUsoAgenda.ScheduleVisitCommand(
                     UUID.randomUUID().toString(),
-                    cliente.id(),
-                    ordem == null ? "" : ordem.id(),
+                    clienteId,
+                    ordemId,
+                    "",
                     VisitaAgendada.VisitType.ONE_OFF,
+                    VisitaAgendada.Recurrence.NONE,
                     dataInicio,
                     tituloField == null ? "" : tituloField.getText(),
                     "servico",
@@ -97,13 +109,15 @@ public class ControladorNovoServico {
                     dataInicio.atStartOfDay(),
                     dataFim.atTime(23, 59),
                     diaInteiroPicker != null && diaInteiroPicker.getValue() != null,
-                    parseEnum(VisitaAgendada.VisitStatus.class, statusField == null ? "" : statusField.getText(), VisitaAgendada.VisitStatus.SCHEDULED),
-                    parseEnum(VisitaAgendada.VisitPriority.class, prioridadeField == null ? "" : prioridadeField.getText(), VisitaAgendada.VisitPriority.NORMAL),
-                    onlyUuid(responsavelField == null ? "" : responsavelField.getText()),
+                    statusCombo == null || statusCombo.getValue() == null ? VisitaAgendada.VisitStatus.SCHEDULED : statusCombo.getValue(),
+                    prioridadeCombo == null || prioridadeCombo.getValue() == null ? VisitaAgendada.VisitPriority.NORMAL : prioridadeCombo.getValue(),
+                    UtilComboBox.idSelecionado(responsavelCombo),
+                    false,
+                    1,
                     mergeDescricao()
             ));
             gerenciadorNavegacao.navigateTo(VisaoAplicacao.SERVICES);
-            UtilJanela.fecharJanela(clienteField);
+            UtilJanela.fecharJanela(clienteCombo);
         } catch (Exception exception) {
             setFeedback(exception.getMessage());
         }
@@ -111,7 +125,7 @@ public class ControladorNovoServico {
 
     @FXML
     private void onCancelar() {
-        UtilJanela.fecharJanela(clienteField);
+        UtilJanela.fecharJanela(clienteCombo);
     }
 
     private String mergeDescricao() {
@@ -124,27 +138,24 @@ public class ControladorNovoServico {
         return diaInteiroPicker != null && diaInteiroPicker.getValue() != null ? texto + " | Dia inteiro" : texto;
     }
 
-    private OpcaoId requiredOption(OpcaoId value, String message) {
-        if (value == null) {
-            throw new IllegalArgumentException(message);
-        }
-        return value;
-    }
-
-    private String onlyUuid(String value) {
-        if (value == null || value.isBlank()) {
-            return "";
-        }
-        try {
-            return UUID.fromString(value.trim()).toString();
-        } catch (IllegalArgumentException exception) {
-            return "";
-        }
-    }
-
     private void setFeedback(String message) {
         if (feedbackLabel != null) {
             feedbackLabel.setText(message == null ? "" : message);
+        }
+    }
+
+    private void atualizarOrdensPorCliente() {
+        String clienteId = UtilComboBox.idSelecionado(clienteCombo);
+        UtilComboBox.preencher(ordemCombo, clienteId.isBlank()
+                ? servicoConsultaReferencias.ordensServico()
+                : servicoConsultaReferencias.ordensServicoPorCliente(clienteId), true);
+    }
+
+    private void sincronizarClientePorOrdem() {
+        String ordemId = UtilComboBox.idSelecionado(ordemCombo);
+        if (!ordemId.isBlank()) {
+            UtilComboBox.selecionarPorId(clienteCombo, servicoConsultaReferencias.clienteIdPorOrdem(ordemId));
+            UtilComboBox.selecionarPorId(ordemCombo, ordemId);
         }
     }
 }

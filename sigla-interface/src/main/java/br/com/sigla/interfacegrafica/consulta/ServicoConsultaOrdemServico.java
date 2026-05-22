@@ -56,7 +56,7 @@ public class ServicoConsultaOrdemServico {
                 order.status().name(),
                 order.valorServico() == null ? BigDecimal.ZERO : order.valorServico(),
                 order.clienteId(),
-                "",
+                order.contratoId(),
                 order.tipoServico(),
                 order.dataInicio(),
                 order.dataFim(),

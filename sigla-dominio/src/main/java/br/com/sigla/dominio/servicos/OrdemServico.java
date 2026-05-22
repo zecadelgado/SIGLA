@@ -8,6 +8,7 @@ public record OrdemServico(
         String id,
         Long numeroOs,
         String clienteId,
+        String contratoId,
         String titulo,
         String descricao,
         String tipoServico,
@@ -24,10 +25,11 @@ public record OrdemServico(
 ) {
     public OrdemServico {
         id = requireText(id, "id");
-        clienteId = requireText(clienteId, "clienteId");
+        clienteId = normalizeOptional(clienteId);
+        contratoId = normalizeOptional(contratoId);
         titulo = requireText(titulo, "titulo");
         descricao = normalizeOptional(descricao);
-        tipoServico = requireText(tipoServico, "tipoServico");
+        tipoServico = normalizeOptional(tipoServico);
         status = Objects.requireNonNullElse(status, OrdemServicoStatus.AGENDADA);
         responsavelInternoId = normalizeOptional(responsavelInternoId);
         executadoPorId = normalizeOptional(executadoPorId);
@@ -36,6 +38,45 @@ public record OrdemServico(
             throw new IllegalArgumentException("valorServico must not be negative");
         }
         observacoes = normalizeOptional(observacoes);
+    }
+
+    public OrdemServico(
+            String id,
+            Long numeroOs,
+            String clienteId,
+            String titulo,
+            String descricao,
+            String tipoServico,
+            OrdemServicoStatus status,
+            LocalDateTime dataAgendada,
+            LocalDateTime dataInicio,
+            LocalDateTime dataFim,
+            String responsavelInternoId,
+            String executadoPorId,
+            boolean foiFeito,
+            boolean pago,
+            BigDecimal valorServico,
+            String observacoes
+    ) {
+        this(
+                id,
+                numeroOs,
+                clienteId,
+                "",
+                titulo,
+                descricao,
+                tipoServico,
+                status,
+                dataAgendada,
+                dataInicio,
+                dataFim,
+                responsavelInternoId,
+                executadoPorId,
+                foiFeito,
+                pago,
+                valorServico,
+                observacoes
+        );
     }
 
     public enum OrdemServicoStatus {

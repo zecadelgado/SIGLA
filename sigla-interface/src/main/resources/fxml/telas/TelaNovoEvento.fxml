@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="650.0" prefWidth="760.0" style="-fx-background-color: lightgrey;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.sigla.interfacegrafica.controlador.ControladorNovoEvento">
+   <children>
+      <VBox prefHeight="650.0" prefWidth="760.0" spacing="12.0">
+         <padding>
+            <Insets bottom="18.0" left="24.0" right="24.0" top="18.0" />
+         </padding>
+         <children>
+            <Label text="Novo Evento" textFill="#00417e">
+               <font><Font name="Ebrima Bold" size="36.0" /></font>
+            </Label>
+            <GridPane hgap="18.0" vgap="9.0">
+               <children>
+                  <Label text="Cliente" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                  <ComboBox fx:id="clienteCombo" prefWidth="220.0" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                  <Label text="Contrato" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                  <ComboBox fx:id="contratoCombo" prefWidth="220.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Label text="Ordem de Servico" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                  <ComboBox fx:id="ordemCombo" prefWidth="220.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+
+                  <Label text="Responsavel" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                  <ComboBox fx:id="responsavelCombo" prefWidth="220.0" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                  <Label text="Tipo" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <ComboBox fx:id="tipoCombo" prefWidth="220.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <Label text="Recorrencia" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                  <ComboBox fx:id="recorrenciaCombo" prefWidth="220.0" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+
+                  <Label text="Titulo" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                  <TextField fx:id="tituloField" prefWidth="680.0" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.rowIndex="5" />
+
+                  <Label text="Descricao" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+                  <TextArea fx:id="descricaoArea" prefHeight="80.0" prefWidth="680.0" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.rowIndex="7" />
+
+                  <Label text="Status" GridPane.columnIndex="0" GridPane.rowIndex="8" />
+                  <ComboBox fx:id="statusCombo" prefWidth="220.0" GridPane.columnIndex="0" GridPane.rowIndex="9" />
+                  <Label text="Prioridade" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                  <ComboBox fx:id="prioridadeCombo" prefWidth="220.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                  <Label text="Data" GridPane.columnIndex="2" GridPane.rowIndex="8" />
+                  <DatePicker fx:id="dataPicker" prefWidth="220.0" GridPane.columnIndex="2" GridPane.rowIndex="9" />
+
+                  <Label text="Inicio" GridPane.columnIndex="0" GridPane.rowIndex="10" />
+                  <TextField fx:id="inicioField" prefWidth="220.0" GridPane.columnIndex="0" GridPane.rowIndex="11" />
+                  <Label text="Fim" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                  <TextField fx:id="fimField" prefWidth="220.0" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                  <Label text="Dias lembrete" GridPane.columnIndex="2" GridPane.rowIndex="10" />
+                  <TextField fx:id="diasLembreteField" prefWidth="220.0" GridPane.columnIndex="2" GridPane.rowIndex="11" />
+
+                  <CheckBox fx:id="diaInteiroCheck" text="Dia inteiro" GridPane.columnIndex="0" GridPane.rowIndex="12" />
+                  <CheckBox fx:id="lembreteCheck" text="Lembrete ativo" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+               </children>
+            </GridPane>
+            <Label fx:id="feedbackLabel" textFill="#8b0000" />
+            <HBox spacing="20.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#onConfirmar" prefWidth="340.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 8;" text="OK" textFill="WHITE" />
+                  <Button mnemonicParsing="false" onAction="#onCancelar" prefWidth="340.0" style="-fx-background-color: white; -fx-background-radius: 8;" text="Cancelar" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

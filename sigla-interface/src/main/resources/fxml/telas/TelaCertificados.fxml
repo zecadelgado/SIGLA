@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="790.0" prefWidth="1530.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.sigla.interfacegrafica.controlador.ControladorCertificados">
+   <children>
+      <BorderPane prefHeight="790.0" prefWidth="1530.0">
+         <center>
+            <VBox spacing="20.0" style="-fx-background-color: lightgrey;" BorderPane.alignment="CENTER">
+               <padding>
+                  <Insets bottom="30.0" left="28.0" right="40.0" top="30.0" />
+               </padding>
+               <children>
+                  <VBox>
+                     <children>
+                        <Label text="Certificados" textFill="#00417e">
+                           <font><Font name="Ebrima Bold" size="46.0" /></font>
+                        </Label>
+                        <Label text="Controle de certificados emitidos e vencimentos" textFill="#303030" />
+                     </children>
+                  </VBox>
+                  <TableView fx:id="certificadosTable" prefHeight="590.0" prefWidth="1200.0">
+                     <columns>
+                        <TableColumn fx:id="clienteColumn" prefWidth="260.0" text="Cliente" />
+                        <TableColumn fx:id="emissaoColumn" prefWidth="160.0" text="Emissao" />
+                        <TableColumn fx:id="validadeColumn" prefWidth="160.0" text="Validade" />
+                        <TableColumn fx:id="statusColumn" prefWidth="160.0" text="Status" />
+                        <TableColumn fx:id="alertaColumn" prefWidth="160.0" text="Dias alerta" />
+                     </columns>
+                  </TableView>
+               </children>
+            </VBox>
+         </center>
+      </BorderPane>
+   </children>
+</AnchorPane>

@@ -22,8 +22,10 @@ public class CasoDeUsoGerenciarAgenda implements CasoDeUsoAgenda {
         repository.save(new VisitaAgendada(
                 command.id(),
                 command.customerId(),
+                command.orderId(),
                 command.contractId(),
                 command.type(),
+                command.recurrence(),
                 command.scheduledDate(),
                 command.title(),
                 command.serviceType(),
@@ -34,6 +36,8 @@ public class CasoDeUsoGerenciarAgenda implements CasoDeUsoAgenda {
                 command.status(),
                 command.priority(),
                 command.responsibleId(),
+                command.reminderActive(),
+                command.daysBeforeReminder(),
                 command.notes()
         ));
     }

@@ -4,6 +4,7 @@ import br.com.sigla.aplicacao.financeiro.porta.entrada.CasoDeUsoFinanceiro;
 import br.com.sigla.aplicacao.financeiro.porta.saida.RepositorioEntradaFinanceira;
 import br.com.sigla.aplicacao.financeiro.porta.saida.RepositorioDespesaFinanceira;
 import br.com.sigla.aplicacao.financeiro.porta.saida.RepositorioPlanoParcelamento;
+import br.com.sigla.aplicacao.financeiro.porta.saida.RepositorioReferenciaFinanceira;
 import br.com.sigla.dominio.financeiro.EntradaFinanceira;
 import br.com.sigla.dominio.financeiro.DespesaFinanceira;
 import br.com.sigla.dominio.financeiro.PlanoParcelamento;
@@ -20,15 +21,18 @@ public class CasoDeUsoGerenciarFinanceiro implements CasoDeUsoFinanceiro {
     private final RepositorioEntradaFinanceira entryRepository;
     private final RepositorioDespesaFinanceira expenseRepository;
     private final RepositorioPlanoParcelamento installmentPlanRepository;
+    private final RepositorioReferenciaFinanceira referenceRepository;
 
     public CasoDeUsoGerenciarFinanceiro(
             RepositorioEntradaFinanceira entryRepository,
             RepositorioDespesaFinanceira expenseRepository,
-            RepositorioPlanoParcelamento installmentPlanRepository
+            RepositorioPlanoParcelamento installmentPlanRepository,
+            RepositorioReferenciaFinanceira referenceRepository
     ) {
         this.entryRepository = entryRepository;
         this.expenseRepository = expenseRepository;
         this.installmentPlanRepository = installmentPlanRepository;
+        this.referenceRepository = referenceRepository;
     }
 
     @Override
@@ -94,10 +98,10 @@ public class CasoDeUsoGerenciarFinanceiro implements CasoDeUsoFinanceiro {
                     command.customerId(),
                     command.serviceProvidedId(),
                     command.description(),
-                    command.category(),
+                    prefer(command.categoryId(), command.category()),
                     command.dueDate(),
                     command.paymentDate(),
-                    command.paymentMethod(),
+                    prefer(command.paymentMethodId(), command.paymentMethod()),
                     command.createdBy(),
                     command.orderReference(),
                     mapEntryStatus(command.status())
@@ -127,7 +131,7 @@ public class CasoDeUsoGerenciarFinanceiro implements CasoDeUsoFinanceiro {
                 command.description(),
                 command.dueDate(),
                 command.paymentDate(),
-                command.paymentMethod(),
+                prefer(command.paymentMethodId(), command.paymentMethod()),
                 command.createdBy(),
                 command.orderReference(),
                 mapExpenseStatus(command.status()),
@@ -188,6 +192,32 @@ public class CasoDeUsoGerenciarFinanceiro implements CasoDeUsoFinanceiro {
                 .toList();
         return java.util.stream.Stream.concat(entries.stream(), expenses.stream())
                 .sorted(Comparator.comparing(TransacaoFinanceiraView::issueDate).reversed())
+                .toList();
+    }
+
+    @Override
+    public List<ReferenciaFinanceiraView> listCategorias(TransactionType tipo) {
+        List<ReferenciaFinanceiraView> referencias = referenceRepository.categoriasAtivas(tipo.name()).stream()
+                .map(reference -> new ReferenciaFinanceiraView(reference.id(), reference.nome()))
+                .toList();
+        if (!referencias.isEmpty()) {
+            return referencias;
+        }
+        return defaultCategorias(tipo).stream()
+                .map(value -> new ReferenciaFinanceiraView(value, value))
+                .toList();
+    }
+
+    @Override
+    public List<ReferenciaFinanceiraView> listFormasPagamento() {
+        List<ReferenciaFinanceiraView> referencias = referenceRepository.formasPagamentoAtivas().stream()
+                .map(reference -> new ReferenciaFinanceiraView(reference.id(), reference.nome()))
+                .toList();
+        if (!referencias.isEmpty()) {
+            return referencias;
+        }
+        return List.of("PIX", "DINHEIRO", "BOLETO", "CARTAO").stream()
+                .map(value -> new ReferenciaFinanceiraView(value, value))
                 .toList();
     }
 
@@ -268,6 +298,16 @@ public class CasoDeUsoGerenciarFinanceiro implements CasoDeUsoFinanceiro {
 
     private String normalizeResponsible(String value) {
         return value == null || value.isBlank() ? "Sistema" : value.trim();
+    }
+
+    private String prefer(String first, String second) {
+        return first == null || first.isBlank() ? second : first;
+    }
+
+    private List<String> defaultCategorias(TransactionType tipo) {
+        return tipo == TransactionType.EXPENSE
+                ? List.of("FOOD", "FUEL", "PRODUCTS", "EXTRAS")
+                : List.of("SERVICOS", "GERAL");
     }
 }
 

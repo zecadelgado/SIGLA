@@ -15,6 +15,7 @@ public interface CasoDeUsoOrdemServico {
     record CreateOrdemServicoCommand(
             String id,
             String clienteId,
+            String contratoId,
             String titulo,
             String descricao,
             String tipoServico,
@@ -27,5 +28,37 @@ public interface CasoDeUsoOrdemServico {
             BigDecimal valorServico,
             String observacoes
     ) {
+        public CreateOrdemServicoCommand(
+                String id,
+                String clienteId,
+                String titulo,
+                String descricao,
+                String tipoServico,
+                OrdemServico.OrdemServicoStatus status,
+                LocalDateTime dataAgendada,
+                LocalDateTime dataInicio,
+                LocalDateTime dataFim,
+                String responsavelInternoId,
+                String executadoPorId,
+                BigDecimal valorServico,
+                String observacoes
+        ) {
+            this(
+                    id,
+                    clienteId,
+                    "",
+                    titulo,
+                    descricao,
+                    tipoServico,
+                    status,
+                    dataAgendada,
+                    dataInicio,
+                    dataFim,
+                    responsavelInternoId,
+                    executadoPorId,
+                    valorServico,
+                    observacoes
+            );
+        }
     }
 }

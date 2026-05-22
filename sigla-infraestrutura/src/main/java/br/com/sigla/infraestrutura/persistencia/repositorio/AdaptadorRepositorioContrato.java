@@ -44,13 +44,17 @@ public class AdaptadorRepositorioContrato implements RepositorioContrato {
         return new Contrato(
                 PersistenciaIds.toString(entity.getId()),
                 PersistenciaIds.toString(entity.getClienteId()),
+                entity.getDescricao(),
                 entity.getDataInicio(),
                 entity.getDataFim() == null ? entity.getDataInicio() : entity.getDataFim(),
                 parseType(entity.getTipoContrato()),
                 parseFrequency(entity.getTipoContrato()),
                 parseStatus(entity.getStatus()),
-                Contrato.RenewalRule.MANUAL,
-                entity.getDiasAlertaFim()
+                parseRenewalRule(entity.getObservacoes()),
+                entity.getValorMensal(),
+                entity.isAlertaAtivo(),
+                entity.getDiasAlertaFim(),
+                entity.getObservacoes()
         );
     }
 
@@ -58,15 +62,15 @@ public class AdaptadorRepositorioContrato implements RepositorioContrato {
         ContratoEntidade entity = new ContratoEntidade();
         entity.setId(PersistenciaIds.toUuid(contract.id()));
         entity.setClienteId(PersistenciaIds.toUuid(contract.customerId()));
-        entity.setDescricao(contract.type().name());
+        entity.setDescricao(contract.descricao());
         entity.setTipoContrato(contract.type().name());
         entity.setDataInicio(contract.startDate());
         entity.setDataFim(contract.endDate());
-        entity.setValorMensal(java.math.BigDecimal.ZERO);
-        entity.setAlertaAtivo(true);
+        entity.setValorMensal(contract.valorMensal());
+        entity.setAlertaAtivo(contract.alertaAtivo());
         entity.setDiasAlertaFim(contract.alertDaysBeforeEnd());
         entity.setStatus(contract.status().name());
-        entity.setObservacoes(contract.renewalRule().name());
+        entity.setObservacoes(contract.observacoes());
         return entity;
     }
 
@@ -75,7 +79,7 @@ public class AdaptadorRepositorioContrato implements RepositorioContrato {
             return Contrato.ContratoType.MONTHLY;
         }
         return switch (value.trim().toUpperCase()) {
-            case "MENSAL" -> Contrato.ContratoType.MONTHLY;
+            case "MENSAL", "MONTHLY" -> Contrato.ContratoType.MONTHLY;
             case "QUINZENAL" -> Contrato.ContratoType.QUINZENAL;
             case "AVULSO" -> Contrato.ContratoType.AVULSO;
             default -> Contrato.ContratoType.CORPORATE;
@@ -87,8 +91,8 @@ public class AdaptadorRepositorioContrato implements RepositorioContrato {
             return Contrato.ServiceFrequency.MONTHLY;
         }
         return switch (value.trim().toUpperCase()) {
-            case "QUINZENAL" -> Contrato.ServiceFrequency.BIWEEKLY;
-            case "AVULSO" -> Contrato.ServiceFrequency.ONE_OFF;
+            case "QUINZENAL", "BIWEEKLY" -> Contrato.ServiceFrequency.BIWEEKLY;
+            case "AVULSO", "ONE_OFF" -> Contrato.ServiceFrequency.ONE_OFF;
             default -> Contrato.ServiceFrequency.MONTHLY;
         };
     }
@@ -103,6 +107,17 @@ public class AdaptadorRepositorioContrato implements RepositorioContrato {
             case "EXPIRADO", "EXPIRED" -> Contrato.ContratoStatus.EXPIRED;
             default -> Contrato.ContratoStatus.DRAFT;
         };
+    }
+
+    private Contrato.RenewalRule parseRenewalRule(String value) {
+        if (value == null || value.isBlank()) {
+            return Contrato.RenewalRule.MANUAL;
+        }
+        try {
+            return Contrato.RenewalRule.valueOf(value.trim().toUpperCase());
+        } catch (IllegalArgumentException exception) {
+            return Contrato.RenewalRule.MANUAL;
+        }
     }
 }
 

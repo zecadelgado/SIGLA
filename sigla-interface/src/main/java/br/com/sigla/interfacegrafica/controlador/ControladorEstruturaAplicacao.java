@@ -48,6 +48,21 @@ public class ControladorEstruturaAplicacao {
         navigate(VisaoAplicacao.INVENTORY);
     }
 
+    @javafx.fxml.FXML
+    private void onContratosClick() {
+        navigate(VisaoAplicacao.CONTRACTS);
+    }
+
+    @javafx.fxml.FXML
+    private void onAgendaClick() {
+        navigate(VisaoAplicacao.AGENDA);
+    }
+
+    @javafx.fxml.FXML
+    private void onCertificadosClick() {
+        navigate(VisaoAplicacao.CERTIFICATES);
+    }
+
     private void navigate(VisaoAplicacao view) {
         navigationManager.navigateTo(view);
     }

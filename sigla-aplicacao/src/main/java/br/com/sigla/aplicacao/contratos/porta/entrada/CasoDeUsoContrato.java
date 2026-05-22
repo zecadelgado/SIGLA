@@ -2,6 +2,7 @@ package br.com.sigla.aplicacao.contratos.porta.entrada;
 
 import br.com.sigla.dominio.contratos.Contrato;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -16,14 +17,45 @@ public interface CasoDeUsoContrato {
     record CreateContratoCommand(
             String id,
             String customerId,
+            String descricao,
             LocalDate startDate,
             LocalDate endDate,
             Contrato.ContratoType type,
             Contrato.ServiceFrequency serviceFrequency,
             Contrato.ContratoStatus status,
             Contrato.RenewalRule renewalRule,
-            int alertDaysBeforeEnd
+            BigDecimal valorMensal,
+            boolean alertaAtivo,
+            int alertDaysBeforeEnd,
+            String observacoes
     ) {
+        public CreateContratoCommand(
+                String id,
+                String customerId,
+                LocalDate startDate,
+                LocalDate endDate,
+                Contrato.ContratoType type,
+                Contrato.ServiceFrequency serviceFrequency,
+                Contrato.ContratoStatus status,
+                Contrato.RenewalRule renewalRule,
+                int alertDaysBeforeEnd
+        ) {
+            this(
+                    id,
+                    customerId,
+                    "",
+                    startDate,
+                    endDate,
+                    type,
+                    serviceFrequency,
+                    status,
+                    renewalRule,
+                    BigDecimal.ZERO,
+                    true,
+                    alertDaysBeforeEnd,
+                    ""
+            );
+        }
     }
 }
 

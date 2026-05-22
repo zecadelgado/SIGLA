@@ -44,8 +44,10 @@ public class AdaptadorRepositorioAgenda implements RepositorioAgenda {
         return new VisitaAgendada(
                 PersistenciaIds.toString(entity.getId()),
                 PersistenciaIds.toString(entity.getClienteId()),
+                PersistenciaIds.toString(entity.getOrdemServicoId()),
                 PersistenciaIds.toString(entity.getContratoId()),
                 parseVisitType(entity.getType()),
+                parseRecurrence(entity.getRecurrence()),
                 entity.getStartAt().toLocalDate(),
                 entity.getTitle(),
                 entity.getServiceType(),
@@ -56,6 +58,8 @@ public class AdaptadorRepositorioAgenda implements RepositorioAgenda {
                 parseVisitStatus(entity.getStatus()),
                 parseVisitPriority(entity.getPriority()),
                 PersistenciaIds.toString(entity.getResponsibleId()),
+                entity.isReminderActive(),
+                entity.getDaysBeforeReminder(),
                 entity.getNotes()
         );
     }
@@ -64,10 +68,11 @@ public class AdaptadorRepositorioAgenda implements RepositorioAgenda {
         VisitaAgendadaEntidade entity = new VisitaAgendadaEntidade();
         entity.setId(PersistenciaIds.toUuid(schedule.id()));
         entity.setClienteId(PersistenciaIds.toUuid(schedule.customerId()));
+        entity.setOrdemServicoId(PersistenciaIds.toUuid(schedule.orderId()));
         entity.setContratoId(PersistenciaIds.toUuid(schedule.contractId()));
-        entity.setType(schedule.serviceType() == null || schedule.serviceType().isBlank() ? schedule.type().name() : schedule.serviceType());
+        entity.setType(schedule.type().name());
+        entity.setRecurrence(schedule.recurrence().name());
         entity.setTitle(schedule.title());
-        entity.setServiceType(schedule.serviceType() == null || schedule.serviceType().isBlank() ? "servico" : schedule.serviceType());
         entity.setInternalResponsible(schedule.internalResponsible());
         entity.setStartAt(schedule.startAt() == null ? schedule.scheduledDate().atStartOfDay() : schedule.startAt());
         entity.setEndAt(schedule.endAt());
@@ -75,6 +80,8 @@ public class AdaptadorRepositorioAgenda implements RepositorioAgenda {
         entity.setStatus(schedule.status().name());
         entity.setPriority(schedule.priority().name());
         entity.setResponsibleId(PersistenciaIds.toUuid(schedule.responsibleId()));
+        entity.setReminderActive(schedule.reminderActive());
+        entity.setDaysBeforeReminder(schedule.daysBeforeReminder());
         entity.setNotes(schedule.notes());
         return entity;
     }
@@ -87,6 +94,17 @@ public class AdaptadorRepositorioAgenda implements RepositorioAgenda {
             return VisitaAgendada.VisitType.valueOf(value.trim().toUpperCase());
         } catch (IllegalArgumentException exception) {
             return VisitaAgendada.VisitType.ONE_OFF;
+        }
+    }
+
+    private VisitaAgendada.Recurrence parseRecurrence(String value) {
+        if (value == null || value.isBlank() || "AVULSO".equalsIgnoreCase(value)) {
+            return VisitaAgendada.Recurrence.NONE;
+        }
+        try {
+            return VisitaAgendada.Recurrence.valueOf(value.trim().toUpperCase());
+        } catch (IllegalArgumentException exception) {
+            return VisitaAgendada.Recurrence.NONE;
         }
     }
 

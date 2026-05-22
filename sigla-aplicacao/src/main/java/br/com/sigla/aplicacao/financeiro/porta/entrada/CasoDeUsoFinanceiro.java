@@ -26,6 +26,10 @@ public interface CasoDeUsoFinanceiro {
 
     List<TransacaoFinanceiraView> listTransactions();
 
+    List<ReferenciaFinanceiraView> listCategorias(TransactionType tipo);
+
+    List<ReferenciaFinanceiraView> listFormasPagamento();
+
     BigDecimal currentBalance();
 
     List<PlanoParcelamento> overdueInstallments(LocalDate referenceDate);
@@ -130,6 +134,7 @@ public interface CasoDeUsoFinanceiro {
             String id,
             TransactionType type,
             String category,
+            String categoryId,
             String description,
             String customerId,
             String serviceProvidedId,
@@ -139,12 +144,54 @@ public interface CasoDeUsoFinanceiro {
             LocalDate dueDate,
             LocalDate paymentDate,
             String paymentMethod,
+            String paymentMethodId,
             boolean installment,
             int installmentCount,
             String createdBy,
             String notes,
             TransactionStatus status
     ) {
+        public RegisterTransacaoFinanceiraCommand(
+                String id,
+                TransactionType type,
+                String category,
+                String description,
+                String customerId,
+                String serviceProvidedId,
+                String orderReference,
+                BigDecimal amount,
+                LocalDate issueDate,
+                LocalDate dueDate,
+                LocalDate paymentDate,
+                String paymentMethod,
+                boolean installment,
+                int installmentCount,
+                String createdBy,
+                String notes,
+                TransactionStatus status
+        ) {
+            this(
+                    id,
+                    type,
+                    category,
+                    "",
+                    description,
+                    customerId,
+                    serviceProvidedId,
+                    orderReference,
+                    amount,
+                    issueDate,
+                    dueDate,
+                    paymentDate,
+                    paymentMethod,
+                    "",
+                    installment,
+                    installmentCount,
+                    createdBy,
+                    notes,
+                    status
+            );
+        }
     }
 
     record TransacaoFinanceiraView(
@@ -161,6 +208,12 @@ public interface CasoDeUsoFinanceiro {
             String paymentMethod,
             String createdBy,
             TransactionStatus status
+    ) {
+    }
+
+    record ReferenciaFinanceiraView(
+            String id,
+            String nome
     ) {
     }
 

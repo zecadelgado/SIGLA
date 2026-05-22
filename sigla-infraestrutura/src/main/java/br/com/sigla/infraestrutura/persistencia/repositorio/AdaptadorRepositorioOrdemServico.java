@@ -45,6 +45,7 @@ public class AdaptadorRepositorioOrdemServico implements RepositorioOrdemServico
                 PersistenciaIds.toString(entity.getId()),
                 entity.getNumeroOs(),
                 PersistenciaIds.toString(entity.getClienteId()),
+                PersistenciaIds.toString(entity.getContratoId()),
                 entity.getTitulo(),
                 entity.getDescricao(),
                 entity.getTipoServico(),
@@ -65,6 +66,7 @@ public class AdaptadorRepositorioOrdemServico implements RepositorioOrdemServico
         OrdemServicoEntidade entity = new OrdemServicoEntidade();
         entity.setId(PersistenciaIds.toUuid(ordemServico.id()));
         entity.setClienteId(PersistenciaIds.toUuid(ordemServico.clienteId()));
+        entity.setContratoId(PersistenciaIds.toUuid(ordemServico.contratoId()));
         entity.setTitulo(ordemServico.titulo());
         entity.setDescricao(ordemServico.descricao());
         entity.setTipoServico(ordemServico.tipoServico());

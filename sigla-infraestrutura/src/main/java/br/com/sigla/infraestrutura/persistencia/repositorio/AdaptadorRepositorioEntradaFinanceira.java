@@ -80,6 +80,10 @@ public class AdaptadorRepositorioEntradaFinanceira implements RepositorioEntrada
     }
 
     private UUID resolveCategoria(String tipo, String nome) {
+        UUID id = PersistenciaIds.toUuidIfValid(nome);
+        if (id != null && categoriaRepository.existsById(id)) {
+            return id;
+        }
         String normalized = nome == null || nome.isBlank() ? "GERAL" : nome.trim();
         return categoriaRepository.findByTipoAndNomeIgnoreCase(tipo, normalized)
                 .map(FinanceiroCategoriaEntidade::getId)
@@ -94,6 +98,10 @@ public class AdaptadorRepositorioEntradaFinanceira implements RepositorioEntrada
     }
 
     private UUID resolveFormaPagamento(String nome) {
+        UUID id = PersistenciaIds.toUuidIfValid(nome);
+        if (id != null && formaPagamentoRepository.existsById(id)) {
+            return id;
+        }
         String normalized = nome == null || nome.isBlank() ? "NAO_INFORMADO" : nome.trim();
         return formaPagamentoRepository.findByNomeIgnoreCase(normalized)
                 .map(FinanceiroFormaPagamentoEntidade::getId)
@@ -161,8 +169,12 @@ interface SpringDataRepositorioFinanceiroLancamento extends JpaRepository<Financ
 
 interface SpringDataRepositorioFinanceiroCategoria extends JpaRepository<FinanceiroCategoriaEntidade, UUID> {
     Optional<FinanceiroCategoriaEntidade> findByTipoAndNomeIgnoreCase(String tipo, String nome);
+
+    List<FinanceiroCategoriaEntidade> findByTipoIgnoreCaseAndAtivoTrueOrderByNomeAsc(String tipo);
 }
 
 interface SpringDataRepositorioFinanceiroFormaPagamento extends JpaRepository<FinanceiroFormaPagamentoEntidade, UUID> {
     Optional<FinanceiroFormaPagamentoEntidade> findByNomeIgnoreCase(String nome);
+
+    List<FinanceiroFormaPagamentoEntidade> findByAtivoTrueOrderByNomeAsc();
 }

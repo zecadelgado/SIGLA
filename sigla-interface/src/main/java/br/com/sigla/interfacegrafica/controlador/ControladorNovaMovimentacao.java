@@ -3,10 +3,13 @@ package br.com.sigla.interfacegrafica.controlador;
 import br.com.sigla.aplicacao.estoque.porta.entrada.CasoDeUsoEstoque;
 import br.com.sigla.dominio.estoque.ItemEstoque;
 import br.com.sigla.interfacegrafica.consulta.ServicoConsultaReferencias;
+import br.com.sigla.interfacegrafica.modelo.OpcaoId;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
+import br.com.sigla.interfacegrafica.util.UtilComboBox;
 import br.com.sigla.interfacegrafica.util.UtilJanela;
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.springframework.stereotype.Component;
@@ -14,9 +17,6 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
-
-import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.parseEnum;
-import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.resolveOpcional;
 
 @Component
 public class ControladorNovaMovimentacao {
@@ -26,9 +26,9 @@ public class ControladorNovaMovimentacao {
     private final GerenciadorNavegacao gerenciadorNavegacao;
 
     @FXML
-    private TextField produtoField;
+    private ComboBox<OpcaoId> produtoCombo;
     @FXML
-    private TextField tipoField;
+    private ComboBox<ItemEstoque.MovementType> tipoCombo;
     @FXML
     private TextField quantidadeField;
     @FXML
@@ -38,9 +38,9 @@ public class ControladorNovaMovimentacao {
     @FXML
     private TextField usuarioField;
     @FXML
-    private TextField clienteField;
+    private ComboBox<OpcaoId> clienteCombo;
     @FXML
-    private TextField ordemField;
+    private ComboBox<OpcaoId> ordemCombo;
     @FXML
     private TextField destinoField;
     @FXML
@@ -60,8 +60,15 @@ public class ControladorNovaMovimentacao {
 
     @FXML
     public void initialize() {
-        if (tipoField != null && tipoField.getText().isBlank()) {
-            tipoField.setText(ItemEstoque.MovementType.OUTBOUND.name());
+        UtilComboBox.preencher(produtoCombo, servicoConsultaReferencias.produtos(), false);
+        UtilComboBox.preencher(clienteCombo, servicoConsultaReferencias.clientes(), true);
+        UtilComboBox.preencher(ordemCombo, servicoConsultaReferencias.ordensServico(), true);
+        if (tipoCombo != null) {
+            tipoCombo.getItems().setAll(ItemEstoque.MovementType.values());
+            tipoCombo.getSelectionModel().select(ItemEstoque.MovementType.OUTBOUND);
+        }
+        if (clienteCombo != null) {
+            clienteCombo.valueProperty().addListener((observable, oldValue, newValue) -> atualizarOrdensPorCliente());
         }
         quantidadeField.textProperty().addListener((observable, oldValue, newValue) -> recomputeTotal());
         valorUnitarioField.textProperty().addListener((observable, oldValue, newValue) -> recomputeTotal());
@@ -71,29 +78,26 @@ public class ControladorNovaMovimentacao {
     @FXML
     private void onConfirmarMovimentacao() {
         try {
-            var produto = resolveOpcional(servicoConsultaReferencias.produtos(), produtoField == null ? "" : produtoField.getText());
-            if (produto == null) {
-                throw new IllegalArgumentException("Selecione um produto valido.");
-            }
-            var cliente = resolveOpcional(servicoConsultaReferencias.clientes(), clienteField == null ? "" : clienteField.getText());
-            var ordem = resolveOpcional(servicoConsultaReferencias.ordensServico(), ordemField == null ? "" : ordemField.getText());
+            var produto = UtilComboBox.obrigatorio(produtoCombo, "Selecione um produto valido.");
+            String clienteId = UtilComboBox.idSelecionado(clienteCombo);
+            String ordemId = UtilComboBox.idSelecionado(ordemCombo);
 
             casoDeUsoEstoque.recordMovement(new CasoDeUsoEstoque.RecordInventoryMovementCommand(
                     produto.id(),
                     UUID.randomUUID().toString(),
-                    parseEnum(ItemEstoque.MovementType.class, tipoField == null ? "" : tipoField.getText(), ItemEstoque.MovementType.OUTBOUND),
+                    tipoCombo == null || tipoCombo.getValue() == null ? ItemEstoque.MovementType.OUTBOUND : tipoCombo.getValue(),
                     Integer.parseInt(quantidadeField.getText()),
                     LocalDate.now(),
                     new BigDecimal(valorUnitarioField.getText()),
                     new BigDecimal(valorTotalField.getText()),
-                    usuarioField.getText(),
-                    cliente == null ? "" : cliente.id(),
-                    ordem == null ? "" : ordem.id(),
+                    usuarioField == null || usuarioField.getText().isBlank() ? "Sistema" : usuarioField.getText(),
+                    clienteId,
+                    ordemId,
                     destinoField.getText(),
                     observacoesField == null ? "" : observacoesField.getText()
             ));
             gerenciadorNavegacao.navigateTo(VisaoAplicacao.INVENTORY);
-            UtilJanela.fecharJanela(produtoField);
+            UtilJanela.fecharJanela(produtoCombo);
         } catch (Exception exception) {
             setFeedback(exception.getMessage());
         }
@@ -101,7 +105,14 @@ public class ControladorNovaMovimentacao {
 
     @FXML
     private void onCancelar() {
-        UtilJanela.fecharJanela(produtoField);
+        UtilJanela.fecharJanela(produtoCombo);
+    }
+
+    private void atualizarOrdensPorCliente() {
+        String clienteId = UtilComboBox.idSelecionado(clienteCombo);
+        UtilComboBox.preencher(ordemCombo, clienteId.isBlank()
+                ? servicoConsultaReferencias.ordensServico()
+                : servicoConsultaReferencias.ordensServicoPorCliente(clienteId), true);
     }
 
     private void recomputeTotal() {

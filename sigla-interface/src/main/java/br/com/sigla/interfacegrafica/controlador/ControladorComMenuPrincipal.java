@@ -46,4 +46,19 @@ public abstract class ControladorComMenuPrincipal {
     protected void onClientesClick() {
         gerenciadorNavegacao.navigateTo(VisaoAplicacao.CUSTOMERS);
     }
+
+    @FXML
+    protected void onContratosClick() {
+        gerenciadorNavegacao.navigateTo(VisaoAplicacao.CONTRACTS);
+    }
+
+    @FXML
+    protected void onAgendaClick() {
+        gerenciadorNavegacao.navigateTo(VisaoAplicacao.AGENDA);
+    }
+
+    @FXML
+    protected void onCertificadosClick() {
+        gerenciadorNavegacao.navigateTo(VisaoAplicacao.CERTIFICATES);
+    }
 }

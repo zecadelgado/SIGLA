@@ -3,19 +3,19 @@ package br.com.sigla.interfacegrafica.controlador;
 import br.com.sigla.aplicacao.potenciaisclientes.porta.entrada.CasoDeUsoPotencialCliente;
 import br.com.sigla.dominio.potenciaisclientes.PotencialCliente;
 import br.com.sigla.interfacegrafica.consulta.ServicoConsultaReferencias;
+import br.com.sigla.interfacegrafica.modelo.OpcaoId;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
+import br.com.sigla.interfacegrafica.util.UtilComboBox;
 import br.com.sigla.interfacegrafica.util.UtilJanela;
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-
-import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.parseEnum;
-import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.resolveOpcional;
 
 @Component
 public class ControladorNovaIndicacao {
@@ -29,11 +29,11 @@ public class ControladorNovaIndicacao {
     @FXML
     private TextField telefoneField;
     @FXML
-    private TextField clienteField;
+    private ComboBox<OpcaoId> clienteCombo;
     @FXML
     private DatePicker dataPicker;
     @FXML
-    private TextField statusField;
+    private ComboBox<PotencialCliente.PotencialClienteStatus> statusCombo;
     @FXML
     private Label feedbackLabel;
 
@@ -52,8 +52,10 @@ public class ControladorNovaIndicacao {
         if (dataPicker != null) {
             dataPicker.setValue(LocalDate.now());
         }
-        if (statusField != null && statusField.getText().isBlank()) {
-            statusField.setText(PotencialCliente.PotencialClienteStatus.NEW.name());
+        UtilComboBox.preencher(clienteCombo, servicoConsultaReferencias.clientes(), true);
+        if (statusCombo != null) {
+            statusCombo.getItems().setAll(PotencialCliente.PotencialClienteStatus.values());
+            statusCombo.getSelectionModel().select(PotencialCliente.PotencialClienteStatus.NEW);
         }
         setFeedback("");
     }
@@ -61,14 +63,13 @@ public class ControladorNovaIndicacao {
     @FXML
     private void onConfirmar() {
         try {
-            var cliente = resolveOpcional(servicoConsultaReferencias.clientes(), clienteField == null ? "" : clienteField.getText());
-            String customerId = cliente == null ? "" : cliente.id();
+            String customerId = UtilComboBox.idSelecionado(clienteCombo);
             casoDeUsoPotencialCliente.register(new CasoDeUsoPotencialCliente.RegisterPotencialClienteCommand(
                     "LEAD-" + System.currentTimeMillis(),
                     nomeField.getText(),
                     telefoneField.getText(),
                     "INDICACAO:" + customerId,
-                    parseEnum(PotencialCliente.PotencialClienteStatus.class, statusField == null ? "" : statusField.getText(), PotencialCliente.PotencialClienteStatus.NEW),
+                    statusCombo == null || statusCombo.getValue() == null ? PotencialCliente.PotencialClienteStatus.NEW : statusCombo.getValue(),
                     dataPicker == null ? LocalDate.now() : dataPicker.getValue(),
                     "Indicacao",
                     ""

@@ -16,7 +16,12 @@ public enum VisaoAplicacao {
     SERVICES("/fxml/telas/TelaServi\u00e7os.fxml", true, "Servicos", ModoExibicao.PRINCIPAL),
     NEW_SERVICE("/fxml/telas/TelaNovoServi\u00e7o.fxml", true, "Novo Servico", ModoExibicao.SOBREPOSTA),
     SERVICE_ORDER("/fxml/telas/TelaOrdemdeServi\u00e7o.fxml", true, "Ordem de Servico", ModoExibicao.PRINCIPAL),
-    NEW_SERVICE_ORDER("/fxml/telas/TelaNovaOrdemdeServi\u00e7o.fxml", true, "Nova Ordem de Servico", ModoExibicao.SOBREPOSTA);
+    NEW_SERVICE_ORDER("/fxml/telas/TelaNovaOrdemdeServi\u00e7o.fxml", true, "Nova Ordem de Servico", ModoExibicao.SOBREPOSTA),
+    CONTRACTS("/fxml/telas/TelaContratos.fxml", true, "Contratos", ModoExibicao.PRINCIPAL),
+    NEW_CONTRACT("/fxml/telas/TelaNovoContrato.fxml", true, "Novo Contrato", ModoExibicao.SOBREPOSTA),
+    AGENDA("/fxml/telas/TelaAgenda.fxml", true, "Agenda", ModoExibicao.PRINCIPAL),
+    NEW_EVENT("/fxml/telas/TelaNovoEvento.fxml", true, "Novo Evento", ModoExibicao.SOBREPOSTA),
+    CERTIFICATES("/fxml/telas/TelaCertificados.fxml", true, "Certificados", ModoExibicao.PRINCIPAL);
 
     private final String fxmlPath;
     private final boolean shellContent;

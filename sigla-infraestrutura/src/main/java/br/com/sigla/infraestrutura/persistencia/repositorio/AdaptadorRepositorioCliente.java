@@ -33,12 +33,14 @@ public class AdaptadorRepositorioCliente implements RepositorioCliente {
 
     @Override
     public List<Cliente> findAll() {
-        return repository.findAll().stream().map(this::toDomain).toList();
+        return repository.findByTipo("CLIENTE").stream().map(this::toDomain).toList();
     }
 
     @Override
     public Optional<Cliente> findById(String id) {
-        return repository.findById(PersistenciaIds.toUuid(id)).map(this::toDomain);
+        return repository.findById(PersistenciaIds.toUuid(id))
+                .filter(entity -> "CLIENTE".equals(entity.getTipo()))
+                .map(this::toDomain);
     }
 
     private Cliente toDomain(ClienteEntidade entity) {
@@ -131,5 +133,6 @@ class InMemoryAdaptadorRepositorioCliente implements RepositorioCliente {
 }
 
 interface SpringDataRepositorioCliente extends JpaRepository<ClienteEntidade, UUID> {
+    List<ClienteEntidade> findByTipo(String tipo);
 }
 

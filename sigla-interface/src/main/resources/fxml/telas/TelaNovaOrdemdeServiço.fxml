@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
@@ -14,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.sigla.interfacegrafica.controlador.ControladorNovaOrdemServico">
    <content>
       <AnchorPane prefHeight="900.0" prefWidth="800.0" style="-fx-background-color: lightgrey;">
          <children>
@@ -40,14 +41,11 @@
                                     <Insets left="25.0" top="5.0" />
                                  </VBox.margin>
                               </Label>
-                              <TextField fx:id="clienteField" prefHeight="30.0" prefWidth="350.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
+                              <ComboBox fx:id="clienteCombo" prefHeight="30.0" prefWidth="350.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
                                  <VBox.margin>
                                     <Insets left="25.0" />
                                  </VBox.margin>
-                              </TextField>
+                              </ComboBox>
                            </children>
                         </VBox>
                         <Region prefHeight="76.0" prefWidth="40.0" />
@@ -78,6 +76,27 @@
                      <VBox.margin>
                         <Insets top="15.0" />
                      </VBox.margin>
+                  </HBox>
+                  <HBox prefHeight="76.0" prefWidth="656.0">
+                     <children>
+                        <VBox prefHeight="76.0" prefWidth="370.0">
+                           <children>
+                              <Label text="Contrato">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets left="25.0" top="5.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <ComboBox fx:id="contratoCombo" prefHeight="30.0" prefWidth="350.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
+                                 <VBox.margin>
+                                    <Insets left="25.0" />
+                                 </VBox.margin>
+                              </ComboBox>
+                           </children>
+                        </VBox>
+                     </children>
                   </HBox>
                   <HBox prefHeight="76.0" prefWidth="656.0">
                      <VBox.margin>
@@ -139,14 +158,11 @@
                                     <Insets left="25.0" top="5.0" />
                                  </VBox.margin>
                               </Label>
-                              <TextField fx:id="statusField" prefHeight="30.0" prefWidth="350.0" style="-fx-background-radius: 5;">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
+                              <ComboBox fx:id="statusCombo" prefHeight="30.0" prefWidth="350.0" style="-fx-background-radius: 5;">
                                  <VBox.margin>
                                     <Insets left="25.0" />
                                  </VBox.margin>
-                              </TextField>
+                              </ComboBox>
                            </children>
                         </VBox>
                         <Region prefHeight="76.0" prefWidth="40.0" />
@@ -160,14 +176,11 @@
                                     <Insets top="5.0" />
                                  </VBox.margin>
                               </Label>
-                              <TextField fx:id="responsavelInternoField" prefHeight="30.0" prefWidth="350.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
+                              <ComboBox fx:id="responsavelInternoCombo" prefHeight="30.0" prefWidth="350.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
                                  <VBox.margin>
                                     <Insets right="25.0" />
                                  </VBox.margin>
-                              </TextField>
+                              </ComboBox>
                            </children>
                            <HBox.margin>
                               <Insets />
@@ -234,14 +247,11 @@
                                     <Insets left="25.0" top="5.0" />
                                  </VBox.margin>
                               </Label>
-                              <TextField fx:id="responsavelSecundarioField" prefHeight="30.0" prefWidth="350.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
+                              <ComboBox fx:id="responsavelSecundarioCombo" prefHeight="30.0" prefWidth="350.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
                                  <VBox.margin>
                                     <Insets left="25.0" />
                                  </VBox.margin>
-                              </TextField>
+                              </ComboBox>
                            </children>
                         </VBox>
                         <Region prefHeight="76.0" prefWidth="40.0" />
@@ -255,14 +265,11 @@
                                     <Insets top="5.0" />
                                  </VBox.margin>
                               </Label>
-                              <TextField fx:id="executadoPorField" prefHeight="30.0" prefWidth="350.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
+                              <ComboBox fx:id="executadoPorCombo" prefHeight="30.0" prefWidth="350.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
                                  <VBox.margin>
                                     <Insets right="25.0" />
                                  </VBox.margin>
-                              </TextField>
+                              </ComboBox>
                            </children>
                            <HBox.margin>
                               <Insets />

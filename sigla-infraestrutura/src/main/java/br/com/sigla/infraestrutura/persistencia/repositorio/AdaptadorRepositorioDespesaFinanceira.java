@@ -98,6 +98,10 @@ public class AdaptadorRepositorioDespesaFinanceira implements RepositorioDespesa
     }
 
     private UUID resolveCategoria(String tipo, String nome) {
+        UUID id = PersistenciaIds.toUuidIfValid(nome);
+        if (id != null && categoriaRepository.existsById(id)) {
+            return id;
+        }
         String normalized = nome == null || nome.isBlank() ? "EXTRAS" : nome.trim();
         return categoriaRepository.findByTipoAndNomeIgnoreCase(tipo, normalized)
                 .map(FinanceiroCategoriaEntidade::getId)
@@ -112,6 +116,10 @@ public class AdaptadorRepositorioDespesaFinanceira implements RepositorioDespesa
     }
 
     private UUID resolveFormaPagamento(String nome) {
+        UUID id = PersistenciaIds.toUuidIfValid(nome);
+        if (id != null && formaPagamentoRepository.existsById(id)) {
+            return id;
+        }
         String normalized = nome == null || nome.isBlank() ? "NAO_INFORMADO" : nome.trim();
         return formaPagamentoRepository.findByNomeIgnoreCase(normalized)
                 .map(FinanceiroFormaPagamentoEntidade::getId)

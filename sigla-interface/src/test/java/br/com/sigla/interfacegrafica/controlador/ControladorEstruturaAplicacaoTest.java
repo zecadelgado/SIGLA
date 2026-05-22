@@ -41,6 +41,15 @@ class ControladorEstruturaAplicacaoTest {
 
         invoke(controller, "onEstoqueClick");
         assertEquals(VisaoAplicacao.INVENTORY, navigationManager.lastView);
+
+        invoke(controller, "onContratosClick");
+        assertEquals(VisaoAplicacao.CONTRACTS, navigationManager.lastView);
+
+        invoke(controller, "onAgendaClick");
+        assertEquals(VisaoAplicacao.AGENDA, navigationManager.lastView);
+
+        invoke(controller, "onCertificadosClick");
+        assertEquals(VisaoAplicacao.CERTIFICATES, navigationManager.lastView);
     }
 
     private void invoke(ControladorEstruturaAplicacao controller, String methodName) throws Exception {

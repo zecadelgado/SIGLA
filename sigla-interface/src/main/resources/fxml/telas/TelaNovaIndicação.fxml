@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
@@ -89,14 +90,11 @@
                               <Insets left="25.0" top="5.0" />
                            </VBox.margin>
                         </Label>
-                        <TextField fx:id="clienteField" prefHeight="30.0" prefWidth="466.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
+                        <ComboBox fx:id="clienteCombo" prefHeight="30.0" prefWidth="466.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
                            <VBox.margin>
                               <Insets left="25.0" />
                            </VBox.margin>
-                        </TextField>
+                        </ComboBox>
                      </children>
                   </VBox>
                   <Region prefHeight="76.0" prefWidth="40.0" />
@@ -135,14 +133,11 @@
                               <Insets top="5.0" />
                            </VBox.margin>
                         </Label>
-                        <TextField fx:id="statusField" prefHeight="30.0" prefWidth="466.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
+                        <ComboBox fx:id="statusCombo" prefHeight="30.0" prefWidth="466.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
                            <VBox.margin>
                               <Insets />
                            </VBox.margin>
-                        </TextField>
+                        </ComboBox>
                      </children>
                   </VBox>
                   <Region prefHeight="76.0" prefWidth="314.0" />

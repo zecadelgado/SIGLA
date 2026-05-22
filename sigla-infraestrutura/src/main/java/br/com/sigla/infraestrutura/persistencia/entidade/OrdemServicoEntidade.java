@@ -20,8 +20,11 @@ public class OrdemServicoEntidade {
     @Column(name = "numero_os", insertable = false, updatable = false)
     private Long numeroOs;
 
-    @Column(name = "cliente_id", nullable = false)
+    @Column(name = "cliente_id")
     private UUID clienteId;
+
+    @Column(name = "contrato_id")
+    private UUID contratoId;
 
     @Column(name = "titulo", nullable = false)
     private String titulo;
@@ -80,6 +83,14 @@ public class OrdemServicoEntidade {
 
     public void setClienteId(UUID clienteId) {
         this.clienteId = clienteId;
+    }
+
+    public UUID getContratoId() {
+        return contratoId;
+    }
+
+    public void setContratoId(UUID contratoId) {
+        this.contratoId = contratoId;
     }
 
     public String getTitulo() {

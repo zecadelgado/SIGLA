@@ -22,13 +22,17 @@ public class CasoDeUsoGerenciarContrato implements CasoDeUsoContrato {
         repository.save(new Contrato(
                 command.id(),
                 command.customerId(),
+                command.descricao(),
                 command.startDate(),
                 command.endDate(),
                 command.type(),
                 command.serviceFrequency(),
                 command.status(),
                 command.renewalRule(),
-                command.alertDaysBeforeEnd()
+                command.valorMensal(),
+                command.alertaAtivo(),
+                command.alertDaysBeforeEnd(),
+                command.observacoes()
         ));
     }
 

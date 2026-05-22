@@ -19,8 +19,10 @@ public interface CasoDeUsoAgenda {
     record ScheduleVisitCommand(
             String id,
             String customerId,
+            String orderId,
             String contractId,
             VisitaAgendada.VisitType type,
+            VisitaAgendada.Recurrence recurrence,
             LocalDate scheduledDate,
             String title,
             String serviceType,
@@ -31,8 +33,50 @@ public interface CasoDeUsoAgenda {
             VisitaAgendada.VisitStatus status,
             VisitaAgendada.VisitPriority priority,
             String responsibleId,
+            boolean reminderActive,
+            int daysBeforeReminder,
             String notes
     ) {
+        public ScheduleVisitCommand(
+                String id,
+                String customerId,
+                String contractId,
+                VisitaAgendada.VisitType type,
+                LocalDate scheduledDate,
+                String title,
+                String serviceType,
+                String internalResponsible,
+                LocalDateTime startAt,
+                LocalDateTime endAt,
+                boolean allDay,
+                VisitaAgendada.VisitStatus status,
+                VisitaAgendada.VisitPriority priority,
+                String responsibleId,
+                String notes
+        ) {
+            this(
+                    id,
+                    customerId,
+                    "",
+                    contractId,
+                    type,
+                    VisitaAgendada.Recurrence.NONE,
+                    scheduledDate,
+                    title,
+                    serviceType,
+                    internalResponsible,
+                    startAt,
+                    endAt,
+                    allDay,
+                    status,
+                    priority,
+                    responsibleId,
+                    false,
+                    1,
+                    notes
+            );
+        }
+
         public ScheduleVisitCommand(
                 String id,
                 String customerId,
@@ -51,8 +95,10 @@ public interface CasoDeUsoAgenda {
             this(
                     id,
                     customerId,
+                    "",
                     contractId,
                     type,
+                    VisitaAgendada.Recurrence.NONE,
                     scheduledDate,
                     title,
                     serviceType,
@@ -63,6 +109,8 @@ public interface CasoDeUsoAgenda {
                     status,
                     VisitaAgendada.VisitPriority.NORMAL,
                     "",
+                    false,
+                    1,
                     notes
             );
         }
@@ -79,8 +127,10 @@ public interface CasoDeUsoAgenda {
             this(
                     id,
                     customerId,
+                    "",
                     contractId,
                     type,
+                    VisitaAgendada.Recurrence.NONE,
                     scheduledDate,
                     "",
                     "",
@@ -91,6 +141,8 @@ public interface CasoDeUsoAgenda {
                     status,
                     VisitaAgendada.VisitPriority.NORMAL,
                     "",
+                    false,
+                    1,
                     notes
             );
         }

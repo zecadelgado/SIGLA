@@ -22,6 +22,7 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
                 command.id(),
                 null,
                 command.clienteId(),
+                command.contratoId(),
                 command.titulo(),
                 command.descricao(),
                 command.tipoServico(),
