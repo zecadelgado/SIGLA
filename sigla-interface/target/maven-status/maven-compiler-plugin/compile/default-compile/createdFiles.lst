@@ -15,6 +15,7 @@ br\com\sigla\interfacegrafica\consulta\ServicoConsultaOrdemServico$OrdemServicoR
 br\com\sigla\interfacegrafica\controlador\ControladorServicos.class
 br\com\sigla\interfacegrafica\apresentacao\ApresentadorMoeda.class
 br\com\sigla\interfacegrafica\controlador\ControladorContratos.class
+br\com\sigla\interfacegrafica\util\UtilComboBox$1.class
 br\com\sigla\interfacegrafica\consulta\ServicoConsultaOrdemServico$OrdemServicoView.class
 br\com\sigla\interfacegrafica\controlador\ControladorFinanceiro.class
 br\com\sigla\interfacegrafica\controlador\ControladorNovoProduto.class
@@ -48,6 +49,7 @@ br\com\sigla\interfacegrafica\aplicativo\FluxoAplicacao.class
 br\com\sigla\interfacegrafica\controlador\ControladorContratosCertificados$ClienteOption.class
 br\com\sigla\interfacegrafica\controlador\ControladorUsuarios.class
 br\com\sigla\interfacegrafica\controlador\ControladorContratosCertificados$ItemVencimentoRow.class
+br\com\sigla\interfacegrafica\util\UtilComboBox.class
 br\com\sigla\interfacegrafica\controlador\ControladorFuncionarios.class
 br\com\sigla\interfacegrafica\controlador\ControladorContratosCertificados.class
 br\com\sigla\interfacegrafica\controlador\ControladorLogin.class

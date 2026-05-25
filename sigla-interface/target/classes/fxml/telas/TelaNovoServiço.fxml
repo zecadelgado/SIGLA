@@ -3,282 +3,81 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="510.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.sigla.interfacegrafica.controlador.ControladorNovoServico">
+<VBox prefHeight="620.0" prefWidth="720.0" spacing="14.0" style="-fx-background-color: lightgrey;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.sigla.interfacegrafica.controlador.ControladorNovoServico">
+   <padding>
+      <Insets bottom="24.0" left="28.0" right="28.0" top="24.0" />
+   </padding>
    <children>
-      <VBox prefHeight="510.0" prefWidth="650.0" style="-fx-background-color: lightgrey;">
+      <Label text="Novo Servico" textFill="#00417e">
+         <font>
+            <Font name="System Bold" size="38.0" />
+         </font>
+      </Label>
+
+      <GridPane hgap="18.0" vgap="8.0">
+         <columnConstraints>
+            <ColumnConstraints hgrow="ALWAYS" percentWidth="50.0" />
+            <ColumnConstraints hgrow="ALWAYS" percentWidth="50.0" />
+         </columnConstraints>
          <children>
-            <Label prefHeight="52.0" prefWidth="358.0" text="Novo Serviço" textFill="#00417e">
-               <font>
-                  <Font name="Ebrima Bold" size="36.0" />
-               </font>
-               <VBox.margin>
-                  <Insets left="20.0" top="15.0" />
-               </VBox.margin>
-            </Label>
-            <GridPane>
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-               <children>
-                  <Label text="Cliente">
-                     <font>
-                        <Font size="16.0" />
-                     </font>
-                     <GridPane.margin>
-                        <Insets left="25.0" />
-                     </GridPane.margin>
-                  </Label>
-                  <TextField fx:id="clienteField" prefHeight="30.0" prefWidth="466.0" style="-fx-background-radius: 5;" GridPane.rowIndex="1">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <GridPane.margin>
-                        <Insets left="25.0" right="10.0" />
-                     </GridPane.margin>
-                  </TextField>
-                  <Label text="Ordem de Serviço" GridPane.columnIndex="1">
-                     <font>
-                        <Font size="16.0" />
-                     </font>
-                     <GridPane.margin>
-                        <Insets left="10.0" />
-                     </GridPane.margin>
-                  </Label>
-                  <TextField fx:id="ordemField" prefHeight="30.0" prefWidth="466.0" style="-fx-background-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <GridPane.margin>
-                        <Insets left="10.0" right="25.0" />
-                     </GridPane.margin>
-                  </TextField>
-               </children>
-            </GridPane>
-            <GridPane layoutX="10.0" layoutY="77.0">
-               <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-               </rowConstraints>
-               <children>
-                  <Label text="Título">
-                     <font>
-                        <Font size="16.0" />
-                     </font>
-                     <GridPane.margin>
-                        <Insets left="25.0" />
-                     </GridPane.margin>
-                  </Label>
-                  <TextField fx:id="tituloField" prefHeight="30.0" prefWidth="466.0" style="-fx-background-radius: 5;" GridPane.rowIndex="1">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <GridPane.margin>
-                        <Insets left="25.0" right="10.0" />
-                     </GridPane.margin>
-                  </TextField>
-                  <Label text="Descrição" GridPane.columnIndex="1">
-                     <font>
-                        <Font size="16.0" />
-                     </font>
-                     <GridPane.margin>
-                        <Insets left="10.0" />
-                     </GridPane.margin>
-                  </Label>
-                  <TextField fx:id="descricaoField" prefHeight="30.0" prefWidth="466.0" style="-fx-background-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <GridPane.margin>
-                        <Insets left="10.0" right="25.0" />
-                     </GridPane.margin>
-                  </TextField>
-               </children>
-               <VBox.margin>
-                  <Insets top="10.0" />
-               </VBox.margin>
-            </GridPane>
-            <GridPane>
-              <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-               <children>
-                  <Label text="Data Inicio">
-                     <font>
-                        <Font size="16.0" />
-                     </font>
-                     <GridPane.margin>
-                        <Insets left="25.0" />
-                     </GridPane.margin>
-                  </Label>
-                  <Label text="Data Fim" GridPane.columnIndex="1">
-                     <font>
-                        <Font size="16.0" />
-                     </font>
-                     <GridPane.margin>
-                        <Insets left="10.0" />
-                     </GridPane.margin>
-                  </Label>
-                  <Label text="Dia Inteiro" GridPane.columnIndex="2">
-                     <font>
-                        <Font size="16.0" />
-                     </font>
-                     <GridPane.margin>
-                        <Insets left="10.0" />
-                     </GridPane.margin>
-                  </Label>
-                  <DatePicker fx:id="dataFimPicker" prefHeight="26.0" prefWidth="214.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                     <GridPane.margin>
-                        <Insets left="12.0" right="12.0" />
-                     </GridPane.margin>
-                  </DatePicker>
-                  <DatePicker fx:id="dataInicioPicker" prefHeight="26.0" prefWidth="214.0" GridPane.rowIndex="1">
-                     <GridPane.margin>
-                        <Insets left="25.0" />
-                     </GridPane.margin>
-                  </DatePicker>
-                  <CheckBox fx:id="diaInteiroCheck" prefHeight="26.0" prefWidth="214.0" text="Sim" GridPane.columnIndex="2" GridPane.rowIndex="1">
-                     <GridPane.margin>
-                        <Insets right="25.0" />
-                     </GridPane.margin>
-                  </CheckBox>
-               </children>
-               <padding>
-                  <Insets top="10.0" />
-               </padding>
-               <VBox.margin>
-                  <Insets top="10.0" />
-               </VBox.margin>
-            </GridPane>
-            <GridPane>
-               <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-               </rowConstraints>
-               <children>
-                  <Label text="Status">
-                     <font>
-                        <Font size="16.0" />
-                     </font>
-                     <GridPane.margin>
-                        <Insets left="25.0" />
-                     </GridPane.margin>
-                  </Label>
-                  <TextField fx:id="statusField" prefHeight="30.0" prefWidth="466.0" style="-fx-background-radius: 5;" GridPane.rowIndex="1">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <GridPane.margin>
-                        <Insets left="25.0" right="10.0" />
-                     </GridPane.margin>
-                  </TextField>
-                  <Label text="Prioridade" GridPane.columnIndex="1">
-                     <font>
-                        <Font size="16.0" />
-                     </font>
-                     <GridPane.margin>
-                        <Insets left="10.0" />
-                     </GridPane.margin>
-                  </Label>
-                  <TextField fx:id="prioridadeField" prefHeight="30.0" prefWidth="466.0" style="-fx-background-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <GridPane.margin>
-                        <Insets left="10.0" right="25.0" />
-                     </GridPane.margin>
-                  </TextField>
-               </children>
-               <VBox.margin>
-                  <Insets top="10.0" />
-               </VBox.margin>
-            </GridPane>
-            <GridPane>
-               <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-               </rowConstraints>
-               <children>
-                  <Label text="Responsável">
-                     <font>
-                        <Font size="16.0" />
-                     </font>
-                     <GridPane.margin>
-                        <Insets left="25.0" />
-                     </GridPane.margin>
-                  </Label>
-                  <TextField fx:id="responsavelField" prefHeight="30.0" prefWidth="466.0" style="-fx-background-radius: 5;" GridPane.rowIndex="1">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <GridPane.margin>
-                        <Insets left="25.0" right="10.0" />
-                     </GridPane.margin>
-                  </TextField>
-               </children>
-               <VBox.margin>
-                  <Insets top="10.0" />
-               </VBox.margin>
-            </GridPane>
-            <HBox prefHeight="46.0" prefWidth="670.0">
-               <children>
-                  <Button mnemonicParsing="false" onAction="#onConfirmar" prefWidth="300.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Registrar Serviço" textFill="WHITE">
-                     <HBox.margin>
-                        <Insets left="25.0" />
-                     </HBox.margin>
-                     <font>
-                        <Font name="Ebrima Bold" size="18.0" />
-                     </font>
-                  </Button>
-                  <Region prefHeight="46.0" prefWidth="40.0" />
-                  <Button mnemonicParsing="false" onAction="#onCancelar" prefWidth="300.0" style="-fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Cancelar">
-                     <HBox.margin>
-                        <Insets right="25.0" />
-                     </HBox.margin>
-                     <font>
-                        <Font name="Ebrima Bold" size="18.0" />
-                     </font>
-                  </Button>
-               </children>
-               <VBox.margin>
-                  <Insets top="25.0" />
-               </VBox.margin>
-            </HBox>
+            <Label text="Cliente" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+            <ComboBox fx:id="clienteCombo" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+
+            <Label text="Ordem de Servico" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+            <ComboBox fx:id="ordemCombo" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+            <Label text="Contrato" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+            <ComboBox fx:id="contratoCombo" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+
+            <Label text="Responsavel" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <ComboBox fx:id="responsavelCombo" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+            <Label text="Titulo" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+            <TextField fx:id="tituloField" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+
+            <Label text="Descricao" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <TextField fx:id="descricaoField" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+
+            <Label text="Data Inicio" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+            <DatePicker fx:id="dataInicioPicker" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="0" GridPane.rowIndex="7" />
+
+            <Label text="Data Fim" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <DatePicker fx:id="dataFimPicker" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+
+            <Label text="Status" GridPane.columnIndex="0" GridPane.rowIndex="8" />
+            <TextField fx:id="statusField" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="0" GridPane.rowIndex="9" />
+
+            <Label text="Prioridade" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+            <TextField fx:id="prioridadeField" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
          </children>
-      </VBox>
+      </GridPane>
+
+      <CheckBox fx:id="diaInteiroCheck" text="Dia inteiro" />
+      <Label fx:id="feedbackLabel" minHeight="22.0" textFill="#b00020" wrapText="true" />
+
+      <HBox alignment="CENTER" spacing="24.0">
+         <children>
+            <Button mnemonicParsing="false" onAction="#onConfirmar" prefHeight="40.0" prefWidth="220.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 8;" text="Cadastrar" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="15.0" />
+               </font>
+            </Button>
+            <Button cancelButton="true" mnemonicParsing="false" onAction="#onCancelar" prefHeight="40.0" prefWidth="220.0" style="-fx-background-color: white; -fx-background-radius: 8;" text="Cancelar">
+               <font>
+                  <Font name="System Bold" size="15.0" />
+               </font>
+            </Button>
+         </children>
+      </HBox>
    </children>
-</AnchorPane>
+</VBox>

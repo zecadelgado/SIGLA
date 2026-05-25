@@ -5,8 +5,10 @@ import br.com.sigla.dominio.financeiro.CategoriaFinanceira;
 import br.com.sigla.dominio.financeiro.FormaPagamentoFinanceira;
 import br.com.sigla.interfacegrafica.aplicativo.SessaoLocalAplicacao;
 import br.com.sigla.interfacegrafica.consulta.ServicoConsultaReferencias;
+import br.com.sigla.interfacegrafica.modelo.OpcaoId;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
+import br.com.sigla.interfacegrafica.util.UtilComboBox;
 import br.com.sigla.interfacegrafica.util.UtilJanela;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
@@ -19,8 +21,6 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
-
-import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.resolveOpcional;
 
 @Component
 public class ControladorNovaTransacao {
@@ -37,11 +37,11 @@ public class ControladorNovaTransacao {
     @FXML
     private TextField descricaoField;
     @FXML
-    private TextField clienteField;
+    private ComboBox<OpcaoId> clienteCombo;
     @FXML
     private TextField valorField;
     @FXML
-    private TextField ordemField;
+    private ComboBox<OpcaoId> ordemCombo;
     @FXML
     private DatePicker emissaoPicker;
     @FXML
@@ -83,6 +83,13 @@ public class ControladorNovaTransacao {
             tipoCombo.valueProperty().addListener((observable, oldValue, newValue) -> carregarCategorias());
         }
         configurarCombos();
+        UtilComboBox.preencher(clienteCombo, servicoConsultaReferencias.clientes(), true);
+        UtilComboBox.preencher(ordemCombo, servicoConsultaReferencias.ordensServico(), true);
+        if (clienteCombo != null) {
+            clienteCombo.valueProperty().addListener((observable, oldValue, newValue) ->
+                    UtilComboBox.preencher(ordemCombo, servicoConsultaReferencias.ordensServicoDoCliente(UtilComboBox.idSelecionado(clienteCombo)), true)
+            );
+        }
         carregarCategorias();
         if (emissaoPicker != null) {
             emissaoPicker.setValue(LocalDate.now());
@@ -96,8 +103,8 @@ public class ControladorNovaTransacao {
     @FXML
     private void onAdicionar() {
         try {
-            var cliente = resolveOpcional(servicoConsultaReferencias.clientes(), clienteField == null ? "" : clienteField.getText());
-            var ordem = resolveOpcional(servicoConsultaReferencias.ordensServico(), ordemField == null ? "" : ordemField.getText());
+            var cliente = UtilComboBox.selecionado(clienteCombo);
+            var ordem = UtilComboBox.selecionado(ordemCombo);
             casoDeUsoFinanceiro.registerTransaction(new CasoDeUsoFinanceiro.RegisterTransacaoFinanceiraCommand(
                     UUID.randomUUID().toString(),
                     tipoCombo == null || tipoCombo.getValue() == null ? CasoDeUsoFinanceiro.TransactionType.ENTRY : tipoCombo.getValue(),

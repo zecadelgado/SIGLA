@@ -6,8 +6,10 @@ import br.com.sigla.interfacegrafica.consulta.ServicoConsultaReferencias;
 import br.com.sigla.interfacegrafica.modelo.OpcaoId;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
+import br.com.sigla.interfacegrafica.util.UtilComboBox;
 import br.com.sigla.interfacegrafica.util.UtilJanela;
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -16,10 +18,8 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.parseEnum;
-import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.resolveOpcional;
 
 @Component
 public class ControladorNovaOrdemServico {
@@ -29,7 +29,9 @@ public class ControladorNovaOrdemServico {
     private final GerenciadorNavegacao gerenciadorNavegacao;
 
     @FXML
-    private TextField clienteField;
+    private ComboBox<OpcaoId> clienteCombo;
+    @FXML
+    private ComboBox<OpcaoId> contratoCombo;
     @FXML
     private TextField tituloField;
     @FXML
@@ -39,7 +41,7 @@ public class ControladorNovaOrdemServico {
     @FXML
     private TextField statusField;
     @FXML
-    private TextField responsavelInternoField;
+    private ComboBox<OpcaoId> responsavelInternoCombo;
     @FXML
     private DatePicker dataAgendadaPicker;
     @FXML
@@ -47,9 +49,9 @@ public class ControladorNovaOrdemServico {
     @FXML
     private DatePicker dataFimPicker;
     @FXML
-    private TextField responsavelSecundarioField;
+    private ComboBox<OpcaoId> responsavelSecundarioCombo;
     @FXML
-    private TextField executadoPorField;
+    private ComboBox<OpcaoId> executadoPorCombo;
     @FXML
     private TextField valorServicoField;
     @FXML
@@ -69,6 +71,16 @@ public class ControladorNovaOrdemServico {
 
     @FXML
     public void initialize() {
+        UtilComboBox.preencher(clienteCombo, servicoConsultaReferencias.clientes(), false);
+        UtilComboBox.preencher(contratoCombo, servicoConsultaReferencias.contratos(), true);
+        UtilComboBox.preencher(responsavelInternoCombo, servicoConsultaReferencias.funcionarios(), true);
+        UtilComboBox.preencher(responsavelSecundarioCombo, servicoConsultaReferencias.funcionarios(), true);
+        UtilComboBox.preencher(executadoPorCombo, servicoConsultaReferencias.funcionarios(), true);
+        if (clienteCombo != null) {
+            clienteCombo.valueProperty().addListener((observable, oldValue, newValue) ->
+                    UtilComboBox.preencher(contratoCombo, servicoConsultaReferencias.contratosDoCliente(UtilComboBox.idSelecionado(clienteCombo)), true)
+            );
+        }
         LocalDate hoje = LocalDate.now();
         if (dataAgendadaPicker != null && dataAgendadaPicker.getValue() == null) {
             dataAgendadaPicker.setValue(hoje);
@@ -88,7 +100,8 @@ public class ControladorNovaOrdemServico {
     @FXML
     private void onConfirmar() {
         try {
-            OpcaoId cliente = requiredOption(resolveOpcional(servicoConsultaReferencias.clientes(), clienteField == null ? "" : clienteField.getText()), "Selecione um cliente.");
+            OpcaoId cliente = requiredOption(UtilComboBox.selecionado(clienteCombo), "Selecione um cliente.");
+            OpcaoId contrato = UtilComboBox.selecionado(contratoCombo);
             LocalDate dataAgendada = dataAgendadaPicker == null ? LocalDate.now() : dataAgendadaPicker.getValue();
             LocalDate dataInicio = dataInicioPicker == null || dataInicioPicker.getValue() == null ? dataAgendada : dataInicioPicker.getValue();
             LocalDate dataFim = dataFimPicker == null || dataFimPicker.getValue() == null ? dataAgendada : dataFimPicker.getValue();
@@ -98,6 +111,7 @@ public class ControladorNovaOrdemServico {
             casoDeUsoOrdemServico.create(new CasoDeUsoOrdemServico.CreateOrdemServicoCommand(
                     UUID.randomUUID().toString(),
                     cliente.id(),
+                    contrato == null ? "" : contrato.id(),
                     tituloField == null ? "" : tituloField.getText(),
                     descricaoField == null ? "" : descricaoField.getText(),
                     tipoServicoField == null ? "" : tipoServicoField.getText(),
@@ -105,13 +119,13 @@ public class ControladorNovaOrdemServico {
                     dataAgendada.atStartOfDay(),
                     inicio,
                     fim,
-                    onlyUuid(chooseResponsible()),
-                    onlyUuid(executadoPorField == null ? "" : executadoPorField.getText()),
+                    chooseResponsible(),
+                    UtilComboBox.idSelecionado(executadoPorCombo),
                     parseMoney(valorServicoField == null ? "" : valorServicoField.getText()),
                     observacoesField == null ? "" : observacoesField.getText()
             ));
             gerenciadorNavegacao.navigateTo(VisaoAplicacao.SERVICE_ORDER);
-            UtilJanela.fecharJanela(clienteField);
+            UtilJanela.fecharJanela(clienteCombo);
         } catch (Exception exception) {
             setFeedback(exception.getMessage());
         }
@@ -119,7 +133,7 @@ public class ControladorNovaOrdemServico {
 
     @FXML
     private void onCancelar() {
-        UtilJanela.fecharJanela(clienteField);
+        UtilJanela.fecharJanela(clienteCombo);
     }
 
     private OpcaoId requiredOption(OpcaoId value, String message) {
@@ -130,35 +144,15 @@ public class ControladorNovaOrdemServico {
     }
 
     private String chooseResponsible() {
-        if (responsavelInternoField != null && !responsavelInternoField.getText().isBlank()) {
-            return responsavelInternoField.getText();
+        String principal = UtilComboBox.idSelecionado(responsavelInternoCombo);
+        if (!principal.isBlank()) {
+            return principal;
         }
-        if (responsavelSecundarioField != null && !responsavelSecundarioField.getText().isBlank()) {
-            return responsavelSecundarioField.getText();
+        String secundario = UtilComboBox.idSelecionado(responsavelSecundarioCombo);
+        if (!secundario.isBlank()) {
+            return secundario;
         }
-        return executadoPorField == null ? "" : executadoPorField.getText();
-    }
-
-    private String mergeObservacoes() {
-        return Stream.of(
-                        descricaoField == null ? "" : descricaoField.getText(),
-                        observacoesField == null ? "" : observacoesField.getText(),
-                        valorServicoField == null || valorServicoField.getText().isBlank() ? "" : "Valor: " + valorServicoField.getText()
-                )
-                .filter(value -> value != null && !value.isBlank())
-                .reduce((left, right) -> left + " | " + right)
-                .orElse("");
-    }
-
-    private String onlyUuid(String value) {
-        if (value == null || value.isBlank()) {
-            return "";
-        }
-        try {
-            return UUID.fromString(value.trim()).toString();
-        } catch (IllegalArgumentException exception) {
-            return "";
-        }
+        return UtilComboBox.idSelecionado(executadoPorCombo);
     }
 
     private java.math.BigDecimal parseMoney(String value) {

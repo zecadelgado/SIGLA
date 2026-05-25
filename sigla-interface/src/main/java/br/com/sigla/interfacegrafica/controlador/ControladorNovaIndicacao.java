@@ -4,10 +4,13 @@ import br.com.sigla.aplicacao.potenciaisclientes.porta.entrada.CasoDeUsoPotencia
 import br.com.sigla.dominio.potenciaisclientes.PotencialCliente;
 import br.com.sigla.interfacegrafica.consulta.ServicoConsultaReferencias;
 import br.com.sigla.interfacegrafica.formatador.FormatadorMascaraCpf;
+import br.com.sigla.interfacegrafica.modelo.OpcaoId;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
+import br.com.sigla.interfacegrafica.util.UtilComboBox;
 import br.com.sigla.interfacegrafica.util.UtilJanela;
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -18,8 +21,6 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.parseEnum;
-import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.resolveOpcional;
-
 @Component
 public class ControladorNovaIndicacao {
 
@@ -33,7 +34,7 @@ public class ControladorNovaIndicacao {
     @FXML
     private TextField telefoneField;
     @FXML
-    private TextField clienteField;
+    private ComboBox<OpcaoId> clienteCombo;
     @FXML
     private DatePicker dataPicker;
     @FXML
@@ -63,6 +64,7 @@ public class ControladorNovaIndicacao {
         if (statusField != null && statusField.getText().isBlank()) {
             statusField.setText(PotencialCliente.PotencialClienteStatus.NOVO.name());
         }
+        UtilComboBox.preencher(clienteCombo, servicoConsultaReferencias.clientes(), true);
         formatadorMascaraCpf.aplicarTelefone(telefoneField);
         setFeedback("");
     }
@@ -70,7 +72,7 @@ public class ControladorNovaIndicacao {
     @FXML
     private void onConfirmar() {
         try {
-            var cliente = resolveOpcional(servicoConsultaReferencias.clientes(), clienteField == null ? "" : clienteField.getText());
+            var cliente = UtilComboBox.selecionado(clienteCombo);
             String customerId = cliente == null ? "" : cliente.id();
             casoDeUsoPotencialCliente.register(new CasoDeUsoPotencialCliente.RegisterPotencialClienteCommand(
                     UUID.randomUUID().toString(),
