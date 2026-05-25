@@ -7,8 +7,10 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -30,8 +32,29 @@ public class ServicoConsultaOrdemServico {
                 .collect(Collectors.toMap(customer -> customer.id(), customer -> customer.name()));
         return casoDeUsoOrdemServico.listAll().stream()
                 .map(order -> toView(order, clientes))
-                .sorted((left, right) -> right.emissionDate().compareTo(left.emissionDate()))
+                .sorted(Comparator.comparing(
+                        OrdemServicoView::emissionDate,
+                        Comparator.nullsLast(Comparator.reverseOrder())
+                ))
                 .toList();
+    }
+
+    public List<OrdemServicoView> listByDate(LocalDate date) {
+        if (date == null) {
+            return List.of();
+        }
+        return listAll().stream()
+                .filter(order -> date.equals(order.emissionDate()))
+                .toList();
+    }
+
+    public Optional<OrdemServicoView> findById(String id) {
+        if (id == null || id.isBlank()) {
+            return Optional.empty();
+        }
+        return listAll().stream()
+                .filter(order -> order.id().equals(id))
+                .findFirst();
     }
 
     public OrdemServicoResumo summary() {
@@ -50,17 +73,24 @@ public class ServicoConsultaOrdemServico {
                 order.id(),
                 order.numeroOs() == null ? order.id() : String.valueOf(order.numeroOs()),
                 order.titulo(),
+                order.descricao(),
                 clientes.getOrDefault(order.clienteId(), order.clienteId()),
                 blankAsDash(order.responsavelInternoId()),
-                order.dataAgendada() == null ? LocalDate.now() : order.dataAgendada().toLocalDate(),
+                order.dataAgendada() == null ? null : order.dataAgendada().toLocalDate(),
                 order.status().name(),
-                order.valorServico() == null ? BigDecimal.ZERO : order.valorServico(),
+                order.totalGeral(),
                 order.clienteId(),
-                "",
+                order.contratoId(),
                 order.tipoServico(),
                 order.dataInicio(),
                 order.dataFim(),
-                blankAsDash(order.observacoes())
+                blankAsDash(order.observacoes()),
+                order.foiFeito(),
+                order.pago(),
+                order.assinaturaCliente(),
+                order.totalProdutos(),
+                order.produtos().size(),
+                order.anexos().size()
         );
     }
 
@@ -68,6 +98,7 @@ public class ServicoConsultaOrdemServico {
             String id,
             String numero,
             String title,
+            String description,
             String customerName,
             String responsible,
             LocalDate emissionDate,
@@ -78,7 +109,13 @@ public class ServicoConsultaOrdemServico {
             String serviceType,
             java.time.LocalDateTime startAt,
             java.time.LocalDateTime endAt,
-            String notes
+            String notes,
+            boolean done,
+            boolean paid,
+            boolean signed,
+            BigDecimal productTotal,
+            int productCount,
+            int attachmentCount
     ) {
     }
 

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefHeight="620.0" prefWidth="980.0" spacing="16.0" style="-fx-background-color: lightgrey;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.sigla.interfacegrafica.controlador.ControladorDetalhesServicosDia">
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+   <children>
+      <HBox alignment="CENTER_LEFT" spacing="12.0">
+         <children>
+            <VBox HBox.hgrow="ALWAYS">
+               <children>
+                  <Label fx:id="tituloLabel" text="Detalhes dos Servicos" textFill="#00417e">
+                     <font>
+                        <Font name="Ebrima Bold" size="34.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="resumoLabel" text="0 ordem(ns)" textFill="#303030">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            <Button fx:id="fecharButton" mnemonicParsing="false" onAction="#onFechar" prefHeight="36.0" prefWidth="110.0" style="-fx-background-color: white; -fx-background-radius: 5;" text="Fechar" />
+         </children>
+      </HBox>
+      <SplitPane dividerPositions="0.57" prefHeight="520.0" prefWidth="940.0" VBox.vgrow="ALWAYS">
+         <items>
+            <TableView fx:id="ordensTable" prefHeight="520.0" prefWidth="530.0">
+               <columns>
+                  <TableColumn fx:id="numeroColumn" prefWidth="90.0" text="OS" />
+                  <TableColumn fx:id="clienteColumn" prefWidth="160.0" text="Cliente" />
+                  <TableColumn fx:id="tituloColumn" prefWidth="150.0" text="Titulo" />
+                  <TableColumn fx:id="statusColumn" prefWidth="110.0" text="Status" />
+                  <TableColumn fx:id="valorColumn" prefWidth="105.0" text="Valor" />
+               </columns>
+            </TableView>
+            <TextArea fx:id="detalhesArea" editable="false" prefHeight="520.0" prefWidth="390.0" wrapText="true" />
+         </items>
+      </SplitPane>
+   </children>
+</VBox>

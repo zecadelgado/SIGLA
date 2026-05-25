@@ -16,7 +16,7 @@
    <children>
       <HBox prefHeight="790.0" prefWidth="1530.0">
          <children>
-            <VBox prefHeight="765.0" prefWidth="250.0" spacing="15.0" style="-fx-background-color: #0B2A6F;">
+            <VBox fx:id="menuLateral" prefHeight="765.0" prefWidth="250.0" spacing="15.0" style="-fx-background-color: #0B2A6F;">
                <children>
                   <Label text="Sigla" textFill="#a6d3ff">
                      <font>
@@ -99,11 +99,11 @@
                <children>
                   <HBox prefHeight="106.0" prefWidth="1282.0">
                      <children>
-                        <VBox prefHeight="106.0" prefWidth="413.0">
+<VBox prefHeight="118.0" prefWidth="504.0">
                            <children>
-                              <Label prefHeight="52.0" prefWidth="381.0" text="Serviços Prestados" textFill="#00417e">
+                              <Label prefHeight="66.0" prefWidth="460.0" text="Serviços Prestados" textFill="#00417e">
                                  <font>
-                                    <Font name="Ebrima Bold" size="40.0" />
+                                    <Font name="Ebrima Bold" size="50.0" />
                                  </font>
                                  <VBox.margin>
                                     <Insets left="30.0" top="32.0" />
@@ -119,15 +119,7 @@
                               </Label>
                            </children>
                         </VBox>
-                        <Region prefHeight="106.0" prefWidth="619.0" />
-                        <Button mnemonicParsing="false" onAction="#onNovoServico" prefHeight="42.0" prefWidth="214.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="+ Novo Serviço" textFill="WHITE">
-                           <font>
-                              <Font name="Ebrima Bold" size="22.0" />
-                           </font>
-                           <HBox.margin>
-                              <Insets right="30.0" top="40.0" />
-                           </HBox.margin>
-                        </Button>
+                        <Region prefHeight="118.0" prefWidth="542.0" />
                      </children>
                   </HBox>
                   <HBox prefHeight="100.0" prefWidth="200.0">
@@ -208,7 +200,7 @@
                   </HBox>
                   <HBox prefHeight="43.0" prefWidth="1221.0">
                      <children>
-                        <Button alignment="CENTER" mnemonicParsing="false" prefHeight="10.0" prefWidth="30.0" style="-fx-background-color: #00417e;" text="&lt;" textFill="WHITE">
+                        <Button fx:id="mesAnteriorButton" alignment="CENTER" mnemonicParsing="false" onAction="#onMesAnterior" prefHeight="10.0" prefWidth="30.0" style="-fx-background-color: #00417e;" text="&lt;" textFill="WHITE">
                            <font>
                               <Font name="Impact" size="18.0" />
                            </font>
@@ -216,7 +208,7 @@
                               <Insets left="520.0" right="10.0" />
                            </HBox.margin>
                         </Button>
-                        <Label alignment="CENTER" text="Abril">
+                        <Label fx:id="mesAtualLabel" alignment="CENTER" text="Abril">
                            <font>
                               <Font name="Ebrima Bold" size="28.0" />
                            </font>
@@ -224,7 +216,7 @@
                               <Insets left="15.0" right="15.0" />
                            </HBox.margin>
                         </Label>
-                        <Button alignment="CENTER" mnemonicParsing="false" prefHeight="10.0" prefWidth="30.0" style="-fx-background-color: #00417e;" text="&gt;" textFill="WHITE">
+                        <Button fx:id="proximoMesButton" alignment="CENTER" mnemonicParsing="false" onAction="#onProximoMes" prefHeight="10.0" prefWidth="30.0" style="-fx-background-color: #00417e;" text="&gt;" textFill="WHITE">
                            <font>
                               <Font name="Impact" size="18.0" />
                            </font>
@@ -237,7 +229,7 @@
                         <Insets bottom="-10.0" left="30.0" right="30.0" top="40.0" />
                      </VBox.margin>
                   </HBox>
-                  <GridPane prefHeight="398.0" prefWidth="1221.0" style="-fx-background-color: lightgrey; -fx-background-radius: 10;">
+                  <GridPane fx:id="calendarioGrid" prefHeight="398.0" prefWidth="1221.0" style="-fx-background-color: lightgrey; -fx-background-radius: 10;">
                     <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />

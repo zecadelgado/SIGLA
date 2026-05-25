@@ -46,11 +46,13 @@ public class AdaptadorRepositorioEstoque implements RepositorioEstoque {
                 PersistenciaIds.toString(entity.getId()),
                 entity.getName(),
                 entity.getDescription(),
+                entity.getSku(),
                 entity.getCostPrice(),
                 entity.getSalePrice(),
                 entity.getQuantity(),
                 entity.getMinimumQuantity(),
                 entity.getUnit(),
+                entity.isAtivo(),
                 entity.getMovements().stream()
                         .map(movement -> new ItemEstoque.InventoryMovement(
                                 PersistenciaIds.toString(movement.getId()),
@@ -63,6 +65,9 @@ public class AdaptadorRepositorioEstoque implements RepositorioEstoque {
                                 PersistenciaIds.toString(movement.getCustomerId()),
                                 PersistenciaIds.toString(movement.getOrderReference()),
                                 movement.getDestinationDescription(),
+                                PersistenciaIds.toString(movement.getFuncionarioId()),
+                                movement.getQuemPegou(),
+                                movement.getQuemComprou(),
                                 movement.getNotes()
                         ))
                         .toList()
@@ -74,11 +79,13 @@ public class AdaptadorRepositorioEstoque implements RepositorioEstoque {
         entity.setId(PersistenciaIds.toUuid(item.id()));
         entity.setName(item.name());
         entity.setDescription(item.description());
+        entity.setSku(item.sku());
         entity.setCostPrice(item.costPrice());
         entity.setSalePrice(item.salePrice());
         entity.setQuantity(item.quantity());
         entity.setMinimumQuantity(item.minimumQuantity());
         entity.setUnit(item.unit());
+        entity.setAtivo(item.ativo());
         List<ItemEstoqueEntidade.MovementEmbeddable> movements = new ArrayList<>();
         for (ItemEstoque.InventoryMovement movement : item.movements()) {
             ItemEstoqueEntidade.MovementEmbeddable embeddable = new ItemEstoqueEntidade.MovementEmbeddable();
@@ -90,8 +97,11 @@ public class AdaptadorRepositorioEstoque implements RepositorioEstoque {
             embeddable.setTotalPrice(movement.totalPrice());
             embeddable.setCreatedBy(PersistenciaIds.toUuidIfValid(movement.createdBy()));
             embeddable.setCustomerId(PersistenciaIds.toUuid(movement.customerId()));
+            embeddable.setFuncionarioId(PersistenciaIds.toUuid(movement.funcionarioId()));
             embeddable.setOrderReference(PersistenciaIds.toUuid(movement.orderReference()));
             embeddable.setDestinationDescription(movement.destinationDescription());
+            embeddable.setQuemPegou(movement.quemPegou());
+            embeddable.setQuemComprou(movement.quemComprou());
             embeddable.setNotes(movement.notes());
             movements.add(embeddable);
         }
@@ -103,7 +113,30 @@ public class AdaptadorRepositorioEstoque implements RepositorioEstoque {
         if (value == null || value.isBlank()) {
             return ItemEstoque.MovementType.OUTBOUND;
         }
-        return ItemEstoque.MovementType.valueOf(value.trim().toUpperCase());
+        return ItemEstoque.MovementType.from(value);
+    }
+
+    @Override
+    public boolean existsActiveSku(String sku, String exceptId) {
+        String normalized = sku == null ? "" : sku.trim().toLowerCase();
+        if (normalized.isBlank()) {
+            return false;
+        }
+        return repository.findAll().stream()
+                .filter(ItemEstoqueEntidade::isAtivo)
+                .filter(item -> !PersistenciaIds.toString(item.getId()).equals(exceptId))
+                .anyMatch(item -> item.getSku() != null && item.getSku().trim().equalsIgnoreCase(normalized));
+    }
+
+    @Override
+    public boolean existsMovementForOrder(String orderId) {
+        if (orderId == null || orderId.isBlank()) {
+            return false;
+        }
+        UUID orderUuid = PersistenciaIds.toUuid(orderId);
+        return repository.findAll().stream()
+                .flatMap(item -> item.getMovements().stream())
+                .anyMatch(movement -> orderUuid.equals(movement.getOrderReference()));
     }
 }
 
@@ -126,6 +159,22 @@ class InMemoryAdaptadorRepositorioEstoque implements RepositorioEstoque {
     @Override
     public Optional<ItemEstoque> findById(String id) {
         return Optional.ofNullable(storage.get(id));
+    }
+
+    @Override
+    public boolean existsActiveSku(String sku, String exceptId) {
+        String normalized = sku == null ? "" : sku.trim();
+        return storage.values().stream()
+                .filter(ItemEstoque::ativo)
+                .filter(item -> !item.id().equals(exceptId))
+                .anyMatch(item -> item.sku().equalsIgnoreCase(normalized));
+    }
+
+    @Override
+    public boolean existsMovementForOrder(String orderId) {
+        return storage.values().stream()
+                .flatMap(item -> item.movements().stream())
+                .anyMatch(movement -> movement.orderReference().equals(orderId));
     }
 }
 

@@ -43,12 +43,16 @@ public class AdaptadorRepositorioCertificado implements RepositorioCertificado {
     private CertificadoEntidade toEntity(Certificado certificate) {
         CertificadoEntidade entity = new CertificadoEntidade();
         entity.setId(PersistenciaIds.toUuid(certificate.id()));
-        entity.setClienteId(PersistenciaIds.toUuid(certificate.serviceProvidedId()));
-        entity.setDescricao("Certificado");
+        entity.setClienteId(PersistenciaIds.toUuid(certificate.customerId()));
+        entity.setOrdemServicoId(PersistenciaIds.toUuid(certificate.orderId()));
+        entity.setDescricao(certificate.description().isBlank() ? "Certificado de higiene" : certificate.description());
         entity.setIssuedOn(certificate.issuedOn());
         entity.setValidUntil(certificate.validUntil());
+        entity.setIntervaloMeses(certificate.intervalMonths());
+        entity.setAlertaAtivo(certificate.alertActive());
         entity.setStatus(certificate.status().name());
         entity.setRenewalAlertDays(certificate.renewalAlertDays());
+        entity.setObservacoes(certificate.notes());
         return entity;
     }
 
@@ -56,10 +60,16 @@ public class AdaptadorRepositorioCertificado implements RepositorioCertificado {
         return new Certificado(
                 PersistenciaIds.toString(entity.getId()),
                 PersistenciaIds.toString(entity.getClienteId()),
+                "",
+                PersistenciaIds.toString(entity.getOrdemServicoId()),
+                entity.getDescricao(),
                 entity.getIssuedOn(),
                 entity.getValidUntil(),
+                entity.getIntervaloMeses() <= 0 ? 6 : entity.getIntervaloMeses(),
+                entity.isAlertaAtivo(),
                 parseStatus(entity.getStatus()),
-                entity.getRenewalAlertDays()
+                entity.getRenewalAlertDays() <= 0 ? 15 : entity.getRenewalAlertDays(),
+                entity.getObservacoes()
         );
     }
 
