@@ -43,6 +43,10 @@ public class ServicoConsultaReferencias {
     public List<OpcaoId> clientes() {
         return casoDeUsoCliente.listAll().stream()
                 .filter(customer -> customer.ativo())
+<<<<<<< Updated upstream
+=======
+                .sorted(Comparator.comparing(customer -> customer.name().toLowerCase()))
+>>>>>>> Stashed changes
                 .map(customer -> new OpcaoId(customer.id(), customer.name()))
                 .sorted(Comparator.comparing(OpcaoId::label))
                 .toList();
@@ -51,6 +55,10 @@ public class ServicoConsultaReferencias {
     public List<OpcaoId> funcionarios() {
         return casoDeUsoFuncionario.listAll().stream()
                 .filter(employee -> employee.status() == Funcionario.FuncionarioStatus.ACTIVE)
+<<<<<<< Updated upstream
+=======
+                .sorted(Comparator.comparing(employee -> employee.name().toLowerCase()))
+>>>>>>> Stashed changes
                 .map(employee -> new OpcaoId(employee.id(), employee.name() + " - " + employee.role()))
                 .sorted(Comparator.comparing(OpcaoId::label))
                 .toList();
@@ -87,6 +95,7 @@ public class ServicoConsultaReferencias {
 
     public List<OpcaoId> ordensServicoPorCliente(String clienteId) {
         return servicoConsultaOrdemServico.listAll().stream()
+<<<<<<< Updated upstream
                 .filter(order -> isSame(order.customerId(), clienteId))
                 .map(order -> new OpcaoId(order.id(), order.numero() + " - " + order.customerName()))
                 .sorted(Comparator.comparing(OpcaoId::label))
@@ -113,16 +122,51 @@ public class ServicoConsultaReferencias {
                 .map(reference -> new OpcaoId(reference.id(), reference.nome()))
                 .sorted(Comparator.comparing(OpcaoId::label))
                 .toList();
+=======
+                .filter(order -> mesmoId(order.customerId(), clienteId))
+                .map(order -> new OpcaoId(order.id(), order.numero() + " - " + order.customerName()))
+                .toList();
+    }
+
+    public List<OpcaoId> contratos() {
+        return casoDeUsoContrato.listAll().stream()
+                .map(contrato -> new OpcaoId(contrato.id(), labelContrato(contrato)))
+                .toList();
+    }
+
+    public List<OpcaoId> contratosPorCliente(String clienteId) {
+        return casoDeUsoContrato.listAll().stream()
+                .filter(contrato -> mesmoId(contrato.customerId(), clienteId))
+                .map(contrato -> new OpcaoId(contrato.id(), labelContrato(contrato)))
+                .toList();
+    }
+
+    public String clienteIdPorOrdem(String ordemId) {
+        return servicoConsultaOrdemServico.findById(ordemId)
+                .map(ServicoConsultaOrdemServico.OrdemServicoView::customerId)
+                .orElse("");
+    }
+
+    public String contratoIdPorOrdem(String ordemId) {
+        return servicoConsultaOrdemServico.findById(ordemId)
+                .map(ServicoConsultaOrdemServico.OrdemServicoView::contractId)
+                .orElse("");
+>>>>>>> Stashed changes
     }
 
     public String clienteIdPorContrato(String contratoId) {
         return casoDeUsoContrato.listAll().stream()
+<<<<<<< Updated upstream
                 .filter(contract -> isSame(contract.id(), contratoId))
+=======
+                .filter(contrato -> mesmoId(contrato.id(), contratoId))
+>>>>>>> Stashed changes
                 .map(Contrato::customerId)
                 .findFirst()
                 .orElse("");
     }
 
+<<<<<<< Updated upstream
     public String clienteIdPorOrdem(String ordemId) {
         return servicoConsultaOrdemServico.listAll().stream()
                 .filter(order -> isSame(order.id(), ordemId))
@@ -151,5 +195,30 @@ public class ServicoConsultaReferencias {
 
     private boolean isSame(String left, String right) {
         return left != null && right != null && !right.isBlank() && Objects.equals(left, right);
+=======
+    public List<OpcaoId> categoriasFinanceiras(CasoDeUsoFinanceiro.TransactionType tipo) {
+        String tipoBanco = tipo == CasoDeUsoFinanceiro.TransactionType.EXPENSE ? "EXPENSE" : "ENTRY";
+        return casoDeUsoFinanceiro.listCategoriasAtivas().stream()
+                .filter(categoria -> categoria.tipo().equalsIgnoreCase(tipoBanco))
+                .map(categoria -> new OpcaoId(categoria.id(), categoria.nome()))
+                .toList();
+    }
+
+    public List<OpcaoId> formasPagamento() {
+        return casoDeUsoFinanceiro.listFormasPagamentoAtivas().stream()
+                .map(forma -> new OpcaoId(forma.id(), forma.nome()))
+                .toList();
+    }
+
+    private String labelContrato(Contrato contrato) {
+        String descricao = contrato.description() == null || contrato.description().isBlank()
+                ? contrato.type().name()
+                : contrato.description();
+        return descricao + " - " + contrato.status().name();
+    }
+
+    private boolean mesmoId(String left, String right) {
+        return left != null && right != null && !right.isBlank() && left.equals(right);
+>>>>>>> Stashed changes
     }
 }

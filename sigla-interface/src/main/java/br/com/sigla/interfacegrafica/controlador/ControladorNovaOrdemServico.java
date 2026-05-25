@@ -20,7 +20,10 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 @Component
 public class ControladorNovaOrdemServico {
 
@@ -86,15 +89,25 @@ public class ControladorNovaOrdemServico {
         UtilComboBox.preencher(responsavelInternoCombo, servicoConsultaReferencias.funcionarios(), true);
         UtilComboBox.preencher(responsavelSecundarioCombo, servicoConsultaReferencias.funcionarios(), true);
         UtilComboBox.preencher(executadoPorCombo, servicoConsultaReferencias.funcionarios(), true);
+<<<<<<< Updated upstream
+=======
+        if (statusCombo != null) {
+            statusCombo.getItems().setAll(OrdemServico.OrdemServicoStatus.values());
+            statusCombo.getSelectionModel().select(OrdemServico.OrdemServicoStatus.AGENDADA);
+        }
+>>>>>>> Stashed changes
         if (clienteCombo != null) {
             clienteCombo.valueProperty().addListener((observable, oldValue, newValue) -> atualizarContratosPorCliente());
         }
         if (contratoCombo != null) {
             contratoCombo.valueProperty().addListener((observable, oldValue, newValue) -> sincronizarClientePorContrato());
+<<<<<<< Updated upstream
         }
         if (statusCombo != null) {
             statusCombo.getItems().setAll(OrdemServico.OrdemServicoStatus.values());
             statusCombo.getSelectionModel().select(OrdemServico.OrdemServicoStatus.AGENDADA);
+=======
+>>>>>>> Stashed changes
         }
         setFeedback("");
     }
@@ -102,6 +115,10 @@ public class ControladorNovaOrdemServico {
     @FXML
     private void onConfirmar() {
         try {
+<<<<<<< Updated upstream
+=======
+            OpcaoId cliente = UtilComboBox.obrigatorio(clienteCombo, "Selecione um cliente.");
+>>>>>>> Stashed changes
             LocalDate dataAgendada = dataAgendadaPicker == null ? LocalDate.now() : dataAgendadaPicker.getValue();
             LocalDate dataInicio = dataInicioPicker == null || dataInicioPicker.getValue() == null ? dataAgendada : dataInicioPicker.getValue();
             LocalDate dataFim = dataFimPicker == null || dataFimPicker.getValue() == null ? dataAgendada : dataFimPicker.getValue();
@@ -110,7 +127,11 @@ public class ControladorNovaOrdemServico {
 
             casoDeUsoOrdemServico.create(new CasoDeUsoOrdemServico.CreateOrdemServicoCommand(
                     UUID.randomUUID().toString(),
+<<<<<<< Updated upstream
                     UtilComboBox.idSelecionado(clienteCombo),
+=======
+                    cliente.id(),
+>>>>>>> Stashed changes
                     UtilComboBox.idSelecionado(contratoCombo),
                     tituloField == null ? "" : tituloField.getText(),
                     descricaoField == null ? "" : descricaoField.getText(),
@@ -134,6 +155,7 @@ public class ControladorNovaOrdemServico {
     @FXML
     private void onCancelar() {
         UtilJanela.fecharJanela(clienteCombo);
+<<<<<<< Updated upstream
     }
 
     @FXML
@@ -159,6 +181,18 @@ public class ControladorNovaOrdemServico {
         String responsavelSecundario = UtilComboBox.idSelecionado(responsavelSecundarioCombo);
         if (!responsavelSecundario.isBlank()) {
             return responsavelSecundario;
+=======
+    }
+
+    private String chooseResponsible() {
+        String interno = UtilComboBox.idSelecionado(responsavelInternoCombo);
+        if (!interno.isBlank()) {
+            return interno;
+        }
+        String secundario = UtilComboBox.idSelecionado(responsavelSecundarioCombo);
+        if (!secundario.isBlank()) {
+            return secundario;
+>>>>>>> Stashed changes
         }
         return UtilComboBox.idSelecionado(executadoPorCombo);
     }

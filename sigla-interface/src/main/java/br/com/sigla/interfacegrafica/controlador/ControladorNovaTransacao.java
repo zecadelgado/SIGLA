@@ -89,6 +89,19 @@ public class ControladorNovaTransacao {
             parceladoCombo.getItems().setAll(false, true);
             parceladoCombo.getSelectionModel().select(Boolean.FALSE);
         }
+<<<<<<< Updated upstream
+=======
+        configurarCombos();
+        carregarCategorias();
+        UtilComboBox.preencher(clienteCombo, servicoConsultaReferencias.clientes(), true);
+        UtilComboBox.preencher(ordemCombo, servicoConsultaReferencias.ordensServico(), true);
+        if (clienteCombo != null) {
+            clienteCombo.valueProperty().addListener((observable, oldValue, newValue) -> atualizarOrdensPorCliente());
+        }
+        if (ordemCombo != null) {
+            ordemCombo.valueProperty().addListener((observable, oldValue, newValue) -> sincronizarClientePorOrdem());
+        }
+>>>>>>> Stashed changes
         if (emissaoPicker != null) {
             emissaoPicker.setValue(LocalDate.now());
         }
@@ -102,19 +115,28 @@ public class ControladorNovaTransacao {
     @FXML
     private void onAdicionar() {
         try {
+<<<<<<< Updated upstream
             String clienteId = UtilComboBox.idSelecionado(clienteCombo);
             String ordemId = UtilComboBox.idSelecionado(ordemCombo);
             OpcaoId categoria = UtilComboBox.obrigatorio(categoriaCombo, "Selecione uma categoria.");
             OpcaoId formaPagamento = UtilComboBox.obrigatorio(formaPagamentoCombo, "Selecione uma forma de pagamento.");
+=======
+>>>>>>> Stashed changes
             casoDeUsoFinanceiro.registerTransaction(new CasoDeUsoFinanceiro.RegisterTransacaoFinanceiraCommand(
                     UUID.randomUUID().toString(),
                     tipoCombo == null || tipoCombo.getValue() == null ? CasoDeUsoFinanceiro.TransactionType.ENTRY : tipoCombo.getValue(),
                     categoria.label(),
                     categoria.id(),
                     descricaoField.getText(),
+<<<<<<< Updated upstream
                     clienteId,
                     "",
                     ordemId,
+=======
+                    UtilComboBox.idSelecionado(clienteCombo),
+                    "",
+                    UtilComboBox.idSelecionado(ordemCombo),
+>>>>>>> Stashed changes
                     new BigDecimal(valorField.getText()),
                     emissaoPicker == null ? LocalDate.now() : emissaoPicker.getValue(),
                     vencimentoPicker == null ? null : vencimentoPicker.getValue(),
@@ -150,6 +172,21 @@ public class ControladorNovaTransacao {
                 ? CasoDeUsoFinanceiro.TransactionType.ENTRY
                 : tipoCombo.getValue();
         UtilComboBox.preencher(categoriaCombo, servicoConsultaReferencias.categoriasFinanceiras(tipo), false);
+    }
+
+    private void atualizarOrdensPorCliente() {
+        String clienteId = UtilComboBox.idSelecionado(clienteCombo);
+        UtilComboBox.preencher(ordemCombo, clienteId.isBlank()
+                ? servicoConsultaReferencias.ordensServico()
+                : servicoConsultaReferencias.ordensServicoPorCliente(clienteId), true);
+    }
+
+    private void sincronizarClientePorOrdem() {
+        String ordemId = UtilComboBox.idSelecionado(ordemCombo);
+        if (!ordemId.isBlank()) {
+            UtilComboBox.selecionarPorId(clienteCombo, servicoConsultaReferencias.clienteIdPorOrdem(ordemId));
+            UtilComboBox.selecionarPorId(ordemCombo, ordemId);
+        }
     }
 
     private void atualizarOrdensPorCliente() {

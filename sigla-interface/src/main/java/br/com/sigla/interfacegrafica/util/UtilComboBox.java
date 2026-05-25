@@ -3,6 +3,10 @@ package br.com.sigla.interfacegrafica.util;
 import br.com.sigla.interfacegrafica.modelo.OpcaoId;
 import javafx.scene.control.ComboBox;
 
+<<<<<<< Updated upstream
+=======
+import java.util.ArrayList;
+>>>>>>> Stashed changes
 import java.util.List;
 
 public final class UtilComboBox {
@@ -16,6 +20,7 @@ public final class UtilComboBox {
         if (comboBox == null) {
             return;
         }
+<<<<<<< Updated upstream
         OpcaoId selecionado = comboBox.getValue();
         comboBox.getItems().clear();
         if (permitirVazio) {
@@ -27,12 +32,29 @@ public final class UtilComboBox {
         } else if (permitirVazio) {
             comboBox.getSelectionModel().select(VAZIO);
         } else if (!comboBox.getItems().isEmpty()) {
+=======
+        String selecionado = idSelecionado(comboBox);
+        List<OpcaoId> itens = new ArrayList<>();
+        if (permitirVazio) {
+            itens.add(VAZIO);
+        }
+        if (opcoes != null) {
+            itens.addAll(opcoes);
+        }
+        comboBox.getItems().setAll(itens);
+        selecionarPorId(comboBox, selecionado);
+        if (comboBox.getSelectionModel().isEmpty() && permitirVazio) {
+>>>>>>> Stashed changes
             comboBox.getSelectionModel().selectFirst();
         }
     }
 
     public static String idSelecionado(ComboBox<OpcaoId> comboBox) {
+<<<<<<< Updated upstream
         if (comboBox == null || comboBox.getValue() == null) {
+=======
+        if (comboBox == null || comboBox.getValue() == null || comboBox.getValue().id() == null) {
+>>>>>>> Stashed changes
             return "";
         }
         return comboBox.getValue().id();
@@ -42,6 +64,7 @@ public final class UtilComboBox {
         if (comboBox == null) {
             return;
         }
+<<<<<<< Updated upstream
         if (id == null || id.isBlank()) {
             selecionarVazioOuLimpar(comboBox);
             return;
@@ -73,5 +96,29 @@ public final class UtilComboBox {
         } else {
             comboBox.getSelectionModel().clearSelection();
         }
+=======
+        String alvo = id == null ? "" : id;
+        comboBox.getItems().stream()
+                .filter(item -> alvo.equals(item.id()))
+                .findFirst()
+                .ifPresentOrElse(
+                        item -> comboBox.getSelectionModel().select(item),
+                        () -> {
+                            if (!comboBox.getItems().isEmpty() && comboBox.getItems().getFirst().id().isBlank()) {
+                                comboBox.getSelectionModel().selectFirst();
+                            } else {
+                                comboBox.getSelectionModel().clearSelection();
+                            }
+                        }
+                );
+    }
+
+    public static OpcaoId obrigatorio(ComboBox<OpcaoId> comboBox, String mensagem) {
+        OpcaoId opcao = comboBox == null ? null : comboBox.getValue();
+        if (opcao == null || opcao.id() == null || opcao.id().isBlank()) {
+            throw new IllegalArgumentException(mensagem);
+        }
+        return opcao;
+>>>>>>> Stashed changes
     }
 }

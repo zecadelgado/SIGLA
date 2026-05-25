@@ -65,10 +65,20 @@ public class ControladorNovaMovimentacao {
         UtilComboBox.preencher(ordemCombo, servicoConsultaReferencias.ordensServico(), true);
         if (tipoCombo != null) {
             tipoCombo.getItems().setAll(ItemEstoque.MovementType.values());
+<<<<<<< Updated upstream
             tipoCombo.getSelectionModel().select(ItemEstoque.MovementType.OUTBOUND);
+=======
+            tipoCombo.getSelectionModel().select(ItemEstoque.MovementType.SAIDA);
+>>>>>>> Stashed changes
         }
         if (clienteCombo != null) {
             clienteCombo.valueProperty().addListener((observable, oldValue, newValue) -> atualizarOrdensPorCliente());
+        }
+        if (clienteCombo != null) {
+            clienteCombo.valueProperty().addListener((observable, oldValue, newValue) -> atualizarOrdensPorCliente());
+        }
+        if (ordemCombo != null) {
+            ordemCombo.valueProperty().addListener((observable, oldValue, newValue) -> sincronizarClientePorOrdem());
         }
         quantidadeField.textProperty().addListener((observable, oldValue, newValue) -> recomputeTotal());
         valorUnitarioField.textProperty().addListener((observable, oldValue, newValue) -> recomputeTotal());
@@ -78,13 +88,23 @@ public class ControladorNovaMovimentacao {
     @FXML
     private void onConfirmarMovimentacao() {
         try {
+<<<<<<< Updated upstream
             var produto = UtilComboBox.obrigatorio(produtoCombo, "Selecione um produto valido.");
             String clienteId = UtilComboBox.idSelecionado(clienteCombo);
             String ordemId = UtilComboBox.idSelecionado(ordemCombo);
+=======
+            OpcaoId produto = UtilComboBox.obrigatorio(produtoCombo, "Selecione um produto valido.");
+            String clienteId = UtilComboBox.idSelecionado(clienteCombo);
+            String ordemId = UtilComboBox.idSelecionado(ordemCombo);
+            ItemEstoque.MovementType tipo = tipoCombo == null || tipoCombo.getValue() == null
+                    ? ItemEstoque.MovementType.SAIDA
+                    : tipoCombo.getValue();
+>>>>>>> Stashed changes
 
             casoDeUsoEstoque.recordMovement(new CasoDeUsoEstoque.RecordInventoryMovementCommand(
                     produto.id(),
                     UUID.randomUUID().toString(),
+<<<<<<< Updated upstream
                     tipoCombo == null || tipoCombo.getValue() == null ? ItemEstoque.MovementType.OUTBOUND : tipoCombo.getValue(),
                     Integer.parseInt(quantidadeField.getText()),
                     LocalDate.now(),
@@ -94,6 +114,20 @@ public class ControladorNovaMovimentacao {
                     clienteId,
                     ordemId,
                     destinoField.getText(),
+=======
+                    tipo,
+                    Integer.parseInt(quantidadeField.getText()),
+                    LocalDate.now(),
+                    new BigDecimal(valorUnitarioField.getText()),
+                    BigDecimal.ZERO,
+                    resolveUsuarioAtual(),
+                    clienteId,
+                    ordemId,
+                    destinoField.getText(),
+                    "",
+                    usuarioField == null ? "" : usuarioField.getText(),
+                    tipo == ItemEstoque.MovementType.COMPRA ? usuarioField.getText() : "",
+>>>>>>> Stashed changes
                     observacoesField == null ? "" : observacoesField.getText()
             ));
             gerenciadorNavegacao.navigateTo(VisaoAplicacao.INVENTORY);
@@ -106,6 +140,7 @@ public class ControladorNovaMovimentacao {
     @FXML
     private void onCancelar() {
         UtilJanela.fecharJanela(produtoCombo);
+<<<<<<< Updated upstream
     }
 
     private void atualizarOrdensPorCliente() {
@@ -113,6 +148,8 @@ public class ControladorNovaMovimentacao {
         UtilComboBox.preencher(ordemCombo, clienteId.isBlank()
                 ? servicoConsultaReferencias.ordensServico()
                 : servicoConsultaReferencias.ordensServicoPorCliente(clienteId), true);
+=======
+>>>>>>> Stashed changes
     }
 
     private void recomputeTotal() {
@@ -130,4 +167,30 @@ public class ControladorNovaMovimentacao {
             feedbackLabel.setText(message == null ? "" : message);
         }
     }
+<<<<<<< Updated upstream
+=======
+
+    private String resolveUsuarioAtual() {
+        String digitado = usuarioField == null ? "" : usuarioField.getText();
+        if (digitado != null && !digitado.isBlank()) {
+            return digitado.trim();
+        }
+        return sessaoLocalAplicacao.usuarioAtual() == null ? "" : sessaoLocalAplicacao.usuarioAtual().id();
+    }
+
+    private void atualizarOrdensPorCliente() {
+        String clienteId = UtilComboBox.idSelecionado(clienteCombo);
+        UtilComboBox.preencher(ordemCombo, clienteId.isBlank()
+                ? servicoConsultaReferencias.ordensServico()
+                : servicoConsultaReferencias.ordensServicoPorCliente(clienteId), true);
+    }
+
+    private void sincronizarClientePorOrdem() {
+        String ordemId = UtilComboBox.idSelecionado(ordemCombo);
+        if (!ordemId.isBlank()) {
+            UtilComboBox.selecionarPorId(clienteCombo, servicoConsultaReferencias.clienteIdPorOrdem(ordemId));
+            UtilComboBox.selecionarPorId(ordemCombo, ordemId);
+        }
+    }
+>>>>>>> Stashed changes
 }

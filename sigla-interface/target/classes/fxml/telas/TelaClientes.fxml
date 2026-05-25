@@ -2,16 +2,14 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<<<<<<< Updated upstream
-=======
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
->>>>>>> Stashed changes
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -25,7 +23,7 @@
          <children>
             <BorderPane prefHeight="1100.0" prefWidth="1510.0" style="-fx-background-color: lightgrey;">
                <left>
-                  <VBox prefHeight="950.0" prefWidth="250.0" spacing="15.0" style="-fx-background-color: #0B2A6F;" BorderPane.alignment="CENTER">
+                  <VBox fx:id="menuLateral" prefHeight="950.0" prefWidth="250.0" spacing="15.0" style="-fx-background-color: #0B2A6F;" BorderPane.alignment="CENTER">
                      <children>
                         <Label text="Sigla" textFill="#a6d3ff">
                            <font>
@@ -110,7 +108,7 @@
                      <children>
                         <HBox prefHeight="100.0" prefWidth="200.0">
                            <children>
-                              <VBox prefHeight="102.0" prefWidth="603.0">
+<VBox prefHeight="102.0" prefWidth="603.0">
                                  <children>
                                     <Label prefHeight="66.0" prefWidth="440.0" text="Gestão de Clientes" textFill="#00417e">
                                        <font>
@@ -254,11 +252,11 @@
                                     </Label>
                                     <TableView fx:id="rankingTable" prefHeight="385.0" prefWidth="200.0">
                                        <columns>
-                                          <TableColumn prefWidth="231.0" style="-fx-background-color: white;" text="Nome" />
-                                          <TableColumn prefWidth="231.0" style="-fx-background-color: White;" text="Email" />
-                                          <TableColumn prefWidth="231.0" style="-fx-background-color: white;" text="Quantidade de Serviços" />
-                                          <TableColumn prefWidth="231.0" style="-fx-background-color: white;" text="Valor" />
-                                          <TableColumn prefWidth="231.0" style="-fx-background-color: white;" text="Indicações" />
+                                          <TableColumn fx:id="rankingClienteColumn" prefWidth="231.0" style="-fx-background-color: white;" text="Nome" />
+                                          <TableColumn fx:id="rankingEmailColumn" prefWidth="231.0" style="-fx-background-color: White;" text="Email" />
+                                          <TableColumn fx:id="rankingServicosColumn" prefWidth="231.0" style="-fx-background-color: white;" text="Quantidade de Serviços" />
+                                          <TableColumn fx:id="rankingFaturamentoColumn" prefWidth="231.0" style="-fx-background-color: white;" text="Valor" />
+                                          <TableColumn fx:id="rankingIndicacoesColumn" prefWidth="231.0" style="-fx-background-color: white;" text="Indicações" />
                                        </columns>
                                        <VBox.margin>
                                           <Insets bottom="15.0" left="15.0" right="15.0" top="10.0" />
@@ -283,9 +281,6 @@
                                           <Insets left="15.0" top="8.0" />
                                        </VBox.margin>
                                     </Label>
-<<<<<<< Updated upstream
-                                    <TableView fx:id="indicacoesTable" prefHeight="385.0" prefWidth="200.0">
-=======
                                     <HBox prefHeight="45.0" prefWidth="1148.0" spacing="10.0">
                                        <children>
                                           <TextField fx:id="indicacaoBuscaField" prefHeight="30.0" prefWidth="190.0" promptText="Buscar indicação" style="-fx-background-radius: 5;" />
@@ -303,13 +298,12 @@
                                        </VBox.margin>
                                     </HBox>
                                     <TableView fx:id="indicacoesTable" prefHeight="340.0" prefWidth="200.0">
->>>>>>> Stashed changes
                                        <columns>
-                                          <TableColumn prefWidth="231.0" style="-fx-background-color: white;" text="Nome Indicado" />
-                                          <TableColumn prefWidth="231.0" style="-fx-background-color: White;" text="Telefone" />
-                                          <TableColumn prefWidth="231.0" style="-fx-background-color: white;" text="Cliente Indicador" />
-                                          <TableColumn prefWidth="231.0" style="-fx-background-color: white;" text="Data" />
-                                          <TableColumn prefWidth="231.0" style="-fx-background-color: white;" text="Status" />
+                                          <TableColumn fx:id="indicacaoNomeColumn" prefWidth="231.0" style="-fx-background-color: white;" text="Nome Indicado" />
+                                          <TableColumn fx:id="indicacaoContatoColumn" prefWidth="231.0" style="-fx-background-color: White;" text="Telefone" />
+                                          <TableColumn fx:id="indicacaoClienteColumn" prefWidth="231.0" style="-fx-background-color: white;" text="Cliente Indicador" />
+                                          <TableColumn fx:id="indicacaoDataColumn" prefWidth="231.0" style="-fx-background-color: white;" text="Data" />
+                                          <TableColumn fx:id="indicacaoStatusColumn" prefWidth="231.0" style="-fx-background-color: white;" text="Status" />
                                        </columns>
                                        <VBox.margin>
                                           <Insets bottom="15.0" left="15.0" right="15.0" top="10.0" />

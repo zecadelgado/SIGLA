@@ -4,6 +4,10 @@ import br.com.sigla.aplicacao.potenciaisclientes.porta.entrada.CasoDeUsoPotencia
 import br.com.sigla.dominio.potenciaisclientes.PotencialCliente;
 import br.com.sigla.interfacegrafica.consulta.ServicoConsultaReferencias;
 import br.com.sigla.interfacegrafica.modelo.OpcaoId;
+<<<<<<< Updated upstream
+=======
+import br.com.sigla.interfacegrafica.formatador.FormatadorMascaraCpf;
+>>>>>>> Stashed changes
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import br.com.sigla.interfacegrafica.util.UtilComboBox;
@@ -16,6 +20,10 @@ import javafx.scene.control.TextField;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+<<<<<<< Updated upstream
+=======
+import java.util.UUID;
+>>>>>>> Stashed changes
 
 @Component
 public class ControladorNovaIndicacao {
@@ -34,6 +42,11 @@ public class ControladorNovaIndicacao {
     private DatePicker dataPicker;
     @FXML
     private ComboBox<PotencialCliente.PotencialClienteStatus> statusCombo;
+<<<<<<< Updated upstream
+=======
+    @FXML
+    private TextArea observacoesArea;
+>>>>>>> Stashed changes
     @FXML
     private Label feedbackLabel;
 
@@ -55,7 +68,11 @@ public class ControladorNovaIndicacao {
         UtilComboBox.preencher(clienteCombo, servicoConsultaReferencias.clientes(), true);
         if (statusCombo != null) {
             statusCombo.getItems().setAll(PotencialCliente.PotencialClienteStatus.values());
+<<<<<<< Updated upstream
             statusCombo.getSelectionModel().select(PotencialCliente.PotencialClienteStatus.NEW);
+=======
+            statusCombo.getSelectionModel().select(PotencialCliente.PotencialClienteStatus.NOVO);
+>>>>>>> Stashed changes
         }
         setFeedback("");
     }
@@ -69,7 +86,12 @@ public class ControladorNovaIndicacao {
                     nomeField.getText(),
                     telefoneField.getText(),
                     "INDICACAO:" + customerId,
+<<<<<<< Updated upstream
                     statusCombo == null || statusCombo.getValue() == null ? PotencialCliente.PotencialClienteStatus.NEW : statusCombo.getValue(),
+=======
+                    customerId,
+                    statusCombo == null || statusCombo.getValue() == null ? PotencialCliente.PotencialClienteStatus.NOVO : statusCombo.getValue(),
+>>>>>>> Stashed changes
                     dataPicker == null ? LocalDate.now() : dataPicker.getValue(),
                     "Indicacao",
                     ""

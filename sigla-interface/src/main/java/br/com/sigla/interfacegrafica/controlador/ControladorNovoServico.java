@@ -9,6 +9,10 @@ import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import br.com.sigla.interfacegrafica.util.UtilComboBox;
 import br.com.sigla.interfacegrafica.util.UtilJanela;
 import javafx.fxml.FXML;
+<<<<<<< Updated upstream
+=======
+import javafx.scene.control.CheckBox;
+>>>>>>> Stashed changes
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -70,6 +74,7 @@ public class ControladorNovoServico {
         UtilComboBox.preencher(clienteCombo, servicoConsultaReferencias.clientes(), true);
         UtilComboBox.preencher(ordemCombo, servicoConsultaReferencias.ordensServico(), true);
         UtilComboBox.preencher(responsavelCombo, servicoConsultaReferencias.funcionarios(), true);
+<<<<<<< Updated upstream
         if (clienteCombo != null) {
             clienteCombo.valueProperty().addListener((observable, oldValue, newValue) -> atualizarOrdensPorCliente());
         }
@@ -83,6 +88,21 @@ public class ControladorNovoServico {
         if (prioridadeCombo != null) {
             prioridadeCombo.getItems().setAll(VisitaAgendada.VisitPriority.values());
             prioridadeCombo.getSelectionModel().select(VisitaAgendada.VisitPriority.NORMAL);
+=======
+        if (statusCombo != null) {
+            statusCombo.getItems().setAll(VisitaAgendada.VisitStatus.values());
+            statusCombo.getSelectionModel().select(VisitaAgendada.VisitStatus.SCHEDULED);
+        }
+        if (prioridadeCombo != null) {
+            prioridadeCombo.getItems().setAll(VisitaAgendada.VisitPriority.values());
+            prioridadeCombo.getSelectionModel().select(VisitaAgendada.VisitPriority.NORMAL);
+        }
+        if (clienteCombo != null) {
+            clienteCombo.valueProperty().addListener((observable, oldValue, newValue) -> atualizarOrdensPorCliente());
+        }
+        if (ordemCombo != null) {
+            ordemCombo.valueProperty().addListener((observable, oldValue, newValue) -> sincronizarClientePorOrdem());
+>>>>>>> Stashed changes
         }
         setFeedback("");
     }
@@ -90,16 +110,27 @@ public class ControladorNovoServico {
     @FXML
     private void onConfirmar() {
         try {
+<<<<<<< Updated upstream
             String clienteId = UtilComboBox.idSelecionado(clienteCombo);
+=======
+            OpcaoId cliente = UtilComboBox.obrigatorio(clienteCombo, "Selecione um cliente.");
+>>>>>>> Stashed changes
             String ordemId = UtilComboBox.idSelecionado(ordemCombo);
             LocalDate dataInicio = dataInicioPicker == null || dataInicioPicker.getValue() == null ? LocalDate.now() : dataInicioPicker.getValue();
             LocalDate dataFim = dataFimPicker == null || dataFimPicker.getValue() == null ? dataInicio : dataFimPicker.getValue();
 
             casoDeUsoAgenda.schedule(new CasoDeUsoAgenda.ScheduleVisitCommand(
                     UUID.randomUUID().toString(),
+<<<<<<< Updated upstream
                     clienteId,
                     ordemId,
                     "",
+=======
+                    cliente.id(),
+                    ordemId,
+                    "",
+                    "",
+>>>>>>> Stashed changes
                     VisitaAgendada.VisitType.ONE_OFF,
                     VisitaAgendada.Recurrence.NONE,
                     dataInicio,
@@ -108,12 +139,20 @@ public class ControladorNovoServico {
                     "",
                     dataInicio.atStartOfDay(),
                     dataFim.atTime(23, 59),
+<<<<<<< Updated upstream
                     diaInteiroPicker != null && diaInteiroPicker.getValue() != null,
+=======
+                    diaInteiroCheck != null && diaInteiroCheck.isSelected(),
+>>>>>>> Stashed changes
                     statusCombo == null || statusCombo.getValue() == null ? VisitaAgendada.VisitStatus.SCHEDULED : statusCombo.getValue(),
                     prioridadeCombo == null || prioridadeCombo.getValue() == null ? VisitaAgendada.VisitPriority.NORMAL : prioridadeCombo.getValue(),
                     UtilComboBox.idSelecionado(responsavelCombo),
                     false,
+<<<<<<< Updated upstream
                     1,
+=======
+                    0,
+>>>>>>> Stashed changes
                     mergeDescricao()
             ));
             gerenciadorNavegacao.navigateTo(VisaoAplicacao.SERVICES);
@@ -135,7 +174,11 @@ public class ControladorNovoServico {
         }
         String titulo = tituloField == null ? "" : tituloField.getText().trim();
         String texto = titulo.isBlank() ? descricao : titulo + " - " + descricao;
+<<<<<<< Updated upstream
         return diaInteiroPicker != null && diaInteiroPicker.getValue() != null ? texto + " | Dia inteiro" : texto;
+=======
+        return diaInteiroCheck != null && diaInteiroCheck.isSelected() ? texto + " | Dia inteiro" : texto;
+>>>>>>> Stashed changes
     }
 
     private void setFeedback(String message) {

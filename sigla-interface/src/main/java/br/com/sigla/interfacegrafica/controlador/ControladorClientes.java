@@ -8,8 +8,15 @@ import br.com.sigla.dominio.clientes.Cliente;
 import br.com.sigla.dominio.potenciaisclientes.PotencialCliente;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorData;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorMoeda;
+<<<<<<< Updated upstream
+=======
+import br.com.sigla.interfacegrafica.consulta.ServicoConsultaOrdemServico;
+import br.com.sigla.interfacegrafica.formatador.FormatadorMascaraCpf;
+import br.com.sigla.interfacegrafica.modelo.OpcaoId;
+>>>>>>> Stashed changes
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
+import br.com.sigla.interfacegrafica.util.UtilComboBox;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -65,6 +72,19 @@ public class ControladorClientes extends ControladorComMenuPrincipal {
     private TableColumn<IndicacaoRow, String> indicacaoDataColumn;
     @FXML
     private TableColumn<IndicacaoRow, String> indicacaoStatusColumn;
+<<<<<<< Updated upstream
+=======
+    @FXML
+    private TextField indicacaoBuscaField;
+    @FXML
+    private ComboBox<OpcaoId> indicacaoClienteFiltroField;
+    @FXML
+    private ChoiceBox<String> indicacaoStatusFiltro;
+    @FXML
+    private DatePicker indicacaoInicioPicker;
+    @FXML
+    private DatePicker indicacaoFimPicker;
+>>>>>>> Stashed changes
 
     public ControladorClientes(
             CasoDeUsoCliente casoDeUsoCliente,
@@ -88,6 +108,14 @@ public class ControladorClientes extends ControladorComMenuPrincipal {
     @FXML
     public void initialize() {
         configureTables();
+<<<<<<< Updated upstream
+=======
+        if (indicacaoStatusFiltro != null) {
+            indicacaoStatusFiltro.getItems().setAll("TODOS", "NOVO", "CONTATADO", "AGUARDANDO_RETORNO", "CONVERTIDO", "PERDIDO", "CANCELADO");
+            indicacaoStatusFiltro.getSelectionModel().select("TODOS");
+        }
+        UtilComboBox.preencher(indicacaoClienteFiltroField, clientesOpcoes(), true);
+>>>>>>> Stashed changes
         refresh();
     }
 
@@ -189,6 +217,198 @@ public class ControladorClientes extends ControladorComMenuPrincipal {
         configureIndicacaoColumn(indicacaoStatusColumn, 4, row -> row.status());
     }
 
+<<<<<<< Updated upstream
+=======
+    @FXML
+    private void onFiltrarIndicacoes() {
+        refresh();
+    }
+
+    @FXML
+    private void onEditarIndicacao() {
+        PotencialCliente lead = indicacaoSelecionada();
+        if (lead == null) {
+            return;
+        }
+        Optional<CasoDeUsoPotencialCliente.RegisterPotencialClienteCommand> command = abrirDialogoIndicacao(lead);
+        command.ifPresent(value -> {
+            executar(() -> casoDeUsoPotencialCliente.update(value));
+            refresh();
+        });
+    }
+
+    @FXML
+    private void onAlterarStatusIndicacao() {
+        PotencialCliente lead = indicacaoSelecionada();
+        if (lead == null) {
+            return;
+        }
+        Optional<CasoDeUsoPotencialCliente.AlterarStatusIndicacaoCommand> command = abrirDialogoStatus(lead);
+        command.ifPresent(value -> {
+            executar(() -> casoDeUsoPotencialCliente.alterarStatus(value));
+            refresh();
+        });
+    }
+
+    @FXML
+    private void onConverterIndicacao() {
+        PotencialCliente lead = indicacaoSelecionada();
+        if (lead == null) {
+            return;
+        }
+        Optional<CasoDeUsoCliente.RegisterClienteCommand> command = abrirDialogoConversao(lead);
+        command.ifPresent(value -> {
+            executar(() -> casoDeUsoPotencialCliente.converterEmCliente(new CasoDeUsoPotencialCliente.ConverterIndicacaoCommand(lead.id(), value.id(), value)));
+            refresh();
+        });
+    }
+
+    private CasoDeUsoPotencialCliente.FiltroIndicacao filtroIndicacao() {
+        String statusText = indicacaoStatusFiltro == null ? "" : indicacaoStatusFiltro.getValue();
+        PotencialCliente.PotencialClienteStatus status = statusText == null || statusText.isBlank() || "TODOS".equals(statusText)
+                ? null
+                : PotencialCliente.PotencialClienteStatus.from(statusText);
+        String indicadorId = UtilComboBox.idSelecionado(indicacaoClienteFiltroField);
+        return new CasoDeUsoPotencialCliente.FiltroIndicacao(
+                indicacaoBuscaField == null ? "" : indicacaoBuscaField.getText(),
+                status,
+                indicacaoInicioPicker == null ? null : indicacaoInicioPicker.getValue(),
+                indicacaoFimPicker == null ? null : indicacaoFimPicker.getValue(),
+                indicadorId
+        );
+    }
+
+    private PotencialCliente indicacaoSelecionada() {
+        IndicacaoRow row = indicacoesTable == null ? null : indicacoesTable.getSelectionModel().getSelectedItem();
+        if (row == null) {
+            mostrar("Selecione uma indicacao.");
+            return null;
+        }
+        return casoDeUsoPotencialCliente.listAll().stream()
+                .filter(lead -> lead.id().equals(row.id()))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private Optional<CasoDeUsoPotencialCliente.RegisterPotencialClienteCommand> abrirDialogoIndicacao(PotencialCliente lead) {
+        Dialog<CasoDeUsoPotencialCliente.RegisterPotencialClienteCommand> dialog = new Dialog<>();
+        dialog.setTitle("Editar Indicacao");
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        TextField nome = field(lead.name());
+        TextField telefone = field(lead.contact());
+        formatadorMascaraCpf.aplicarTelefone(telefone);
+        ComboBox<OpcaoId> indicador = new ComboBox<>();
+        UtilComboBox.preencher(indicador, clientesOpcoes(), true);
+        UtilComboBox.selecionarPorId(indicador, lead.clienteIndicadorId());
+        DatePicker data = new DatePicker(lead.dataIndicacao());
+        ComboBox<PotencialCliente.PotencialClienteStatus> status = new ComboBox<>();
+        status.getItems().setAll(PotencialCliente.PotencialClienteStatus.NOVO, PotencialCliente.PotencialClienteStatus.CONTATADO,
+                PotencialCliente.PotencialClienteStatus.AGUARDANDO_RETORNO, PotencialCliente.PotencialClienteStatus.CONVERTIDO,
+                PotencialCliente.PotencialClienteStatus.PERDIDO, PotencialCliente.PotencialClienteStatus.CANCELADO);
+        status.getSelectionModel().select(PotencialCliente.PotencialClienteStatus.normalizar(lead.status()));
+        TextArea observacoes = new TextArea(lead.observacoes());
+        observacoes.setPrefRowCount(4);
+        GridPane grid = grid();
+        grid.addRow(0, new Label("Nome"), nome);
+        grid.addRow(1, new Label("Telefone"), telefone);
+        grid.addRow(2, new Label("Cliente indicador"), indicador);
+        grid.addRow(3, new Label("Data"), data);
+        grid.addRow(4, new Label("Status"), status);
+        grid.addRow(5, new Label("Observacoes"), observacoes);
+        dialog.getDialogPane().setContent(grid);
+        dialog.setResultConverter(button -> button == ButtonType.OK ? new CasoDeUsoPotencialCliente.RegisterPotencialClienteCommand(
+                lead.id(), nome.getText(), telefone.getText(), "INDICACAO:" + UtilComboBox.idSelecionado(indicador), UtilComboBox.idSelecionado(indicador),
+                status.getValue(), data.getValue(), "Indicacao", observacoes.getText()) : null);
+        return dialog.showAndWait();
+    }
+
+    private Optional<CasoDeUsoPotencialCliente.AlterarStatusIndicacaoCommand> abrirDialogoStatus(PotencialCliente lead) {
+        Dialog<CasoDeUsoPotencialCliente.AlterarStatusIndicacaoCommand> dialog = new Dialog<>();
+        dialog.setTitle("Alterar Status");
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        ComboBox<PotencialCliente.PotencialClienteStatus> status = new ComboBox<>();
+        status.getItems().setAll(PotencialCliente.PotencialClienteStatus.NOVO, PotencialCliente.PotencialClienteStatus.CONTATADO,
+                PotencialCliente.PotencialClienteStatus.AGUARDANDO_RETORNO, PotencialCliente.PotencialClienteStatus.CONVERTIDO,
+                PotencialCliente.PotencialClienteStatus.PERDIDO, PotencialCliente.PotencialClienteStatus.CANCELADO);
+        status.getSelectionModel().select(PotencialCliente.PotencialClienteStatus.normalizar(lead.status()));
+        TextArea motivo = new TextArea();
+        motivo.setPrefRowCount(3);
+        GridPane grid = grid();
+        grid.addRow(0, new Label("Status"), status);
+        grid.addRow(1, new Label("Motivo/observacao"), motivo);
+        dialog.getDialogPane().setContent(grid);
+        dialog.setResultConverter(button -> button == ButtonType.OK ? new CasoDeUsoPotencialCliente.AlterarStatusIndicacaoCommand(lead.id(), status.getValue(), motivo.getText()) : null);
+        return dialog.showAndWait();
+    }
+
+    private Optional<CasoDeUsoCliente.RegisterClienteCommand> abrirDialogoConversao(PotencialCliente lead) {
+        Dialog<CasoDeUsoCliente.RegisterClienteCommand> dialog = new Dialog<>();
+        dialog.setTitle("Converter Indicacao em Cliente");
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        ComboBox<Cliente.TipoCliente> tipo = new ComboBox<>();
+        tipo.getItems().setAll(Cliente.TipoCliente.values());
+        tipo.getSelectionModel().select(Cliente.TipoCliente.PESSOA_FISICA);
+        TextField nome = field(lead.name());
+        TextField razao = field("");
+        TextField fantasia = field("");
+        TextField cpf = field("");
+        TextField cnpj = field("");
+        TextField telefone = field(lead.contact());
+        formatadorMascaraCpf.aplicarCpf(cpf);
+        formatadorMascaraCpf.aplicarCnpj(cnpj);
+        formatadorMascaraCpf.aplicarTelefone(telefone);
+        TextField email = field("");
+        TextArea observacoes = new TextArea("Cliente convertido da indicacao " + lead.id());
+        observacoes.setPrefRowCount(3);
+        GridPane grid = grid();
+        grid.addRow(0, new Label("Tipo"), tipo);
+        grid.addRow(1, new Label("Nome"), nome);
+        grid.addRow(2, new Label("Razao social"), razao);
+        grid.addRow(3, new Label("Nome fantasia"), fantasia);
+        grid.addRow(4, new Label("CPF"), cpf);
+        grid.addRow(5, new Label("CNPJ"), cnpj);
+        grid.addRow(6, new Label("Telefone"), telefone);
+        grid.addRow(7, new Label("E-mail"), email);
+        grid.addRow(8, new Label("Observacoes"), observacoes);
+        dialog.getDialogPane().setContent(grid);
+        dialog.setResultConverter(button -> button == ButtonType.OK ? new CasoDeUsoCliente.RegisterClienteCommand(
+                UUID.randomUUID().toString(), tipo.getValue(), nome.getText(), razao.getText(), fantasia.getText(), cpf.getText(), cnpj.getText(),
+                telefone.getText(), email.getText(), "", "", "", "", "", "", "", List.of(), observacoes.getText(), true) : null);
+        return dialog.showAndWait();
+    }
+
+    private TextField field(String value) {
+        return new TextField(value == null ? "" : value);
+    }
+
+    private GridPane grid() {
+        GridPane grid = new GridPane();
+        grid.setHgap(8);
+        grid.setVgap(8);
+        return grid;
+    }
+
+    private List<OpcaoId> clientesOpcoes() {
+        return casoDeUsoCliente.listAll().stream()
+                .filter(Cliente::ativo)
+                .map(cliente -> new OpcaoId(cliente.id(), cliente.name()))
+                .toList();
+    }
+
+    private void executar(Runnable runnable) {
+        try {
+            runnable.run();
+        } catch (IllegalArgumentException exception) {
+            mostrar(exception.getMessage());
+        }
+    }
+
+    private void mostrar(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, message, ButtonType.OK);
+        alert.showAndWait();
+    }
+
+>>>>>>> Stashed changes
     private void configureRankingColumn(TableColumn<ClienteRankingRow, String> column, int fallbackIndex, java.util.function.Function<ClienteRankingRow, String> getter) {
         TableColumn<ClienteRankingRow, String> target = column != null ? column : getRankingColumn(fallbackIndex);
         if (target != null) {

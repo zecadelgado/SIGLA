@@ -35,11 +35,7 @@
                               <Insets left="25.0" top="5.0" />
                            </VBox.margin>
                         </Label>
-<<<<<<< Updated upstream
-                        <ComboBox fx:id="produtoCombo" prefHeight="30.0" prefWidth="300.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-=======
                         <ComboBox fx:id="produtoCombo" prefHeight="30.0" prefWidth="300.0" style="-fx-background-color: white; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
->>>>>>> Stashed changes
                            <VBox.margin>
                               <Insets left="25.0" />
                            </VBox.margin>
@@ -57,11 +53,7 @@
                               <Insets top="5.0" />
                            </VBox.margin>
                         </Label>
-<<<<<<< Updated upstream
-                        <ComboBox fx:id="tipoCombo" prefHeight="30.0" prefWidth="320.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-=======
                         <ComboBox fx:id="tipoCombo" prefHeight="30.0" prefWidth="320.0" style="-fx-background-color: white; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
->>>>>>> Stashed changes
                            <VBox.margin>
                               <Insets right="25.0" />
                            </VBox.margin>
@@ -184,11 +176,7 @@
                               <Insets left="25.0" top="5.0" />
                            </VBox.margin>
                         </Label>
-<<<<<<< Updated upstream
-                        <ComboBox fx:id="clienteCombo" prefHeight="30.0" prefWidth="466.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-=======
                         <ComboBox fx:id="clienteCombo" prefHeight="30.0" prefWidth="466.0" style="-fx-background-color: white; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
->>>>>>> Stashed changes
                            <VBox.margin>
                               <Insets left="25.0" />
                            </VBox.margin>
@@ -206,11 +194,7 @@
                               <Insets top="5.0" />
                            </VBox.margin>
                         </Label>
-<<<<<<< Updated upstream
-                        <ComboBox fx:id="ordemCombo" prefHeight="30.0" prefWidth="466.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-=======
                         <ComboBox fx:id="ordemCombo" prefHeight="30.0" prefWidth="466.0" style="-fx-background-color: white; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
->>>>>>> Stashed changes
                            <VBox.margin>
                               <Insets right="25.0" />
                            </VBox.margin>
@@ -223,7 +207,7 @@
                <children>
                   <VBox prefHeight="74.0" prefWidth="674.0">
                      <children>
-                        <Label text="Destino Descriçao">
+                        <Label text="Destino Descrição">
                            <font>
                               <Font size="16.0" />
                            </font>
