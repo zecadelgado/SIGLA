@@ -7,6 +7,7 @@ import br.com.sigla.dominio.funcionarios.Funcionario;
 import br.com.sigla.interfacegrafica.formatador.FormatadorMascaraCpf;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
+import br.com.sigla.interfacegrafica.util.TradutorInterface;
 import br.com.sigla.interfacegrafica.util.UtilJanela;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
@@ -80,11 +81,13 @@ public class ControladorNovoCadastro {
     @FXML
     public void initialize() {
         if (tipoCombo != null) {
+            TradutorInterface.aplicar(tipoCombo);
             tipoCombo.getItems().setAll("CLIENTE", "FUNCIONARIO");
             tipoCombo.getSelectionModel().select("CLIENTE");
             tipoCombo.valueProperty().addListener((observable, oldValue, newValue) -> atualizarModoCadastro());
         }
         if (statusFuncionarioCombo != null) {
+            TradutorInterface.aplicar(statusFuncionarioCombo);
             statusFuncionarioCombo.getItems().setAll(Funcionario.FuncionarioStatus.values());
             statusFuncionarioCombo.getSelectionModel().select(Funcionario.FuncionarioStatus.ACTIVE);
         }

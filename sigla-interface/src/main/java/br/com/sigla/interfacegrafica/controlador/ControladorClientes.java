@@ -11,6 +11,7 @@ import br.com.sigla.interfacegrafica.consulta.ServicoConsultaOrdemServico;
 import br.com.sigla.interfacegrafica.formatador.FormatadorMascaraCpf;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
+import br.com.sigla.interfacegrafica.util.TradutorInterface;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -115,6 +116,7 @@ public class ControladorClientes extends ControladorComMenuPrincipal {
     public void initialize() {
         configureTables();
         if (indicacaoStatusFiltro != null) {
+            indicacaoStatusFiltro.setConverter(TradutorInterface.converter());
             indicacaoStatusFiltro.getItems().setAll("TODOS", "NOVO", "CONTATADO", "AGUARDANDO_RETORNO", "CONVERTIDO", "PERDIDO", "CANCELADO");
             indicacaoStatusFiltro.getSelectionModel().select("TODOS");
         }
@@ -180,7 +182,7 @@ public class ControladorClientes extends ControladorComMenuPrincipal {
                             lead.contact(),
                             clientes.getOrDefault(extractCustomerId(lead), "Origem externa"),
                             lead.interactionHistory().isEmpty() ? "-" : apresentadorData.format(lead.interactionHistory().getFirst().interactionDate()),
-                            PotencialCliente.PotencialClienteStatus.normalizar(lead.status()).name()
+                            TradutorInterface.texto(PotencialCliente.PotencialClienteStatus.normalizar(lead.status()))
                     ))
                     .toList());
         }
@@ -289,7 +291,7 @@ public class ControladorClientes extends ControladorComMenuPrincipal {
     private PotencialCliente indicacaoSelecionada() {
         IndicacaoRow row = indicacoesTable == null ? null : indicacoesTable.getSelectionModel().getSelectedItem();
         if (row == null) {
-            mostrar("Selecione uma indicacao.");
+            mostrar("Selecione uma indicação.");
             return null;
         }
         return casoDeUsoPotencialCliente.listAll().stream()
@@ -300,7 +302,7 @@ public class ControladorClientes extends ControladorComMenuPrincipal {
 
     private Optional<CasoDeUsoPotencialCliente.RegisterPotencialClienteCommand> abrirDialogoIndicacao(PotencialCliente lead) {
         Dialog<CasoDeUsoPotencialCliente.RegisterPotencialClienteCommand> dialog = new Dialog<>();
-        dialog.setTitle("Editar Indicacao");
+        dialog.setTitle("Editar Indicação");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         TextField nome = field(lead.name());
         TextField telefone = field(lead.contact());
@@ -308,6 +310,7 @@ public class ControladorClientes extends ControladorComMenuPrincipal {
         TextField indicador = field(lead.clienteIndicadorId());
         DatePicker data = new DatePicker(lead.dataIndicacao());
         ComboBox<PotencialCliente.PotencialClienteStatus> status = new ComboBox<>();
+        TradutorInterface.aplicar(status);
         status.getItems().setAll(PotencialCliente.PotencialClienteStatus.NOVO, PotencialCliente.PotencialClienteStatus.CONTATADO,
                 PotencialCliente.PotencialClienteStatus.AGUARDANDO_RETORNO, PotencialCliente.PotencialClienteStatus.CONVERTIDO,
                 PotencialCliente.PotencialClienteStatus.PERDIDO, PotencialCliente.PotencialClienteStatus.CANCELADO);
@@ -320,11 +323,11 @@ public class ControladorClientes extends ControladorComMenuPrincipal {
         grid.addRow(2, new Label("Cliente indicador"), indicador);
         grid.addRow(3, new Label("Data"), data);
         grid.addRow(4, new Label("Status"), status);
-        grid.addRow(5, new Label("Observacoes"), observacoes);
+        grid.addRow(5, new Label("Observações"), observacoes);
         dialog.getDialogPane().setContent(grid);
         dialog.setResultConverter(button -> button == ButtonType.OK ? new CasoDeUsoPotencialCliente.RegisterPotencialClienteCommand(
                 lead.id(), nome.getText(), telefone.getText(), "INDICACAO:" + indicador.getText(), indicador.getText(),
-                status.getValue(), data.getValue(), "Indicacao", observacoes.getText()) : null);
+                status.getValue(), data.getValue(), "Indicação", observacoes.getText()) : null);
         return dialog.showAndWait();
     }
 
@@ -333,6 +336,7 @@ public class ControladorClientes extends ControladorComMenuPrincipal {
         dialog.setTitle("Alterar Status");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         ComboBox<PotencialCliente.PotencialClienteStatus> status = new ComboBox<>();
+        TradutorInterface.aplicar(status);
         status.getItems().setAll(PotencialCliente.PotencialClienteStatus.NOVO, PotencialCliente.PotencialClienteStatus.CONTATADO,
                 PotencialCliente.PotencialClienteStatus.AGUARDANDO_RETORNO, PotencialCliente.PotencialClienteStatus.CONVERTIDO,
                 PotencialCliente.PotencialClienteStatus.PERDIDO, PotencialCliente.PotencialClienteStatus.CANCELADO);
@@ -341,7 +345,7 @@ public class ControladorClientes extends ControladorComMenuPrincipal {
         motivo.setPrefRowCount(3);
         GridPane grid = grid();
         grid.addRow(0, new Label("Status"), status);
-        grid.addRow(1, new Label("Motivo/observacao"), motivo);
+        grid.addRow(1, new Label("Motivo/observação"), motivo);
         dialog.getDialogPane().setContent(grid);
         dialog.setResultConverter(button -> button == ButtonType.OK ? new CasoDeUsoPotencialCliente.AlterarStatusIndicacaoCommand(lead.id(), status.getValue(), motivo.getText()) : null);
         return dialog.showAndWait();
@@ -349,9 +353,10 @@ public class ControladorClientes extends ControladorComMenuPrincipal {
 
     private Optional<CasoDeUsoCliente.RegisterClienteCommand> abrirDialogoConversao(PotencialCliente lead) {
         Dialog<CasoDeUsoCliente.RegisterClienteCommand> dialog = new Dialog<>();
-        dialog.setTitle("Converter Indicacao em Cliente");
+        dialog.setTitle("Converter Indicação em Cliente");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         ComboBox<Cliente.TipoCliente> tipo = new ComboBox<>();
+        TradutorInterface.aplicar(tipo);
         tipo.getItems().setAll(Cliente.TipoCliente.values());
         tipo.getSelectionModel().select(Cliente.TipoCliente.PESSOA_FISICA);
         TextField nome = field(lead.name());
@@ -364,18 +369,18 @@ public class ControladorClientes extends ControladorComMenuPrincipal {
         formatadorMascaraCpf.aplicarCnpj(cnpj);
         formatadorMascaraCpf.aplicarTelefone(telefone);
         TextField email = field("");
-        TextArea observacoes = new TextArea("Cliente convertido da indicacao " + lead.id());
+        TextArea observacoes = new TextArea("Cliente convertido da indicação " + lead.id());
         observacoes.setPrefRowCount(3);
         GridPane grid = grid();
         grid.addRow(0, new Label("Tipo"), tipo);
         grid.addRow(1, new Label("Nome"), nome);
-        grid.addRow(2, new Label("Razao social"), razao);
+        grid.addRow(2, new Label("Razão social"), razao);
         grid.addRow(3, new Label("Nome fantasia"), fantasia);
         grid.addRow(4, new Label("CPF"), cpf);
         grid.addRow(5, new Label("CNPJ"), cnpj);
         grid.addRow(6, new Label("Telefone"), telefone);
         grid.addRow(7, new Label("E-mail"), email);
-        grid.addRow(8, new Label("Observacoes"), observacoes);
+        grid.addRow(8, new Label("Observações"), observacoes);
         dialog.getDialogPane().setContent(grid);
         dialog.setResultConverter(button -> button == ButtonType.OK ? new CasoDeUsoCliente.RegisterClienteCommand(
                 UUID.randomUUID().toString(), tipo.getValue(), nome.getText(), razao.getText(), fantasia.getText(), cpf.getText(), cnpj.getText(),

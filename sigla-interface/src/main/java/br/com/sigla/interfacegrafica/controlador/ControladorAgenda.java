@@ -7,6 +7,7 @@ import br.com.sigla.dominio.agenda.VisitaAgendada;
 import br.com.sigla.dominio.clientes.Cliente;
 import br.com.sigla.dominio.usuarios.Usuario;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorData;
+import br.com.sigla.interfacegrafica.util.TradutorInterface;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -82,8 +83,8 @@ public class ControladorAgenda {
 
     @FXML
     public void initialize() {
-        periodoCombo.getItems().setAll("Mes", "Semana", "Dia");
-        periodoCombo.getSelectionModel().select("Mes");
+        periodoCombo.getItems().setAll("Mês", "Semana", "Dia");
+        periodoCombo.getSelectionModel().select("Mês");
         dataReferenciaPicker.setValue(LocalDate.now());
         periodoCombo.setOnAction(event -> refresh());
         dataReferenciaPicker.setOnAction(event -> refresh());
@@ -120,7 +121,7 @@ public class ControladorAgenda {
         DatePicker dataPicker = new DatePicker(row.dataBase());
         TextField inicioField = new TextField(row.inicioHora());
         TextField fimField = new TextField(row.fimHora());
-        dialog.getDialogPane().setContent(grid("Data", dataPicker, "Inicio", inicioField, "Fim", fimField));
+        dialog.getDialogPane().setContent(grid("Data", dataPicker, "Início", inicioField, "Fim", fimField));
         dialog.setResultConverter(button -> button == ButtonType.OK
                 ? new CasoDeUsoAgenda.RescheduleVisitCommand(row.id(), at(dataPicker.getValue(), inicioField.getText()), at(dataPicker.getValue(), fimField.getText()))
                 : null);
@@ -142,7 +143,7 @@ public class ControladorAgenda {
         if (row == null) {
             return;
         }
-        executar(() -> agendaUseCase.complete(new CasoDeUsoAgenda.ChangeVisitStatusCommand(row.id(), "Concluido pela agenda.")));
+        executar(() -> agendaUseCase.complete(new CasoDeUsoAgenda.ChangeVisitStatusCommand(row.id(), "Concluído pela agenda.")));
     }
 
     @FXML
@@ -204,15 +205,19 @@ public class ControladorAgenda {
         TextArea descricaoArea = new TextArea(atual == null ? "" : atual.notes());
         descricaoArea.setPrefRowCount(3);
         ComboBox<VisitaAgendada.VisitType> tipoCombo = new ComboBox<>();
+        TradutorInterface.aplicar(tipoCombo);
         tipoCombo.getItems().setAll(VisitaAgendada.VisitType.values());
         tipoCombo.getSelectionModel().select(atual == null ? VisitaAgendada.VisitType.ONE_OFF : atual.type());
         ComboBox<VisitaAgendada.Recurrence> recorrenciaCombo = new ComboBox<>();
+        TradutorInterface.aplicar(recorrenciaCombo);
         recorrenciaCombo.getItems().setAll(VisitaAgendada.Recurrence.values());
         recorrenciaCombo.getSelectionModel().select(atual == null ? VisitaAgendada.Recurrence.NONE : atual.recurrence());
         ComboBox<VisitaAgendada.VisitStatus> statusCombo = new ComboBox<>();
+        TradutorInterface.aplicar(statusCombo);
         statusCombo.getItems().setAll(VisitaAgendada.VisitStatus.values());
         statusCombo.getSelectionModel().select(atual == null ? VisitaAgendada.VisitStatus.SCHEDULED : atual.status());
         ComboBox<VisitaAgendada.VisitPriority> prioridadeCombo = new ComboBox<>();
+        TradutorInterface.aplicar(prioridadeCombo);
         prioridadeCombo.getItems().setAll(VisitaAgendada.VisitPriority.values());
         prioridadeCombo.getSelectionModel().select(atual == null ? VisitaAgendada.VisitPriority.NORMAL : atual.priority());
         DatePicker dataPicker = new DatePicker(atual == null ? LocalDate.now() : atual.scheduledDate());
@@ -226,15 +231,15 @@ public class ControladorAgenda {
 
         dialog.getDialogPane().setContent(grid(
                 "Cliente", clienteCombo,
-                "Responsavel", responsavelCombo,
-                "Titulo", tituloField,
-                "Descricao", descricaoArea,
+                "Responsável", responsavelCombo,
+                "Título", tituloField,
+                "Descrição", descricaoArea,
                 "Tipo", tipoCombo,
-                "Recorrencia", recorrenciaCombo,
+                "Recorrência", recorrenciaCombo,
                 "Status", statusCombo,
                 "Prioridade", prioridadeCombo,
                 "Data", dataPicker,
-                "Inicio", inicioField,
+                "Início", inicioField,
                 "Fim", fimField,
                 "Dia inteiro", diaInteiroCheck,
                 "Lembrete", lembreteCheck,
@@ -294,12 +299,12 @@ public class ControladorAgenda {
                 evento.endAt() == null ? "" : evento.endAt().toLocalTime().toString(),
                 evento.title(),
                 nomeCliente(clientes, evento.customerId()),
-                evento.serviceType().isBlank() ? evento.type().name() : evento.serviceType(),
-                evento.recurrence().name(),
+                TradutorInterface.texto(evento.serviceType().isBlank() ? evento.type() : evento.serviceType()),
+                TradutorInterface.texto(evento.recurrence()),
                 status(evento),
-                evento.priority().name(),
+                TradutorInterface.texto(evento.priority()),
                 nomeUsuario(usuarios, evento.responsibleId(), evento.internalResponsible()),
-                evento.reminderActive() ? evento.reminderDaysBefore() + " dia(s)" : "Nao",
+                evento.reminderActive() ? evento.reminderDaysBefore() + " dia(s)" : "Não",
                 vinculo
         );
     }
@@ -308,7 +313,7 @@ public class ControladorAgenda {
         if (evento.status() == VisitaAgendada.VisitStatus.SCHEDULED && evento.scheduledDate().isBefore(LocalDate.now())) {
             return "VENCIDO";
         }
-        return evento.status().name();
+        return TradutorInterface.texto(evento.status());
     }
 
     private String serviceType(VisitaAgendada.VisitType type) {

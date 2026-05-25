@@ -40,6 +40,7 @@ br\com\sigla\interfacegrafica\controlador\ControladorAgenda$AgendaRow.class
 br\com\sigla\interfacegrafica\controlador\ControladorAgenda.class
 br\com\sigla\interfacegrafica\controlador\ControladorFinanceiro$1.class
 br\com\sigla\interfacegrafica\controlador\ControladorComMenuPrincipal.class
+br\com\sigla\interfacegrafica\util\TradutorInterface$1.class
 br\com\sigla\interfacegrafica\aplicativo\AplicacaoDesktopSigla.class
 br\com\sigla\interfacegrafica\aplicativo\EstruturaAplicacao.class
 br\com\sigla\interfacegrafica\controlador\ControladorEstoque$ProdutoRow.class
@@ -66,7 +67,9 @@ br\com\sigla\interfacegrafica\controlador\ControladorCadastro$ResponsavelRow.cla
 br\com\sigla\interfacegrafica\util\UtilJanela.class
 br\com\sigla\interfacegrafica\controlador\ControladorNovaTransacao$1.class
 br\com\sigla\interfacegrafica\apresentacao\ApresentadorTexto.class
+br\com\sigla\interfacegrafica\util\TradutorInterface$2.class
 br\com\sigla\interfacegrafica\controlador\ControladorNovaMovimentacao.class
 br\com\sigla\interfacegrafica\apresentacao\ApresentadorData.class
+br\com\sigla\interfacegrafica\util\TradutorInterface.class
 br\com\sigla\interfacegrafica\controlador\ControladorDashboard.class
 br\com\sigla\interfacegrafica\inicializacao\LancadorSigla.class

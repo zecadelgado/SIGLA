@@ -8,6 +8,7 @@ import br.com.sigla.dominio.clientes.Cliente;
 import br.com.sigla.dominio.contratos.Contrato;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorData;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorMoeda;
+import br.com.sigla.interfacegrafica.util.TradutorInterface;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.fxml.FXML;
 import javafx.scene.control.ButtonType;
@@ -112,7 +113,7 @@ public class ControladorContratosCertificados {
     private void configurarFiltros() {
         filtroTipoCombo.getItems().setAll("Todos", "Contratos", "Certificados");
         filtroTipoCombo.getSelectionModel().select("Todos");
-        filtroSituacaoCombo.getItems().setAll("Todos", "Ativos", "Proximos do vencimento", "Vencidos");
+        filtroSituacaoCombo.getItems().setAll("Todos", "Ativos", "Próximos do vencimento", "Vencidos");
         filtroSituacaoCombo.getSelectionModel().select("Todos");
         filtroTipoCombo.setOnAction(event -> refresh());
         filtroSituacaoCombo.setOnAction(event -> refresh());
@@ -142,10 +143,10 @@ public class ControladorContratosCertificados {
             rows.add(new ItemVencimentoRow(
                     "Contrato",
                     cliente,
-                    contrato.description().isBlank() ? contrato.type().name() : contrato.description(),
+                    contrato.description().isBlank() ? TradutorInterface.texto(contrato.type()) : contrato.description(),
                     apresentadorData.format(contrato.startDate()),
                     apresentadorData.format(contrato.endDate()),
-                    contrato.status().name(),
+                    TradutorInterface.texto(contrato.status()),
                     contrato.alertDaysBeforeEnd() + " dias",
                     apresentadorMoeda.format(contrato.monthlyValue()),
                     situacao
@@ -161,7 +162,7 @@ public class ControladorContratosCertificados {
                     certificado.description().isBlank() ? "Certificado de higiene" : certificado.description(),
                     apresentadorData.format(certificado.issuedOn()),
                     apresentadorData.format(certificado.validUntil()),
-                    certificado.status().name(),
+                    TradutorInterface.texto(certificado.status()),
                     certificado.renewalAlertDays() + " dias",
                     certificado.intervalMonths() + " meses",
                     situacao
@@ -187,7 +188,7 @@ public class ControladorContratosCertificados {
                         || ("Certificados".equals(tipo) && row.tipo().equals("Certificado")))
                 .filter(row -> "Todos".equals(situacao)
                         || ("Ativos".equals(situacao) && row.situacao().equals("Ativo"))
-                        || ("Proximos do vencimento".equals(situacao) && row.situacao().equals("Proximo"))
+                        || ("Próximos do vencimento".equals(situacao) && row.situacao().equals("Proximo"))
                         || ("Vencidos".equals(situacao) && row.situacao().equals("Vencido")))
                 .toList();
     }
@@ -217,9 +218,11 @@ public class ControladorContratosCertificados {
         DatePicker inicioPicker = new DatePicker(LocalDate.now());
         DatePicker fimPicker = new DatePicker(LocalDate.now().plusMonths(12));
         ComboBox<Contrato.ContratoType> tipoCombo = new ComboBox<>();
+        TradutorInterface.aplicar(tipoCombo);
         tipoCombo.getItems().setAll(Contrato.ContratoType.values());
         tipoCombo.getSelectionModel().select(Contrato.ContratoType.MONTHLY);
         ComboBox<Contrato.ServiceFrequency> frequenciaCombo = new ComboBox<>();
+        TradutorInterface.aplicar(frequenciaCombo);
         frequenciaCombo.getItems().setAll(Contrato.ServiceFrequency.values());
         frequenciaCombo.getSelectionModel().select(Contrato.ServiceFrequency.MONTHLY);
         TextField valorMensalField = new TextField("0");
@@ -231,15 +234,15 @@ public class ControladorContratosCertificados {
 
         dialog.getDialogPane().setContent(grid(
                 "Cliente", clienteCombo,
-                "Descricao", descricaoField,
-                "Inicio", inicioPicker,
+                "Descrição", descricaoField,
+                "Início", inicioPicker,
                 "Fim", fimPicker,
                 "Tipo", tipoCombo,
-                "Frequencia", frequenciaCombo,
+                "Frequência", frequenciaCombo,
                 "Valor mensal", valorMensalField,
                 "Dias de alerta", diasAlertaField,
                 "Alerta", alertaAtivoCheck,
-                "Observacoes", observacoesArea
+                "Observações", observacoesArea
         ));
         dialog.setResultConverter(button -> {
             if (button != ButtonType.OK) {
@@ -286,13 +289,13 @@ public class ControladorContratosCertificados {
 
         dialog.getDialogPane().setContent(grid(
                 "Cliente", clienteCombo,
-                "Descricao", descricaoField,
-                "Emissao", emissaoPicker,
+                "Descrição", descricaoField,
+                "Emissão", emissaoPicker,
                 "Validade", validadePicker,
                 "Intervalo em meses", intervaloField,
                 "Dias de alerta", diasAlertaField,
                 "Alerta", alertaAtivoCheck,
-                "Observacoes", observacoesArea
+                "Observações", observacoesArea
         ));
         dialog.setResultConverter(button -> {
             if (button != ButtonType.OK) {

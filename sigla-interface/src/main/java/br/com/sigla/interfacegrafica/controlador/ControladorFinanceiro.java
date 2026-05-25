@@ -9,6 +9,7 @@ import br.com.sigla.interfacegrafica.apresentacao.ApresentadorData;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorMoeda;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
+import br.com.sigla.interfacegrafica.util.TradutorInterface;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -166,7 +167,7 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
                 .filter(parcela -> parcela.status() != LancamentoFinanceiro.Status.CANCELLED)
                 .toList();
         if (parcelas.isEmpty()) {
-            mostrar("Nao ha parcela pendente para baixar.");
+            mostrar("Não há parcela pendente para baixar.");
             return;
         }
         Dialog<LancamentoFinanceiro.ParcelaFinanceira> dialog = new Dialog<>();
@@ -210,7 +211,7 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
             return;
         }
         TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Cancelar lancamento");
+        dialog.setTitle("Cancelar lançamento");
         dialog.setHeaderText("Informe o motivo do cancelamento");
         dialog.showAndWait().ifPresent(motivo -> executar(() -> casoDeUsoFinanceiro.cancel(selected.id(), motivo)));
     }
@@ -242,8 +243,8 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
     }
 
     private void configureTable() {
-        configureColumn(tipoColumn, 0, row -> row.type().name());
-        configureColumn(categoriaColumn, 1, row -> blankAsDash(row.category()));
+        configureColumn(tipoColumn, 0, row -> TradutorInterface.texto(row.type()));
+        configureColumn(categoriaColumn, 1, row -> blankAsDash(TradutorInterface.texto(row.category())));
         configureColumn(descricaoColumn, 2, row -> blankAsDash(row.description()));
         configureColumn(clienteColumn, 3, row -> resolveCliente(row.customerId()));
         configureColumn(ordemColumn, 4, row -> blankAsDash(row.orderReference()));
@@ -254,12 +255,12 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
         configureColumn(formaPagamentoColumn, 9, row -> blankAsDash(row.paymentMethod()));
         configureColumn(parcelasColumn, 10, row -> row.installment() ? row.installmentCount() + " (" + apresentadorMoeda.format(row.paidAmount()) + " pago)" : "-");
         configureColumn(observacoesColumn, 11, row -> blankAsDash(row.notes()));
-        configureColumn(statusColumn, 12, row -> row.overdue() && row.status() == CasoDeUsoFinanceiro.TransactionStatus.PENDING ? "OVERDUE" : row.status().name());
+        configureColumn(statusColumn, 12, row -> TradutorInterface.texto(row.overdue() && row.status() == CasoDeUsoFinanceiro.TransactionStatus.PENDING ? "OVERDUE" : row.status()));
     }
 
     private Optional<CasoDeUsoFinanceiro.SalvarLancamentoFinanceiroCommand> abrirDialogoEdicao(CasoDeUsoFinanceiro.TransacaoFinanceiraView selected) {
         Dialog<CasoDeUsoFinanceiro.SalvarLancamentoFinanceiroCommand> dialog = new Dialog<>();
-        dialog.setTitle("Editar lancamento");
+        dialog.setTitle("Editar lançamento");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         ComboBox<CategoriaFinanceira> categoria = comboCategoria(selected.type(), selected.categoryId());
         ComboBox<FormaPagamentoFinanceira> forma = comboForma(selected.paymentMethodId());
@@ -272,11 +273,11 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
         GridPane grid = grid();
         grid.addRow(0, new Label("Categoria"), categoria);
         grid.addRow(1, new Label("Forma"), forma);
-        grid.addRow(2, new Label("Descricao"), descricao);
+        grid.addRow(2, new Label("Descrição"), descricao);
         grid.addRow(3, new Label("Valor"), valor);
-        grid.addRow(4, new Label("Emissao"), emissao);
+        grid.addRow(4, new Label("Emissão"), emissao);
         grid.addRow(5, new Label("Vencimento"), vencimento);
-        grid.addRow(6, new Label("Observacoes"), observacoes);
+        grid.addRow(6, new Label("Observações"), observacoes);
         dialog.getDialogPane().setContent(grid);
         dialog.setResultConverter(button -> button == ButtonType.OK ? new CasoDeUsoFinanceiro.SalvarLancamentoFinanceiroCommand(
                 selected.id(), selected.type(), categoria.getValue().id(), forma.getValue().id(), descricao.getText(),
@@ -293,8 +294,10 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
         DatePicker inicio = new DatePicker();
         DatePicker fim = new DatePicker();
         ComboBox<CasoDeUsoFinanceiro.TransactionType> tipo = new ComboBox<>();
+        TradutorInterface.aplicar(tipo);
         tipo.getItems().setAll(CasoDeUsoFinanceiro.TransactionType.values());
         ComboBox<CasoDeUsoFinanceiro.TransactionStatus> status = new ComboBox<>();
+        TradutorInterface.aplicar(status);
         status.getItems().setAll(CasoDeUsoFinanceiro.TransactionStatus.values());
         ComboBox<CategoriaFinanceira> categoria = comboCategoria(null, "");
         ComboBox<FormaPagamentoFinanceira> forma = comboForma("");
@@ -302,7 +305,7 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
         TextField texto = new TextField();
         CheckBox vencidos = new CheckBox("Somente vencidos");
         GridPane grid = grid();
-        grid.addRow(0, new Label("Inicio"), inicio);
+        grid.addRow(0, new Label("Início"), inicio);
         grid.addRow(1, new Label("Fim"), fim);
         grid.addRow(2, new Label("Tipo"), tipo);
         grid.addRow(3, new Label("Status"), status);
@@ -324,7 +327,7 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
         combo.setConverter(new StringConverter<>() {
             @Override
             public String toString(CategoriaFinanceira categoria) {
-                return categoria == null ? "" : categoria.nome();
+                return categoria == null ? "" : TradutorInterface.texto(categoria.nome());
             }
 
             @Override

@@ -18,7 +18,7 @@
         <VBox styleClass="screen-header">
             <children>
                 <Label text="Contratos e certificados" styleClass="screen-title-large"/>
-                <Label text="Controle unico de vencimentos, alertas e validade dos certificados de higiene." styleClass="screen-subtitle" wrapText="true"/>
+                <Label text="Controle único de vencimentos, alertas e validade dos certificados de higiene." styleClass="screen-subtitle" wrapText="true"/>
             </children>
         </VBox>
 
@@ -37,7 +37,7 @@
                 </VBox>
                 <VBox GridPane.columnIndex="1" styleClass="metric-card">
                     <children>
-                        <Label text="Proximos do vencimento" styleClass="metric-label"/>
+                        <Label text="Próximos do vencimento" styleClass="metric-label"/>
                         <Label fx:id="proximosLabel" styleClass="metric-value"/>
                     </children>
                 </VBox>
@@ -67,12 +67,12 @@
                         <TableColumn fx:id="tipoColumn" text="Tipo" prefWidth="120.0"/>
                         <TableColumn fx:id="clienteColumn" text="Cliente" prefWidth="190.0"/>
                         <TableColumn fx:id="descricaoColumn" text="Descrição" prefWidth="230.0"/>
-                        <TableColumn fx:id="inicioColumn" text="Inicio/Emissao" prefWidth="130.0"/>
+                        <TableColumn fx:id="inicioColumn" text="Início/Emissão" prefWidth="130.0"/>
                         <TableColumn fx:id="vencimentoColumn" text="Fim/Validade" prefWidth="130.0"/>
                         <TableColumn fx:id="statusColumn" text="Status" prefWidth="115.0"/>
                         <TableColumn fx:id="alertaColumn" text="Alerta" prefWidth="95.0"/>
                         <TableColumn fx:id="detalheColumn" text="Valor/Intervalo" prefWidth="145.0"/>
-                        <TableColumn fx:id="situacaoColumn" text="Situacao" prefWidth="120.0"/>
+                        <TableColumn fx:id="situacaoColumn" text="Situação" prefWidth="120.0"/>
                     </columns>
                 </TableView>
             </children>

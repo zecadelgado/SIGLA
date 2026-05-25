@@ -8,6 +8,7 @@ import br.com.sigla.interfacegrafica.consulta.ServicoConsultaReferencias;
 import br.com.sigla.interfacegrafica.modelo.OpcaoId;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
+import br.com.sigla.interfacegrafica.util.TradutorInterface;
 import br.com.sigla.interfacegrafica.util.UtilComboBox;
 import br.com.sigla.interfacegrafica.util.UtilJanela;
 import javafx.fxml.FXML;
@@ -78,6 +79,7 @@ public class ControladorNovaTransacao {
     @FXML
     public void initialize() {
         if (tipoCombo != null) {
+            TradutorInterface.aplicar(tipoCombo);
             tipoCombo.getItems().setAll(CasoDeUsoFinanceiro.TransactionType.values());
             tipoCombo.getSelectionModel().select(CasoDeUsoFinanceiro.TransactionType.ENTRY);
             tipoCombo.valueProperty().addListener((observable, oldValue, newValue) -> carregarCategorias());
@@ -155,7 +157,7 @@ public class ControladorNovaTransacao {
             categoriaCombo.setConverter(new StringConverter<>() {
                 @Override
                 public String toString(CategoriaFinanceira categoria) {
-                    return categoria == null ? "" : categoria.nome();
+                    return categoria == null ? "" : TradutorInterface.texto(categoria.nome());
                 }
 
                 @Override
@@ -182,10 +184,12 @@ public class ControladorNovaTransacao {
             }
         }
         if (parceladoCombo != null) {
+            TradutorInterface.aplicar(parceladoCombo);
             parceladoCombo.getItems().setAll(Boolean.FALSE, Boolean.TRUE);
             parceladoCombo.getSelectionModel().select(Boolean.FALSE);
         }
         if (statusCombo != null) {
+            TradutorInterface.aplicar(statusCombo);
             statusCombo.getItems().setAll(CasoDeUsoFinanceiro.TransactionStatus.PENDING, CasoDeUsoFinanceiro.TransactionStatus.PAID);
             statusCombo.getSelectionModel().select(CasoDeUsoFinanceiro.TransactionStatus.PENDING);
         }

@@ -6,6 +6,7 @@ import br.com.sigla.dominio.clientes.Cliente;
 import br.com.sigla.interfacegrafica.formatador.FormatadorMascaraCpf;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
+import br.com.sigla.interfacegrafica.util.TradutorInterface;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -200,7 +201,7 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
         configureResponsavelColumn(responsavelCargoColumn, 1, row -> row.cargo());
         configureResponsavelColumn(responsavelTelefoneColumn, 2, row -> row.telefone());
         configureResponsavelColumn(responsavelEmailColumn, 3, row -> row.email());
-        configureResponsavelColumn(responsavelPrincipalColumn, 4, row -> row.principal() ? "Sim" : "Nao");
+        configureResponsavelColumn(responsavelPrincipalColumn, 4, row -> row.principal() ? "Sim" : "Não");
     }
 
     private void configureColumn(TableColumn<CadastroRow, String> column, int fallbackIndex, java.util.function.Function<CadastroRow, String> getter) {
@@ -346,6 +347,7 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
         ComboBox<Cliente.TipoCliente> tipo = new ComboBox<>();
+        TradutorInterface.aplicar(tipo);
         tipo.getItems().setAll(Cliente.TipoCliente.values());
         tipo.getSelectionModel().select(cliente.tipo());
         TextField nome = field(cliente.name());
@@ -366,13 +368,13 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
         grid.setVgap(8);
         grid.addRow(0, new javafx.scene.control.Label("Tipo"), tipo);
         grid.addRow(1, new javafx.scene.control.Label("Nome"), nome);
-        grid.addRow(2, new javafx.scene.control.Label("Razao social"), razao);
+        grid.addRow(2, new javafx.scene.control.Label("Razão social"), razao);
         grid.addRow(3, new javafx.scene.control.Label("Nome fantasia"), fantasia);
         grid.addRow(4, new javafx.scene.control.Label("CPF"), cpf);
         grid.addRow(5, new javafx.scene.control.Label("CNPJ"), cnpj);
         grid.addRow(6, new javafx.scene.control.Label("Telefone"), telefone);
         grid.addRow(7, new javafx.scene.control.Label("E-mail"), email);
-        grid.addRow(8, new javafx.scene.control.Label("Observacoes"), observacoes);
+        grid.addRow(8, new javafx.scene.control.Label("Observações"), observacoes);
         dialog.getDialogPane().setContent(grid);
         dialog.setResultConverter(button -> button == ButtonType.OK ? new CasoDeUsoCliente.RegisterClienteCommand(
                 cliente.id(), tipo.getValue(), nome.getText(), razao.getText(), fantasia.getText(), cpf.getText(), cnpj.getText(), telefone.getText(),
@@ -383,7 +385,7 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
 
     private Optional<CasoDeUsoCliente.ContactCommand> abrirDialogoResponsavel(ResponsavelRow existente) {
         Dialog<CasoDeUsoCliente.ContactCommand> dialog = new Dialog<>();
-        dialog.setTitle(existente == null ? "Novo Responsavel" : "Editar Responsavel");
+        dialog.setTitle(existente == null ? "Novo Responsável" : "Editar Responsável");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         TextField nome = field(existente == null ? "" : existente.nome());
         TextField cargo = field(existente == null ? "" : existente.cargo());
