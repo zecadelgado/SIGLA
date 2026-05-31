@@ -13,9 +13,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="520.0" prefWidth="670.0" style="-fx-background-color: lightgrey;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.sigla.interfacegrafica.controlador.ControladorNovaIndicacao">
+<AnchorPane prefHeight="549.0" prefWidth="690.0" style="-fx-background-color: lightgrey;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.sigla.interfacegrafica.controlador.ControladorNovaIndicacao">
    <children>
-      <VBox prefHeight="520.0" prefWidth="670.0" style="-fx-background-color: lightgrey;">
+      <VBox prefHeight="549.0" prefWidth="690.0" spacing="10.0" style="-fx-background-color: lightgrey;">
          <children>
             <Label prefHeight="52.0" prefWidth="358.0" text="Nova Indicação" textFill="#00417e">
                <font>
@@ -25,7 +25,7 @@
                   <Insets left="20.0" top="15.0" />
                </VBox.margin>
             </Label>
-            <HBox prefHeight="76.0" prefWidth="656.0">
+            <HBox>
                <children>
                   <VBox prefHeight="76.0" prefWidth="330.0">
                      <children>
@@ -79,7 +79,7 @@
                   <Insets />
                </opaqueInsets>
             </HBox>
-            <HBox prefHeight="76.0" prefWidth="656.0">
+            <HBox>
                <children>
                   <VBox prefHeight="76.0" prefWidth="330.0">
                      <children>
@@ -121,7 +121,7 @@
                   <Insets top="-5.0" />
                </VBox.margin>
             </HBox>
-            <HBox prefHeight="76.0" prefWidth="656.0">
+            <HBox>
                <children>
                   <Region prefHeight="76.0" prefWidth="25.0" />
                   <VBox prefHeight="76.0" prefWidth="301.0">
@@ -150,7 +150,7 @@
                   <Insets top="-5.0" />
                </VBox.margin>
             </HBox>
-            <VBox prefHeight="100.0" prefWidth="620.0">
+            <VBox>
                <children>
                   <Label text="Observações">
                      <font>
@@ -170,11 +170,6 @@
                   <Insets top="-5.0" />
                </VBox.margin>
             </VBox>
-            <Label fx:id="feedbackLabel" prefHeight="20.0" prefWidth="620.0" textFill="#0B2A6F">
-               <VBox.margin>
-                  <Insets left="25.0" top="5.0" />
-               </VBox.margin>
-            </Label>
             <HBox prefHeight="46.0" prefWidth="670.0">
                <children>
                   <Button mnemonicParsing="false" onAction="#onConfirmar" prefWidth="310.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Confirmar" textFill="WHITE">
@@ -200,6 +195,9 @@
                </VBox.margin>
             </HBox>
          </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
       </VBox>
    </children>
 </AnchorPane>

@@ -9,75 +9,163 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="br.com.sigla.interfacegrafica.controlador.ControladorContratosCertificados"
-      styleClass="screen-root">
+<VBox style="-fx-background-color: lightgrey;" styleClass="screen-root" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.sigla.interfacegrafica.controlador.ControladorContratosCertificados">
     <children>
         <VBox styleClass="screen-header">
             <children>
-                <Label text="Contratos e certificados" styleClass="screen-title-large"/>
-                <Label text="Controle único de vencimentos, alertas e validade dos certificados de higiene." styleClass="screen-subtitle" wrapText="true"/>
+            <Label text="Contratos e certificados" textFill="#00417e">
+               <font>
+                  <Font name="Ebrima Bold" size="50.0" />
+               </font>
+            </Label>
+            <Label prefHeight="20.0" prefWidth="508.0" text="Controle único de vencimentos, alertas e validade dos certificados de higiene." textFill="#303030">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
             </children>
+         <VBox.margin>
+            <Insets bottom="10.0" left="20.0" right="10.0" top="10.0" />
+         </VBox.margin>
         </VBox>
 
-        <GridPane hgap="16.0" vgap="16.0" styleClass="metric-grid">
+        <GridPane hgap="16.0" prefHeight="73.0" prefWidth="1274.0" styleClass="metric-grid" vgap="16.0">
             <columnConstraints>
-                <ColumnConstraints percentWidth="33.3"/>
-                <ColumnConstraints percentWidth="33.3"/>
-                <ColumnConstraints percentWidth="33.3"/>
+                <ColumnConstraints percentWidth="33.3" />
+                <ColumnConstraints percentWidth="33.3" />
+                <ColumnConstraints percentWidth="33.3" />
             </columnConstraints>
             <children>
-                <VBox GridPane.columnIndex="0" styleClass="metric-card">
+                <VBox prefHeight="79.0" prefWidth="414.0" style="-fx-background-color: white; -fx-background-radius: 10;" styleClass="metric-card" GridPane.columnIndex="0">
                     <children>
-                        <Label text="Ativos" styleClass="metric-label"/>
-                        <Label fx:id="totalAtivosLabel" styleClass="metric-value"/>
+                        <Label styleClass="metric-label" text="Ativos">
+                     <font>
+                        <Font name="Ebrima Bold" size="18.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets left="5.0" top="5.0" />
+                     </VBox.margin></Label>
+                        <Label fx:id="totalAtivosLabel" styleClass="metric-value" text="0">
+                     <VBox.margin>
+                        <Insets bottom="5.0" left="10.0" top="5.0" />
+                     </VBox.margin>
+                     <font>
+                        <Font name="Ebrima Bold" size="18.0" />
+                     </font></Label>
                     </children>
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
                 </VBox>
-                <VBox GridPane.columnIndex="1" styleClass="metric-card">
+                <VBox style="-fx-background-color: white; -fx-background-radius: 10;" styleClass="metric-card" GridPane.columnIndex="1">
                     <children>
-                        <Label text="Próximos do vencimento" styleClass="metric-label"/>
-                        <Label fx:id="proximosLabel" styleClass="metric-value"/>
+                        <Label styleClass="metric-label" text="Próximos do vencimento">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets left="5.0" top="5.0" />
+                     </VBox.margin></Label>
+                  <Label fx:id="totalAtivosLabel1" styleClass="metric-value" text="0">
+                     <font>
+                        <Font name="Ebrima Bold" size="18.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="5.0" left="10.0" top="5.0" />
+                     </VBox.margin>
+                  </Label>
                     </children>
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
                 </VBox>
-                <VBox GridPane.columnIndex="2" styleClass="metric-card">
+                <VBox style="-fx-background-color: white; -fx-background-radius: 10;" styleClass="metric-card" GridPane.columnIndex="2">
                     <children>
-                        <Label text="Vencidos" styleClass="metric-label"/>
-                        <Label fx:id="vencidosLabel" styleClass="metric-value"/>
+                        <Label styleClass="metric-label" text="Vencidos">
+                     <font>
+                        <Font name="Ebrima Bold" size="18.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets left="5.0" top="5.0" />
+                     </VBox.margin></Label>
+                  <Label fx:id="totalAtivosLabel11" styleClass="metric-value" text="0">
+                     <font>
+                        <Font name="Ebrima Bold" size="18.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="5.0" left="10.0" top="5.0" />
+                     </VBox.margin>
+                  </Label>
                     </children>
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
                 </VBox>
             </children>
+         <rowConstraints>
+            <RowConstraints />
+         </rowConstraints>
+         <VBox.margin>
+            <Insets left="20.0" right="15.0" top="10.0" />
+         </VBox.margin>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
         </GridPane>
 
         <VBox styleClass="content-card">
             <children>
-                <HBox spacing="12.0">
+                <HBox spacing="15.0">
                     <children>
-                        <ComboBox fx:id="filtroTipoCombo" prefWidth="180.0"/>
-                        <ComboBox fx:id="filtroSituacaoCombo" prefWidth="240.0"/>
-                        <Button text="Novo contrato" onAction="#onNovoContrato"/>
-                        <Button text="Novo certificado" onAction="#onNovoCertificado"/>
-                        <Button text="Atualizar" onAction="#onAtualizar"/>
+                        <ComboBox fx:id="filtroTipoCombo" prefWidth="180.0" />
+                        <ComboBox fx:id="filtroSituacaoCombo" prefWidth="240.0" />
+                        <Button onAction="#onNovoContrato" prefHeight="28.0" prefWidth="130.0" style="-fx-background-color: #00417e; -fx-background-radius: 5;" text="Novo contrato" textFill="WHITE">
+                     <font>
+                        <Font name="Ebrima Bold" size="14.0" />
+                     </font></Button>
+                        <Button onAction="#onNovoCertificado" prefHeight="28.0" prefWidth="140.0" style="-fx-background-color: #00417e; -fx-background-radius: 5;" text="Novo certificado" textFill="WHITE">
+                     <font>
+                        <Font name="Ebrima Bold" size="14.0" />
+                     </font></Button>
+                        <Button onAction="#onAtualizar" prefHeight="28.0" prefWidth="90.0" style="-fx-background-color: #00417e; -fx-background-radius: 5;" text="Atualizar" textFill="WHITE">
+                     <font>
+                        <Font name="Ebrima Bold" size="14.0" />
+                     </font></Button>
                     </children>
+               <VBox.margin>
+                  <Insets bottom="10.0" />
+               </VBox.margin>
                 </HBox>
 
                 <TableView fx:id="itensTable" prefHeight="520.0">
                     <columns>
-                        <TableColumn fx:id="tipoColumn" text="Tipo" prefWidth="120.0"/>
-                        <TableColumn fx:id="clienteColumn" text="Cliente" prefWidth="190.0"/>
-                        <TableColumn fx:id="descricaoColumn" text="Descrição" prefWidth="230.0"/>
-                        <TableColumn fx:id="inicioColumn" text="Início/Emissão" prefWidth="130.0"/>
-                        <TableColumn fx:id="vencimentoColumn" text="Fim/Validade" prefWidth="130.0"/>
-                        <TableColumn fx:id="statusColumn" text="Status" prefWidth="115.0"/>
-                        <TableColumn fx:id="alertaColumn" text="Alerta" prefWidth="95.0"/>
-                        <TableColumn fx:id="detalheColumn" text="Valor/Intervalo" prefWidth="145.0"/>
-                        <TableColumn fx:id="situacaoColumn" text="Situação" prefWidth="120.0"/>
+                        <TableColumn fx:id="tipoColumn" prefWidth="120.0" text="Tipo" />
+                        <TableColumn fx:id="clienteColumn" prefWidth="190.0" text="Cliente" />
+                        <TableColumn fx:id="descricaoColumn" prefWidth="230.0" text="Descrição" />
+                        <TableColumn fx:id="inicioColumn" prefWidth="130.0" text="Início/Emissão" />
+                        <TableColumn fx:id="vencimentoColumn" prefWidth="130.0" text="Fim/Validade" />
+                        <TableColumn fx:id="statusColumn" prefWidth="115.0" text="Status" />
+                        <TableColumn fx:id="alertaColumn" prefWidth="95.0" text="Alerta" />
+                        <TableColumn fx:id="detalheColumn" prefWidth="145.0" text="Valor/Intervalo" />
+                        <TableColumn fx:id="situacaoColumn" prefWidth="120.0" text="Situação" />
                     </columns>
                 </TableView>
             </children>
             <padding>
-                <Insets top="16" right="16" bottom="16" left="16"/>
+                <Insets bottom="16" left="16" right="16" top="16" />
             </padding>
         </VBox>
     </children>

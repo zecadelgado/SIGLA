@@ -32,10 +32,13 @@
                   </Label>
                </children>
             </VBox>
-            <Button fx:id="fecharButton" mnemonicParsing="false" onAction="#onFechar" prefHeight="36.0" prefWidth="110.0" style="-fx-background-color: white; -fx-background-radius: 5;" text="Fechar" />
+            <Button fx:id="fecharButton" mnemonicParsing="false" onAction="#onFechar" prefHeight="36.0" prefWidth="146.0" style="-fx-background-color: #00417e; -fx-background-radius: 5;" text="Fechar" textFill="WHITE">
+               <font>
+                  <Font name="Ebrima Bold" size="18.0" />
+               </font></Button>
          </children>
       </HBox>
-      <SplitPane dividerPositions="0.57" prefHeight="520.0" prefWidth="940.0" VBox.vgrow="ALWAYS">
+      <SplitPane dividerPositions="0.6534526854219949" prefHeight="520.0" prefWidth="940.0" VBox.vgrow="ALWAYS">
          <items>
             <TableView fx:id="ordensTable" prefHeight="520.0" prefWidth="530.0">
                <columns>

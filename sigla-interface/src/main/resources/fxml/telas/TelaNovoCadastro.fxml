@@ -10,6 +10,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -80,16 +81,32 @@
                   <Label text="Estado" GridPane.columnIndex="1" GridPane.rowIndex="14" />
                   <TextField fx:id="estadoField" maxWidth="Infinity" prefHeight="32.0" promptText="UF" style="-fx-background-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="15" />
                </children>
+               <rowConstraints>
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+               </rowConstraints>
             </GridPane>
 
-            <VBox spacing="6.0">
+            <VBox prefHeight="98.0" prefWidth="662.0" spacing="6.0">
                <children>
                   <Label text="Observações" />
-                  <TextField fx:id="observacoesField" maxWidth="Infinity" prefHeight="32.0" style="-fx-background-radius: 5;" />
+                  <TextField fx:id="observacoesField" maxWidth="Infinity" prefHeight="41.0" prefWidth="662.0" style="-fx-background-radius: 5;" />
                </children>
             </VBox>
-
-            <Label fx:id="feedbackLabel" minHeight="22.0" textFill="#b00020" wrapText="true" />
 
             <HBox alignment="CENTER" spacing="24.0">
                <children>

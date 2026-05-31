@@ -130,7 +130,7 @@
                                     <Font name="Ebrima Bold" size="17.0" />
                                  </font>
                                  <HBox.margin>
-                                    <Insets top="30.0" />
+                                    <Insets top="40.0" />
                                  </HBox.margin>
                               </Button>
                               <Button mnemonicParsing="false" onAction="#onNovoProduto" prefHeight="46.0" prefWidth="182.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="+ Novo Produto" textFill="WHITE">
@@ -138,7 +138,7 @@
                                     <Font name="Ebrima Bold" size="17.0" />
                                  </font>
                                  <HBox.margin>
-                                    <Insets left="20.0" top="30.0" />
+                                    <Insets left="20.0" top="40.0" />
                                  </HBox.margin>
                               </Button>
                            </children>
@@ -232,7 +232,7 @@
                                     <Insets left="10.0" top="2.0" />
                                  </VBox.margin>
                               </Label>
-                              <Label fx:id="alertaLabel" prefHeight="20.0" prefWidth="314.0" text="• Produto: 25 unidades (Mínimo: 30)" textFill="#891111">
+                              <Label fx:id="alertaLabel" prefHeight="20.0" prefWidth="314.0" text="• Produto: 0 unidades (Mínimo: 0)" textFill="#891111">
                                  <font>
                                     <Font name="Ebrima" size="14.0" />
                                  </font>
