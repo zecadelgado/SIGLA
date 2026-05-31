@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1530.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+  <content>
+    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="790.0" prefWidth="1530.0">
+         <children>
+            <VBox prefHeight="778.0" prefWidth="1518.0" spacing="20.0" style="-fx-background-color: lightgrey;" styleClass="screen-root">
+               <children>
+                  <VBox prefHeight="62.0" prefWidth="1463.0" styleClass="screen-header">
+                     <children>
+                        <Label styleClass="screen-title-large" text="Agenda e Calendário" textFill="#00417e">
+                           <font>
+                              <Font name="Ebrima Bold" size="50.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="periodoLabel" styleClass="screen-subtitle" text="-" />
+                     </children>
+                     <VBox.margin>
+                        <Insets left="15.0" />
+                     </VBox.margin>
+                  </VBox>
+                  <VBox styleClass="content-card">
+                     <children>
+                        <HBox spacing="12.0">
+                           <children>
+                              <ComboBox fx:id="periodoCombo" prefWidth="140.0" />
+                              <DatePicker fx:id="dataReferenciaPicker" prefWidth="160.0" />
+                              <Button onAction="#onNovoEvento" style="-fx-background-color: #00417e;" text="Novo evento" textFill="WHITE">
+                                 <font>
+                                    <Font name="Ebrima Bold" size="14.0" />
+                                 </font>
+                              </Button>
+                              <Button onAction="#onEditarEvento" style="-fx-background-color: #00417e;" text="Editar" textFill="WHITE">
+                                 <font>
+                                    <Font name="Ebrima Bold" size="14.0" />
+                                 </font>
+                              </Button>
+                              <Button onAction="#onReagendar" text="Reagendar">
+                                 <font>
+                                    <Font name="Ebrima Bold" size="14.0" />
+                                 </font>
+                              </Button>
+                              <Button onAction="#onConcluir" text="Concluir">
+                                 <font>
+                                    <Font name="Ebrima Bold" size="14.0" />
+                                 </font>
+                              </Button>
+                              <Button onAction="#onCancelar" text="Cancelar">
+                                 <font>
+                                    <Font name="Ebrima Bold" size="14.0" />
+                                 </font>
+                              </Button>
+                              <Button onAction="#onAtualizar" text="Atualizar">
+                                 <font>
+                                    <Font name="Ebrima Bold" size="14.0" />
+                                 </font>
+                              </Button>
+                           </children>
+                           <VBox.margin>
+                              <Insets bottom="20.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <ScrollPane prefHeight="591.0" prefWidth="1446.0">
+                           <content>
+                              <TableView fx:id="eventosTable" prefHeight="620.0" prefWidth="1434.0">
+                                 <columns>
+                                    <TableColumn fx:id="dataColumn" prefWidth="145.0" text="Data" />
+                                    <TableColumn fx:id="tituloColumn" prefWidth="220.0" text="Titulo" />
+                                    <TableColumn fx:id="clienteColumn" prefWidth="180.0" text="Cliente" />
+                                    <TableColumn fx:id="tipoColumn" prefWidth="130.0" text="Tipo" />
+                                    <TableColumn fx:id="recorrenciaColumn" prefWidth="120.0" text="Recorrencia" />
+                                    <TableColumn fx:id="statusColumn" prefWidth="100.0" text="Status" />
+                                    <TableColumn fx:id="prioridadeColumn" prefWidth="110.0" text="Prioridade" />
+                                    <TableColumn fx:id="responsavelColumn" prefWidth="150.0" text="Responsavel" />
+                                    <TableColumn fx:id="lembreteColumn" prefWidth="150.0" text="Lembrete" />
+                                    <TableColumn fx:id="vinculoColumn" prefWidth="125.0" text="Vinculo" />
+                                 </columns>
+                              </TableView>
+                           </content>
+                        </ScrollPane>
+                     </children>
+                     <padding>
+                        <Insets bottom="16" left="16" right="16" top="16" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets top="-5.0" />
+                     </VBox.margin>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
+            </VBox>
+         </children></AnchorPane>
+  </content>
+</ScrollPane>

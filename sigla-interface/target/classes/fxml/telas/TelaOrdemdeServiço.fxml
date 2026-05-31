@@ -17,7 +17,7 @@
    <children>
       <HBox prefHeight="790.0" prefWidth="1530.0">
          <children>
-            <VBox prefHeight="765.0" prefWidth="250.0" spacing="15.0" style="-fx-background-color: #0B2A6F;">
+            <VBox fx:id="menuLateral" prefHeight="765.0" prefWidth="250.0" spacing="15.0" style="-fx-background-color: #0B2A6F;">
                <children>
                   <Label text="Sigla" textFill="#a6d3ff">
                      <font>
@@ -96,15 +96,15 @@
                   <Insets bottom="20.0" left="15.0" right="15.0" top="20.0" />
                </padding>
             </VBox>
-            <VBox prefHeight="790.0" prefWidth="1284.0" style="-fx-background-color: lightgrey;">
+            <VBox prefHeight="790.0" prefWidth="1284.0" style="-fx-background-color: lightgrey;" HBox.hgrow="ALWAYS">
                <children>
                   <HBox prefHeight="130.0" prefWidth="1282.0">
                      <children>
-                        <VBox prefHeight="100.0" prefWidth="458.0">
+<VBox prefHeight="100.0" prefWidth="458.0">
                            <children>
-                              <Label prefHeight="52.0" prefWidth="358.0" text="Ordem de Serviço" textFill="#00417e">
+                              <Label prefHeight="66.0" prefWidth="424.0" text="Ordem de Serviço" textFill="#00417e">
                                  <font>
-                                    <Font name="Ebrima Bold" size="40.0" />
+                                    <Font name="Ebrima Bold" size="50.0" />
                                  </font>
                                  <VBox.margin>
                                     <Insets left="30.0" top="35.0" />
@@ -236,7 +236,7 @@
                                     <Insets left="10.0" top="8.0" />
                                  </VBox.margin>
                               </Label>
-                               <TextField fx:id="searchField" prefHeight="26.0" prefWidth="791.0" text="Buscar pelo número, cliente ou responsável...">
+                               <TextField fx:id="searchField" prefHeight="26.0" prefWidth="791.0" promptText="Buscar pelo numero, cliente, tipo ou responsavel...">
                                  <VBox.margin>
                                     <Insets bottom="10.0" left="10.0" right="5.0" top="5.0" />
                                  </VBox.margin>
@@ -277,12 +277,15 @@
                            <children>
                               <TableView fx:id="ordensTable" prefHeight="355.0" prefWidth="1223.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5); -fx-background-radius: 10;">
                                 <columns>
-                                  <TableColumn prefWidth="220.0" style="-fx-background-color: white;" text="Número" />
-                                  <TableColumn prefWidth="250.0" style="-fx-background-color: white;" text="Cliente" />
-                                    <TableColumn prefWidth="200.0" style="-fx-background-color: white;" text="Responsável" />
-                                    <TableColumn prefWidth="170.0" style="-fx-background-color: white;" text="Data de emissão" />
-                                    <TableColumn prefWidth="200.0" style="-fx-background-color: white;" text="Valor total" />
-                                    <TableColumn prefWidth="180.0" style="-fx-background-color: white;" text="Status" />
+                                  <TableColumn fx:id="numeroColumn" prefWidth="90.0" style="-fx-background-color: white;" text="Numero" />
+                                  <TableColumn fx:id="clienteColumn" prefWidth="190.0" style="-fx-background-color: white;" text="Cliente" />
+                                    <TableColumn fx:id="tituloColumn" prefWidth="180.0" style="-fx-background-color: white;" text="Titulo" />
+                                    <TableColumn fx:id="tipoColumn" prefWidth="145.0" style="-fx-background-color: white;" text="Tipo" />
+                                    <TableColumn fx:id="responsavelColumn" prefWidth="155.0" style="-fx-background-color: white;" text="Responsavel" />
+                                    <TableColumn fx:id="emissaoColumn" prefWidth="135.0" style="-fx-background-color: white;" text="Data agendada" />
+                                    <TableColumn fx:id="valorColumn" prefWidth="130.0" style="-fx-background-color: white;" text="Valor total" />
+                                    <TableColumn fx:id="pagoColumn" prefWidth="80.0" style="-fx-background-color: white;" text="Pago" />
+                                    <TableColumn fx:id="statusColumn" prefWidth="115.0" style="-fx-background-color: white;" text="Status" />
                                 </columns>
                                  <VBox.margin>
                                     <Insets />
@@ -295,6 +298,21 @@
                         <Insets left="30.0" right="30.0" top="30.0" />
                      </VBox.margin>
                   </ScrollPane>
+                  <HBox prefHeight="48.0" prefWidth="1222.0" spacing="8.0">
+                     <VBox.margin>
+                        <Insets left="30.0" right="30.0" top="14.0" />
+                     </VBox.margin>
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#onDetalharOrdem" prefHeight="38.0" prefWidth="132.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 5;" text="Detalhar" textFill="WHITE" />
+                        <Button mnemonicParsing="false" onAction="#onEditarOrdem" prefHeight="38.0" prefWidth="120.0" style="-fx-background-color: white; -fx-background-radius: 5;" text="Editar" />
+                        <Button mnemonicParsing="false" onAction="#onIniciarOrdem" prefHeight="38.0" prefWidth="120.0" style="-fx-background-color: white; -fx-background-radius: 5;" text="Iniciar" />
+                        <Button mnemonicParsing="false" onAction="#onConcluirOrdem" prefHeight="38.0" prefWidth="120.0" style="-fx-background-color: white; -fx-background-radius: 5;" text="Concluir" />
+                        <Button mnemonicParsing="false" onAction="#onMarcarPago" prefHeight="38.0" prefWidth="130.0" style="-fx-background-color: white; -fx-background-radius: 5;" text="Marcar pago" />
+                        <Button mnemonicParsing="false" onAction="#onAdicionarProdutoOrdem" prefHeight="38.0" prefWidth="150.0" style="-fx-background-color: white; -fx-background-radius: 5;" text="Adicionar produto" />
+                        <Button mnemonicParsing="false" onAction="#onAnexarOrdem" prefHeight="38.0" prefWidth="120.0" style="-fx-background-color: white; -fx-background-radius: 5;" text="Anexar" />
+                        <Button mnemonicParsing="false" onAction="#onCancelarOrdem" prefHeight="38.0" prefWidth="120.0" style="-fx-background-color: white; -fx-background-radius: 5;" text="Cancelar" />
+                     </children>
+                  </HBox>
                </children>
             </VBox>
          </children>

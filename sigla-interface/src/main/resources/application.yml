@@ -4,7 +4,7 @@ spring:
   main:
     web-application-type: none
   profiles:
-    default: dev
+    default: supabase
 
 logging:
   config: classpath:logback-spring.xml

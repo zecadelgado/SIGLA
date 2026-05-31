@@ -58,6 +58,13 @@ public class AdaptadorRepositorioEntradaFinanceira implements RepositorioEntrada
     }
 
     @Override
+    public Optional<EntradaFinanceira> findById(String id) {
+        return findAll().stream()
+                .filter(entry -> entry.id().equals(id))
+                .findFirst();
+    }
+
+    @Override
     public List<EntradaFinanceira> findAll() {
         return repository.findByTipo("ENTRY").stream()
                 .map(entity -> new EntradaFinanceira(
@@ -150,6 +157,11 @@ class InMemoryAdaptadorRepositorioEntradaFinanceira implements RepositorioEntrad
     }
 
     @Override
+    public Optional<EntradaFinanceira> findById(String id) {
+        return Optional.ofNullable(storage.get(id));
+    }
+
+    @Override
     public List<EntradaFinanceira> findAll() {
         return storage.values().stream().toList();
     }
@@ -157,6 +169,8 @@ class InMemoryAdaptadorRepositorioEntradaFinanceira implements RepositorioEntrad
 
 interface SpringDataRepositorioFinanceiroLancamento extends JpaRepository<FinanceiroLancamentoEntidade, UUID> {
     List<FinanceiroLancamentoEntidade> findByTipo(String tipo);
+
+    Optional<FinanceiroLancamentoEntidade> findByOrdemServicoId(UUID ordemServicoId);
 }
 
 interface SpringDataRepositorioFinanceiroCategoria extends JpaRepository<FinanceiroCategoriaEntidade, UUID> {

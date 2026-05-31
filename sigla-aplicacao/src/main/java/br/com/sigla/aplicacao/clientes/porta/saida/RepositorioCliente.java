@@ -9,8 +9,17 @@ public interface RepositorioCliente {
 
     void save(Cliente customer);
 
+    void deleteById(String id);
+
     List<Cliente> findAll();
 
     Optional<Cliente> findById(String id);
-}
 
+    boolean existsActiveCpf(String cpf, String exceptId);
+
+    boolean existsActiveCnpj(String cnpj, String exceptId);
+
+    boolean existsActiveEmail(String email, String exceptId);
+
+    boolean hasLinkedRecords(String id);
+}
