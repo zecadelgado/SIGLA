@@ -12,6 +12,7 @@ Sistema Integrado de Gestao Logistica e Administrativa para operacao de detetiza
 
 ## Guia Da Estrutura
 
+- documentacao geral do projeto: `docs/contexto-geral-do-projeto.md`
 - guia rapido do repositorio: `docs/guia-estrutura-sigla.md`
 - documento arquitetural da detetizadora: `docs/arquitetura-detetizadora.md`
 

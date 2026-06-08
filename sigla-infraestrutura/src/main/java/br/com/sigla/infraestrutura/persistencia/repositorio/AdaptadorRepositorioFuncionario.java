@@ -4,6 +4,7 @@ import br.com.sigla.aplicacao.funcionarios.porta.saida.RepositorioFuncionario;
 import br.com.sigla.dominio.funcionarios.Funcionario;
 import br.com.sigla.infraestrutura.persistencia.PersistenciaIds;
 import br.com.sigla.infraestrutura.persistencia.entidade.ClienteEntidade;
+import jakarta.persistence.EntityManager;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,14 +21,21 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AdaptadorRepositorioFuncionario implements RepositorioFuncionario {
 
     private final SpringDataRepositorioFuncionario repository;
+    private final EntityManager entityManager;
 
-    public AdaptadorRepositorioFuncionario(SpringDataRepositorioFuncionario repository) {
+    public AdaptadorRepositorioFuncionario(SpringDataRepositorioFuncionario repository, EntityManager entityManager) {
         this.repository = repository;
+        this.entityManager = entityManager;
     }
 
     @Override
     public void save(Funcionario employee) {
         repository.save(toEntity(employee));
+    }
+
+    @Override
+    public void deleteById(String id) {
+        repository.deleteById(PersistenciaIds.toUuid(id));
     }
 
     @Override
@@ -38,6 +46,14 @@ public class AdaptadorRepositorioFuncionario implements RepositorioFuncionario {
     @Override
     public Optional<Funcionario> findById(String id) {
         return repository.findById(PersistenciaIds.toUuid(id)).filter(entity -> "FUNCIONARIO".equals(entity.getTipo())).map(this::toDomain);
+    }
+
+    @Override
+    public boolean hasLinkedRecords(String id) {
+        UUID uuid = PersistenciaIds.toUuid(id);
+        return count("select count(*) from ordens_servico where responsavel_interno_id = :id or executado_por_id = :id", uuid) > 0
+                || count("select count(*) from agenda_eventos where responsavel_id = :id", uuid) > 0
+                || count("select count(*) from estoque_movimentacoes where funcionario_id = :id", uuid) > 0;
     }
 
     private Funcionario toDomain(ClienteEntidade entity) {
@@ -66,6 +82,13 @@ public class AdaptadorRepositorioFuncionario implements RepositorioFuncionario {
     private String blankAs(String value, String fallback) {
         return value == null || value.isBlank() ? fallback : value;
     }
+
+    private long count(String sql, UUID id) {
+        Number result = (Number) entityManager.createNativeQuery(sql)
+                .setParameter("id", id)
+                .getSingleResult();
+        return result.longValue();
+    }
 }
 
 @Repository
@@ -80,6 +103,11 @@ class InMemoryAdaptadorRepositorioFuncionario implements RepositorioFuncionario 
     }
 
     @Override
+    public void deleteById(String id) {
+        storage.remove(id);
+    }
+
+    @Override
     public List<Funcionario> findAll() {
         return storage.values().stream().toList();
     }
@@ -87,6 +115,11 @@ class InMemoryAdaptadorRepositorioFuncionario implements RepositorioFuncionario 
     @Override
     public Optional<Funcionario> findById(String id) {
         return Optional.ofNullable(storage.get(id));
+    }
+
+    @Override
+    public boolean hasLinkedRecords(String id) {
+        return false;
     }
 }
 

@@ -531,7 +531,9 @@ public class CasoDeUsoGerenciarFinanceiro implements CasoDeUsoFinanceiro {
         String texto = nome == null ? "" : nome.trim();
         return lancamentoRepository.findCategoriasAtivas().stream()
                 .filter(categoria -> tipoCategoria(categoria.tipo()) == type)
-                .filter(categoria -> texto.isBlank() || categoria.nome().equalsIgnoreCase(texto))
+                .filter(categoria -> texto.isBlank()
+                        || categoria.id().equals(texto)
+                        || categoria.nome().equalsIgnoreCase(texto))
                 .findFirst()
                 .map(CategoriaFinanceira::id)
                 .orElseThrow(() -> new IllegalArgumentException("Categoria financeira ativa nao encontrada."));
@@ -540,7 +542,9 @@ public class CasoDeUsoGerenciarFinanceiro implements CasoDeUsoFinanceiro {
     private String resolveFormaPagamentoId(String nome) {
         String texto = nome == null ? "" : nome.trim();
         return lancamentoRepository.findFormasPagamentoAtivas().stream()
-                .filter(forma -> texto.isBlank() || forma.nome().equalsIgnoreCase(texto))
+                .filter(forma -> texto.isBlank()
+                        || forma.id().equals(texto)
+                        || forma.nome().equalsIgnoreCase(texto))
                 .findFirst()
                 .map(FormaPagamentoFinanceira::id)
                 .orElseThrow(() -> new IllegalArgumentException("Forma de pagamento ativa nao encontrada."));

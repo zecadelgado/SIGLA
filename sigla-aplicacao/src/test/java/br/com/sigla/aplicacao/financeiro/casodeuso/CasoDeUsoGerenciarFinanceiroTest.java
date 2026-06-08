@@ -43,6 +43,36 @@ class CasoDeUsoGerenciarFinanceiroTest {
     }
 
     @Test
+    void registraTransacaoAceitandoIdsDaTela() {
+        FakeLancamentos repository = new FakeLancamentos();
+        CasoDeUsoGerenciarFinanceiro financeiro = financeiro(repository);
+
+        financeiro.registerTransaction(new CasoDeUsoFinanceiro.RegisterTransacaoFinanceiraCommand(
+                "l-1",
+                CasoDeUsoFinanceiro.TransactionType.ENTRY,
+                "cat-servicos",
+                "Entrada manual",
+                "cliente-1",
+                "",
+                "",
+                BigDecimal.TEN,
+                LocalDate.now(),
+                LocalDate.now(),
+                null,
+                "forma-pix",
+                false,
+                1,
+                "usuario-1",
+                "",
+                CasoDeUsoFinanceiro.TransactionStatus.PENDING
+        ));
+
+        LancamentoFinanceiro lancamento = repository.findById("l-1").orElseThrow();
+        assertEquals("cat-servicos", lancamento.categoriaId());
+        assertEquals("forma-pix", lancamento.formaPagamentoId());
+    }
+
+    @Test
     void geraParcelasComSomaExataEBaixaIndividualAtualizaStatus() {
         FakeLancamentos repository = new FakeLancamentos();
         CasoDeUsoGerenciarFinanceiro financeiro = financeiro(repository);

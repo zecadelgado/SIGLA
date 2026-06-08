@@ -166,18 +166,24 @@
     -fx-wrap-text: true;
 }
 
+.table-view .table-row-cell:selected,
+.table-view .table-row-cell:focused:selected,
 .registry-table .table-row-cell:selected,
 .registry-table .table-row-cell:focused:selected {
     -fx-background-color: #0b6fd3;
     -fx-table-cell-border-color: #58a9f5;
 }
 
+.table-view .table-row-cell:selected .table-cell,
+.table-view .table-row-cell:focused:selected .table-cell,
 .registry-table .table-row-cell:selected .table-cell,
 .registry-table .table-row-cell:focused:selected .table-cell {
     -fx-background-color: #0b6fd3;
     -fx-text-fill: #ffffff;
 }
 
+.table-view .table-row-cell:selected .text,
+.table-view .table-row-cell:focused:selected .text,
 .registry-table .table-row-cell:selected .text,
 .registry-table .table-row-cell:focused:selected .text {
     -fx-fill: #ffffff;

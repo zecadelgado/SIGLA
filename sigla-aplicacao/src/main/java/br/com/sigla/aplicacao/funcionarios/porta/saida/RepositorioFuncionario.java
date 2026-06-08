@@ -9,8 +9,12 @@ public interface RepositorioFuncionario {
 
     void save(Funcionario employee);
 
+    void deleteById(String id);
+
     List<Funcionario> findAll();
 
     Optional<Funcionario> findById(String id);
+
+    boolean hasLinkedRecords(String id);
 }
 

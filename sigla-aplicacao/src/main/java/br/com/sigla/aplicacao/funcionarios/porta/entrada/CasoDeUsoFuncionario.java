@@ -8,6 +8,14 @@ public interface CasoDeUsoFuncionario {
 
     void register(RegisterFuncionarioCommand command);
 
+    void update(RegisterFuncionarioCommand command);
+
+    void inativar(String id);
+
+    void reativar(String id);
+
+    void excluirFisicamente(String id);
+
     List<Funcionario> listAll();
 
     record RegisterFuncionarioCommand(

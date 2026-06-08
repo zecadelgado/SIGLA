@@ -3,6 +3,7 @@ package br.com.sigla.interfacegrafica.controlador;
 import br.com.sigla.aplicacao.clientes.porta.entrada.CasoDeUsoCliente;
 import br.com.sigla.aplicacao.funcionarios.porta.entrada.CasoDeUsoFuncionario;
 import br.com.sigla.dominio.clientes.Cliente;
+import br.com.sigla.dominio.funcionarios.Funcionario;
 import br.com.sigla.interfacegrafica.formatador.FormatadorMascaraCpf;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
@@ -156,8 +157,14 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
                     customer.ativo() ? "Ativo" : "Inativo"
             )));
         }
-        if (!"CLIENTE".equals(filtroAtual) && !"INATIVOS".equals(filtroAtivo)) {
-            casoDeUsoFuncionario.listAll().forEach(employee -> registros.add(new CadastroRow(
+        if (!"CLIENTE".equals(filtroAtual)) {
+            casoDeUsoFuncionario.listAll().stream()
+                    .filter(employee -> switch (filtroAtivo) {
+                        case "INATIVOS" -> employee.status() != Funcionario.FuncionarioStatus.ACTIVE;
+                        case "TODOS" -> true;
+                        default -> employee.status() == Funcionario.FuncionarioStatus.ACTIVE;
+                    })
+                    .forEach(employee -> registros.add(new CadastroRow(
                     employee.id(),
                     false,
                     "FUNCIONARIO",
@@ -169,7 +176,7 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
                     "-",
                     "-",
                     "-",
-                    "Ativo"
+                    TradutorInterface.texto(employee.status())
             )));
         }
 
@@ -236,8 +243,20 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
 
     @FXML
     private void onEditarCadastro() {
-        CadastroRow row = clienteSelecionado();
+        CadastroRow row = cadastroSelecionado();
         if (row == null) {
+            return;
+        }
+        if (!row.cliente()) {
+            Funcionario funcionario = casoDeUsoFuncionario.listAll().stream().filter(item -> item.id().equals(row.id())).findFirst().orElse(null);
+            if (funcionario == null) {
+                return;
+            }
+            Optional<CasoDeUsoFuncionario.RegisterFuncionarioCommand> command = abrirDialogoFuncionario(funcionario);
+            command.ifPresent(value -> {
+                executar(() -> casoDeUsoFuncionario.update(value));
+                refresh();
+            });
             return;
         }
         Cliente cliente = casoDeUsoCliente.listAll().stream().filter(item -> item.id().equals(row.id())).findFirst().orElse(null);
@@ -253,27 +272,45 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
 
     @FXML
     private void onInativarCadastro() {
-        CadastroRow row = clienteSelecionado();
+        CadastroRow row = cadastroSelecionado();
         if (row != null) {
-            executar(() -> casoDeUsoCliente.inativar(row.id()));
+            executar(() -> {
+                if (row.cliente()) {
+                    casoDeUsoCliente.inativar(row.id());
+                } else {
+                    casoDeUsoFuncionario.inativar(row.id());
+                }
+            });
             refresh();
         }
     }
 
     @FXML
     private void onReativarCadastro() {
-        CadastroRow row = clienteSelecionado();
+        CadastroRow row = cadastroSelecionado();
         if (row != null) {
-            executar(() -> casoDeUsoCliente.reativar(row.id()));
+            executar(() -> {
+                if (row.cliente()) {
+                    casoDeUsoCliente.reativar(row.id());
+                } else {
+                    casoDeUsoFuncionario.reativar(row.id());
+                }
+            });
             refresh();
         }
     }
 
     @FXML
     private void onExcluirCadastro() {
-        CadastroRow row = clienteSelecionado();
+        CadastroRow row = cadastroSelecionado();
         if (row != null) {
-            executar(() -> casoDeUsoCliente.excluirFisicamente(row.id()));
+            executar(() -> {
+                if (row.cliente()) {
+                    casoDeUsoCliente.excluirFisicamente(row.id());
+                } else {
+                    casoDeUsoFuncionario.excluirFisicamente(row.id());
+                }
+            });
             refresh();
         }
     }
@@ -383,6 +420,32 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
         return dialog.showAndWait();
     }
 
+    private Optional<CasoDeUsoFuncionario.RegisterFuncionarioCommand> abrirDialogoFuncionario(Funcionario funcionario) {
+        Dialog<CasoDeUsoFuncionario.RegisterFuncionarioCommand> dialog = new Dialog<>();
+        dialog.setTitle("Editar Funcionario");
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        TextField nome = field(funcionario.name());
+        TextField cargo = field(funcionario.role());
+        TextField contato = field(funcionario.contact());
+        ComboBox<Funcionario.FuncionarioStatus> status = new ComboBox<>();
+        TradutorInterface.aplicar(status);
+        status.getItems().setAll(Funcionario.FuncionarioStatus.values());
+        status.getSelectionModel().select(funcionario.status());
+
+        GridPane grid = new GridPane();
+        grid.setHgap(8);
+        grid.setVgap(8);
+        grid.addRow(0, new javafx.scene.control.Label("Nome"), nome);
+        grid.addRow(1, new javafx.scene.control.Label("Cargo"), cargo);
+        grid.addRow(2, new javafx.scene.control.Label("Contato"), contato);
+        grid.addRow(3, new javafx.scene.control.Label("Status"), status);
+        dialog.getDialogPane().setContent(grid);
+        dialog.setResultConverter(button -> button == ButtonType.OK ? new CasoDeUsoFuncionario.RegisterFuncionarioCommand(
+                funcionario.id(), nome.getText(), cargo.getText(), contato.getText(), status.getValue()) : null);
+        return dialog.showAndWait();
+    }
+
     private Optional<CasoDeUsoCliente.ContactCommand> abrirDialogoResponsavel(ResponsavelRow existente) {
         Dialog<CasoDeUsoCliente.ContactCommand> dialog = new Dialog<>();
         dialog.setTitle(existente == null ? "Novo Responsável" : "Editar Responsável");
@@ -428,6 +491,15 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
         CadastroRow row = cadastroTable == null ? null : cadastroTable.getSelectionModel().getSelectedItem();
         if (row == null || !row.cliente()) {
             mostrar("Selecione um cliente.");
+            return null;
+        }
+        return row;
+    }
+
+    private CadastroRow cadastroSelecionado() {
+        CadastroRow row = cadastroTable == null ? null : cadastroTable.getSelectionModel().getSelectedItem();
+        if (row == null) {
+            mostrar("Selecione um cadastro.");
             return null;
         }
         return row;
