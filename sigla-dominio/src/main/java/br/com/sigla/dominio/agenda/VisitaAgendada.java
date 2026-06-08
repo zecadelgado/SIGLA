@@ -189,7 +189,9 @@ public record VisitaAgendada(
 
     public boolean conflictsWith(VisitaAgendada other) {
         Objects.requireNonNull(other, "other is required");
-        if (id.equals(other.id) || status == VisitStatus.CANCELLED || other.status == VisitStatus.CANCELLED) {
+        // Apenas eventos ativos (agendado/em andamento) competem por horario;
+        // cancelados, concluidos e nao realizados nao geram conflito.
+        if (id.equals(other.id) || !bloqueiaHorario(status) || !bloqueiaHorario(other.status)) {
             return false;
         }
         if (responsibleId == null || responsibleId.isBlank() || !responsibleId.equals(other.responsibleId)) {
@@ -203,6 +205,10 @@ public record VisitaAgendada(
         LocalDateTime otherStart = other.effectiveStart();
         LocalDateTime otherEnd = other.effectiveEnd();
         return thisStart.isBefore(otherEnd) && thisEnd.isAfter(otherStart);
+    }
+
+    private static boolean bloqueiaHorario(VisitStatus status) {
+        return status == VisitStatus.SCHEDULED || status == VisitStatus.IN_PROGRESS;
     }
 
     public List<VisitaAgendada> occurrencesBetween(LocalDate start, LocalDate end) {

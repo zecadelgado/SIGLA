@@ -141,6 +141,22 @@
                                     <Insets left="20.0" top="40.0" />
                                  </HBox.margin>
                               </Button>
+                              <Button mnemonicParsing="false" onAction="#onInativarProduto" prefHeight="46.0" prefWidth="110.0" style="-fx-background-color: white; -fx-background-radius: 5;" text="Inativar" textFill="#0B2A6F">
+                                 <font>
+                                    <Font name="Ebrima Bold" size="15.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets left="15.0" top="40.0" />
+                                 </HBox.margin>
+                              </Button>
+                              <Button mnemonicParsing="false" onAction="#onReativarProduto" prefHeight="46.0" prefWidth="110.0" style="-fx-background-color: white; -fx-background-radius: 5;" text="Reativar" textFill="#0B2A6F">
+                                 <font>
+                                    <Font name="Ebrima Bold" size="15.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets left="10.0" top="40.0" />
+                                 </HBox.margin>
+                              </Button>
                            </children>
                         </HBox>
                         <HBox prefHeight="110.0" prefWidth="1252.0" style="-fx-background-color: #cccccc; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">

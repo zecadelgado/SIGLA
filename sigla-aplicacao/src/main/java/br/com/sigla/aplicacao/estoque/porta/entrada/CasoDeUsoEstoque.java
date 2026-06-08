@@ -14,6 +14,8 @@ public interface CasoDeUsoEstoque {
 
     void inativarItem(String id);
 
+    void reativarItem(String id);
+
     void recordMovement(RecordInventoryMovementCommand command);
 
     List<ItemEstoque> listAll();

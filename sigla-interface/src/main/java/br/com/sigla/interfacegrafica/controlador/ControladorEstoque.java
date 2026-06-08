@@ -141,6 +141,17 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
     }
 
     @FXML
+    private void onReativarProduto() {
+        ProdutoRow row = produtosTable == null ? null : produtosTable.getSelectionModel().getSelectedItem();
+        if (row == null) {
+            mostrar("Selecione um produto.");
+            return;
+        }
+        executar(() -> casoDeUsoEstoque.reativarItem(row.id()));
+        refresh();
+    }
+
+    @FXML
     private void onFiltrarBaixoEstoque() {
         somenteBaixoEstoque = !somenteBaixoEstoque;
         refresh();

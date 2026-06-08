@@ -39,6 +39,15 @@ public class CasoDeUsoGerenciarEstoque implements CasoDeUsoEstoque {
 
     @Override
     public void inativarItem(String id) {
+        alterarAtivo(id, false);
+    }
+
+    @Override
+    public void reativarItem(String id) {
+        alterarAtivo(id, true);
+    }
+
+    private void alterarAtivo(String id, boolean ativo) {
         ItemEstoque atual = repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Produto nao encontrado."));
         repository.save(new ItemEstoque(
@@ -51,7 +60,7 @@ public class CasoDeUsoGerenciarEstoque implements CasoDeUsoEstoque {
                 atual.quantity(),
                 atual.minimumQuantity(),
                 atual.unit(),
-                false,
+                ativo,
                 atual.movements()
         ));
     }
