@@ -50,6 +50,76 @@ public class CasoDeUsoGerenciarContrato implements CasoDeUsoContrato {
     }
 
     @Override
+    public void update(UpdateContratoCommand command) {
+        Contrato atual = find(command.id());
+        Contrato contrato = new Contrato(
+                command.id(),
+                command.customerId(),
+                command.description(),
+                command.startDate(),
+                command.endDate(),
+                command.type(),
+                command.serviceFrequency(),
+                atual.status(),
+                command.renewalRule(),
+                command.monthlyValue(),
+                command.alertActive(),
+                command.alertDaysBeforeEnd(),
+                command.notes()
+        );
+        repository.save(contrato);
+        sincronizarCalendario(contrato);
+    }
+
+    @Override
+    public void encerrar(EncerrarContratoCommand command) {
+        if (command.motivo() == null || command.motivo().isBlank()) {
+            throw new IllegalArgumentException("Motivo do encerramento e obrigatorio.");
+        }
+        Contrato contrato = find(command.id());
+        if (contrato.status() == Contrato.ContratoStatus.CANCELLED) {
+            throw new IllegalArgumentException("Contrato ja encerrado.");
+        }
+        Contrato encerrado = contrato
+                .comObservacoes(append(contrato.notes(), "[ENCERRAMENTO] " + command.motivo()))
+                .comStatus(Contrato.ContratoStatus.CANCELLED);
+        repository.save(encerrado);
+        sincronizarCalendario(encerrado);
+    }
+
+    @Override
+    public void renovar(RenovarContratoCommand command) {
+        Contrato contrato = find(command.id());
+        if (contrato.status() == Contrato.ContratoStatus.CANCELLED) {
+            throw new IllegalArgumentException("Contrato encerrado nao pode ser renovado.");
+        }
+        LocalDate novaDataFim = command.novaDataFim() == null
+                ? contrato.endDate().plusMonths(contrato.periodoMeses())
+                : command.novaDataFim();
+        if (!novaDataFim.isAfter(contrato.endDate())) {
+            throw new IllegalArgumentException("Nova data fim deve ser posterior ao vencimento atual.");
+        }
+        Contrato renovado = contrato.renovado(novaDataFim)
+                .comObservacoes(append(contrato.notes(), "[RENOVACAO] ate " + novaDataFim));
+        repository.save(renovado);
+        sincronizarCalendario(renovado);
+    }
+
+    @Override
+    public List<Contrato> marcarVencidos(LocalDate referenceDate) {
+        LocalDate hoje = referenceDate == null ? LocalDate.now() : referenceDate;
+        List<Contrato> afetados = new java.util.ArrayList<>();
+        for (Contrato contrato : repository.findAll()) {
+            if (contrato.status() == Contrato.ContratoStatus.ACTIVE && contrato.endDate().isBefore(hoje)) {
+                Contrato vencido = contrato.comStatus(Contrato.ContratoStatus.EXPIRED);
+                repository.save(vencido);
+                afetados.add(vencido);
+            }
+        }
+        return afetados;
+    }
+
+    @Override
     public List<Contrato> listAll() {
         return repository.findAll();
     }
@@ -59,6 +129,21 @@ public class CasoDeUsoGerenciarContrato implements CasoDeUsoContrato {
         return repository.findAll().stream()
                 .filter(contract -> contract.isExpiringWithin(referenceDate))
                 .toList();
+    }
+
+    private Contrato find(String id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Contrato nao encontrado."));
+    }
+
+    private String append(String current, String addition) {
+        if (addition == null || addition.isBlank()) {
+            return current;
+        }
+        if (current == null || current.isBlank()) {
+            return addition.trim();
+        }
+        return current + System.lineSeparator() + addition.trim();
     }
 
     private void sincronizarCalendario(Contrato contrato) {

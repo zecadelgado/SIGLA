@@ -9,9 +9,37 @@ public interface CasoDeUsoCertificado {
 
     void issue(IssueCertificadoCommand command);
 
+    void update(UpdateCertificadoCommand command);
+
+    /** Marca o certificado atual como SUBSTITUIDO e emite um novo. Retorna o id do novo. */
+    String renovar(RenovarCertificadoCommand command);
+
+    /** Marca como EXPIRED os certificados ATIVO cuja validade ja passou. Retorna os afetados. */
+    List<Certificado> marcarVencidos(LocalDate referenceDate);
+
     List<Certificado> listAll();
 
     List<Certificado> expiringCertificados(LocalDate referenceDate);
+
+    record UpdateCertificadoCommand(
+            String id,
+            String customerId,
+            String description,
+            LocalDate issuedOn,
+            LocalDate validUntil,
+            int intervalMonths,
+            boolean alertActive,
+            int renewalAlertDays,
+            String notes
+    ) {
+    }
+
+    record RenovarCertificadoCommand(
+            String id,
+            LocalDate issuedOn,
+            int intervalMonths
+    ) {
+    }
 
     record IssueCertificadoCommand(
             String id,

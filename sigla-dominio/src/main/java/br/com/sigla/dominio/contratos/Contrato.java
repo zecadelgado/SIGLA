@@ -91,6 +91,31 @@ public record Contrato(
         return status == ContratoStatus.EXPIRED || endDate.isBefore(referenceDate);
     }
 
+    public Contrato comStatus(ContratoStatus novoStatus) {
+        return new Contrato(id, customerId, description, startDate, endDate, type, serviceFrequency,
+                novoStatus, renewalRule, monthlyValue, alertActive, alertDaysBeforeEnd, notes);
+    }
+
+    public Contrato comObservacoes(String novasObservacoes) {
+        return new Contrato(id, customerId, description, startDate, endDate, type, serviceFrequency,
+                status, renewalRule, monthlyValue, alertActive, alertDaysBeforeEnd, novasObservacoes);
+    }
+
+    /** Prorroga o contrato ate {@code novaDataFim} e reativa (renovacao manual). */
+    public Contrato renovado(LocalDate novaDataFim) {
+        return new Contrato(id, customerId, description, startDate, novaDataFim, type, serviceFrequency,
+                ContratoStatus.ACTIVE, renewalRule, monthlyValue, alertActive, alertDaysBeforeEnd, notes);
+    }
+
+    /** Periodo de recorrencia em meses, derivado do tipo/frequencia (default 12 para renovacao). */
+    public int periodoMeses() {
+        return switch (serviceFrequency) {
+            case BIWEEKLY -> 1;
+            case ONE_OFF -> 12;
+            case MONTHLY -> 12;
+        };
+    }
+
     public enum ContratoType {
         MONTHLY,
         QUINZENAL,

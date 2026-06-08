@@ -69,6 +69,11 @@ public record Certificado(
         return status == CertificadoStatus.EXPIRED || validUntil.isBefore(referenceDate);
     }
 
+    public Certificado comStatus(CertificadoStatus novoStatus) {
+        return new Certificado(id, customerId, serviceProvidedId, orderId, description, issuedOn,
+                validUntil, intervalMonths, alertActive, novoStatus, renewalAlertDays, notes);
+    }
+
     public enum CertificadoStatus {
         ACTIVE,
         EXPIRED,

@@ -10,9 +10,40 @@ public interface CasoDeUsoContrato {
 
     void create(CreateContratoCommand command);
 
+    void update(UpdateContratoCommand command);
+
+    void encerrar(EncerrarContratoCommand command);
+
+    void renovar(RenovarContratoCommand command);
+
+    /** Marca como EXPIRED os contratos ATIVO cuja data fim ja passou. Retorna os afetados. */
+    List<Contrato> marcarVencidos(LocalDate referenceDate);
+
     List<Contrato> listAll();
 
     List<Contrato> expiringContratos(LocalDate referenceDate);
+
+    record UpdateContratoCommand(
+            String id,
+            String customerId,
+            String description,
+            LocalDate startDate,
+            LocalDate endDate,
+            Contrato.ContratoType type,
+            Contrato.ServiceFrequency serviceFrequency,
+            Contrato.RenewalRule renewalRule,
+            BigDecimal monthlyValue,
+            boolean alertActive,
+            int alertDaysBeforeEnd,
+            String notes
+    ) {
+    }
+
+    record EncerrarContratoCommand(String id, String motivo) {
+    }
+
+    record RenovarContratoCommand(String id, LocalDate novaDataFim) {
+    }
 
     record CreateContratoCommand(
             String id,

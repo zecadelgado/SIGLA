@@ -52,6 +52,76 @@ public class CasoDeUsoGerenciarCertificado implements CasoDeUsoCertificado {
     }
 
     @Override
+    public void update(UpdateCertificadoCommand command) {
+        Certificado atual = find(command.id());
+        int intervalMonths = command.intervalMonths() <= 0 ? atual.intervalMonths() : command.intervalMonths();
+        LocalDate validUntil = command.validUntil() == null ? command.issuedOn().plusMonths(intervalMonths) : command.validUntil();
+        int alertDays = command.renewalAlertDays() <= 0 ? atual.renewalAlertDays() : command.renewalAlertDays();
+        Certificado certificado = new Certificado(
+                command.id(),
+                command.customerId(),
+                atual.serviceProvidedId(),
+                atual.orderId(),
+                command.description(),
+                command.issuedOn(),
+                validUntil,
+                intervalMonths,
+                command.alertActive(),
+                atual.status(),
+                alertDays,
+                command.notes()
+        );
+        repository.save(certificado);
+        sincronizarCalendario(certificado);
+    }
+
+    @Override
+    public String renovar(RenovarCertificadoCommand command) {
+        Certificado atual = find(command.id());
+        if (atual.status() == Certificado.CertificadoStatus.REPLACED) {
+            throw new IllegalArgumentException("Certificado ja substituido.");
+        }
+        Certificado substituido = atual.comStatus(Certificado.CertificadoStatus.REPLACED);
+        repository.save(substituido);
+        sincronizarCalendario(substituido);
+
+        LocalDate emissao = command.issuedOn() == null ? LocalDate.now() : command.issuedOn();
+        int intervalMonths = command.intervalMonths() <= 0 ? atual.intervalMonths() : command.intervalMonths();
+        String novoId = java.util.UUID.randomUUID().toString();
+        Certificado novo = new Certificado(
+                novoId,
+                atual.customerId(),
+                atual.serviceProvidedId(),
+                atual.orderId(),
+                atual.description(),
+                emissao,
+                emissao.plusMonths(intervalMonths),
+                intervalMonths,
+                atual.alertActive(),
+                Certificado.CertificadoStatus.ACTIVE,
+                atual.renewalAlertDays(),
+                atual.notes()
+        );
+        repository.save(novo);
+        sincronizarCalendario(novo);
+        return novoId;
+    }
+
+    @Override
+    public List<Certificado> marcarVencidos(LocalDate referenceDate) {
+        LocalDate hoje = referenceDate == null ? LocalDate.now() : referenceDate;
+        List<Certificado> afetados = new java.util.ArrayList<>();
+        for (Certificado certificado : repository.findAll()) {
+            if (certificado.status() == Certificado.CertificadoStatus.ACTIVE && certificado.validUntil().isBefore(hoje)) {
+                Certificado vencido = certificado.comStatus(Certificado.CertificadoStatus.EXPIRED);
+                repository.save(vencido);
+                afetados.add(vencido);
+            }
+        }
+        return afetados;
+    }
+
+    @Override
     public List<Certificado> listAll() {
         return repository.findAll();
     }
@@ -61,6 +131,11 @@ public class CasoDeUsoGerenciarCertificado implements CasoDeUsoCertificado {
         return repository.findAll().stream()
                 .filter(certificate -> certificate.isExpiringWithin(referenceDate))
                 .toList();
+    }
+
+    private Certificado find(String id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Certificado nao encontrado."));
     }
 
     private void sincronizarCalendario(Certificado certificado) {
