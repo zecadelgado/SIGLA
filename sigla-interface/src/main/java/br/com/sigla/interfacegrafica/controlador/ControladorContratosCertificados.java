@@ -11,6 +11,7 @@ import br.com.sigla.interfacegrafica.apresentacao.ApresentadorMoeda;
 import br.com.sigla.interfacegrafica.util.TradutorInterface;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -21,6 +22,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.GridPane;
 import org.springframework.stereotype.Component;
 
@@ -97,17 +99,106 @@ public class ControladorContratosCertificados {
 
     @FXML
     private void onNovoContrato() {
-        abrirDialogoContrato();
+        abrirDialogoContrato(null);
     }
 
     @FXML
     private void onNovoCertificado() {
-        abrirDialogoCertificado();
+        abrirDialogoCertificado(null);
     }
 
     @FXML
     private void onAtualizar() {
         refresh();
+    }
+
+    @FXML
+    private void onEditarItem() {
+        ItemVencimentoRow row = selecionado();
+        if (row == null) {
+            return;
+        }
+        if ("Contrato".equals(row.tipo())) {
+            contratoPorId(row.id()).ifPresent(this::abrirDialogoContrato);
+        } else {
+            certificadoPorId(row.id()).ifPresent(this::abrirDialogoCertificado);
+        }
+    }
+
+    @FXML
+    private void onEncerrarItem() {
+        ItemVencimentoRow row = selecionado();
+        if (row == null) {
+            return;
+        }
+        if (!"Contrato".equals(row.tipo())) {
+            alerta("Encerrar disponível apenas para contratos. Para certificados, use Renovar.");
+            return;
+        }
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Encerrar contrato");
+        dialog.setHeaderText(null);
+        dialog.setContentText("Motivo do encerramento:");
+        dialog.showAndWait().ifPresent(motivo -> executar(() -> {
+            casoDeUsoContrato.encerrar(new CasoDeUsoContrato.EncerrarContratoCommand(row.id(), motivo));
+            refresh();
+        }));
+    }
+
+    @FXML
+    private void onRenovarItem() {
+        ItemVencimentoRow row = selecionado();
+        if (row == null) {
+            return;
+        }
+        if ("Contrato".equals(row.tipo())) {
+            Dialog<LocalDate> dialog = new Dialog<>();
+            dialog.setTitle("Renovar contrato");
+            dialog.getDialogPane().getButtonTypes().setAll(ButtonType.OK, ButtonType.CANCEL);
+            DatePicker picker = new DatePicker();
+            contratoPorId(row.id()).ifPresent(contrato -> picker.setValue(contrato.endDate().plusMonths(contrato.periodoMeses())));
+            dialog.getDialogPane().setContent(grid("Nova data fim", picker));
+            dialog.setResultConverter(button -> button == ButtonType.OK ? picker.getValue() : null);
+            dialog.showAndWait().ifPresent(novaData -> executar(() -> {
+                casoDeUsoContrato.renovar(new CasoDeUsoContrato.RenovarContratoCommand(row.id(), novaData));
+                refresh();
+            }));
+        } else {
+            executar(() -> {
+                casoDeUsoCertificado.renovar(new CasoDeUsoCertificado.RenovarCertificadoCommand(row.id(), LocalDate.now(), 0));
+                refresh();
+            });
+        }
+    }
+
+    private ItemVencimentoRow selecionado() {
+        ItemVencimentoRow row = itensTable.getSelectionModel().getSelectedItem();
+        if (row == null) {
+            alerta("Selecione um item na tabela.");
+        }
+        return row;
+    }
+
+    private java.util.Optional<Contrato> contratoPorId(String id) {
+        return casoDeUsoContrato.listAll().stream().filter(contrato -> contrato.id().equals(id)).findFirst();
+    }
+
+    private java.util.Optional<Certificado> certificadoPorId(String id) {
+        return casoDeUsoCertificado.listAll().stream().filter(certificado -> certificado.id().equals(id)).findFirst();
+    }
+
+    private void executar(Runnable acao) {
+        try {
+            acao.run();
+        } catch (RuntimeException exception) {
+            alerta(exception.getMessage());
+        }
+    }
+
+    private void alerta(String mensagem) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, mensagem == null ? "" : mensagem);
+        alert.setHeaderText(null);
+        alert.showAndWait();
     }
 
     private void configurarFiltros() {
@@ -141,6 +232,7 @@ public class ControladorContratosCertificados {
             String cliente = nomeCliente(clientes, contrato.customerId());
             String situacao = situacao(contrato.status() == Contrato.ContratoStatus.CANCELLED, contrato.endDate(), contrato.alertDaysBeforeEnd(), hoje);
             rows.add(new ItemVencimentoRow(
+                    contrato.id(),
                     "Contrato",
                     cliente,
                     contrato.description().isBlank() ? TradutorInterface.texto(contrato.type()) : contrato.description(),
@@ -157,6 +249,7 @@ public class ControladorContratosCertificados {
             String cliente = nomeCliente(clientes, certificado.customerId());
             String situacao = situacao(certificado.status() == Certificado.CertificadoStatus.REPLACED, certificado.validUntil(), certificado.renewalAlertDays(), hoje);
             rows.add(new ItemVencimentoRow(
+                    certificado.id(),
                     "Certificado",
                     cliente,
                     certificado.description().isBlank() ? "Certificado de higiene" : certificado.description(),
@@ -208,9 +301,9 @@ public class ControladorContratosCertificados {
         return cliente == null ? clienteId : cliente.name();
     }
 
-    private void abrirDialogoContrato() {
-        Dialog<CasoDeUsoContrato.CreateContratoCommand> dialog = new Dialog<>();
-        dialog.setTitle("Novo contrato");
+    private void abrirDialogoContrato(Contrato existente) {
+        Dialog<Boolean> dialog = new Dialog<>();
+        dialog.setTitle(existente == null ? "Novo contrato" : "Editar contrato");
         dialog.getDialogPane().getButtonTypes().setAll(ButtonType.OK, ButtonType.CANCEL);
 
         ComboBox<ClienteOption> clienteCombo = clientesCombo();
@@ -232,6 +325,19 @@ public class ControladorContratosCertificados {
         TextArea observacoesArea = new TextArea();
         observacoesArea.setPrefRowCount(3);
 
+        if (existente != null) {
+            selecionarCliente(clienteCombo, existente.customerId());
+            descricaoField.setText(existente.description());
+            inicioPicker.setValue(existente.startDate());
+            fimPicker.setValue(existente.endDate());
+            tipoCombo.getSelectionModel().select(existente.type());
+            frequenciaCombo.getSelectionModel().select(existente.serviceFrequency());
+            valorMensalField.setText(existente.monthlyValue().toPlainString());
+            diasAlertaField.setText(String.valueOf(existente.alertDaysBeforeEnd()));
+            alertaAtivoCheck.setSelected(existente.alertActive());
+            observacoesArea.setText(existente.notes());
+        }
+
         dialog.getDialogPane().setContent(grid(
                 "Cliente", clienteCombo,
                 "Descrição", descricaoField,
@@ -244,36 +350,60 @@ public class ControladorContratosCertificados {
                 "Alerta", alertaAtivoCheck,
                 "Observações", observacoesArea
         ));
-        dialog.setResultConverter(button -> {
-            if (button != ButtonType.OK) {
-                return null;
+        dialog.setResultConverter(button -> button == ButtonType.OK);
+        dialog.showAndWait().ifPresent(confirmado -> {
+            if (!Boolean.TRUE.equals(confirmado)) {
+                return;
             }
             ClienteOption cliente = clienteCombo.getValue();
-            return new CasoDeUsoContrato.CreateContratoCommand(
-                    UUID.randomUUID().toString(),
-                    cliente == null ? "" : cliente.id(),
-                    descricaoField.getText(),
-                    inicioPicker.getValue(),
-                    fimPicker.getValue(),
-                    tipoCombo.getValue(),
-                    frequenciaCombo.getValue(),
-                    Contrato.ContratoStatus.ACTIVE,
-                    Contrato.RenewalRule.MANUAL,
-                    parseMoney(valorMensalField.getText()),
-                    alertaAtivoCheck.isSelected(),
-                    parseInt(diasAlertaField.getText(), 15),
-                    observacoesArea.getText()
-            );
-        });
-        dialog.showAndWait().ifPresent(command -> {
-            casoDeUsoContrato.create(command);
-            refresh();
+            executar(() -> {
+                if (existente == null) {
+                    casoDeUsoContrato.create(new CasoDeUsoContrato.CreateContratoCommand(
+                            UUID.randomUUID().toString(),
+                            cliente == null ? "" : cliente.id(),
+                            descricaoField.getText(),
+                            inicioPicker.getValue(),
+                            fimPicker.getValue(),
+                            tipoCombo.getValue(),
+                            frequenciaCombo.getValue(),
+                            Contrato.ContratoStatus.ACTIVE,
+                            Contrato.RenewalRule.MANUAL,
+                            parseMoney(valorMensalField.getText()),
+                            alertaAtivoCheck.isSelected(),
+                            parseInt(diasAlertaField.getText(), 15),
+                            observacoesArea.getText()
+                    ));
+                } else {
+                    casoDeUsoContrato.update(new CasoDeUsoContrato.UpdateContratoCommand(
+                            existente.id(),
+                            cliente == null ? existente.customerId() : cliente.id(),
+                            descricaoField.getText(),
+                            inicioPicker.getValue(),
+                            fimPicker.getValue(),
+                            tipoCombo.getValue(),
+                            frequenciaCombo.getValue(),
+                            Contrato.RenewalRule.MANUAL,
+                            parseMoney(valorMensalField.getText()),
+                            alertaAtivoCheck.isSelected(),
+                            parseInt(diasAlertaField.getText(), 15),
+                            observacoesArea.getText()
+                    ));
+                }
+                refresh();
+            });
         });
     }
 
-    private void abrirDialogoCertificado() {
-        Dialog<CasoDeUsoCertificado.IssueCertificadoCommand> dialog = new Dialog<>();
-        dialog.setTitle("Novo certificado");
+    private void selecionarCliente(ComboBox<ClienteOption> combo, String clienteId) {
+        combo.getItems().stream()
+                .filter(option -> option.id().equals(clienteId))
+                .findFirst()
+                .ifPresent(option -> combo.getSelectionModel().select(option));
+    }
+
+    private void abrirDialogoCertificado(Certificado existente) {
+        Dialog<Boolean> dialog = new Dialog<>();
+        dialog.setTitle(existente == null ? "Novo certificado" : "Editar certificado");
         dialog.getDialogPane().getButtonTypes().setAll(ButtonType.OK, ButtonType.CANCEL);
 
         ComboBox<ClienteOption> clienteCombo = clientesCombo();
@@ -287,6 +417,17 @@ public class ControladorContratosCertificados {
         TextArea observacoesArea = new TextArea();
         observacoesArea.setPrefRowCount(3);
 
+        if (existente != null) {
+            selecionarCliente(clienteCombo, existente.customerId());
+            descricaoField.setText(existente.description());
+            emissaoPicker.setValue(existente.issuedOn());
+            validadePicker.setValue(existente.validUntil());
+            intervaloField.setText(String.valueOf(existente.intervalMonths()));
+            diasAlertaField.setText(String.valueOf(existente.renewalAlertDays()));
+            alertaAtivoCheck.setSelected(existente.alertActive());
+            observacoesArea.setText(existente.notes());
+        }
+
         dialog.getDialogPane().setContent(grid(
                 "Cliente", clienteCombo,
                 "Descrição", descricaoField,
@@ -297,29 +438,43 @@ public class ControladorContratosCertificados {
                 "Alerta", alertaAtivoCheck,
                 "Observações", observacoesArea
         ));
-        dialog.setResultConverter(button -> {
-            if (button != ButtonType.OK) {
-                return null;
+        dialog.setResultConverter(button -> button == ButtonType.OK);
+        dialog.showAndWait().ifPresent(confirmado -> {
+            if (!Boolean.TRUE.equals(confirmado)) {
+                return;
             }
             ClienteOption cliente = clienteCombo.getValue();
-            return new CasoDeUsoCertificado.IssueCertificadoCommand(
-                    UUID.randomUUID().toString(),
-                    cliente == null ? "" : cliente.id(),
-                    "",
-                    "",
-                    descricaoField.getText(),
-                    emissaoPicker.getValue(),
-                    validadePicker.getValue(),
-                    parseInt(intervaloField.getText(), 6),
-                    alertaAtivoCheck.isSelected(),
-                    Certificado.CertificadoStatus.ACTIVE,
-                    parseInt(diasAlertaField.getText(), 15),
-                    observacoesArea.getText()
-            );
-        });
-        dialog.showAndWait().ifPresent(command -> {
-            casoDeUsoCertificado.issue(command);
-            refresh();
+            executar(() -> {
+                if (existente == null) {
+                    casoDeUsoCertificado.issue(new CasoDeUsoCertificado.IssueCertificadoCommand(
+                            UUID.randomUUID().toString(),
+                            cliente == null ? "" : cliente.id(),
+                            "",
+                            "",
+                            descricaoField.getText(),
+                            emissaoPicker.getValue(),
+                            validadePicker.getValue(),
+                            parseInt(intervaloField.getText(), 6),
+                            alertaAtivoCheck.isSelected(),
+                            Certificado.CertificadoStatus.ACTIVE,
+                            parseInt(diasAlertaField.getText(), 15),
+                            observacoesArea.getText()
+                    ));
+                } else {
+                    casoDeUsoCertificado.update(new CasoDeUsoCertificado.UpdateCertificadoCommand(
+                            existente.id(),
+                            cliente == null ? existente.customerId() : cliente.id(),
+                            descricaoField.getText(),
+                            emissaoPicker.getValue(),
+                            validadePicker.getValue(),
+                            parseInt(intervaloField.getText(), 6),
+                            alertaAtivoCheck.isSelected(),
+                            parseInt(diasAlertaField.getText(), 15),
+                            observacoesArea.getText()
+                    ));
+                }
+                refresh();
+            });
         });
     }
 
@@ -369,6 +524,7 @@ public class ControladorContratosCertificados {
     }
 
     public record ItemVencimentoRow(
+            String id,
             String tipo,
             String cliente,
             String descricao,

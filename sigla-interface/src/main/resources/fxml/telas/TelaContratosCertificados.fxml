@@ -73,7 +73,7 @@
                      <VBox.margin>
                         <Insets left="5.0" top="5.0" />
                      </VBox.margin></Label>
-                  <Label fx:id="totalAtivosLabel1" styleClass="metric-value" text="0">
+                  <Label fx:id="proximosLabel" styleClass="metric-value" text="0">
                      <font>
                         <Font name="Ebrima Bold" size="18.0" />
                      </font>
@@ -98,7 +98,7 @@
                      <VBox.margin>
                         <Insets left="5.0" top="5.0" />
                      </VBox.margin></Label>
-                  <Label fx:id="totalAtivosLabel11" styleClass="metric-value" text="0">
+                  <Label fx:id="vencidosLabel" styleClass="metric-value" text="0">
                      <font>
                         <Font name="Ebrima Bold" size="18.0" />
                      </font>
@@ -141,6 +141,18 @@
                         <Font name="Ebrima Bold" size="14.0" />
                      </font></Button>
                         <Button onAction="#onAtualizar" prefHeight="28.0" prefWidth="90.0" style="-fx-background-color: #00417e; -fx-background-radius: 5;" text="Atualizar" textFill="WHITE">
+                     <font>
+                        <Font name="Ebrima Bold" size="14.0" />
+                     </font></Button>
+                        <Button onAction="#onEditarItem" prefHeight="28.0" prefWidth="90.0" style="-fx-background-color: white; -fx-background-radius: 5;" text="Editar" textFill="#00417e">
+                     <font>
+                        <Font name="Ebrima Bold" size="14.0" />
+                     </font></Button>
+                        <Button onAction="#onRenovarItem" prefHeight="28.0" prefWidth="90.0" style="-fx-background-color: white; -fx-background-radius: 5;" text="Renovar" textFill="#00417e">
+                     <font>
+                        <Font name="Ebrima Bold" size="14.0" />
+                     </font></Button>
+                        <Button onAction="#onEncerrarItem" prefHeight="28.0" prefWidth="100.0" style="-fx-background-color: white; -fx-background-radius: 5;" text="Encerrar" textFill="#00417e">
                      <font>
                         <Font name="Ebrima Bold" size="14.0" />
                      </font></Button>
