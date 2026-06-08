@@ -13,5 +13,5 @@ spring:
     baseline-on-migrate: true
 
 sigla:
-  storage:
+  armazenamento:
     attachment-root: var/attachments
