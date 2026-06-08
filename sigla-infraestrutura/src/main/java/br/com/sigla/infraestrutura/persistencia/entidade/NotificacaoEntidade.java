@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "notificacoes")
@@ -37,6 +38,15 @@ public class NotificacaoEntidade {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 24)
     private Notificacao.NotificacaoStatus status;
+
+    @Column(name = "read_at", insertable = false, updatable = false)
+    private OffsetDateTime readAt;
+
+    @Column(name = "created_at", insertable = false, updatable = false)
+    private OffsetDateTime createdAt;
+
+    @Column(name = "updated_at", insertable = false, updatable = false)
+    private OffsetDateTime updatedAt;
 
     public String getId() {
         return id;
@@ -92,6 +102,18 @@ public class NotificacaoEntidade {
 
     public void setStatus(Notificacao.NotificacaoStatus status) {
         this.status = status;
+    }
+
+    public OffsetDateTime getReadAt() {
+        return readAt;
+    }
+
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public OffsetDateTime getUpdatedAt() {
+        return updatedAt;
     }
 }
 

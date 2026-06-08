@@ -31,7 +31,7 @@ public class AuditoriaEventoEntidade {
     @Column(name = "usuario_id")
     private UUID usuarioId;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;
 
     public UUID getId() {
