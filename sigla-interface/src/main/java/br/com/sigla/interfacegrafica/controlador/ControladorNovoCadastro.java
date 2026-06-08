@@ -158,7 +158,6 @@ public class ControladorNovoCadastro {
 
     private void cadastrarFuncionario() {
         validarFuncionario();
-        String contato = !texto(telefoneField).isBlank() ? texto(telefoneField) : texto(emailField);
         Funcionario.FuncionarioStatus status = statusFuncionarioCombo == null || statusFuncionarioCombo.getValue() == null
                 ? Funcionario.FuncionarioStatus.ACTIVE
                 : statusFuncionarioCombo.getValue();
@@ -166,8 +165,17 @@ public class ControladorNovoCadastro {
         casoDeUsoFuncionario.register(new CasoDeUsoFuncionario.RegisterFuncionarioCommand(
                 UUID.randomUUID().toString(),
                 texto(nomeField),
+                texto(cpfField),
                 texto(cargoField),
-                contato,
+                texto(telefoneField),
+                texto(emailField),
+                texto(cepField),
+                texto(ruaField),
+                texto(numeroField),
+                texto(complementoField),
+                texto(bairroField),
+                texto(cidadeField),
+                texto(estadoField),
                 status
         ));
     }
@@ -222,16 +230,19 @@ public class ControladorNovoCadastro {
 
     private void atualizarModoCadastro() {
         boolean funcionario = isCadastroFuncionario();
-        setDisabled(cpfField, funcionario);
+        // CNPJ e razao social sao exclusivos de pessoa juridica (cliente).
         setDisabled(cnpjField, funcionario);
         setDisabled(razaoSocialField, funcionario);
-        setDisabled(ruaField, funcionario);
-        setDisabled(numeroField, funcionario);
-        setDisabled(complementoField, funcionario);
-        setDisabled(bairroField, funcionario);
-        setDisabled(cidadeField, funcionario);
-        setDisabled(cepField, funcionario);
-        setDisabled(estadoField, funcionario);
+        // CPF e endereco agora valem para cliente E funcionario.
+        setDisabled(cpfField, false);
+        setDisabled(ruaField, false);
+        setDisabled(numeroField, false);
+        setDisabled(complementoField, false);
+        setDisabled(bairroField, false);
+        setDisabled(cidadeField, false);
+        setDisabled(cepField, false);
+        setDisabled(estadoField, false);
+        // Cargo e situacao sao exclusivos de funcionario.
         setDisabled(cargoField, !funcionario);
         setDisabled(statusFuncionarioCombo, !funcionario);
     }

@@ -169,13 +169,13 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
                     false,
                     "FUNCIONARIO",
                     employee.name(),
+                    employee.cpf().isBlank() ? "-" : employee.cpf(),
+                    "-",
                     employee.role(),
-                    "",
-                    "-",
-                    employee.contact(),
-                    "-",
-                    "-",
-                    "-",
+                    employee.contato(),
+                    employee.email().isBlank() ? "-" : employee.email(),
+                    blankAsDash(employee.cep()),
+                    blankAsDash(employee.cidade()),
                     TradutorInterface.texto(employee.status())
             )));
         }
@@ -426,8 +426,17 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
         TextField nome = field(funcionario.name());
+        TextField cpf = field(funcionario.cpf());
         TextField cargo = field(funcionario.role());
-        TextField contato = field(funcionario.contact());
+        TextField telefone = field(funcionario.telefone());
+        TextField email = field(funcionario.email());
+        TextField cep = field(funcionario.cep());
+        TextField rua = field(funcionario.rua());
+        TextField numero = field(funcionario.numero());
+        TextField complemento = field(funcionario.complemento());
+        TextField bairro = field(funcionario.bairro());
+        TextField cidade = field(funcionario.cidade());
+        TextField estado = field(funcionario.estado());
         ComboBox<Funcionario.FuncionarioStatus> status = new ComboBox<>();
         TradutorInterface.aplicar(status);
         status.getItems().setAll(Funcionario.FuncionarioStatus.values());
@@ -437,12 +446,23 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
         grid.setHgap(8);
         grid.setVgap(8);
         grid.addRow(0, new javafx.scene.control.Label("Nome"), nome);
-        grid.addRow(1, new javafx.scene.control.Label("Cargo"), cargo);
-        grid.addRow(2, new javafx.scene.control.Label("Contato"), contato);
-        grid.addRow(3, new javafx.scene.control.Label("Status"), status);
+        grid.addRow(1, new javafx.scene.control.Label("CPF"), cpf);
+        grid.addRow(2, new javafx.scene.control.Label("Cargo"), cargo);
+        grid.addRow(3, new javafx.scene.control.Label("Telefone"), telefone);
+        grid.addRow(4, new javafx.scene.control.Label("E-mail"), email);
+        grid.addRow(5, new javafx.scene.control.Label("CEP"), cep);
+        grid.addRow(6, new javafx.scene.control.Label("Rua"), rua);
+        grid.addRow(7, new javafx.scene.control.Label("Número"), numero);
+        grid.addRow(8, new javafx.scene.control.Label("Complemento"), complemento);
+        grid.addRow(9, new javafx.scene.control.Label("Bairro"), bairro);
+        grid.addRow(10, new javafx.scene.control.Label("Cidade"), cidade);
+        grid.addRow(11, new javafx.scene.control.Label("Estado"), estado);
+        grid.addRow(12, new javafx.scene.control.Label("Status"), status);
         dialog.getDialogPane().setContent(grid);
         dialog.setResultConverter(button -> button == ButtonType.OK ? new CasoDeUsoFuncionario.RegisterFuncionarioCommand(
-                funcionario.id(), nome.getText(), cargo.getText(), contato.getText(), status.getValue()) : null);
+                funcionario.id(), nome.getText(), cpf.getText(), cargo.getText(), telefone.getText(), email.getText(),
+                cep.getText(), rua.getText(), numero.getText(), complemento.getText(), bairro.getText(),
+                cidade.getText(), estado.getText(), status.getValue()) : null);
         return dialog.showAndWait();
     }
 

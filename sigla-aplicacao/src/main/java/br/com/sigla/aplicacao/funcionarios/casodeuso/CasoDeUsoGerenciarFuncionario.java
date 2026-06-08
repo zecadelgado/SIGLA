@@ -21,8 +21,17 @@ public class CasoDeUsoGerenciarFuncionario implements CasoDeUsoFuncionario {
         repository.save(new Funcionario(
                 command.id(),
                 command.name(),
+                command.cpf(),
                 command.role(),
-                command.contact(),
+                command.telefone(),
+                command.email(),
+                command.cep(),
+                command.rua(),
+                command.numero(),
+                command.complemento(),
+                command.bairro(),
+                command.cidade(),
+                command.estado(),
                 command.status()
         ));
     }
@@ -64,7 +73,11 @@ public class CasoDeUsoGerenciarFuncionario implements CasoDeUsoFuncionario {
     }
 
     private Funcionario withStatus(Funcionario funcionario, Funcionario.FuncionarioStatus status) {
-        return new Funcionario(funcionario.id(), funcionario.name(), funcionario.role(), funcionario.contact(), status);
+        return new Funcionario(
+                funcionario.id(), funcionario.name(), funcionario.cpf(), funcionario.role(),
+                funcionario.telefone(), funcionario.email(), funcionario.cep(), funcionario.rua(),
+                funcionario.numero(), funcionario.complemento(), funcionario.bairro(),
+                funcionario.cidade(), funcionario.estado(), status);
     }
 }
 

@@ -57,12 +57,28 @@ public class AdaptadorRepositorioFuncionario implements RepositorioFuncionario {
     }
 
     private Funcionario toDomain(ClienteEntidade entity) {
+        String telefone = blankAs(entity.getTelefonePrincipal(), "");
+        String email = blankAs(entity.getEmail(), "");
+        if (telefone.isBlank() && email.isBlank()) {
+            telefone = "-";
+        }
+        // role: coluna cargo (atual) com fallback para observacoes (linhas legadas).
+        String cargo = blankAs(entity.getCargo(), blankAs(entity.getObservacoes(), "Equipe"));
         return new Funcionario(
                 PersistenciaIds.toString(entity.getId()),
                 entity.getNome(),
-                blankAs(entity.getObservacoes(), "Equipe"),
-                blankAs(entity.getTelefonePrincipal(), entity.getEmail()),
-                entity.isAtivo() ? Funcionario.FuncionarioStatus.ACTIVE : Funcionario.FuncionarioStatus.INACTIVE
+                blankAs(entity.getCpf(), ""),
+                cargo,
+                telefone,
+                email,
+                blankAs(entity.getCep(), ""),
+                blankAs(entity.getRua(), ""),
+                blankAs(entity.getNumero(), ""),
+                blankAs(entity.getComplemento(), ""),
+                blankAs(entity.getBairro(), ""),
+                blankAs(entity.getCidade(), ""),
+                blankAs(entity.getEstado(), ""),
+                statusDe(entity.getSituacao(), entity.isAtivo())
         );
     }
 
@@ -72,11 +88,40 @@ public class AdaptadorRepositorioFuncionario implements RepositorioFuncionario {
         entity.setTipo("FUNCIONARIO");
         entity.setNome(employee.name());
         entity.setNomeFantasia(employee.name());
-        entity.setTelefonePrincipal(employee.contact());
-        entity.setEmail(employee.contact().contains("@") ? employee.contact() : "");
-        entity.setObservacoes(employee.role());
-        entity.setAtivo(employee.status() == Funcionario.FuncionarioStatus.ACTIVE);
+        entity.setCpf(employee.cpf());
+        entity.setTelefonePrincipal(employee.telefone());
+        entity.setEmail(employee.email());
+        entity.setCep(employee.cep());
+        entity.setRua(employee.rua());
+        entity.setNumero(employee.numero());
+        entity.setComplemento(employee.complemento());
+        entity.setBairro(employee.bairro());
+        entity.setCidade(employee.cidade());
+        entity.setEstado(employee.estado());
+        entity.setCargo(employee.role());
+        entity.setSituacao(situacaoDe(employee.status()));
+        // "Afastado" continua contando como ativo no boolean; apenas INATIVO desativa.
+        entity.setAtivo(employee.status() != Funcionario.FuncionarioStatus.INACTIVE);
         return entity;
+    }
+
+    private String situacaoDe(Funcionario.FuncionarioStatus status) {
+        return switch (status) {
+            case INACTIVE -> "INATIVO";
+            case ON_LEAVE -> "AFASTADO";
+            case ACTIVE -> "ATIVO";
+        };
+    }
+
+    private Funcionario.FuncionarioStatus statusDe(String situacao, boolean ativo) {
+        if (situacao == null || situacao.isBlank()) {
+            return ativo ? Funcionario.FuncionarioStatus.ACTIVE : Funcionario.FuncionarioStatus.INACTIVE;
+        }
+        return switch (situacao.trim().toUpperCase()) {
+            case "INATIVO", "INACTIVE" -> Funcionario.FuncionarioStatus.INACTIVE;
+            case "AFASTADO", "ON_LEAVE" -> Funcionario.FuncionarioStatus.ON_LEAVE;
+            default -> Funcionario.FuncionarioStatus.ACTIVE;
+        };
     }
 
     private String blankAs(String value, String fallback) {

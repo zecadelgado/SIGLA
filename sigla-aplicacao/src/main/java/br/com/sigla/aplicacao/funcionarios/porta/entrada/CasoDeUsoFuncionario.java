@@ -21,10 +21,23 @@ public interface CasoDeUsoFuncionario {
     record RegisterFuncionarioCommand(
             String id,
             String name,
+            String cpf,
             String role,
-            String contact,
+            String telefone,
+            String email,
+            String cep,
+            String rua,
+            String numero,
+            String complemento,
+            String bairro,
+            String cidade,
+            String estado,
             Funcionario.FuncionarioStatus status
     ) {
+        /** Construtor compacto para fluxos simples (apenas contato por telefone). */
+        public RegisterFuncionarioCommand(String id, String name, String role, String telefone, Funcionario.FuncionarioStatus status) {
+            this(id, name, "", role, telefone, "", "", "", "", "", "", "", "", status);
+        }
     }
 }
 
