@@ -5,8 +5,7 @@ import br.com.sigla.dominio.clientes.Cliente;
 import br.com.sigla.infraestrutura.persistencia.PersistenciaIds;
 import br.com.sigla.infraestrutura.persistencia.entidade.ClienteEntidade;
 import jakarta.persistence.EntityManager;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -18,7 +17,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
-@ConditionalOnBean(SpringDataRepositorioCliente.class)
 public class AdaptadorRepositorioCliente implements RepositorioCliente {
 
     private final SpringDataRepositorioCliente repository;
@@ -155,21 +153,28 @@ public class AdaptadorRepositorioCliente implements RepositorioCliente {
         entity.setEstado(customer.estado());
         entity.setObservacoes(customer.notes());
         entity.setAtivo(customer.ativo());
+
         List<ClienteEntidade.ResponsavelEntidade> contacts = new ArrayList<>();
         boolean principal = true;
+
         for (Cliente.ContactPerson contact : customer.contacts()) {
             ClienteEntidade.ResponsavelEntidade embeddable = new ClienteEntidade.ResponsavelEntidade();
-            embeddable.setId(PersistenciaIds.toUuidIfValid(contact.id()) == null ? UUID.randomUUID() : PersistenciaIds.toUuidIfValid(contact.id()));
+            embeddable.setId(PersistenciaIds.toUuidIfValid(contact.id()) == null
+                    ? UUID.randomUUID()
+                    : PersistenciaIds.toUuidIfValid(contact.id()));
             embeddable.setNome(contact.name());
             embeddable.setCargo(contact.role());
             embeddable.setTelefone(contact.phone());
             embeddable.setEmail(contact.email());
             embeddable.setPrincipal(contact.principal() && principal);
+
             if (embeddable.isPrincipal()) {
                 principal = false;
             }
+
             contacts.add(embeddable);
         }
+
         entity.setResponsaveis(contacts);
         return entity;
     }
@@ -200,7 +205,7 @@ public class AdaptadorRepositorioCliente implements RepositorioCliente {
 }
 
 @Repository
-@ConditionalOnMissingBean(SpringDataRepositorioCliente.class)
+@Profile("memoria")
 class InMemoryAdaptadorRepositorioCliente implements RepositorioCliente {
 
     private final Map<String, Cliente> storage = new ConcurrentHashMap<>();
@@ -264,4 +269,3 @@ class InMemoryAdaptadorRepositorioCliente implements RepositorioCliente {
 
 interface SpringDataRepositorioCliente extends JpaRepository<ClienteEntidade, UUID> {
 }
-
