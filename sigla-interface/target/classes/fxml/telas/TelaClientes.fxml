@@ -249,7 +249,7 @@
                                           <Insets left="15.0" top="8.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <TableView fx:id="rankingTable" prefHeight="385.0" prefWidth="200.0">
+                                    <TableView fx:id="rankingTable" prefHeight="385.0" prefWidth="200.0" styleClass="registry-table">
                                        <columns>
                                           <TableColumn fx:id="rankingClienteColumn" prefWidth="231.0" style="-fx-background-color: white;" text="Nome" />
                                           <TableColumn fx:id="rankingEmailColumn" prefWidth="231.0" style="-fx-background-color: White;" text="Email" />
@@ -296,7 +296,7 @@
                                           <Insets left="15.0" right="15.0" top="4.0" />
                                        </VBox.margin>
                                     </HBox>
-                                    <TableView fx:id="indicacoesTable" prefHeight="340.0" prefWidth="200.0">
+                                    <TableView fx:id="indicacoesTable" prefHeight="340.0" prefWidth="200.0" styleClass="registry-table">
                                        <columns>
                                           <TableColumn fx:id="indicacaoNomeColumn" prefWidth="231.0" style="-fx-background-color: white;" text="Nome Indicado" />
                                           <TableColumn fx:id="indicacaoContatoColumn" prefWidth="231.0" style="-fx-background-color: White;" text="Telefone" />

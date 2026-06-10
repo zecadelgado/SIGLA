@@ -1,1 +1,3 @@
 br\com\sigla\infraestrutura\armazenamento\AdaptadorArmazenamentoAnexoSistemaArquivosTest.class
+br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioServicoPrestadoTest$RepositorioOrdemServicoFake.class
+br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioServicoPrestadoTest.class

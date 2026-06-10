@@ -1,7 +1,9 @@
+br\com\sigla\aplicacao\contratos\porta\entrada\CasoDeUsoContrato$EncerrarContratoCommand.class
 br\com\sigla\aplicacao\servicos\porta\entrada\CasoDeUsoServicoPrestado.class
 br\com\sigla\aplicacao\agenda\porta\entrada\CasoDeUsoAgenda$ScheduleVisitCommand.class
 br\com\sigla\aplicacao\servicos\porta\entrada\CasoDeUsoOrdemServico$AdicionarProdutoOrdemCommand.class
 br\com\sigla\aplicacao\usuarios\porta\entrada\CasoDeUsoUsuario.class
+br\com\sigla\aplicacao\contratos\porta\entrada\CasoDeUsoContrato$RenovarContratoCommand.class
 br\com\sigla\aplicacao\financeiro\porta\entrada\CasoDeUsoFinanceiro$TransacaoFinanceiraView.class
 br\com\sigla\aplicacao\potenciaisclientes\porta\entrada\CasoDeUsoPotencialCliente$AlterarStatusIndicacaoCommand.class
 br\com\sigla\aplicacao\agenda\porta\entrada\CasoDeUsoAgenda$ChangeVisitStatusCommand.class
@@ -19,6 +21,7 @@ br\com\sigla\aplicacao\clientes\porta\saida\RepositorioCliente.class
 br\com\sigla\aplicacao\potenciaisclientes\porta\entrada\CasoDeUsoPotencialCliente$RegisterPotencialClienteCommand.class
 br\com\sigla\aplicacao\usuarios\porta\saida\ServicoSenhaUsuario.class
 br\com\sigla\aplicacao\estoque\casodeuso\CasoDeUsoGerenciarEstoque.class
+br\com\sigla\aplicacao\contratos\porta\entrada\CasoDeUsoContrato$UpdateContratoCommand.class
 br\com\sigla\aplicacao\financeiro\porta\entrada\CasoDeUsoFinanceiro$TransactionStatus.class
 br\com\sigla\aplicacao\financeiro\porta\entrada\CasoDeUsoFinanceiro.class
 br\com\sigla\aplicacao\financeiro\casodeuso\CasoDeUsoGerenciarFinanceiro$1.class
@@ -67,6 +70,7 @@ br\com\sigla\aplicacao\certificados\porta\entrada\CasoDeUsoCertificado$IssueCert
 br\com\sigla\aplicacao\estoque\porta\entrada\CasoDeUsoEstoque$RegisterItemEstoqueCommand.class
 br\com\sigla\aplicacao\agenda\porta\entrada\CasoDeUsoAgenda$RescheduleVisitCommand.class
 br\com\sigla\aplicacao\auditoria\porta\saida\RepositorioAuditoriaFuncional.class
+br\com\sigla\aplicacao\certificados\porta\entrada\CasoDeUsoCertificado$UpdateCertificadoCommand.class
 br\com\sigla\aplicacao\financeiro\porta\entrada\CasoDeUsoFinanceiro$RegisterTransacaoFinanceiraCommand.class
 br\com\sigla\aplicacao\clientes\porta\entrada\CasoDeUsoCliente.class
 br\com\sigla\aplicacao\agenda\porta\entrada\CasoDeUsoAgenda.class
@@ -78,6 +82,7 @@ br\com\sigla\aplicacao\clientes\porta\entrada\CasoDeUsoCliente$FiltroCliente.cla
 br\com\sigla\aplicacao\funcionarios\porta\saida\RepositorioFuncionario.class
 br\com\sigla\aplicacao\financeiro\porta\saida\RepositorioPlanoParcelamento.class
 br\com\sigla\aplicacao\clientes\porta\entrada\CasoDeUsoCliente$ContactCommand.class
+br\com\sigla\aplicacao\certificados\porta\entrada\CasoDeUsoCertificado$RenovarCertificadoCommand.class
 br\com\sigla\aplicacao\financeiro\porta\saida\RepositorioLancamentoFinanceiro.class
 br\com\sigla\aplicacao\usuarios\porta\saida\RepositorioUsuario.class
 br\com\sigla\aplicacao\usuarios\porta\entrada\CasoDeUsoUsuario$RegistrarUsuarioCommand.class

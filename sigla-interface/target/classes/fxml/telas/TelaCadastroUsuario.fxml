@@ -4,18 +4,20 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="655.0" style="-fx-background-color: #93cbfe;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.sigla.interfacegrafica.controlador.ControladorCadastroUsuario">
    <children>
-      <Label layoutX="90.0" layoutY="26.0" prefHeight="66.0" prefWidth="253.0" text="Cadastre-se" textFill="#006ec1">
+      <Label layoutX="138.0" layoutY="23.0" prefHeight="66.0" prefWidth="253.0" text="Cadastre-se" textFill="#006ec1">
          <font>
             <Font name="Nirmala UI Bold" size="45.0" />
          </font>
       </Label>
       <TextField fx:id="nomeField" layoutX="139.0" layoutY="143.0" prefHeight="26.0" prefWidth="400.0" promptText="Usuário" style="-fx-border-color: #116694;" />
-      <Label layoutX="90.0" layoutY="91.0" prefHeight="26.0" prefWidth="400.0" text="Insira seus dados abaixo para realizar seu Cadastro!" textFill="#0e8fff">
+      <Label layoutX="139.0" layoutY="89.0" prefHeight="26.0" prefWidth="400.0" text="Insira seus dados abaixo para realizar seu Cadastro!" textFill="#0e8fff">
          <font>
             <Font name="Nirmala UI Bold" size="16.0" />
          </font>
@@ -36,15 +38,20 @@
             <Font name="Nirmala UI Bold" size="12.0" />
          </font>
       </Label>
-      <Button layoutX="242.0" layoutY="282.0" mnemonicParsing="false" onAction="#onCadastrar" prefHeight="35.0" prefWidth="171.0" style="-fx-background-color: #006ec1;" text="Cadastrar" textFill="WHITE">
+      <Button layoutX="242.0" layoutY="267.0" mnemonicParsing="false" onAction="#onCadastrar" prefHeight="35.0" prefWidth="171.0" style="-fx-background-color: #006ec1;" text="Cadastrar" textFill="WHITE">
          <font>
-            <Font name="Nirmala Text Bold" size="14.0" />
+            <Font name="Nirmala Text Bold" size="22.0" />
          </font>
       </Button>
-      <Button layoutX="242.0" layoutY="330.0" mnemonicParsing="false" onAction="#onVoltarLogin" prefHeight="35.0" prefWidth="171.0" style="-fx-background-color: #116694;" text="Voltar ao Login" textFill="WHITE">
+      <Button layoutX="242.0" layoutY="323.0" mnemonicParsing="false" onAction="#onVoltarLogin" prefHeight="35.0" prefWidth="171.0" style="-fx-background-color: #116694;" text="Voltar ao Login" textFill="WHITE">
          <font>
-            <Font name="Nirmala Text Bold" size="14.0" />
+            <Font name="Nirmala Text Bold" size="18.0" />
          </font>
       </Button>
+      <ImageView fitHeight="98.0" fitWidth="117.0" layoutX="22.0" layoutY="41.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../../../../../../../../Downloads/logo%20sigla%20png.png" />
+         </image>
+      </ImageView>
    </children>
 </AnchorPane>

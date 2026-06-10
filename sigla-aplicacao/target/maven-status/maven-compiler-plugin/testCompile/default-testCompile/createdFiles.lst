@@ -12,6 +12,8 @@ br\com\sigla\aplicacao\notificacoes\casodeuso\CasoDeUsoAtualizarNotificacaoTest$
 br\com\sigla\aplicacao\contratos\casodeuso\CasoDeUsoGerenciarContratoTest$FakeRepositorioAgenda.class
 br\com\sigla\aplicacao\contratos\casodeuso\CasoDeUsoGerenciarContratoTest.class
 br\com\sigla\aplicacao\estoque\casodeuso\CasoDeUsoGerenciarEstoqueTest$InMemoryRepositorioEstoque.class
+br\com\sigla\aplicacao\funcionarios\casodeuso\CasoDeUsoGerenciarFuncionarioTest.class
+br\com\sigla\aplicacao\funcionarios\casodeuso\CasoDeUsoGerenciarFuncionarioTest$FakeRepositorioFuncionario.class
 br\com\sigla\aplicacao\notificacoes\casodeuso\CasoDeUsoAtualizarNotificacaoTest$FakeRepositorioCliente.class
 br\com\sigla\aplicacao\estoque\casodeuso\CasoDeUsoGerenciarEstoqueTest.class
 br\com\sigla\aplicacao\servicos\casodeuso\CasoDeUsoGerenciarOrdemServicoTest.class

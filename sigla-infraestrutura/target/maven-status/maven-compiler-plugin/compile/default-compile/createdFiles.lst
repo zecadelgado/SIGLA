@@ -16,10 +16,10 @@ br\com\sigla\infraestrutura\persistencia\repositorio\SpringDataRepositorioContra
 br\com\sigla\infraestrutura\relogio\ProvedorRelogioSistema.class
 br\com\sigla\infraestrutura\configuracao\PropriedadesArmazenamentoSigla.class
 br\com\sigla\infraestrutura\seguranca\ServicoSenhaUsuarioBCrypt.class
-br\com\sigla\infraestrutura\persistencia\entidade\ServicoPrestadoEntidade.class
 br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioEntradaFinanceira.class
 br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioAuditoriaFuncional.class
 br\com\sigla\infraestrutura\persistencia\repositorio\InMemoryAdaptadorRepositorioPlanoParcelamento.class
+br\com\sigla\infraestrutura\configuracao\VerificadorModoPersistencia.class
 br\com\sigla\infraestrutura\persistencia\repositorio\InMemoryAdaptadorRepositorioCertificado.class
 br\com\sigla\infraestrutura\persistencia\entidade\PotencialClienteEntidade.class
 br\com\sigla\infraestrutura\persistencia\repositorio\SpringDataRepositorioCertificado.class
@@ -32,7 +32,6 @@ br\com\sigla\infraestrutura\persistencia\repositorio\InMemoryAdaptadorRepositori
 br\com\sigla\infraestrutura\persistencia\entidade\NotificacaoEntidade.class
 br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioPlanoParcelamento.class
 br\com\sigla\infraestrutura\persistencia\entidade\AuditoriaEventoEntidade.class
-br\com\sigla\infraestrutura\persistencia\repositorio\InMemoryAdaptadorRepositorioServicoPrestado.class
 br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioFuncionario.class
 br\com\sigla\infraestrutura\persistencia\repositorio\SpringDataRepositorioPotencialCliente.class
 br\com\sigla\infraestrutura\persistencia\entidade\CertificadoEntidade.class
@@ -44,7 +43,6 @@ br\com\sigla\infraestrutura\persistencia\repositorio\InMemoryAdaptadorRepositori
 br\com\sigla\infraestrutura\persistencia\repositorio\SpringDataRepositorioCliente.class
 br\com\sigla\infraestrutura\persistencia\entidade\FinanceiroCategoriaEntidade.class
 br\com\sigla\infraestrutura\persistencia\repositorio\InMemoryAdaptadorRepositorioPotencialCliente.class
-br\com\sigla\infraestrutura\persistencia\repositorio\SpringDataRepositorioServicoPrestado.class
 br\com\sigla\infraestrutura\integracao\AdaptadorWebhookN8n.class
 br\com\sigla\infraestrutura\persistencia\repositorio\SpringDataRepositorioAuditoriaEvento.class
 br\com\sigla\infraestrutura\persistencia\repositorio\InMemoryAdaptadorRepositorioDespesaFinanceira.class
@@ -55,16 +53,16 @@ br\com\sigla\infraestrutura\persistencia\PersistenciaIds.class
 br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioAgenda$1.class
 br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioNotificacao.class
 br\com\sigla\infraestrutura\persistencia\entidade\OrdemServicoEntidade.class
+br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioServicoPrestado$1.class
 br\com\sigla\infraestrutura\persistencia\repositorio\SpringDataRepositorioAgenda.class
 br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioEstoque.class
 br\com\sigla\infraestrutura\persistencia\entidade\FinanceiroFormaPagamentoEntidade.class
-br\com\sigla\infraestrutura\persistencia\entidade\ServicoPrestadoEntidade$AttachmentEmbeddable.class
 br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioUsuario.class
+br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioFuncionario$1.class
 br\com\sigla\infraestrutura\persistencia\repositorio\InMemoryAdaptadorRepositorioContrato.class
 br\com\sigla\infraestrutura\persistencia\entidade\ClienteEntidade$ResponsavelEntidade.class
 br\com\sigla\infraestrutura\persistencia\entidade\FinanceiroParcelaEntidade.class
 br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioPotencialCliente.class
-br\com\sigla\infraestrutura\persistencia\entidade\FuncionarioEntidade.class
 br\com\sigla\infraestrutura\persistencia\repositorio\SpringDataRepositorioNotificacao.class
 br\com\sigla\infraestrutura\persistencia\entidade\ClienteEntidade.class
 br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioCertificado.class
