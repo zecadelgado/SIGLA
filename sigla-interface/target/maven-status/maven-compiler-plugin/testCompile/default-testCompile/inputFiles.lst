@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 C:\Users\PC\IdeaProjects\SIGLA\sigla-interface\src\test\java\br\com\sigla\interfacegrafica\aplicativo\SessaoLocalAplicacaoTest.java
 C:\Users\PC\IdeaProjects\SIGLA\sigla-interface\src\test\java\br\com\sigla\interfacegrafica\consulta\ServicoConsultaOrdemServicoTest.java
 C:\Users\PC\IdeaProjects\SIGLA\sigla-interface\src\test\java\br\com\sigla\interfacegrafica\controlador\ControladorDashboardTest.java
@@ -7,3 +8,14 @@ C:\Users\PC\IdeaProjects\SIGLA\sigla-interface\src\test\java\br\com\sigla\interf
 C:\Users\PC\IdeaProjects\SIGLA\sigla-interface\src\test\java\br\com\sigla\interfacegrafica\navegacao\GerenciadorNavegacaoTest.java
 C:\Users\PC\IdeaProjects\SIGLA\sigla-interface\src\test\java\br\com\sigla\interfacegrafica\navegacao\VisaoAplicacaoTest.java
 C:\Users\PC\IdeaProjects\SIGLA\sigla-interface\src\test\java\br\com\sigla\interfacegrafica\util\TradutorInterfaceTest.java
+=======
+D:\SIGLA\sigla-interface\src\test\java\br\com\sigla\interfacegrafica\aplicativo\SessaoLocalAplicacaoTest.java
+D:\SIGLA\sigla-interface\src\test\java\br\com\sigla\interfacegrafica\consulta\ServicoConsultaOrdemServicoTest.java
+D:\SIGLA\sigla-interface\src\test\java\br\com\sigla\interfacegrafica\controlador\ControladorDashboardTest.java
+D:\SIGLA\sigla-interface\src\test\java\br\com\sigla\interfacegrafica\controlador\ControladorEstruturaAplicacaoTest.java
+D:\SIGLA\sigla-interface\src\test\java\br\com\sigla\interfacegrafica\formatador\FormatadorMascaraCpfTest.java
+D:\SIGLA\sigla-interface\src\test\java\br\com\sigla\interfacegrafica\fxml\TelaFxmlResourcesTest.java
+D:\SIGLA\sigla-interface\src\test\java\br\com\sigla\interfacegrafica\navegacao\GerenciadorNavegacaoTest.java
+D:\SIGLA\sigla-interface\src\test\java\br\com\sigla\interfacegrafica\navegacao\VisaoAplicacaoTest.java
+D:\SIGLA\sigla-interface\src\test\java\br\com\sigla\interfacegrafica\util\TradutorInterfaceTest.java
+>>>>>>> Stashed changes
