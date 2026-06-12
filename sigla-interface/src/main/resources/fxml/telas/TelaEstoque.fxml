@@ -194,7 +194,7 @@
                                           <Font name="Ebrima" size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="valorTotalLabel" text="R$ 0000" textFill="#00417e">
+                                    <Label fx:id="valorTotalLabel" text="R$ 0,00" textFill="#00417e">
                                        <VBox.margin>
                                           <Insets left="20.0" top="8.0" />
                                        </VBox.margin>
@@ -315,7 +315,7 @@
                                           <TableColumn fx:id="movimentoTipoColumn" prefWidth="170.0" style="-fx-background-color: white;" text="Tipo Movimentação" />
                                           <TableColumn fx:id="movimentoQuantidadeColumn" prefWidth="170.0" style="-fx-background-color: white;" text="Quantidade" />
                                           <TableColumn fx:id="movimentoValorColumn" prefWidth="170.0" style="-fx-background-color: white;" text="Valor Unitário" />
-                                          <TableColumn prefWidth="170.0" style="-fx-background-color: white;" text="Valor Total" />
+                                          <TableColumn fx:id="movimentoValorTotalColumn" prefWidth="170.0" style="-fx-background-color: white;" text="Valor Total" />
                                           <TableColumn fx:id="movimentoUsuarioColumn" prefWidth="170.0" style="-fx-background-color: white;" text="Usuário" />
                                           <TableColumn fx:id="movimentoClienteColumn" prefWidth="170.0" style="-fx-background-color: white;" text="Cliente" />
                                           <TableColumn fx:id="movimentoOrdemColumn" prefWidth="170.0" style="-fx-background-color: white;" text="Ordem Serviço" />

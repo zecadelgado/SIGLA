@@ -65,12 +65,12 @@
                      <children>
                         <VBox prefHeight="100.0" prefWidth="300.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
                            <children>
-                              <Label text="Receitas (Pago)" textFill="#003363">
+                              <Label text="Receitas (Pago)" textFill="#00417e">
                                  <font>
                                     <Font name="Ebrima Bold" size="18.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="receitasLabel" layoutX="20.0" layoutY="20.0" text="R$ 0000,00" textFill="#003363">
+                              <Label fx:id="receitasLabel" layoutX="20.0" layoutY="20.0" text="R$ 0,00" textFill="#00417e">
                                  <font>
                                     <Font name="Ebrima Bold" size="24.0" />
                                  </font>
@@ -82,12 +82,12 @@
                         </VBox>
                         <VBox prefHeight="100.0" prefWidth="300.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
                            <children>
-                              <Label text="Despesas (Pago)" textFill="#003363">
+                              <Label text="Despesas (Pago)" textFill="#00417e">
                                  <font>
                                     <Font name="Ebrima Bold" size="18.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="despesasLabel" layoutX="20.0" layoutY="20.0" text="R$ 0000,00" textFill="#003363">
+                              <Label fx:id="despesasLabel" layoutX="20.0" layoutY="20.0" text="R$ 0,00" textFill="#00417e">
                                  <font>
                                     <Font name="Ebrima Bold" size="24.0" />
                                  </font>
@@ -99,12 +99,12 @@
                         </VBox>
                         <VBox prefHeight="100.0" prefWidth="300.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
                            <children>
-                              <Label text="Saldo Atual" textFill="#003363">
+                              <Label text="Saldo Atual" textFill="#00417e">
                                  <font>
                                     <Font name="Ebrima Bold" size="18.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="saldoLabel" layoutX="20.0" layoutY="20.0" text="R$ 0000,00" textFill="#003363">
+                              <Label fx:id="saldoLabel" layoutX="20.0" layoutY="20.0" text="R$ 0,00" textFill="#00417e">
                                  <font>
                                     <Font name="Ebrima Bold" size="24.0" />
                                  </font>
@@ -116,12 +116,12 @@
                         </VBox>
                         <VBox prefHeight="100.0" prefWidth="300.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
                            <children>
-                              <Label text="A Receber" textFill="#003363">
+                              <Label text="A Receber" textFill="#00417e">
                                  <font>
                                     <Font name="Ebrima Bold" size="18.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="receberLabel" layoutX="20.0" layoutY="20.0" text="R$ 0000,00" textFill="#003363">
+                              <Label fx:id="receberLabel" layoutX="20.0" layoutY="20.0" text="R$ 0,00" textFill="#00417e">
                                  <font>
                                     <Font name="Ebrima Bold" size="24.0" />
                                  </font>
@@ -167,11 +167,11 @@
                         <Insets left="28.0" right="40.0" />
                      </VBox.margin>
                   </HBox>
-                  <ScrollPane prefHeight="400.0" prefWidth="2500.0">
+                  <ScrollPane prefHeight="400.0" prefWidth="1900.0">
                      <content>
-                        <VBox prefHeight="405.0" prefWidth="2500.0">
+                        <VBox prefHeight="405.0" prefWidth="1900.0">
                            <children>
-                              <TableView fx:id="transacoesTable" prefHeight="400.0" prefWidth="2500.0" style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
+                              <TableView fx:id="transacoesTable" prefHeight="400.0" prefWidth="1900.0" style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
                                 <columns>
                                   <TableColumn fx:id="tipoColumn" prefWidth="150.0" style="-fx-background-color: white;" text="Tipo" />
                                   <TableColumn fx:id="categoriaColumn" prefWidth="150.0" style="-fx-background-color: white;" text="Categoria" />

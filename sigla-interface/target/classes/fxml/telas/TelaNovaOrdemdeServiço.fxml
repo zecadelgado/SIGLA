@@ -20,7 +20,7 @@
             <Insets bottom="24.0" left="28.0" right="28.0" top="24.0" />
          </padding>
          <children>
-            <Label text="Nova Ordem de Servico" textFill="#00417e">
+            <Label text="Nova Ordem de Serviço" textFill="#00417e">
                <font>
                   <Font name="System Bold" size="36.0" />
                </font>
@@ -38,40 +38,40 @@
                   <Label text="Contrato" GridPane.columnIndex="1" GridPane.rowIndex="0" />
                   <ComboBox fx:id="contratoCombo" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-                  <Label text="Titulo" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                  <Label text="Título" GridPane.columnIndex="0" GridPane.rowIndex="2" />
                   <TextField fx:id="tituloField" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="0" GridPane.rowIndex="3" />
 
-                  <Label text="Tipo Servico" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <Label text="Tipo Serviço" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <TextField fx:id="tipoServicoField" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
-                  <Label text="Descricao" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                  <Label text="Descrição" GridPane.columnIndex="0" GridPane.rowIndex="4" />
                   <TextField fx:id="descricaoField" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="0" GridPane.rowIndex="5" />
 
                   <Label text="Status" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                   <TextField fx:id="statusField" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
 
-                  <Label text="Responsavel Interno" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+                  <Label text="Responsável Interno" GridPane.columnIndex="0" GridPane.rowIndex="6" />
                   <ComboBox fx:id="responsavelInternoCombo" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="0" GridPane.rowIndex="7" />
 
-                  <Label text="Responsavel Secundario" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                  <Label text="Responsável Secundário" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                   <ComboBox fx:id="responsavelSecundarioCombo" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
 
                   <Label text="Executado por" GridPane.columnIndex="0" GridPane.rowIndex="8" />
                   <ComboBox fx:id="executadoPorCombo" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="0" GridPane.rowIndex="9" />
 
-                  <Label text="Valor Servico" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                  <Label text="Valor Serviço" GridPane.columnIndex="1" GridPane.rowIndex="8" />
                   <TextField fx:id="valorServicoField" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
 
                   <Label text="Data Agendada" GridPane.columnIndex="0" GridPane.rowIndex="10" />
                   <DatePicker fx:id="dataAgendadaPicker" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="0" GridPane.rowIndex="11" />
 
-                  <Label text="Data Inicio" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                  <Label text="Data Início" GridPane.columnIndex="1" GridPane.rowIndex="10" />
                   <DatePicker fx:id="dataInicioPicker" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="1" GridPane.rowIndex="11" />
 
                   <Label text="Data Fim" GridPane.columnIndex="0" GridPane.rowIndex="12" />
                   <DatePicker fx:id="dataFimPicker" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="0" GridPane.rowIndex="13" />
 
-                  <Label text="Observacoes" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+                  <Label text="Observações" GridPane.columnIndex="1" GridPane.rowIndex="12" />
                   <TextField fx:id="observacoesField" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="1" GridPane.rowIndex="13" />
                </children>
             </GridPane>

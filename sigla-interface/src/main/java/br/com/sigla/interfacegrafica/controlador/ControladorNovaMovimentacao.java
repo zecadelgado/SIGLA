@@ -4,6 +4,7 @@ import br.com.sigla.aplicacao.estoque.porta.entrada.CasoDeUsoEstoque;
 import br.com.sigla.dominio.estoque.ItemEstoque;
 import br.com.sigla.interfacegrafica.aplicativo.SessaoLocalAplicacao;
 import br.com.sigla.interfacegrafica.consulta.ServicoConsultaReferencias;
+import br.com.sigla.interfacegrafica.formatador.FormatadorMascaraMoeda;
 import br.com.sigla.interfacegrafica.modelo.OpcaoId;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
@@ -26,6 +27,7 @@ public class ControladorNovaMovimentacao {
     private final ServicoConsultaReferencias servicoConsultaReferencias;
     private final GerenciadorNavegacao gerenciadorNavegacao;
     private final SessaoLocalAplicacao sessaoLocalAplicacao;
+    private final FormatadorMascaraMoeda formatadorMoeda;
 
     @FXML
     private ComboBox<OpcaoId> produtoCombo;
@@ -54,12 +56,14 @@ public class ControladorNovaMovimentacao {
             CasoDeUsoEstoque casoDeUsoEstoque,
             ServicoConsultaReferencias servicoConsultaReferencias,
             GerenciadorNavegacao gerenciadorNavegacao,
-            SessaoLocalAplicacao sessaoLocalAplicacao
+            SessaoLocalAplicacao sessaoLocalAplicacao,
+            FormatadorMascaraMoeda formatadorMoeda
     ) {
         this.casoDeUsoEstoque = casoDeUsoEstoque;
         this.servicoConsultaReferencias = servicoConsultaReferencias;
         this.gerenciadorNavegacao = gerenciadorNavegacao;
         this.sessaoLocalAplicacao = sessaoLocalAplicacao;
+        this.formatadorMoeda = formatadorMoeda;
     }
 
     @FXML
@@ -79,6 +83,7 @@ public class ControladorNovaMovimentacao {
         if (usuarioField != null && usuarioField.getText().isBlank() && sessaoLocalAplicacao.usuarioAtual() != null) {
             usuarioField.setText(sessaoLocalAplicacao.usuarioAtual().id());
         }
+        formatadorMoeda.aplicar(valorUnitarioField);
         quantidadeField.textProperty().addListener((observable, oldValue, newValue) -> recomputeTotal());
         valorUnitarioField.textProperty().addListener((observable, oldValue, newValue) -> recomputeTotal());
         setFeedback("");
@@ -94,14 +99,15 @@ public class ControladorNovaMovimentacao {
             var cliente = UtilComboBox.selecionado(clienteCombo);
             var ordem = UtilComboBox.selecionado(ordemCombo);
             ItemEstoque.MovementType tipo = tipoCombo == null || tipoCombo.getValue() == null ? ItemEstoque.MovementType.SAIDA : tipoCombo.getValue();
+            int quantidade = quantidadeInformada();
 
             casoDeUsoEstoque.recordMovement(new CasoDeUsoEstoque.RecordInventoryMovementCommand(
                     produto.id(),
                     UUID.randomUUID().toString(),
                     tipo,
-                    Integer.parseInt(quantidadeField.getText()),
+                    quantidade,
                     LocalDate.now(),
-                    new BigDecimal(valorUnitarioField.getText()),
+                    formatadorMoeda.valor(valorUnitarioField),
                     BigDecimal.ZERO,
                     resolveUsuarioAtual(),
                     cliente == null ? "" : cliente.id(),
@@ -126,12 +132,26 @@ public class ControladorNovaMovimentacao {
 
     private void recomputeTotal() {
         try {
-            BigDecimal quantidade = new BigDecimal(quantidadeField.getText());
-            BigDecimal valorUnitario = new BigDecimal(valorUnitarioField.getText());
+            BigDecimal quantidade = new BigDecimal(quantidadeField.getText().trim());
+            BigDecimal valorUnitario = formatadorMoeda.valor(valorUnitarioField);
             valorTotalField.setText(quantidade.multiply(valorUnitario).toPlainString());
         } catch (Exception ignored) {
             // campos incompletos
         }
+    }
+
+    private int quantidadeInformada() {
+        String texto = quantidadeField == null ? "" : quantidadeField.getText().trim();
+        int quantidade;
+        try {
+            quantidade = Integer.parseInt(texto);
+        } catch (NumberFormatException exception) {
+            throw new IllegalArgumentException("Informe uma quantidade valida.");
+        }
+        if (quantidade <= 0) {
+            throw new IllegalArgumentException("Quantidade deve ser maior que zero.");
+        }
+        return quantidade;
     }
 
     private void setFeedback(String message) {

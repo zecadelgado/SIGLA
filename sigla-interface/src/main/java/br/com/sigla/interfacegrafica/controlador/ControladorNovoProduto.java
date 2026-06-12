@@ -1,6 +1,7 @@
 package br.com.sigla.interfacegrafica.controlador;
 
 import br.com.sigla.aplicacao.estoque.porta.entrada.CasoDeUsoEstoque;
+import br.com.sigla.interfacegrafica.formatador.FormatadorMascaraMoeda;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import br.com.sigla.interfacegrafica.util.UtilJanela;
@@ -10,7 +11,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 @Component
@@ -18,6 +18,7 @@ public class ControladorNovoProduto {
 
     private final CasoDeUsoEstoque casoDeUsoEstoque;
     private final GerenciadorNavegacao gerenciadorNavegacao;
+    private final FormatadorMascaraMoeda formatadorMoeda;
 
     @FXML
     private TextField nomeField;
@@ -38,9 +39,10 @@ public class ControladorNovoProduto {
     @FXML
     private Label feedbackLabel;
 
-    public ControladorNovoProduto(CasoDeUsoEstoque casoDeUsoEstoque, GerenciadorNavegacao gerenciadorNavegacao) {
+    public ControladorNovoProduto(CasoDeUsoEstoque casoDeUsoEstoque, GerenciadorNavegacao gerenciadorNavegacao, FormatadorMascaraMoeda formatadorMoeda) {
         this.casoDeUsoEstoque = casoDeUsoEstoque;
         this.gerenciadorNavegacao = gerenciadorNavegacao;
+        this.formatadorMoeda = formatadorMoeda;
     }
 
     @FXML
@@ -49,6 +51,8 @@ public class ControladorNovoProduto {
             unidadeCombo.getItems().setAll("un", "litro", "kg", "caixa", "pacote", "frasco");
             unidadeCombo.getSelectionModel().select("un");
         }
+        formatadorMoeda.aplicar(valorCustoField);
+        formatadorMoeda.aplicar(valorVendaField);
         setFeedback("");
     }
 
@@ -60,8 +64,8 @@ public class ControladorNovoProduto {
                     nomeField.getText(),
                     descricaoField.getText(),
                     skuField == null ? "" : skuField.getText(),
-                    new BigDecimal(valorCustoField.getText()),
-                    new BigDecimal(valorVendaField.getText()),
+                    formatadorMoeda.valor(valorCustoField),
+                    formatadorMoeda.valor(valorVendaField),
                     Integer.parseInt(quantidadeField.getText()),
                     Integer.parseInt(quantidadeMinimaField.getText()),
                     unidadeCombo == null || unidadeCombo.getValue() == null ? "un" : unidadeCombo.getValue(),

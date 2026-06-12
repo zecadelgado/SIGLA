@@ -5,6 +5,7 @@ import br.com.sigla.aplicacao.estoque.porta.entrada.CasoDeUsoEstoque;
 import br.com.sigla.dominio.estoque.ItemEstoque;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorData;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorMoeda;
+import br.com.sigla.interfacegrafica.formatador.FormatadorMascaraMoeda;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -33,6 +34,7 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
     private final GerenciadorNavegacao gerenciadorNavegacao;
     private final ApresentadorMoeda apresentadorMoeda;
     private final ApresentadorData apresentadorData;
+    private final FormatadorMascaraMoeda formatadorMoeda;
 
     @FXML
     private Label totalProdutosLabel;
@@ -69,6 +71,8 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
     @FXML
     private TableColumn<CasoDeUsoEstoque.InventoryMovementView, String> movimentoValorColumn;
     @FXML
+    private TableColumn<CasoDeUsoEstoque.InventoryMovementView, String> movimentoValorTotalColumn;
+    @FXML
     private TableColumn<CasoDeUsoEstoque.InventoryMovementView, String> movimentoUsuarioColumn;
     @FXML
     private TableColumn<CasoDeUsoEstoque.InventoryMovementView, String> movimentoClienteColumn;
@@ -85,7 +89,8 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
             CasoDeUsoEstoque casoDeUsoEstoque,
             GerenciadorNavegacao gerenciadorNavegacao,
             ApresentadorMoeda apresentadorMoeda,
-            ApresentadorData apresentadorData
+            ApresentadorData apresentadorData,
+            FormatadorMascaraMoeda formatadorMoeda
     ) {
         super(gerenciadorNavegacao);
         this.casoDeUsoCliente = casoDeUsoCliente;
@@ -93,6 +98,7 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
         this.gerenciadorNavegacao = gerenciadorNavegacao;
         this.apresentadorMoeda = apresentadorMoeda;
         this.apresentadorData = apresentadorData;
+        this.formatadorMoeda = formatadorMoeda;
     }
 
     @FXML
@@ -216,7 +222,8 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
         configureMovimentoColumn(movimentoProdutoColumn, 0, row -> row.itemName());
         configureMovimentoColumn(movimentoTipoColumn, 1, row -> row.type().name());
         configureMovimentoColumn(movimentoQuantidadeColumn, 2, row -> String.valueOf(row.amount()));
-        configureMovimentoColumn(movimentoValorColumn, 4, row -> apresentadorMoeda.format(row.totalPrice()));
+        configureMovimentoColumn(movimentoValorColumn, 3, row -> apresentadorMoeda.format(row.unitPrice()));
+        configureMovimentoColumn(movimentoValorTotalColumn, 4, row -> apresentadorMoeda.format(row.totalPrice()));
         configureMovimentoColumn(movimentoUsuarioColumn, 5, row -> row.createdBy());
         configureMovimentoColumn(movimentoClienteColumn, 6, row -> resolveCliente(row.customerId()));
         configureMovimentoColumn(movimentoOrdemColumn, 7, row -> blankAsDash(row.orderReference()));
@@ -286,8 +293,12 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
         ComboBox<String> unidade = new ComboBox<>();
         unidade.getItems().setAll("un", "litro", "kg", "caixa", "pacote", "frasco");
         unidade.getSelectionModel().select(item.unit());
-        TextField custo = new TextField(item.costPrice().toPlainString());
-        TextField venda = new TextField(item.salePrice().toPlainString());
+        TextField custo = new TextField();
+        formatadorMoeda.aplicar(custo);
+        formatadorMoeda.definir(custo, item.costPrice());
+        TextField venda = new TextField();
+        formatadorMoeda.aplicar(venda);
+        formatadorMoeda.definir(venda, item.salePrice());
         TextField minimo = new TextField(String.valueOf(item.minimumQuantity()));
         CheckBox ativo = new CheckBox("Ativo");
         ativo.setSelected(item.ativo());
@@ -304,8 +315,8 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
         grid.add(ativo, 1, 7);
         dialog.getDialogPane().setContent(grid);
         dialog.setResultConverter(button -> button == ButtonType.OK ? new CasoDeUsoEstoque.RegisterItemEstoqueCommand(
-                item.id(), nome.getText(), descricao.getText(), sku.getText(), new BigDecimal(custo.getText().replace(",", ".")),
-                new BigDecimal(venda.getText().replace(",", ".")), item.quantity(), Integer.parseInt(minimo.getText()),
+                item.id(), nome.getText(), descricao.getText(), sku.getText(), formatadorMoeda.valor(custo),
+                formatadorMoeda.valor(venda), item.quantity(), Integer.parseInt(minimo.getText()),
                 unidade.getValue(), ativo.isSelected()) : null);
         return dialog.showAndWait();
     }

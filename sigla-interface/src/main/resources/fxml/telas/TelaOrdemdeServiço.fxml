@@ -277,11 +277,11 @@
                            <children>
                               <TableView fx:id="ordensTable" prefHeight="355.0" prefWidth="1223.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5); -fx-background-radius: 10;">
                                 <columns>
-                                  <TableColumn fx:id="numeroColumn" prefWidth="90.0" style="-fx-background-color: white;" text="Numero" />
+                                  <TableColumn fx:id="numeroColumn" prefWidth="90.0" style="-fx-background-color: white;" text="Número" />
                                   <TableColumn fx:id="clienteColumn" prefWidth="190.0" style="-fx-background-color: white;" text="Cliente" />
-                                    <TableColumn fx:id="tituloColumn" prefWidth="180.0" style="-fx-background-color: white;" text="Titulo" />
+                                    <TableColumn fx:id="tituloColumn" prefWidth="180.0" style="-fx-background-color: white;" text="Título" />
                                     <TableColumn fx:id="tipoColumn" prefWidth="145.0" style="-fx-background-color: white;" text="Tipo" />
-                                    <TableColumn fx:id="responsavelColumn" prefWidth="155.0" style="-fx-background-color: white;" text="Responsavel" />
+                                    <TableColumn fx:id="responsavelColumn" prefWidth="155.0" style="-fx-background-color: white;" text="Responsável" />
                                     <TableColumn fx:id="emissaoColumn" prefWidth="135.0" style="-fx-background-color: white;" text="Data agendada" />
                                     <TableColumn fx:id="valorColumn" prefWidth="130.0" style="-fx-background-color: white;" text="Valor total" />
                                     <TableColumn fx:id="pagoColumn" prefWidth="80.0" style="-fx-background-color: white;" text="Pago" />

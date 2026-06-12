@@ -8,7 +8,6 @@ br\com\sigla\interfacegrafica\navegacao\VisaoAplicacao.class
 br\com\sigla\interfacegrafica\controlador\ControladorEstruturaAplicacao.class
 br\com\sigla\interfacegrafica\controlador\ControladorServicos$ItemCalendario.class
 br\com\sigla\interfacegrafica\modelo\OpcaoId.class
-br\com\sigla\interfacegrafica\controlador\ControladorAgenda$UsuarioOption.class
 br\com\sigla\interfacegrafica\controlador\ControladorNovoServico.class
 br\com\sigla\interfacegrafica\controlador\ControladorNovoCadastro.class
 br\com\sigla\interfacegrafica\consulta\ServicoConsultaOrdemServico$OrdemServicoResumo.class
@@ -33,6 +32,7 @@ br\com\sigla\interfacegrafica\controlador\ControladorNovaTransacao.class
 br\com\sigla\interfacegrafica\controlador\ControladorAgenda$1.class
 br\com\sigla\interfacegrafica\formatador\FormatadorMascaraCpf.class
 br\com\sigla\interfacegrafica\inicializacao\InicializadorDadosDesenvolvimento.class
+br\com\sigla\interfacegrafica\formatador\FormatadorMascaraMoeda.class
 br\com\sigla\interfacegrafica\util\ResolvedorEntradaTexto.class
 br\com\sigla\interfacegrafica\controlador\ControladorNovaOrdemServico.class
 br\com\sigla\interfacegrafica\navegacao\GerenciadorNavegacao.class
@@ -67,6 +67,7 @@ br\com\sigla\interfacegrafica\controlador\ControladorCadastro$ResponsavelRow.cla
 br\com\sigla\interfacegrafica\util\UtilJanela.class
 br\com\sigla\interfacegrafica\controlador\ControladorNovaTransacao$1.class
 br\com\sigla\interfacegrafica\apresentacao\ApresentadorTexto.class
+br\com\sigla\interfacegrafica\controlador\ControladorAgenda$ResponsavelOption.class
 br\com\sigla\interfacegrafica\util\TradutorInterface$2.class
 br\com\sigla\interfacegrafica\controlador\ControladorNovaMovimentacao.class
 br\com\sigla\interfacegrafica\apresentacao\ApresentadorData.class

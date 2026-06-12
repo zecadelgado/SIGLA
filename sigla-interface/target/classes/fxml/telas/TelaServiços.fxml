@@ -137,7 +137,7 @@
                                     <Font name="Ebrima Bold" size="18.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="totalServicosLabel" text="0" textFill="#000e66">
+                              <Label fx:id="totalServicosLabel" text="0" textFill="#00417e">
                                  <VBox.margin>
                                     <Insets left="10.0" top="15.0" />
                                  </VBox.margin>
@@ -157,7 +157,7 @@
                                     <Font name="Ebrima Bold" size="18.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="recebidosLabel" text="R$ 0" textFill="#000e66">
+                              <Label fx:id="recebidosLabel" text="R$ 0" textFill="#00417e">
                                  <font>
                                     <Font name="Ebrima Bold" size="24.0" />
                                  </font>
@@ -180,7 +180,7 @@
                                     <Font name="Ebrima Bold" size="18.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="pendentesLabel" text="R$ 0" textFill="#000e66">
+                              <Label fx:id="pendentesLabel" text="R$ 0" textFill="#00417e">
                                  <font>
                                     <Font name="Ebrima Bold" size="24.0" />
                                  </font>

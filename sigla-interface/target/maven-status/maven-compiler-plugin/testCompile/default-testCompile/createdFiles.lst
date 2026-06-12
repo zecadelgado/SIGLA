@@ -10,6 +10,7 @@ br\com\sigla\interfacegrafica\controlador\ControladorEstruturaAplicacaoTest$SpyG
 br\com\sigla\interfacegrafica\navegacao\GerenciadorNavegacaoTest.class
 br\com\sigla\interfacegrafica\controlador\ControladorEstruturaAplicacaoTest.class
 br\com\sigla\interfacegrafica\consulta\ServicoConsultaOrdemServicoTest$FakeCliente.class
+br\com\sigla\interfacegrafica\formatador\FormatadorMascaraMoedaTest.class
 br\com\sigla\interfacegrafica\aplicativo\SessaoLocalAplicacaoTest$FakeCasoDeUsoUsuario.class
 br\com\sigla\interfacegrafica\aplicativo\SessaoLocalAplicacaoTest.class
 br\com\sigla\interfacegrafica\fxml\TelaFxmlResourcesTest.class

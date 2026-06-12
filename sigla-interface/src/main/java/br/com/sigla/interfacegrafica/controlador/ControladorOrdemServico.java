@@ -7,6 +7,7 @@ import br.com.sigla.interfacegrafica.apresentacao.ApresentadorMoeda;
 import br.com.sigla.interfacegrafica.consulta.ContextoDetalheOrdemServico;
 import br.com.sigla.interfacegrafica.consulta.ServicoConsultaOrdemServico;
 import br.com.sigla.interfacegrafica.consulta.ServicoConsultaReferencias;
+import br.com.sigla.interfacegrafica.formatador.FormatadorMascaraMoeda;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto;
@@ -24,7 +25,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
@@ -39,6 +39,7 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
     private final ContextoDetalheOrdemServico contextoDetalheOrdemServico;
     private final ApresentadorMoeda apresentadorMoeda;
     private final ApresentadorData apresentadorData;
+    private final FormatadorMascaraMoeda formatadorMoeda;
 
     @FXML
     private Label abertasLabel;
@@ -80,7 +81,8 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
             GerenciadorNavegacao gerenciadorNavegacao,
             ContextoDetalheOrdemServico contextoDetalheOrdemServico,
             ApresentadorMoeda apresentadorMoeda,
-            ApresentadorData apresentadorData
+            ApresentadorData apresentadorData,
+            FormatadorMascaraMoeda formatadorMoeda
     ) {
         super(gerenciadorNavegacao);
         this.servicoConsultaOrdemServico = servicoConsultaOrdemServico;
@@ -90,6 +92,7 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
         this.contextoDetalheOrdemServico = contextoDetalheOrdemServico;
         this.apresentadorMoeda = apresentadorMoeda;
         this.apresentadorData = apresentadorData;
+        this.formatadorMoeda = formatadorMoeda;
     }
 
     @FXML
@@ -260,7 +263,8 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         TextField produto = new TextField();
         TextField quantidade = new TextField("1");
-        TextField valor = new TextField("0");
+        TextField valor = new TextField();
+        formatadorMoeda.aplicar(valor);
         GridPane grid = grid();
         grid.addRow(0, new Label("Produto"), produto);
         grid.addRow(1, new Label("Quantidade"), quantidade);
@@ -279,7 +283,7 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
                     UUID.randomUUID().toString(),
                     opcao.id(),
                     Integer.parseInt(quantidade.getText()),
-                    new BigDecimal(valor.getText().replace(",", "."))
+                    formatadorMoeda.valor(valor)
             );
         });
         return dialog.showAndWait();
@@ -295,7 +299,9 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
         descricao.setPrefRowCount(2);
         TextField tipo = new TextField(selected.serviceType());
         TextField responsavel = new TextField(selected.responsible().equals("-") ? "" : selected.responsible());
-        TextField valor = new TextField(selected.amount().subtract(selected.productTotal()).toPlainString());
+        TextField valor = new TextField();
+        formatadorMoeda.aplicar(valor);
+        formatadorMoeda.definir(valor, selected.amount().subtract(selected.productTotal()));
         TextArea observacoes = new TextArea(selected.notes().equals("-") ? "" : selected.notes());
         observacoes.setPrefRowCount(3);
         GridPane grid = grid();
@@ -311,10 +317,12 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
             if (button != ButtonType.OK) {
                 return null;
             }
+            // Evita gravar id inexistente (violacao de FK): so usa ids validos resolvidos das referencias.
+            // Cliente nao resolvido mantem o cliente atual da OS; responsavel nao resolvido fica vazio.
             var opcaoCliente = ResolvedorEntradaTexto.resolveOpcional(servicoConsultaReferencias.clientes(), cliente.getText());
-            String clienteId = opcaoCliente == null ? cliente.getText().trim() : opcaoCliente.id();
+            String clienteId = opcaoCliente != null ? opcaoCliente.id() : selected.customerId();
             var opcaoResponsavel = ResolvedorEntradaTexto.resolveOpcional(servicoConsultaReferencias.funcionarios(), responsavel.getText());
-            String responsavelId = opcaoResponsavel == null ? responsavel.getText().trim() : opcaoResponsavel.id();
+            String responsavelId = opcaoResponsavel != null ? opcaoResponsavel.id() : "";
             return new CasoDeUsoOrdemServico.UpdateOrdemServicoCommand(
                     selected.id(),
                     clienteId,
@@ -324,7 +332,7 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
                     tipo.getText(),
                     selected.emissionDate().atStartOfDay(),
                     responsavelId,
-                    new BigDecimal(valor.getText().replace(",", ".")),
+                    formatadorMoeda.valor(valor),
                     observacoes.getText()
             );
         });

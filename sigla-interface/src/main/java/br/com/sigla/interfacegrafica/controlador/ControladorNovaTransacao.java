@@ -5,6 +5,7 @@ import br.com.sigla.dominio.financeiro.CategoriaFinanceira;
 import br.com.sigla.dominio.financeiro.FormaPagamentoFinanceira;
 import br.com.sigla.interfacegrafica.aplicativo.SessaoLocalAplicacao;
 import br.com.sigla.interfacegrafica.consulta.ServicoConsultaReferencias;
+import br.com.sigla.interfacegrafica.formatador.FormatadorMascaraMoeda;
 import br.com.sigla.interfacegrafica.modelo.OpcaoId;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
@@ -19,7 +20,6 @@ import javafx.scene.control.TextField;
 import javafx.util.StringConverter;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -30,6 +30,7 @@ public class ControladorNovaTransacao {
     private final ServicoConsultaReferencias servicoConsultaReferencias;
     private final GerenciadorNavegacao gerenciadorNavegacao;
     private final SessaoLocalAplicacao sessaoLocalAplicacao;
+    private final FormatadorMascaraMoeda formatadorMoeda;
 
     @FXML
     private ComboBox<CasoDeUsoFinanceiro.TransactionType> tipoCombo;
@@ -68,12 +69,14 @@ public class ControladorNovaTransacao {
             CasoDeUsoFinanceiro casoDeUsoFinanceiro,
             ServicoConsultaReferencias servicoConsultaReferencias,
             GerenciadorNavegacao gerenciadorNavegacao,
-            SessaoLocalAplicacao sessaoLocalAplicacao
+            SessaoLocalAplicacao sessaoLocalAplicacao,
+            FormatadorMascaraMoeda formatadorMoeda
     ) {
         this.casoDeUsoFinanceiro = casoDeUsoFinanceiro;
         this.servicoConsultaReferencias = servicoConsultaReferencias;
         this.gerenciadorNavegacao = gerenciadorNavegacao;
         this.sessaoLocalAplicacao = sessaoLocalAplicacao;
+        this.formatadorMoeda = formatadorMoeda;
     }
 
     @FXML
@@ -92,12 +95,16 @@ public class ControladorNovaTransacao {
                     UtilComboBox.preencher(ordemCombo, servicoConsultaReferencias.ordensServicoDoCliente(UtilComboBox.idSelecionado(clienteCombo)), true)
             );
         }
+        formatadorMoeda.aplicar(valorField);
         carregarCategorias();
         if (emissaoPicker != null) {
             emissaoPicker.setValue(LocalDate.now());
         }
-        if (criadoPorField != null && criadoPorField.getText().isBlank() && sessaoLocalAplicacao.usuarioAtual() != null) {
-            criadoPorField.setText(sessaoLocalAplicacao.usuarioAtual().id());
+        if (criadoPorField != null) {
+            criadoPorField.setEditable(false);
+            if (sessaoLocalAplicacao.usuarioAtual() != null) {
+                criadoPorField.setText(sessaoLocalAplicacao.usuarioAtual().nome());
+            }
         }
         setFeedback("");
     }
@@ -115,7 +122,7 @@ public class ControladorNovaTransacao {
                     cliente == null ? "" : cliente.id(),
                     "",
                     ordem == null ? "" : ordem.id(),
-                    new BigDecimal(valorField.getText()),
+                    formatadorMoeda.valor(valorField),
                     emissaoPicker == null ? LocalDate.now() : emissaoPicker.getValue(),
                     vencimentoPicker == null ? null : vencimentoPicker.getValue(),
                     pagamentoPicker == null ? null : pagamentoPicker.getValue(),
@@ -145,10 +152,7 @@ public class ControladorNovaTransacao {
     }
 
     private String resolveUsuarioAtual() {
-        String digitado = criadoPorField == null ? "" : criadoPorField.getText();
-        if (digitado != null && !digitado.isBlank()) {
-            return digitado.trim();
-        }
+        // criado_por tem FK para usuarios(id); usa sempre o id da sessao (o campo so exibe o nome).
         return sessaoLocalAplicacao.usuarioAtual() == null ? "" : sessaoLocalAplicacao.usuarioAtual().id();
     }
 

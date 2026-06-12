@@ -4,8 +4,7 @@ import br.com.sigla.aplicacao.servicos.porta.saida.RepositorioOrdemServico;
 import br.com.sigla.dominio.servicos.OrdemServico;
 import br.com.sigla.infraestrutura.persistencia.PersistenciaIds;
 import br.com.sigla.infraestrutura.persistencia.entidade.OrdemServicoEntidade;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -18,7 +17,6 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
-@ConditionalOnBean(SpringDataRepositorioOrdemServico.class)
 public class AdaptadorRepositorioOrdemServico implements RepositorioOrdemServico {
 
     private final SpringDataRepositorioOrdemServico repository;
@@ -148,7 +146,7 @@ public class AdaptadorRepositorioOrdemServico implements RepositorioOrdemServico
 }
 
 @Repository
-@ConditionalOnMissingBean(SpringDataRepositorioOrdemServico.class)
+@Profile("memoria")
 class InMemoryAdaptadorRepositorioOrdemServico implements RepositorioOrdemServico {
 
     private final Map<String, OrdemServico> storage = new ConcurrentHashMap<>();

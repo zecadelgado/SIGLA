@@ -4,8 +4,7 @@ import br.com.sigla.aplicacao.contratos.porta.saida.RepositorioContrato;
 import br.com.sigla.dominio.contratos.Contrato;
 import br.com.sigla.infraestrutura.persistencia.PersistenciaIds;
 import br.com.sigla.infraestrutura.persistencia.entidade.ContratoEntidade;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,7 +15,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
-@ConditionalOnBean(SpringDataRepositorioContrato.class)
 public class AdaptadorRepositorioContrato implements RepositorioContrato {
 
     private final SpringDataRepositorioContrato repository;
@@ -111,7 +109,7 @@ public class AdaptadorRepositorioContrato implements RepositorioContrato {
 }
 
 @Repository
-@ConditionalOnMissingBean(SpringDataRepositorioContrato.class)
+@Profile("memoria")
 class InMemoryAdaptadorRepositorioContrato implements RepositorioContrato {
 
     private final Map<String, Contrato> storage = new ConcurrentHashMap<>();

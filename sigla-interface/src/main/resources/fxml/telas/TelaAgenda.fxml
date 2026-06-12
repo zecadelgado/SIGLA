@@ -78,15 +78,15 @@
                               <TableView fx:id="eventosTable" prefHeight="620.0" prefWidth="1434.0">
                                  <columns>
                                     <TableColumn fx:id="dataColumn" prefWidth="145.0" text="Data" />
-                                    <TableColumn fx:id="tituloColumn" prefWidth="220.0" text="Titulo" />
+                                    <TableColumn fx:id="tituloColumn" prefWidth="220.0" text="Título" />
                                     <TableColumn fx:id="clienteColumn" prefWidth="180.0" text="Cliente" />
                                     <TableColumn fx:id="tipoColumn" prefWidth="130.0" text="Tipo" />
-                                    <TableColumn fx:id="recorrenciaColumn" prefWidth="120.0" text="Recorrencia" />
+                                    <TableColumn fx:id="recorrenciaColumn" prefWidth="120.0" text="Recorrência" />
                                     <TableColumn fx:id="statusColumn" prefWidth="100.0" text="Status" />
                                     <TableColumn fx:id="prioridadeColumn" prefWidth="110.0" text="Prioridade" />
-                                    <TableColumn fx:id="responsavelColumn" prefWidth="150.0" text="Responsavel" />
+                                    <TableColumn fx:id="responsavelColumn" prefWidth="150.0" text="Responsável" />
                                     <TableColumn fx:id="lembreteColumn" prefWidth="150.0" text="Lembrete" />
-                                    <TableColumn fx:id="vinculoColumn" prefWidth="125.0" text="Vinculo" />
+                                    <TableColumn fx:id="vinculoColumn" prefWidth="125.0" text="Vínculo" />
                                  </columns>
                               </TableView>
                            </content>

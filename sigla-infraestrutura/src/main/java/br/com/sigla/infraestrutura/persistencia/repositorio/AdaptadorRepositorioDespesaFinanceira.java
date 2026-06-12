@@ -6,8 +6,7 @@ import br.com.sigla.infraestrutura.persistencia.PersistenciaIds;
 import br.com.sigla.infraestrutura.persistencia.entidade.FinanceiroCategoriaEntidade;
 import br.com.sigla.infraestrutura.persistencia.entidade.FinanceiroFormaPagamentoEntidade;
 import br.com.sigla.infraestrutura.persistencia.entidade.FinanceiroLancamentoEntidade;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -17,7 +16,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
-@ConditionalOnBean(SpringDataRepositorioFinanceiroLancamento.class)
 public class AdaptadorRepositorioDespesaFinanceira implements RepositorioDespesaFinanceira {
 
     private final SpringDataRepositorioFinanceiroLancamento repository;
@@ -142,7 +140,7 @@ public class AdaptadorRepositorioDespesaFinanceira implements RepositorioDespesa
 }
 
 @Repository
-@ConditionalOnMissingBean(SpringDataRepositorioFinanceiroLancamento.class)
+@Profile("memoria")
 class InMemoryAdaptadorRepositorioDespesaFinanceira implements RepositorioDespesaFinanceira {
 
     private final Map<String, DespesaFinanceira> storage = new ConcurrentHashMap<>();

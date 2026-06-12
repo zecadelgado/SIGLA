@@ -3,6 +3,7 @@ package br.com.sigla.interfacegrafica.controlador;
 import br.com.sigla.aplicacao.servicos.porta.entrada.CasoDeUsoOrdemServico;
 import br.com.sigla.dominio.servicos.OrdemServico;
 import br.com.sigla.interfacegrafica.consulta.ServicoConsultaReferencias;
+import br.com.sigla.interfacegrafica.formatador.FormatadorMascaraMoeda;
 import br.com.sigla.interfacegrafica.modelo.OpcaoId;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
@@ -27,6 +28,7 @@ public class ControladorNovaOrdemServico {
     private final CasoDeUsoOrdemServico casoDeUsoOrdemServico;
     private final ServicoConsultaReferencias servicoConsultaReferencias;
     private final GerenciadorNavegacao gerenciadorNavegacao;
+    private final FormatadorMascaraMoeda formatadorMoeda;
 
     @FXML
     private ComboBox<OpcaoId> clienteCombo;
@@ -62,11 +64,13 @@ public class ControladorNovaOrdemServico {
     public ControladorNovaOrdemServico(
             CasoDeUsoOrdemServico casoDeUsoOrdemServico,
             ServicoConsultaReferencias servicoConsultaReferencias,
-            GerenciadorNavegacao gerenciadorNavegacao
+            GerenciadorNavegacao gerenciadorNavegacao,
+            FormatadorMascaraMoeda formatadorMoeda
     ) {
         this.casoDeUsoOrdemServico = casoDeUsoOrdemServico;
         this.servicoConsultaReferencias = servicoConsultaReferencias;
         this.gerenciadorNavegacao = gerenciadorNavegacao;
+        this.formatadorMoeda = formatadorMoeda;
     }
 
     @FXML
@@ -94,6 +98,7 @@ public class ControladorNovaOrdemServico {
         if (statusField != null && statusField.getText().isBlank()) {
             statusField.setText(OrdemServico.OrdemServicoStatus.AGENDADA.name());
         }
+        formatadorMoeda.aplicar(valorServicoField);
         setFeedback("");
     }
 
@@ -121,7 +126,7 @@ public class ControladorNovaOrdemServico {
                     fim,
                     chooseResponsible(),
                     UtilComboBox.idSelecionado(executadoPorCombo),
-                    parseMoney(valorServicoField == null ? "" : valorServicoField.getText()),
+                    formatadorMoeda.valor(valorServicoField),
                     observacoesField == null ? "" : observacoesField.getText()
             ));
             gerenciadorNavegacao.navigateTo(VisaoAplicacao.SERVICE_ORDER);
@@ -153,13 +158,6 @@ public class ControladorNovaOrdemServico {
             return secundario;
         }
         return UtilComboBox.idSelecionado(executadoPorCombo);
-    }
-
-    private java.math.BigDecimal parseMoney(String value) {
-        if (value == null || value.isBlank()) {
-            return java.math.BigDecimal.ZERO;
-        }
-        return new java.math.BigDecimal(value.trim().replace(",", "."));
     }
 
     private void setFeedback(String message) {

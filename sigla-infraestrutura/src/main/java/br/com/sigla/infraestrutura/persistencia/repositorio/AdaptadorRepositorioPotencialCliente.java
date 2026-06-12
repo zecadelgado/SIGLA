@@ -4,8 +4,7 @@ import br.com.sigla.aplicacao.potenciaisclientes.porta.saida.RepositorioPotencia
 import br.com.sigla.dominio.potenciaisclientes.PotencialCliente;
 import br.com.sigla.infraestrutura.persistencia.PersistenciaIds;
 import br.com.sigla.infraestrutura.persistencia.entidade.PotencialClienteEntidade;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,7 +16,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
-@ConditionalOnBean(SpringDataRepositorioPotencialCliente.class)
 public class AdaptadorRepositorioPotencialCliente implements RepositorioPotencialCliente {
 
     private final SpringDataRepositorioPotencialCliente repository;
@@ -102,7 +100,7 @@ public class AdaptadorRepositorioPotencialCliente implements RepositorioPotencia
 }
 
 @Repository
-@ConditionalOnMissingBean(SpringDataRepositorioPotencialCliente.class)
+@Profile("memoria")
 class InMemoryAdaptadorRepositorioPotencialCliente implements RepositorioPotencialCliente {
 
     private final Map<String, PotencialCliente> storage = new ConcurrentHashMap<>();

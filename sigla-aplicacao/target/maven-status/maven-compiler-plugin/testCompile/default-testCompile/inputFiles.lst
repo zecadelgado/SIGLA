@@ -1,15 +1,3 @@
-<<<<<<< Updated upstream
-C:\Users\PC\IdeaProjects\SIGLA\sigla-aplicacao\src\test\java\br\com\sigla\aplicacao\agenda\casodeuso\CasoDeUsoGerenciarAgendaTest.java
-C:\Users\PC\IdeaProjects\SIGLA\sigla-aplicacao\src\test\java\br\com\sigla\aplicacao\certificados\casodeuso\CasoDeUsoGerenciarCertificadoTest.java
-C:\Users\PC\IdeaProjects\SIGLA\sigla-aplicacao\src\test\java\br\com\sigla\aplicacao\clientes\casodeuso\CasoDeUsoGerenciarClienteTest.java
-C:\Users\PC\IdeaProjects\SIGLA\sigla-aplicacao\src\test\java\br\com\sigla\aplicacao\contratos\casodeuso\CasoDeUsoGerenciarContratoTest.java
-C:\Users\PC\IdeaProjects\SIGLA\sigla-aplicacao\src\test\java\br\com\sigla\aplicacao\estoque\casodeuso\CasoDeUsoGerenciarEstoqueTest.java
-C:\Users\PC\IdeaProjects\SIGLA\sigla-aplicacao\src\test\java\br\com\sigla\aplicacao\financeiro\casodeuso\CasoDeUsoGerenciarFinanceiroTest.java
-C:\Users\PC\IdeaProjects\SIGLA\sigla-aplicacao\src\test\java\br\com\sigla\aplicacao\funcionarios\casodeuso\CasoDeUsoGerenciarFuncionarioTest.java
-C:\Users\PC\IdeaProjects\SIGLA\sigla-aplicacao\src\test\java\br\com\sigla\aplicacao\notificacoes\casodeuso\CasoDeUsoAtualizarNotificacaoTest.java
-C:\Users\PC\IdeaProjects\SIGLA\sigla-aplicacao\src\test\java\br\com\sigla\aplicacao\potenciaisclientes\casodeuso\CasoDeUsoGerenciarPotencialClienteTest.java
-C:\Users\PC\IdeaProjects\SIGLA\sigla-aplicacao\src\test\java\br\com\sigla\aplicacao\servicos\casodeuso\CasoDeUsoGerenciarOrdemServicoTest.java
-=======
 D:\SIGLA\sigla-aplicacao\src\test\java\br\com\sigla\aplicacao\agenda\casodeuso\CasoDeUsoGerenciarAgendaTest.java
 D:\SIGLA\sigla-aplicacao\src\test\java\br\com\sigla\aplicacao\certificados\casodeuso\CasoDeUsoGerenciarCertificadoTest.java
 D:\SIGLA\sigla-aplicacao\src\test\java\br\com\sigla\aplicacao\clientes\casodeuso\CasoDeUsoGerenciarClienteTest.java
@@ -20,4 +8,3 @@ D:\SIGLA\sigla-aplicacao\src\test\java\br\com\sigla\aplicacao\funcionarios\casod
 D:\SIGLA\sigla-aplicacao\src\test\java\br\com\sigla\aplicacao\notificacoes\casodeuso\CasoDeUsoAtualizarNotificacaoTest.java
 D:\SIGLA\sigla-aplicacao\src\test\java\br\com\sigla\aplicacao\potenciaisclientes\casodeuso\CasoDeUsoGerenciarPotencialClienteTest.java
 D:\SIGLA\sigla-aplicacao\src\test\java\br\com\sigla\aplicacao\servicos\casodeuso\CasoDeUsoGerenciarOrdemServicoTest.java
->>>>>>> Stashed changes

@@ -18,7 +18,7 @@
       <Insets bottom="24.0" left="28.0" right="28.0" top="24.0" />
    </padding>
    <children>
-      <Label text="Novo Servico" textFill="#00417e">
+      <Label text="Novo Serviço" textFill="#00417e">
          <font>
             <Font name="System Bold" size="38.0" />
          </font>
@@ -33,22 +33,22 @@
             <Label text="Cliente" GridPane.columnIndex="0" GridPane.rowIndex="0" />
             <ComboBox fx:id="clienteCombo" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="0" GridPane.rowIndex="1" />
 
-            <Label text="Ordem de Servico" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+            <Label text="Ordem de Serviço" GridPane.columnIndex="1" GridPane.rowIndex="0" />
             <ComboBox fx:id="ordemCombo" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
             <Label text="Contrato" GridPane.columnIndex="0" GridPane.rowIndex="2" />
             <ComboBox fx:id="contratoCombo" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="0" GridPane.rowIndex="3" />
 
-            <Label text="Responsavel" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label text="Responsável" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <ComboBox fx:id="responsavelCombo" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
-            <Label text="Titulo" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+            <Label text="Título" GridPane.columnIndex="0" GridPane.rowIndex="4" />
             <TextField fx:id="tituloField" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="0" GridPane.rowIndex="5" />
 
-            <Label text="Descricao" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Label text="Descrição" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <TextField fx:id="descricaoField" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
 
-            <Label text="Data Inicio" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+            <Label text="Data Início" GridPane.columnIndex="0" GridPane.rowIndex="6" />
             <DatePicker fx:id="dataInicioPicker" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="0" GridPane.rowIndex="7" />
 
             <Label text="Data Fim" GridPane.columnIndex="1" GridPane.rowIndex="6" />

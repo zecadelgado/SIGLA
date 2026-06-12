@@ -136,7 +136,8 @@ public class AdaptadorRepositorioCliente implements RepositorioCliente {
     private ClienteEntidade toEntity(Cliente customer) {
         ClienteEntidade entity = new ClienteEntidade();
         entity.setId(PersistenciaIds.toUuid(customer.id()));
-        entity.setTipo(customer.tipo().name().toLowerCase());
+        // cadastro.tipo canonico: cliente = 'CLIENTE' (PF/PJ deriva do CNPJ na leitura); funcionario usa 'FUNCIONARIO'.
+        entity.setTipo("CLIENTE");
         entity.setNome(customer.name());
         entity.setRazaoSocial(customer.razaoSocial());
         entity.setNomeFantasia(customer.nomeFantasia());

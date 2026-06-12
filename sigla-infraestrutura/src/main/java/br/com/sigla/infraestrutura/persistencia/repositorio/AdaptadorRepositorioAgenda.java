@@ -4,8 +4,7 @@ import br.com.sigla.aplicacao.agenda.porta.saida.RepositorioAgenda;
 import br.com.sigla.dominio.agenda.VisitaAgendada;
 import br.com.sigla.infraestrutura.persistencia.PersistenciaIds;
 import br.com.sigla.infraestrutura.persistencia.entidade.VisitaAgendadaEntidade;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,7 +15,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
-@ConditionalOnBean(SpringDataRepositorioAgenda.class)
 public class AdaptadorRepositorioAgenda implements RepositorioAgenda {
 
     private final SpringDataRepositorioAgenda repository;
@@ -154,7 +152,7 @@ public class AdaptadorRepositorioAgenda implements RepositorioAgenda {
 }
 
 @Repository
-@ConditionalOnMissingBean(SpringDataRepositorioAgenda.class)
+@Profile("memoria")
 class InMemoryAdaptadorRepositorioAgenda implements RepositorioAgenda {
 
     private final Map<String, VisitaAgendada> storage = new ConcurrentHashMap<>();

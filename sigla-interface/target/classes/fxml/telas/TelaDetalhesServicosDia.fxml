@@ -20,7 +20,7 @@
          <children>
             <VBox HBox.hgrow="ALWAYS">
                <children>
-                  <Label fx:id="tituloLabel" text="Detalhes dos Servicos" textFill="#00417e">
+                  <Label fx:id="tituloLabel" text="Detalhes dos Serviços" textFill="#00417e">
                      <font>
                         <Font name="Ebrima Bold" size="34.0" />
                      </font>
@@ -44,7 +44,7 @@
                <columns>
                   <TableColumn fx:id="numeroColumn" prefWidth="90.0" text="OS" />
                   <TableColumn fx:id="clienteColumn" prefWidth="160.0" text="Cliente" />
-                  <TableColumn fx:id="tituloColumn" prefWidth="150.0" text="Titulo" />
+                  <TableColumn fx:id="tituloColumn" prefWidth="150.0" text="Título" />
                   <TableColumn fx:id="statusColumn" prefWidth="110.0" text="Status" />
                   <TableColumn fx:id="valorColumn" prefWidth="105.0" text="Valor" />
                </columns>

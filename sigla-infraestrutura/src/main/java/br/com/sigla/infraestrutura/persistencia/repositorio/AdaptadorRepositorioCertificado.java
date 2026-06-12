@@ -4,8 +4,7 @@ import br.com.sigla.aplicacao.certificados.porta.saida.RepositorioCertificado;
 import br.com.sigla.dominio.certificados.Certificado;
 import br.com.sigla.infraestrutura.persistencia.PersistenciaIds;
 import br.com.sigla.infraestrutura.persistencia.entidade.CertificadoEntidade;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,7 +15,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
-@ConditionalOnBean(SpringDataRepositorioCertificado.class)
 public class AdaptadorRepositorioCertificado implements RepositorioCertificado {
 
     private final SpringDataRepositorioCertificado repository;
@@ -86,7 +84,7 @@ public class AdaptadorRepositorioCertificado implements RepositorioCertificado {
 }
 
 @Repository
-@ConditionalOnMissingBean(SpringDataRepositorioCertificado.class)
+@Profile("memoria")
 class InMemoryAdaptadorRepositorioCertificado implements RepositorioCertificado {
 
     private final Map<String, Certificado> storage = new ConcurrentHashMap<>();

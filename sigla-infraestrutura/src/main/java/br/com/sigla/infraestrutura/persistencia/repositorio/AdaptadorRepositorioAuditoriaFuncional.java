@@ -4,8 +4,7 @@ import br.com.sigla.aplicacao.auditoria.porta.saida.RepositorioAuditoriaFunciona
 import br.com.sigla.dominio.auditoria.EventoAuditoria;
 import br.com.sigla.infraestrutura.persistencia.PersistenciaIds;
 import br.com.sigla.infraestrutura.persistencia.entidade.AuditoriaEventoEntidade;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,7 +14,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
-@ConditionalOnBean(SpringDataRepositorioAuditoriaEvento.class)
 public class AdaptadorRepositorioAuditoriaFuncional implements RepositorioAuditoriaFuncional {
 
     private final SpringDataRepositorioAuditoriaEvento repository;
@@ -53,7 +51,7 @@ public class AdaptadorRepositorioAuditoriaFuncional implements RepositorioAudito
 }
 
 @Repository
-@ConditionalOnMissingBean(SpringDataRepositorioAuditoriaEvento.class)
+@Profile("memoria")
 class InMemoryAdaptadorRepositorioAuditoriaFuncional implements RepositorioAuditoriaFuncional {
 
     private final Map<String, EventoAuditoria> storage = new ConcurrentHashMap<>();

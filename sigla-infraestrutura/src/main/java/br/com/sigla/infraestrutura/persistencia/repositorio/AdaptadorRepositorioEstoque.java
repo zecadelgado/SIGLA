@@ -4,8 +4,7 @@ import br.com.sigla.aplicacao.estoque.porta.saida.RepositorioEstoque;
 import br.com.sigla.dominio.estoque.ItemEstoque;
 import br.com.sigla.infraestrutura.persistencia.PersistenciaIds;
 import br.com.sigla.infraestrutura.persistencia.entidade.ItemEstoqueEntidade;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,7 +16,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
-@ConditionalOnBean(SpringDataRepositorioEstoque.class)
 public class AdaptadorRepositorioEstoque implements RepositorioEstoque {
 
     private final SpringDataRepositorioEstoque repository;
@@ -141,7 +139,7 @@ public class AdaptadorRepositorioEstoque implements RepositorioEstoque {
 }
 
 @Repository
-@ConditionalOnMissingBean(SpringDataRepositorioEstoque.class)
+@Profile("memoria")
 class InMemoryAdaptadorRepositorioEstoque implements RepositorioEstoque {
 
     private final Map<String, ItemEstoque> storage = new ConcurrentHashMap<>();

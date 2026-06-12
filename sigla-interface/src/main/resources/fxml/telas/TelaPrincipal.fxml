@@ -13,6 +13,7 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -23,125 +24,38 @@
          <children>
             <BorderPane fx:id="contentHost" prefHeight="775.0" prefWidth="1530.0" style="-fx-background-color: lightgray;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <top>
-                  <HBox prefHeight="44.0" prefWidth="1530.0" style="-fx-background-color: lightgrey;" BorderPane.alignment="CENTER_LEFT">
+                  <HBox alignment="CENTER_LEFT" prefHeight="44.0" prefWidth="1530.0" styleClass="shell-topbar" BorderPane.alignment="CENTER_LEFT">
                      <children>
-                        <Button mnemonicParsing="false" onAction="#onAlternarMenuLateral" prefHeight="30.0" prefWidth="92.0" style="-fx-background-color: white; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 12,0,0,4);" text="Menu" textFill="#0B2A6F">
-                           <font>
-                              <Font name="Ebrima Bold" size="14.0" />
-                           </font>
+                        <Button mnemonicParsing="false" onAction="#onAlternarMenuLateral" styleClass="shell-menu-toggle" text="☰   Menu">
                            <HBox.margin>
-                              <Insets left="18.0" top="7.0" />
+                              <Insets left="18.0" />
                            </HBox.margin>
                         </Button>
                      </children>
                   </HBox>
                </top>
                <left>
-                  <VBox fx:id="menuLateral" prefHeight="765.0" prefWidth="260.0" spacing="8.0" style="-fx-background-color: #0B2A6F;" BorderPane.alignment="CENTER">
+                  <VBox fx:id="menuLateral" prefHeight="765.0" prefWidth="252.0" styleClass="shell-sidebar" BorderPane.alignment="CENTER">
                      <children>
-                        <Label text="Sigla" textFill="#a6d3ff">
-                           <font>
-                              <Font name="Ebrima Bold" size="40.0" />
-                           </font>
+                        <Label styleClass="shell-brand-title" text="SIGLA" />
+                        <Label styleClass="shell-brand-subtitle" text="Gestão Empresarial" />
+                        <Region maxWidth="Infinity" styleClass="shell-brand-divider">
                            <VBox.margin>
-                              <Insets left="15.0" top="18.0" />
+                              <Insets bottom="8.0" left="6.0" right="6.0" top="6.0" />
                            </VBox.margin>
-                        </Label>
-                        <Label text="Gestão Empresarial" textFill="#c8e2f2">
-                           <VBox.margin>
-                              <Insets />
-                           </VBox.margin>
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <padding>
-                              <Insets left="15.0" top="0.0" />
-                           </padding>
-                        </Label>
-                        <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onDashboardClick" prefHeight="34.0" prefWidth="200.0" style="-fx-background-color: #1c2e94; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Dashboard" textFill="WHITE" textOverrun="CENTER_ELLIPSIS">
-                           <font>
-                              <Font name="System Bold" size="17.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="15.0" right="10.0" top="12.0" />
-                           </VBox.margin>
-                        </Button>
-                        <Button mnemonicParsing="false" onAction="#onCadastrosClick" prefHeight="34.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Cadastros" textFill="WHITE">
-                           <font>
-                              <Font name="System Bold" size="17.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="15.0" top="4.0" />
-                           </VBox.margin>
-                        </Button>
-                        <Button mnemonicParsing="false" onAction="#onFinanceiroClick" prefHeight="34.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Financeiro" textFill="WHITE">
-                           <font>
-                              <Font name="System Bold" size="17.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="15.0" top="4.0" />
-                           </VBox.margin>
-                        </Button>
-                        <Button mnemonicParsing="false" onAction="#onClientesClick" prefHeight="34.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Clientes" textFill="WHITE">
-                           <font>
-                              <Font name="System Bold" size="17.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="15.0" top="4.0" />
-                           </VBox.margin>
-                        </Button>
-                        <Button mnemonicParsing="false" onAction="#onServicosClick" prefHeight="34.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Serviços" textFill="WHITE">
-                           <font>
-                              <Font name="System Bold" size="17.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="15.0" top="4.0" />
-                           </VBox.margin>
-                        </Button>
-                        <Button mnemonicParsing="false" onAction="#onAgendaClick" prefHeight="34.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Agenda" textFill="WHITE">
-                           <font>
-                              <Font name="System Bold" size="17.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="15.0" top="4.0" />
-                           </VBox.margin>
-                        </Button>
-                        <Button mnemonicParsing="false" onAction="#onOrdemServicoClick" prefHeight="34.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Ordem de Serviço" textFill="WHITE">
-                           <font>
-                              <Font name="System Bold" size="17.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="15.0" top="4.0" />
-                           </VBox.margin>
-                        </Button>
-                        <Button mnemonicParsing="false" onAction="#onEstoqueClick" prefHeight="34.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Estoque" textFill="WHITE">
-                           <font>
-                              <Font name="System Bold" size="17.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="15.0" top="4.0" />
-                           </VBox.margin>
-                        </Button>
-                        <Button mnemonicParsing="false" onAction="#onContratosCertificadosClick" prefHeight="34.0" prefWidth="200.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10;" text="Contratos/Certificados" textFill="WHITE">
-                           <font>
-                              <Font name="System Bold" size="16.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="15.0" top="4.0" />
-                           </VBox.margin>
-                        </Button>
-                        <Button mnemonicParsing="false" onAction="#onLogoutClick" prefHeight="34.0" prefWidth="200.0" style="-fx-background-color: rgba(0,0,0,0.18); -fx-background-radius: 10;" text="Sair" textFill="WHITE">
-                           <font>
-                              <Font name="System Bold" size="17.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="15.0" top="16.0" />
-                           </VBox.margin>
-                        </Button>
+                        </Region>
+                        <Button fx:id="navDashboard" maxWidth="Infinity" mnemonicParsing="false" onAction="#onDashboardClick" styleClass="app-nav-button" text="Dashboard" />
+                        <Button fx:id="navCadastros" maxWidth="Infinity" mnemonicParsing="false" onAction="#onCadastrosClick" styleClass="app-nav-button" text="Cadastros" />
+                        <Button fx:id="navFinanceiro" maxWidth="Infinity" mnemonicParsing="false" onAction="#onFinanceiroClick" styleClass="app-nav-button" text="Financeiro" />
+                        <Button fx:id="navClientes" maxWidth="Infinity" mnemonicParsing="false" onAction="#onClientesClick" styleClass="app-nav-button" text="Clientes" />
+                        <Button fx:id="navServicos" maxWidth="Infinity" mnemonicParsing="false" onAction="#onServicosClick" styleClass="app-nav-button" text="Serviços" />
+                        <Button fx:id="navAgenda" maxWidth="Infinity" mnemonicParsing="false" onAction="#onAgendaClick" styleClass="app-nav-button" text="Agenda" />
+                        <Button fx:id="navOrdemServico" maxWidth="Infinity" mnemonicParsing="false" onAction="#onOrdemServicoClick" styleClass="app-nav-button" text="Ordem de Serviço" />
+                        <Button fx:id="navEstoque" maxWidth="Infinity" mnemonicParsing="false" onAction="#onEstoqueClick" styleClass="app-nav-button" text="Estoque" />
+                        <Button fx:id="navContratos" maxWidth="Infinity" mnemonicParsing="false" onAction="#onContratosCertificadosClick" styleClass="app-nav-button" text="Contratos / Certificados" />
+                        <Region maxWidth="Infinity" VBox.vgrow="ALWAYS" />
+                        <Button fx:id="navSair" maxWidth="Infinity" mnemonicParsing="false" onAction="#onLogoutClick" styleClass="app-nav-button, shell-logout-button" text="Sair" />
                      </children>
-                     <padding>
-                        <Insets bottom="20.0" left="15.0" right="15.0" top="20.0" />
-                     </padding>
                   </VBox>
                </left>
                <center>

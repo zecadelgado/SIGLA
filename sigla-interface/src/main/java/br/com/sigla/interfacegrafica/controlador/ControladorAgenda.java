@@ -2,10 +2,10 @@ package br.com.sigla.interfacegrafica.controlador;
 
 import br.com.sigla.aplicacao.agenda.porta.entrada.CasoDeUsoAgenda;
 import br.com.sigla.aplicacao.clientes.porta.entrada.CasoDeUsoCliente;
-import br.com.sigla.aplicacao.usuarios.porta.entrada.CasoDeUsoUsuario;
+import br.com.sigla.aplicacao.funcionarios.porta.entrada.CasoDeUsoFuncionario;
 import br.com.sigla.dominio.agenda.VisitaAgendada;
 import br.com.sigla.dominio.clientes.Cliente;
-import br.com.sigla.dominio.usuarios.Usuario;
+import br.com.sigla.dominio.funcionarios.Funcionario;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorData;
 import br.com.sigla.interfacegrafica.util.TradutorInterface;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -37,7 +37,7 @@ public class ControladorAgenda {
 
     private final CasoDeUsoAgenda agendaUseCase;
     private final CasoDeUsoCliente clienteUseCase;
-    private final CasoDeUsoUsuario usuarioUseCase;
+    private final CasoDeUsoFuncionario funcionarioUseCase;
     private final ApresentadorData apresentadorData;
 
     @FXML
@@ -72,12 +72,12 @@ public class ControladorAgenda {
     public ControladorAgenda(
             CasoDeUsoAgenda agendaUseCase,
             CasoDeUsoCliente clienteUseCase,
-            CasoDeUsoUsuario usuarioUseCase,
+            CasoDeUsoFuncionario funcionarioUseCase,
             ApresentadorData apresentadorData
     ) {
         this.agendaUseCase = agendaUseCase;
         this.clienteUseCase = clienteUseCase;
-        this.usuarioUseCase = usuarioUseCase;
+        this.funcionarioUseCase = funcionarioUseCase;
         this.apresentadorData = apresentadorData;
     }
 
@@ -185,9 +185,9 @@ public class ControladorAgenda {
         }
         periodoLabel.setText(apresentadorData.format(start) + " a " + apresentadorData.format(end));
         List<Cliente> clientes = clienteUseCase.listAll();
-        List<Usuario> usuarios = usuarioUseCase.listAll();
+        List<Funcionario> funcionarios = funcionarioUseCase.listAll();
         eventosTable.getItems().setAll(agendaUseCase.listBetween(start, end).stream()
-                .map(evento -> toRow(evento, clientes, usuarios))
+                .map(evento -> toRow(evento, clientes, funcionarios))
                 .sorted(Comparator.comparing(AgendaRow::dataBase).thenComparing(AgendaRow::inicioHora).thenComparing(AgendaRow::titulo))
                 .toList());
     }
@@ -199,7 +199,7 @@ public class ControladorAgenda {
 
         ComboBox<ClienteOption> clienteCombo = clientesCombo();
         select(clienteCombo, atual == null ? "" : atual.customerId());
-        ComboBox<UsuarioOption> responsavelCombo = usuariosCombo();
+        ComboBox<ResponsavelOption> responsavelCombo = responsaveisCombo();
         select(responsavelCombo, atual == null ? "" : atual.responsibleId());
         TextField tituloField = new TextField(atual == null ? "" : atual.title());
         TextArea descricaoArea = new TextArea(atual == null ? "" : atual.notes());
@@ -250,7 +250,7 @@ public class ControladorAgenda {
                 return null;
             }
             ClienteOption cliente = clienteCombo.getValue();
-            UsuarioOption responsavel = responsavelCombo.getValue();
+            ResponsavelOption responsavel = responsavelCombo.getValue();
             LocalDate date = dataPicker.getValue();
             boolean allDay = diaInteiroCheck.isSelected();
             return new CasoDeUsoAgenda.ScheduleVisitCommand(
@@ -285,7 +285,7 @@ public class ControladorAgenda {
         }));
     }
 
-    private AgendaRow toRow(VisitaAgendada evento, List<Cliente> clientes, List<Usuario> usuarios) {
+    private AgendaRow toRow(VisitaAgendada evento, List<Cliente> clientes, List<Funcionario> funcionarios) {
         String baseId = evento.id().contains("#") ? evento.id().substring(0, evento.id().indexOf('#')) : evento.id();
         String vinculo = !evento.orderId().isBlank() ? "OS"
                 : !evento.contractId().isBlank() ? "Contrato"
@@ -303,7 +303,7 @@ public class ControladorAgenda {
                 TradutorInterface.texto(evento.recurrence()),
                 status(evento),
                 TradutorInterface.texto(evento.priority()),
-                nomeUsuario(usuarios, evento.responsibleId(), evento.internalResponsible()),
+                nomeResponsavel(funcionarios, evento.responsibleId(), evento.internalResponsible()),
                 evento.reminderActive() ? evento.reminderDaysBefore() + " dia(s)" : "Não",
                 vinculo
         );
@@ -334,12 +334,12 @@ public class ControladorAgenda {
         return combo;
     }
 
-    private ComboBox<UsuarioOption> usuariosCombo() {
-        ComboBox<UsuarioOption> combo = new ComboBox<>();
-        combo.getItems().setAll(usuarioUseCase.listAll().stream()
-                .filter(Usuario::ativo)
-                .map(usuario -> new UsuarioOption(usuario.id(), usuario.nome()))
-                .sorted(Comparator.comparing(UsuarioOption::name))
+    private ComboBox<ResponsavelOption> responsaveisCombo() {
+        ComboBox<ResponsavelOption> combo = new ComboBox<>();
+        combo.getItems().setAll(funcionarioUseCase.listAll().stream()
+                .filter(funcionario -> funcionario.status() != Funcionario.FuncionarioStatus.INACTIVE)
+                .map(funcionario -> new ResponsavelOption(funcionario.id(), funcionario.name()))
+                .sorted(Comparator.comparing(ResponsavelOption::name))
                 .toList());
         return combo;
     }
@@ -405,11 +405,11 @@ public class ControladorAgenda {
                 .orElse(clienteId == null || clienteId.isBlank() ? "-" : clienteId);
     }
 
-    private String nomeUsuario(List<Usuario> usuarios, String usuarioId, String fallback) {
-        return usuarios.stream()
-                .filter(usuario -> usuario.id().equals(usuarioId))
+    private String nomeResponsavel(List<Funcionario> funcionarios, String responsavelId, String fallback) {
+        return funcionarios.stream()
+                .filter(funcionario -> funcionario.id().equals(responsavelId))
                 .findFirst()
-                .map(Usuario::nome)
+                .map(Funcionario::name)
                 .orElse(fallback == null || fallback.isBlank() ? "-" : fallback);
     }
 
@@ -433,7 +433,7 @@ public class ControladorAgenda {
         }
     }
 
-    private record UsuarioOption(String id, String name) implements Option {
+    private record ResponsavelOption(String id, String name) implements Option {
         @Override
         public String toString() {
             return name;
