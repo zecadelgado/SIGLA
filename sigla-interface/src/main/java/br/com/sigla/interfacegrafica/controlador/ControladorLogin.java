@@ -3,6 +3,7 @@ package br.com.sigla.interfacegrafica.controlador;
 import br.com.sigla.interfacegrafica.aplicativo.FluxoAplicacao;
 import br.com.sigla.interfacegrafica.aplicativo.SessaoLocalAplicacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
+import br.com.sigla.interfacegrafica.util.ValidadorEntrada;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -43,6 +44,17 @@ public class ControladorLogin {
     private void onLogin() {
         String username = usernameField == null ? "" : usernameField.getText();
         String password = passwordField == null ? "" : passwordField.getText();
+
+        ValidadorEntrada validador = ValidadorEntrada.nova();
+        validador.texto(username, "o usuário ou e-mail");
+        validador.texto(password, "a senha");
+        try {
+            validador.validar();
+        } catch (IllegalArgumentException erro) {
+            mostrarErro(erro.getMessage());
+            return;
+        }
+
         boolean authenticated = sessaoLocalAplicacao.login(username, password);
         if (authenticated) {
             try {
@@ -51,18 +63,12 @@ public class ControladorLogin {
             } catch (RuntimeException exception) {
                 LOGGER.log(Level.SEVERE, "Falha ao abrir a tela inicial apos login.", exception);
                 sessaoLocalAplicacao.logout();
-                if (errorLabel != null) {
-                    errorLabel.setText("Login validado, mas nao foi possivel abrir a tela inicial. Veja o console.");
-                }
-                setErrorVisible(true);
+                mostrarErro("Login validado, mas não foi possível abrir a tela inicial. Veja o console.");
             }
             return;
         }
 
-        if (errorLabel != null) {
-            errorLabel.setText("Usuario ou senha invalidos.");
-        }
-        setErrorVisible(true);
+        mostrarErro("Usuário ou senha inválidos.");
     }
 
     @FXML
@@ -73,8 +79,12 @@ public class ControladorLogin {
 
     @FXML
     private void onEsqueciSenha() {
+        mostrarErro("Solicite a redefinição de senha a um administrador.");
+    }
+
+    private void mostrarErro(String mensagem) {
         if (errorLabel != null) {
-            errorLabel.setText("Solicite a redefinicao de senha a um administrador.");
+            errorLabel.setText(mensagem == null ? "" : mensagem);
         }
         setErrorVisible(true);
     }

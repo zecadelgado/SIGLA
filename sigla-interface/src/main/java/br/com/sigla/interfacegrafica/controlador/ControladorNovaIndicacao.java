@@ -9,6 +9,7 @@ import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import br.com.sigla.interfacegrafica.util.UtilComboBox;
 import br.com.sigla.interfacegrafica.util.UtilJanela;
+import br.com.sigla.interfacegrafica.util.ValidadorEntrada;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
@@ -72,12 +73,17 @@ public class ControladorNovaIndicacao {
     @FXML
     private void onConfirmar() {
         try {
+            ValidadorEntrada validador = ValidadorEntrada.nova();
+            String nome = validador.texto(texto(nomeField), "o nome do indicado");
+            String telefone = validador.texto(texto(telefoneField), "o telefone do indicado");
+            validador.validar();
+
             var cliente = UtilComboBox.selecionado(clienteCombo);
             String customerId = cliente == null ? "" : cliente.id();
             casoDeUsoPotencialCliente.register(new CasoDeUsoPotencialCliente.RegisterPotencialClienteCommand(
                     UUID.randomUUID().toString(),
-                    nomeField.getText(),
-                    telefoneField.getText(),
+                    nome,
+                    telefone,
                     "INDICACAO:" + customerId,
                     customerId,
                     parseEnum(PotencialCliente.PotencialClienteStatus.class, statusField == null ? "" : statusField.getText(), PotencialCliente.PotencialClienteStatus.NOVO),
@@ -95,6 +101,10 @@ public class ControladorNovaIndicacao {
     @FXML
     private void onCancelar() {
         UtilJanela.fecharJanela(nomeField);
+    }
+
+    private String texto(TextField campo) {
+        return campo == null || campo.getText() == null ? "" : campo.getText();
     }
 
     private void setFeedback(String message) {

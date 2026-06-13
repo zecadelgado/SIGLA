@@ -51,7 +51,7 @@ public class ItemEstoqueEntidade {
     @Column(name = "ativo", nullable = false)
     private boolean ativo = true;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "estoque_movimentacoes", joinColumns = @JoinColumn(name = "produto_id"))
     private List<MovementEmbeddable> movements = new ArrayList<>();
 

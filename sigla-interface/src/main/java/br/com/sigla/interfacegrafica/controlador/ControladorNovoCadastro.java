@@ -9,6 +9,7 @@ import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import br.com.sigla.interfacegrafica.util.TradutorInterface;
 import br.com.sigla.interfacegrafica.util.UtilJanela;
+import br.com.sigla.interfacegrafica.util.ValidadorEntrada;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -181,29 +182,27 @@ public class ControladorNovoCadastro {
     }
 
     private void validarCliente() {
-        if (texto(nomeField).isBlank() && texto(razaoSocialField).isBlank()) {
-            throw new IllegalArgumentException("Informe nome completo ou razao social.");
-        }
-        validarEmail();
+        ValidadorEntrada validador = ValidadorEntrada.nova();
+        validador.exigir(!(texto(nomeField).isBlank() && texto(razaoSocialField).isBlank()),
+                "Informe o nome completo ou a razão social.");
+        validarEmail(validador);
+        validador.validar();
     }
 
     private void validarFuncionario() {
-        if (texto(nomeField).isBlank()) {
-            throw new IllegalArgumentException("Informe o nome do funcionario.");
-        }
-        if (texto(cargoField).isBlank()) {
-            throw new IllegalArgumentException("Informe o cargo do funcionario.");
-        }
-        if (texto(telefoneField).isBlank() && texto(emailField).isBlank()) {
-            throw new IllegalArgumentException("Informe telefone ou e-mail do funcionario.");
-        }
-        validarEmail();
+        ValidadorEntrada validador = ValidadorEntrada.nova();
+        validador.exigir(!texto(nomeField).isBlank(), "Informe o nome do funcionário.");
+        validador.exigir(!texto(cargoField).isBlank(), "Informe o cargo do funcionário.");
+        validador.exigir(!(texto(telefoneField).isBlank() && texto(emailField).isBlank()),
+                "Informe o telefone ou o e-mail do funcionário.");
+        validarEmail(validador);
+        validador.validar();
     }
 
-    private void validarEmail() {
+    private void validarEmail(ValidadorEntrada validador) {
         String email = texto(emailField);
         if (!email.isBlank() && !email.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")) {
-            throw new IllegalArgumentException("Informe um e-mail valido.");
+            validador.erro("Informe um e-mail válido.");
         }
     }
 

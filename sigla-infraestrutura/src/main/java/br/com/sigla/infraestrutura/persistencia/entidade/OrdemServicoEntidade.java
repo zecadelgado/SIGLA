@@ -74,11 +74,11 @@ public class OrdemServicoEntidade {
     @Column(name = "observacoes")
     private String observacoes;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "ordem_servico_id", nullable = false)
     private List<ProdutoEntidade> produtos = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "ordem_servico_id", nullable = false)
     private List<AnexoEntidade> anexos = new ArrayList<>();
 

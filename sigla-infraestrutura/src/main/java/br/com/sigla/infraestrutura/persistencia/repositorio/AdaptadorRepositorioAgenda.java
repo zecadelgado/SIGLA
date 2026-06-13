@@ -7,6 +7,7 @@ import br.com.sigla.infraestrutura.persistencia.entidade.VisitaAgendadaEntidade;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -29,13 +30,25 @@ public class AdaptadorRepositorioAgenda implements RepositorioAgenda {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<VisitaAgendada> findAll() {
         return repository.findAll().stream().map(this::toDomain).toList();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<VisitaAgendada> findById(String id) {
         return repository.findById(PersistenciaIds.toUuid(id)).map(this::toDomain);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<VisitaAgendada> findByResponsavel(String responsibleId) {
+        UUID id = PersistenciaIds.toUuid(responsibleId);
+        if (id == null) {
+            return List.of();
+        }
+        return repository.findByResponsibleId(id).stream().map(this::toDomain).toList();
     }
 
     private VisitaAgendada toDomain(VisitaAgendadaEntidade entity) {
@@ -171,8 +184,20 @@ class InMemoryAdaptadorRepositorioAgenda implements RepositorioAgenda {
     public Optional<VisitaAgendada> findById(String id) {
         return Optional.ofNullable(storage.get(id));
     }
+
+    @Override
+    public List<VisitaAgendada> findByResponsavel(String responsibleId) {
+        if (responsibleId == null || responsibleId.isBlank()) {
+            return List.of();
+        }
+        return storage.values().stream()
+                .filter(schedule -> responsibleId.equals(schedule.responsibleId()))
+                .toList();
+    }
 }
 
 interface SpringDataRepositorioAgenda extends JpaRepository<VisitaAgendadaEntidade, UUID> {
+
+    List<VisitaAgendadaEntidade> findByResponsibleId(UUID responsibleId);
 }
 

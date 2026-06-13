@@ -11,6 +11,7 @@ import br.com.sigla.dominio.servicos.OrdemServico;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface CasoDeUsoFinanceiro {
 
@@ -49,6 +50,8 @@ public interface CasoDeUsoFinanceiro {
     List<TransacaoFinanceiraView> listTransactions(FiltroFinanceiro filtro);
 
     List<LancamentoFinanceiro> listLancamentos(FiltroFinanceiro filtro);
+
+    Optional<LancamentoFinanceiro> buscarLancamentoPorOrdemServico(String ordemServicoId);
 
     List<LancamentoFinanceiro.ParcelaFinanceira> listParcelas(String lancamentoId);
 

@@ -10,6 +10,7 @@ import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import br.com.sigla.interfacegrafica.util.UtilComboBox;
 import br.com.sigla.interfacegrafica.util.UtilJanela;
+import br.com.sigla.interfacegrafica.util.ValidadorEntrada;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -92,14 +93,14 @@ public class ControladorNovaMovimentacao {
     @FXML
     private void onConfirmarMovimentacao() {
         try {
-            var produto = UtilComboBox.selecionado(produtoCombo);
-            if (produto == null) {
-                throw new IllegalArgumentException("Selecione um produto valido.");
-            }
+            ValidadorEntrada validador = ValidadorEntrada.nova();
+            OpcaoId produto = validador.selecao(UtilComboBox.selecionado(produtoCombo), "o produto");
+            int quantidade = validador.inteiroPositivo(texto(quantidadeField), "a quantidade");
+            validador.validar();
+
             var cliente = UtilComboBox.selecionado(clienteCombo);
             var ordem = UtilComboBox.selecionado(ordemCombo);
             ItemEstoque.MovementType tipo = tipoCombo == null || tipoCombo.getValue() == null ? ItemEstoque.MovementType.SAIDA : tipoCombo.getValue();
-            int quantidade = quantidadeInformada();
 
             casoDeUsoEstoque.recordMovement(new CasoDeUsoEstoque.RecordInventoryMovementCommand(
                     produto.id(),
@@ -140,18 +141,8 @@ public class ControladorNovaMovimentacao {
         }
     }
 
-    private int quantidadeInformada() {
-        String texto = quantidadeField == null ? "" : quantidadeField.getText().trim();
-        int quantidade;
-        try {
-            quantidade = Integer.parseInt(texto);
-        } catch (NumberFormatException exception) {
-            throw new IllegalArgumentException("Informe uma quantidade valida.");
-        }
-        if (quantidade <= 0) {
-            throw new IllegalArgumentException("Quantidade deve ser maior que zero.");
-        }
-        return quantidade;
+    private String texto(TextField campo) {
+        return campo == null || campo.getText() == null ? "" : campo.getText();
     }
 
     private void setFeedback(String message) {

@@ -9,6 +9,7 @@ import br.com.sigla.dominio.financeiro.LancamentoFinanceiro;
 import br.com.sigla.dominio.potenciaisclientes.PotencialCliente;
 import br.com.sigla.dominio.servicos.OrdemServico;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorMoeda;
+import br.com.sigla.interfacegrafica.async.ExecutorTarefasUi;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import javafx.application.Platform;
 import javafx.scene.chart.BarChart;
@@ -27,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -118,8 +121,28 @@ class ControladorDashboardTest {
                 proxy(CasoDeUsoEstoque.class, Map.of("listAll", itens)),
                 proxy(CasoDeUsoPotencialCliente.class, Map.of("listAll", List.<PotencialCliente>of())),
                 new SpyGerenciadorNavegacao(),
-                new ApresentadorMoeda()
+                new ApresentadorMoeda(),
+                new ExecutorSincrono()
         );
+    }
+
+    /** Executa o trabalho e o callback inline, tornando o refresh assincrono deterministico no teste. */
+    private static final class ExecutorSincrono extends ExecutorTarefasUi {
+        @Override
+        public <T> void executar(Supplier<T> trabalho, Consumer<T> aoConcluir, Consumer<Throwable> aoFalhar) {
+            try {
+                T resultado = trabalho.get();
+                if (aoConcluir != null) {
+                    aoConcluir.accept(resultado);
+                }
+            } catch (RuntimeException erro) {
+                if (aoFalhar != null) {
+                    aoFalhar.accept(erro);
+                } else {
+                    throw erro;
+                }
+            }
+        }
     }
 
     private LineChart<String, Number> lineChart() {

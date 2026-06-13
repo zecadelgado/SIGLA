@@ -12,6 +12,7 @@ import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import br.com.sigla.interfacegrafica.util.TradutorInterface;
 import br.com.sigla.interfacegrafica.util.UtilComboBox;
 import br.com.sigla.interfacegrafica.util.UtilJanela;
+import br.com.sigla.interfacegrafica.util.ValidadorEntrada;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
@@ -20,6 +21,7 @@ import javafx.scene.control.TextField;
 import javafx.util.StringConverter;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -112,23 +114,34 @@ public class ControladorNovaTransacao {
     @FXML
     private void onAdicionar() {
         try {
+            ValidadorEntrada validador = ValidadorEntrada.nova();
+            String descricao = validador.texto(texto(descricaoField), "a descrição da transação");
+            BigDecimal valor = validador.valorPositivo(formatadorMoeda.valor(valorField), "o valor da transação");
+            boolean parcelado = parceladoCombo != null && Boolean.TRUE.equals(parceladoCombo.getValue());
+            String parcelasTexto = texto(parcelasField);
+            int parcelas = 1;
+            if (parcelado || !parcelasTexto.isBlank()) {
+                parcelas = validador.inteiroPositivo(parcelasTexto, "o número de parcelas");
+            }
+            validador.validar();
+
             var cliente = UtilComboBox.selecionado(clienteCombo);
             var ordem = UtilComboBox.selecionado(ordemCombo);
             casoDeUsoFinanceiro.registerTransaction(new CasoDeUsoFinanceiro.RegisterTransacaoFinanceiraCommand(
                     UUID.randomUUID().toString(),
                     tipoCombo == null || tipoCombo.getValue() == null ? CasoDeUsoFinanceiro.TransactionType.ENTRY : tipoCombo.getValue(),
                     categoriaCombo == null || categoriaCombo.getValue() == null ? "" : categoriaCombo.getValue().id(),
-                    descricaoField.getText(),
+                    descricao,
                     cliente == null ? "" : cliente.id(),
                     "",
                     ordem == null ? "" : ordem.id(),
-                    formatadorMoeda.valor(valorField),
+                    valor,
                     emissaoPicker == null ? LocalDate.now() : emissaoPicker.getValue(),
                     vencimentoPicker == null ? null : vencimentoPicker.getValue(),
                     pagamentoPicker == null ? null : pagamentoPicker.getValue(),
                     formaPagamentoCombo == null || formaPagamentoCombo.getValue() == null ? "" : formaPagamentoCombo.getValue().id(),
-                    parceladoCombo != null && Boolean.TRUE.equals(parceladoCombo.getValue()),
-                    parcelasField.getText().isBlank() ? 1 : Integer.parseInt(parcelasField.getText()),
+                    parcelado,
+                    parcelas,
                     resolveUsuarioAtual(),
                     observacoesField == null ? "" : observacoesField.getText(),
                     statusCombo == null || statusCombo.getValue() == null ? CasoDeUsoFinanceiro.TransactionStatus.PENDING : statusCombo.getValue()
@@ -143,6 +156,10 @@ public class ControladorNovaTransacao {
     @FXML
     private void onCancelar() {
         UtilJanela.fecharJanela(tipoCombo);
+    }
+
+    private String texto(TextField campo) {
+        return campo == null || campo.getText() == null ? "" : campo.getText();
     }
 
     private void setFeedback(String message) {

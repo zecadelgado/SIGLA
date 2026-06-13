@@ -3,6 +3,18 @@ spring:
     url: jdbc:postgresql://aws-0-us-west-2.pooler.supabase.com:5432/postgres?sslmode=require
     username: postgres.jhderjgvzaxgzvcbkeol
     password: Sigla@ideau
+    hikari:
+      pool-name: sigla-pool
+      maximum-pool-size: 10
+      minimum-idle: 3
+      connection-timeout: 10000
+      idle-timeout: 300000
+      keepalive-time: 120000
+      max-lifetime: 1700000
+      data-source-properties:
+        tcpKeepAlive: true
+        prepareThreshold: 1
+        preparedStatementCacheQueries: 256
 
 supabase:
   project:

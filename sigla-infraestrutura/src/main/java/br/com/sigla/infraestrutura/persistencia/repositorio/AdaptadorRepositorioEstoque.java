@@ -4,9 +4,14 @@ import br.com.sigla.aplicacao.estoque.porta.saida.RepositorioEstoque;
 import br.com.sigla.dominio.estoque.ItemEstoque;
 import br.com.sigla.infraestrutura.persistencia.PersistenciaIds;
 import br.com.sigla.infraestrutura.persistencia.entidade.ItemEstoqueEntidade;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,16 +30,20 @@ public class AdaptadorRepositorioEstoque implements RepositorioEstoque {
     }
 
     @Override
+    @CacheEvict(value = "ref.produtos", allEntries = true)
     public void save(ItemEstoque item) {
         repository.save(toEntity(item));
     }
 
     @Override
+    @Cacheable("ref.produtos")
+    @Transactional(readOnly = true)
     public List<ItemEstoque> findAll() {
         return repository.findAll().stream().map(this::toDomain).toList();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<ItemEstoque> findById(String id) {
         return repository.findById(PersistenciaIds.toUuid(id)).map(this::toDomain);
     }
@@ -120,10 +129,7 @@ public class AdaptadorRepositorioEstoque implements RepositorioEstoque {
         if (normalized.isBlank()) {
             return false;
         }
-        return repository.findAll().stream()
-                .filter(ItemEstoqueEntidade::isAtivo)
-                .filter(item -> !PersistenciaIds.toString(item.getId()).equals(exceptId))
-                .anyMatch(item -> item.getSku() != null && item.getSku().trim().equalsIgnoreCase(normalized));
+        return repository.existsActiveSku(normalized, PersistenciaIds.toUuidIfValid(exceptId));
     }
 
     @Override
@@ -132,9 +138,10 @@ public class AdaptadorRepositorioEstoque implements RepositorioEstoque {
             return false;
         }
         UUID orderUuid = PersistenciaIds.toUuid(orderId);
-        return repository.findAll().stream()
-                .flatMap(item -> item.getMovements().stream())
-                .anyMatch(movement -> orderUuid.equals(movement.getOrderReference()));
+        if (orderUuid == null) {
+            return false;
+        }
+        return repository.existsMovementForOrder(orderUuid);
     }
 }
 
@@ -177,5 +184,23 @@ class InMemoryAdaptadorRepositorioEstoque implements RepositorioEstoque {
 }
 
 interface SpringDataRepositorioEstoque extends JpaRepository<ItemEstoqueEntidade, UUID> {
+
+    @Query(value = """
+            select exists(
+                select 1 from produtos p
+                where p.ativo = true
+                  and (cast(:exceptId as uuid) is null or p.id <> cast(:exceptId as uuid))
+                  and lower(trim(coalesce(p.sku, ''))) = :sku
+            )
+            """, nativeQuery = true)
+    boolean existsActiveSku(@Param("sku") String sku, @Param("exceptId") UUID exceptId);
+
+    @Query(value = """
+            select exists(
+                select 1 from estoque_movimentacoes m
+                where m.ordem_servico_id = :orderId
+            )
+            """, nativeQuery = true)
+    boolean existsMovementForOrder(@Param("orderId") UUID orderId);
 }
 

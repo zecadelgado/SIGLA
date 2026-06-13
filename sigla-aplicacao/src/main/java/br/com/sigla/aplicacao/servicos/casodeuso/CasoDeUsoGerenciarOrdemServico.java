@@ -289,7 +289,10 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
     }
 
     private void validarConflitoAgenda(VisitaAgendada schedule) {
-        for (VisitaAgendada existing : repositorioAgenda.findAll()) {
+        if (schedule.responsibleId() == null || schedule.responsibleId().isBlank()) {
+            return;
+        }
+        for (VisitaAgendada existing : repositorioAgenda.findByResponsavel(schedule.responsibleId())) {
             if (schedule.conflictsWith(existing)) {
                 throw new IllegalArgumentException("Conflito de agenda para o mesmo responsavel.");
             }
@@ -453,9 +456,7 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
         if (casoDeUsoFinanceiro == null) {
             return;
         }
-        casoDeUsoFinanceiro.listLancamentos(null).stream()
-                .filter(lancamento -> lancamento.ordemServicoId().equals(ordemServico.id()))
-                .findFirst()
+        casoDeUsoFinanceiro.buscarLancamentoPorOrdemServico(ordemServico.id())
                 .ifPresentOrElse(
                         lancamento -> {
                             if (pago) {
@@ -476,10 +477,8 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
         if (casoDeUsoFinanceiro == null) {
             return;
         }
-        casoDeUsoFinanceiro.listLancamentos(null).stream()
-                .filter(lancamento -> lancamento.ordemServicoId().equals(ordemServico.id()))
+        casoDeUsoFinanceiro.buscarLancamentoPorOrdemServico(ordemServico.id())
                 .filter(lancamento -> !lancamento.status().name().equals("PAID"))
-                .findFirst()
                 .ifPresent(lancamento -> casoDeUsoFinanceiro.cancel(lancamento.id(), motivo == null || motivo.isBlank() ? "OS cancelada." : motivo));
     }
 

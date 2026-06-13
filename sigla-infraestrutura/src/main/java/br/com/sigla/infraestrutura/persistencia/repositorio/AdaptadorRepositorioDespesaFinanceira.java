@@ -8,12 +8,14 @@ import br.com.sigla.infraestrutura.persistencia.entidade.FinanceiroFormaPagament
 import br.com.sigla.infraestrutura.persistencia.entidade.FinanceiroLancamentoEntidade;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Repository
 public class AdaptadorRepositorioDespesaFinanceira implements RepositorioDespesaFinanceira {
@@ -54,31 +56,49 @@ public class AdaptadorRepositorioDespesaFinanceira implements RepositorioDespesa
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<DespesaFinanceira> findById(String id) {
-        return findAll().stream()
-                .filter(expense -> expense.id().equals(id))
-                .findFirst();
+        return repository.findById(PersistenciaIds.toUuid(id))
+                .filter(entity -> "EXPENSE".equals(entity.getTipo()))
+                .map(this::toDomain);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<DespesaFinanceira> findAll() {
+        Map<UUID, String> categorias = nomesCategorias();
+        Map<UUID, String> formas = nomesFormas();
         return repository.findByTipo("EXPENSE").stream()
-                .map(entity -> new DespesaFinanceira(
-                        PersistenciaIds.toString(entity.getId()),
-                        parseCategory(resolveCategoriaNome(entity.getCategoriaId())),
-                        entity.getValorTotal(),
-                        entity.getDataEmissao(),
-                        PersistenciaIds.toString(entity.getCriadoPor()).isBlank() ? "Sistema" : PersistenciaIds.toString(entity.getCriadoPor()),
-                        entity.getDescricao(),
-                        entity.getDataVencimento(),
-                        entity.getDataPagamento(),
-                        resolveFormaPagamentoNome(entity.getFormaPagamentoId()),
-                        PersistenciaIds.toString(entity.getCriadoPor()),
-                        PersistenciaIds.toString(entity.getOrdemServicoId()),
-                        parseStatus(entity.getStatus()),
-                        entity.getObservacoes()
-                ))
+                .map(entity -> toDomain(entity, categorias, formas))
                 .toList();
+    }
+
+    private DespesaFinanceira toDomain(FinanceiroLancamentoEntidade entity) {
+        return toDomain(entity, null, null);
+    }
+
+    private DespesaFinanceira toDomain(FinanceiroLancamentoEntidade entity, Map<UUID, String> categorias, Map<UUID, String> formas) {
+        String categoriaNome = categorias != null
+                ? categorias.getOrDefault(entity.getCategoriaId(), "")
+                : resolveCategoriaNome(entity.getCategoriaId());
+        String formaNome = formas != null
+                ? formas.getOrDefault(entity.getFormaPagamentoId(), "")
+                : resolveFormaPagamentoNome(entity.getFormaPagamentoId());
+        return new DespesaFinanceira(
+                PersistenciaIds.toString(entity.getId()),
+                parseCategory(categoriaNome),
+                entity.getValorTotal(),
+                entity.getDataEmissao(),
+                PersistenciaIds.toString(entity.getCriadoPor()).isBlank() ? "Sistema" : PersistenciaIds.toString(entity.getCriadoPor()),
+                entity.getDescricao(),
+                entity.getDataVencimento(),
+                entity.getDataPagamento(),
+                formaNome,
+                PersistenciaIds.toString(entity.getCriadoPor()),
+                PersistenciaIds.toString(entity.getOrdemServicoId()),
+                parseStatus(entity.getStatus()),
+                entity.getObservacoes()
+        );
     }
 
     private DespesaFinanceira.ExpenseCategory parseCategory(String value) {
@@ -136,6 +156,22 @@ public class AdaptadorRepositorioDespesaFinanceira implements RepositorioDespesa
 
     private String resolveFormaPagamentoNome(UUID id) {
         return id == null ? "" : formaPagamentoRepository.findById(id).map(FinanceiroFormaPagamentoEntidade::getNome).orElse("");
+    }
+
+    private Map<UUID, String> nomesCategorias() {
+        return categoriaRepository.findAll().stream()
+                .collect(Collectors.toMap(
+                        FinanceiroCategoriaEntidade::getId,
+                        entity -> entity.getNome() == null ? "" : entity.getNome(),
+                        (left, right) -> left));
+    }
+
+    private Map<UUID, String> nomesFormas() {
+        return formaPagamentoRepository.findAll().stream()
+                .collect(Collectors.toMap(
+                        FinanceiroFormaPagamentoEntidade::getId,
+                        entity -> entity.getNome() == null ? "" : entity.getNome(),
+                        (left, right) -> left));
     }
 }
 

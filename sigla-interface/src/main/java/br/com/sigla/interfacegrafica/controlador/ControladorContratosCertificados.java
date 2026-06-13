@@ -139,10 +139,16 @@ public class ControladorContratosCertificados {
         dialog.setTitle("Encerrar contrato");
         dialog.setHeaderText(null);
         dialog.setContentText("Motivo do encerramento:");
-        dialog.showAndWait().ifPresent(motivo -> executar(() -> {
-            casoDeUsoContrato.encerrar(new CasoDeUsoContrato.EncerrarContratoCommand(row.id(), motivo));
-            refresh();
-        }));
+        dialog.showAndWait().ifPresent(motivo -> {
+            if (motivo.isBlank()) {
+                alerta("Informe o motivo do encerramento.");
+                return;
+            }
+            executar(() -> {
+                casoDeUsoContrato.encerrar(new CasoDeUsoContrato.EncerrarContratoCommand(row.id(), motivo));
+                refresh();
+            });
+        });
     }
 
     @FXML
@@ -174,7 +180,7 @@ public class ControladorContratosCertificados {
     private ItemVencimentoRow selecionado() {
         ItemVencimentoRow row = itensTable.getSelectionModel().getSelectedItem();
         if (row == null) {
-            alerta("Selecione um item na tabela.");
+            alerta("Selecione um contrato ou certificado na tabela.");
         }
         return row;
     }

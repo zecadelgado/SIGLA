@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -77,9 +78,12 @@ public class ServicoConsultaReferencias {
         if (clienteId == null || clienteId.isBlank()) {
             return contratos();
         }
+        Set<String> idsDoCliente = casoDeUsoContrato.listAll().stream()
+                .filter(contrato -> clienteId.equals(contrato.customerId()))
+                .map(Contrato::id)
+                .collect(Collectors.toSet());
         return contratos().stream()
-                .filter(opcao -> casoDeUsoContrato.listAll().stream()
-                        .anyMatch(contrato -> contrato.id().equals(opcao.id()) && clienteId.equals(contrato.customerId())))
+                .filter(opcao -> idsDoCliente.contains(opcao.id()))
                 .toList();
     }
 

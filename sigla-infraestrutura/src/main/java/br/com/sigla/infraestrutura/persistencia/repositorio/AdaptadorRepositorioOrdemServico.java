@@ -7,6 +7,7 @@ import br.com.sigla.infraestrutura.persistencia.entidade.OrdemServicoEntidade;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -26,16 +27,19 @@ public class AdaptadorRepositorioOrdemServico implements RepositorioOrdemServico
     }
 
     @Override
+    @Transactional
     public OrdemServico save(OrdemServico ordemServico) {
         return toDomain(repository.save(toEntity(ordemServico)));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<OrdemServico> findAll() {
         return repository.findAll().stream().map(this::toDomain).toList();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<OrdemServico> findById(String id) {
         return repository.findById(PersistenciaIds.toUuid(id)).map(this::toDomain);
     }

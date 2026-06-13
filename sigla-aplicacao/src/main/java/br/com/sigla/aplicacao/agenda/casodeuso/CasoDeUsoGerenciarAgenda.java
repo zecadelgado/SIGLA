@@ -130,7 +130,11 @@ public class CasoDeUsoGerenciarAgenda implements CasoDeUsoAgenda {
         if (schedule.reminderActive() && schedule.reminderDaysBefore() < 0) {
             throw new IllegalArgumentException("Dias de lembrete nao pode ser negativo.");
         }
-        for (VisitaAgendada existing : repository.findAll()) {
+        // Conflito so existe entre eventos do mesmo responsavel; sem responsavel nao ha o que validar.
+        if (schedule.responsibleId() == null || schedule.responsibleId().isBlank()) {
+            return;
+        }
+        for (VisitaAgendada existing : repository.findByResponsavel(schedule.responsibleId())) {
             if (schedule.conflictsWith(existing)) {
                 throw new IllegalArgumentException("Conflito de agenda para o mesmo responsavel.");
             }

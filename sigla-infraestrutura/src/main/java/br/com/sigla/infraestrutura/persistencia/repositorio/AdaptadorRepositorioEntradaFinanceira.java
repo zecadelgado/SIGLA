@@ -9,12 +9,14 @@ import br.com.sigla.infraestrutura.persistencia.entidade.FinanceiroLancamentoEnt
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Repository
 public class AdaptadorRepositorioEntradaFinanceira implements RepositorioEntradaFinanceira {
@@ -56,32 +58,50 @@ public class AdaptadorRepositorioEntradaFinanceira implements RepositorioEntrada
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<EntradaFinanceira> findById(String id) {
-        return findAll().stream()
-                .filter(entry -> entry.id().equals(id))
-                .findFirst();
+        return repository.findById(PersistenciaIds.toUuid(id))
+                .filter(entity -> "ENTRY".equals(entity.getTipo()))
+                .map(this::toDomain);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<EntradaFinanceira> findAll() {
+        Map<UUID, String> categorias = nomesCategorias();
+        Map<UUID, String> formas = nomesFormas();
         return repository.findByTipo("ENTRY").stream()
-                .map(entity -> new EntradaFinanceira(
-                        PersistenciaIds.toString(entity.getId()),
-                        parseEntryType(resolveFormaPagamentoNome(entity.getFormaPagamentoId())),
-                        entity.getValorTotal(),
-                        entity.getDataEmissao(),
-                        PersistenciaIds.toString(entity.getClienteId()),
-                        "",
-                        entity.getDescricao(),
-                        resolveCategoriaNome(entity.getCategoriaId()),
-                        entity.getDataVencimento(),
-                        entity.getDataPagamento(),
-                        resolveFormaPagamentoNome(entity.getFormaPagamentoId()),
-                        PersistenciaIds.toString(entity.getCriadoPor()),
-                        PersistenciaIds.toString(entity.getOrdemServicoId()),
-                        parseEntryStatus(entity.getStatus())
-                ))
+                .map(entity -> toDomain(entity, categorias, formas))
                 .toList();
+    }
+
+    private EntradaFinanceira toDomain(FinanceiroLancamentoEntidade entity) {
+        return toDomain(entity, null, null);
+    }
+
+    private EntradaFinanceira toDomain(FinanceiroLancamentoEntidade entity, Map<UUID, String> categorias, Map<UUID, String> formas) {
+        String categoriaNome = categorias != null
+                ? categorias.getOrDefault(entity.getCategoriaId(), "")
+                : resolveCategoriaNome(entity.getCategoriaId());
+        String formaNome = formas != null
+                ? formas.getOrDefault(entity.getFormaPagamentoId(), "")
+                : resolveFormaPagamentoNome(entity.getFormaPagamentoId());
+        return new EntradaFinanceira(
+                PersistenciaIds.toString(entity.getId()),
+                parseEntryType(formaNome),
+                entity.getValorTotal(),
+                entity.getDataEmissao(),
+                PersistenciaIds.toString(entity.getClienteId()),
+                "",
+                entity.getDescricao(),
+                categoriaNome,
+                entity.getDataVencimento(),
+                entity.getDataPagamento(),
+                formaNome,
+                PersistenciaIds.toString(entity.getCriadoPor()),
+                PersistenciaIds.toString(entity.getOrdemServicoId()),
+                parseEntryStatus(entity.getStatus())
+        );
     }
 
     private UUID resolveCategoria(String tipo, String nome) {
@@ -117,6 +137,22 @@ public class AdaptadorRepositorioEntradaFinanceira implements RepositorioEntrada
 
     private String resolveFormaPagamentoNome(UUID id) {
         return id == null ? "" : formaPagamentoRepository.findById(id).map(FinanceiroFormaPagamentoEntidade::getNome).orElse("");
+    }
+
+    private Map<UUID, String> nomesCategorias() {
+        return categoriaRepository.findAll().stream()
+                .collect(Collectors.toMap(
+                        FinanceiroCategoriaEntidade::getId,
+                        entity -> entity.getNome() == null ? "" : entity.getNome(),
+                        (left, right) -> left));
+    }
+
+    private Map<UUID, String> nomesFormas() {
+        return formaPagamentoRepository.findAll().stream()
+                .collect(Collectors.toMap(
+                        FinanceiroFormaPagamentoEntidade::getId,
+                        entity -> entity.getNome() == null ? "" : entity.getNome(),
+                        (left, right) -> left));
     }
 
     private EntradaFinanceira.EntryType parseEntryType(String value) {

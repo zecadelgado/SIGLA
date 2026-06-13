@@ -3,6 +3,7 @@ package br.com.sigla.interfacegrafica.controlador;
 import br.com.sigla.aplicacao.usuarios.porta.entrada.CasoDeUsoUsuario;
 import br.com.sigla.dominio.usuarios.Usuario;
 import br.com.sigla.interfacegrafica.aplicativo.FluxoAplicacao;
+import br.com.sigla.interfacegrafica.util.ValidadorEntrada;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -38,18 +39,12 @@ public class ControladorCadastroUsuario {
 
     @FXML
     private void onCadastrar() {
-        String nome = textValue(nomeField);
-        String senha = textValue(senhaField);
-        if (nome.isBlank()) {
-            setFeedback("Informe o nome de usuario.");
-            return;
-        }
-        if (senha.isBlank()) {
-            setFeedback("Informe a senha.");
-            return;
-        }
-
         try {
+            ValidadorEntrada validador = ValidadorEntrada.nova();
+            String nome = validador.texto(textValue(nomeField), "o nome de usuário");
+            String senha = validador.texto(textValue(senhaField), "a senha");
+            validador.validar();
+
             casoDeUsoUsuario.registrar(new CasoDeUsoUsuario.RegistrarUsuarioCommand(
                     UUID.randomUUID().toString(),
                     nome,

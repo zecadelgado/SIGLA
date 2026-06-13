@@ -78,7 +78,7 @@ public class ClienteEntidade {
     @Column(name = "ativo", nullable = false)
     private boolean ativo = true;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "cliente_id", nullable = false)
     private List<ResponsavelEntidade> responsaveis = new ArrayList<>();
 

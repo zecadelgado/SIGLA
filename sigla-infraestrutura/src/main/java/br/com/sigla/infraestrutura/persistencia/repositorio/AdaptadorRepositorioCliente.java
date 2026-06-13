@@ -5,9 +5,14 @@ import br.com.sigla.dominio.clientes.Cliente;
 import br.com.sigla.infraestrutura.persistencia.PersistenciaIds;
 import br.com.sigla.infraestrutura.persistencia.entidade.ClienteEntidade;
 import jakarta.persistence.EntityManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,24 +33,28 @@ public class AdaptadorRepositorioCliente implements RepositorioCliente {
     }
 
     @Override
+    @CacheEvict(value = "ref.clientes", allEntries = true)
     public void save(Cliente customer) {
         repository.save(toEntity(customer));
     }
 
     @Override
+    @CacheEvict(value = "ref.clientes", allEntries = true)
     public void deleteById(String id) {
         repository.deleteById(PersistenciaIds.toUuid(id));
     }
 
     @Override
+    @Cacheable("ref.clientes")
+    @Transactional(readOnly = true)
     public List<Cliente> findAll() {
-        return repository.findAll().stream()
-                .filter(entity -> !"FUNCIONARIO".equals(entity.getTipo()))
+        return repository.findByTipoNot("FUNCIONARIO").stream()
                 .map(this::toDomain)
                 .toList();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Cliente> findById(String id) {
         return repository.findById(PersistenciaIds.toUuid(id))
                 .filter(entity -> !"FUNCIONARIO".equals(entity.getTipo()))
@@ -58,10 +67,7 @@ public class AdaptadorRepositorioCliente implements RepositorioCliente {
         if (digits.isBlank()) {
             return false;
         }
-        return findAll().stream()
-                .filter(Cliente::ativo)
-                .filter(cliente -> !cliente.id().equals(exceptId))
-                .anyMatch(cliente -> onlyDigits(cliente.cpf()).equals(digits));
+        return repository.existsActiveCpfDigits(digits, PersistenciaIds.toUuidIfValid(exceptId));
     }
 
     @Override
@@ -70,10 +76,7 @@ public class AdaptadorRepositorioCliente implements RepositorioCliente {
         if (digits.isBlank()) {
             return false;
         }
-        return findAll().stream()
-                .filter(Cliente::ativo)
-                .filter(cliente -> !cliente.id().equals(exceptId))
-                .anyMatch(cliente -> onlyDigits(cliente.cnpj()).equals(digits));
+        return repository.existsActiveCnpjDigits(digits, PersistenciaIds.toUuidIfValid(exceptId));
     }
 
     @Override
@@ -82,10 +85,7 @@ public class AdaptadorRepositorioCliente implements RepositorioCliente {
         if (normalized.isBlank()) {
             return false;
         }
-        return findAll().stream()
-                .filter(Cliente::ativo)
-                .filter(cliente -> !cliente.id().equals(exceptId))
-                .anyMatch(cliente -> cliente.email().equalsIgnoreCase(normalized));
+        return repository.existsActiveEmailLower(normalized, PersistenciaIds.toUuidIfValid(exceptId));
     }
 
     @Override
@@ -269,4 +269,39 @@ class InMemoryAdaptadorRepositorioCliente implements RepositorioCliente {
 }
 
 interface SpringDataRepositorioCliente extends JpaRepository<ClienteEntidade, UUID> {
+
+    List<ClienteEntidade> findByTipoNot(String tipo);
+
+    @Query(value = """
+            select exists(
+                select 1 from cadastro c
+                where c.tipo <> 'FUNCIONARIO'
+                  and c.ativo = true
+                  and (cast(:exceptId as uuid) is null or c.id <> cast(:exceptId as uuid))
+                  and regexp_replace(coalesce(c.cpf, ''), '\\D', '', 'g') = :digits
+            )
+            """, nativeQuery = true)
+    boolean existsActiveCpfDigits(@Param("digits") String digits, @Param("exceptId") UUID exceptId);
+
+    @Query(value = """
+            select exists(
+                select 1 from cadastro c
+                where c.tipo <> 'FUNCIONARIO'
+                  and c.ativo = true
+                  and (cast(:exceptId as uuid) is null or c.id <> cast(:exceptId as uuid))
+                  and regexp_replace(coalesce(c.cnpj, ''), '\\D', '', 'g') = :digits
+            )
+            """, nativeQuery = true)
+    boolean existsActiveCnpjDigits(@Param("digits") String digits, @Param("exceptId") UUID exceptId);
+
+    @Query(value = """
+            select exists(
+                select 1 from cadastro c
+                where c.tipo <> 'FUNCIONARIO'
+                  and c.ativo = true
+                  and (cast(:exceptId as uuid) is null or c.id <> cast(:exceptId as uuid))
+                  and lower(coalesce(c.email, '')) = :email
+            )
+            """, nativeQuery = true)
+    boolean existsActiveEmailLower(@Param("email") String email, @Param("exceptId") UUID exceptId);
 }

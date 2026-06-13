@@ -5,6 +5,10 @@ spring:
     web-application-type: none
   profiles:
     default: supabase
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=2000,expireAfterWrite=60s
 
 logging:
   config: classpath:logback-spring.xml

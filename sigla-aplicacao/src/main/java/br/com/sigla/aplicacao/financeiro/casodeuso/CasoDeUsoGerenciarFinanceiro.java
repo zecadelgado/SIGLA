@@ -381,6 +381,14 @@ public class CasoDeUsoGerenciarFinanceiro implements CasoDeUsoFinanceiro {
     }
 
     @Override
+    public java.util.Optional<LancamentoFinanceiro> buscarLancamentoPorOrdemServico(String ordemServicoId) {
+        if (ordemServicoId == null || ordemServicoId.isBlank()) {
+            return java.util.Optional.empty();
+        }
+        return lancamentoRepository.findByOrdemServicoId(ordemServicoId);
+    }
+
+    @Override
     public List<LancamentoFinanceiro.ParcelaFinanceira> listParcelas(String lancamentoId) {
         return find(lancamentoId).parcelas();
     }
@@ -397,12 +405,13 @@ public class CasoDeUsoGerenciarFinanceiro implements CasoDeUsoFinanceiro {
 
     @Override
     public BigDecimal currentBalance() {
-        BigDecimal entries = listLancamentos(null).stream()
+        List<LancamentoFinanceiro> lancamentos = listLancamentos(null);
+        BigDecimal entries = lancamentos.stream()
                 .filter(lancamento -> lancamento.tipo() == LancamentoFinanceiro.Tipo.ENTRY)
                 .filter(lancamento -> lancamento.status() == LancamentoFinanceiro.Status.PAID)
                 .map(LancamentoFinanceiro::valorTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal expenses = listLancamentos(null).stream()
+        BigDecimal expenses = lancamentos.stream()
                 .filter(lancamento -> lancamento.tipo() == LancamentoFinanceiro.Tipo.EXPENSE)
                 .filter(lancamento -> lancamento.status() == LancamentoFinanceiro.Status.PAID)
                 .map(LancamentoFinanceiro::valorTotal)

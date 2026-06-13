@@ -201,19 +201,35 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Estornar pagamento");
         dialog.setHeaderText("Informe o motivo do estorno");
-        dialog.showAndWait().ifPresent(motivo -> executar(() -> casoDeUsoFinanceiro.estornarPagamento(selected.id(), motivo)));
+        dialog.showAndWait().ifPresent(motivo -> {
+            if (motivo.isBlank()) {
+                mostrar("Informe o motivo do estorno.");
+                return;
+            }
+            executar(() -> casoDeUsoFinanceiro.estornarPagamento(selected.id(), motivo));
+        });
     }
 
     @FXML
     private void onCancelarTransacao() {
         var selected = selecionada();
-        if (selected == null || selected.status() == CasoDeUsoFinanceiro.TransactionStatus.CANCELLED) {
+        if (selected == null) {
+            return;
+        }
+        if (selected.status() == CasoDeUsoFinanceiro.TransactionStatus.CANCELLED) {
+            mostrar("Este lançamento já está cancelado.");
             return;
         }
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Cancelar lançamento");
         dialog.setHeaderText("Informe o motivo do cancelamento");
-        dialog.showAndWait().ifPresent(motivo -> executar(() -> casoDeUsoFinanceiro.cancel(selected.id(), motivo)));
+        dialog.showAndWait().ifPresent(motivo -> {
+            if (motivo.isBlank()) {
+                mostrar("Informe o motivo do cancelamento.");
+                return;
+            }
+            executar(() -> casoDeUsoFinanceiro.cancel(selected.id(), motivo));
+        });
     }
 
     private void refresh() {
@@ -386,7 +402,13 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
     }
 
     private CasoDeUsoFinanceiro.TransacaoFinanceiraView selecionada() {
-        return transacoesTable == null ? null : transacoesTable.getSelectionModel().getSelectedItem();
+        CasoDeUsoFinanceiro.TransacaoFinanceiraView selecionada = transacoesTable == null
+                ? null
+                : transacoesTable.getSelectionModel().getSelectedItem();
+        if (selecionada == null) {
+            mostrar("Selecione um lançamento na tabela.");
+        }
+        return selecionada;
     }
 
     private void executar(Runnable runnable) {
@@ -399,7 +421,7 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
     }
 
     private void mostrar(String message) {
-        new Alert(Alert.AlertType.WARNING, message == null ? "Acao nao realizada." : message, ButtonType.OK).showAndWait();
+        new Alert(Alert.AlertType.WARNING, message == null ? "Ação não realizada." : message, ButtonType.OK).showAndWait();
     }
 
     private GridPane grid() {

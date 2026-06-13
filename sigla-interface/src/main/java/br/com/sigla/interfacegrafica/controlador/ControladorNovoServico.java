@@ -8,6 +8,7 @@ import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import br.com.sigla.interfacegrafica.util.UtilComboBox;
 import br.com.sigla.interfacegrafica.util.UtilJanela;
+import br.com.sigla.interfacegrafica.util.ValidadorEntrada;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -94,7 +95,12 @@ public class ControladorNovoServico {
     @FXML
     private void onConfirmar() {
         try {
-            OpcaoId cliente = requiredOption(UtilComboBox.selecionado(clienteCombo), "Selecione um cliente.");
+            ValidadorEntrada validador = ValidadorEntrada.nova();
+            OpcaoId cliente = validador.selecao(UtilComboBox.selecionado(clienteCombo), "o cliente");
+            String titulo = validador.texto(texto(tituloField), "o título do serviço");
+            String descricao = validador.texto(texto(descricaoField), "a descrição do serviço");
+            validador.validar();
+
             OpcaoId ordem = UtilComboBox.selecionado(ordemCombo);
             OpcaoId contrato = UtilComboBox.selecionado(contratoCombo);
             LocalDate dataInicio = dataInicioPicker == null || dataInicioPicker.getValue() == null ? LocalDate.now() : dataInicioPicker.getValue();
@@ -109,7 +115,7 @@ public class ControladorNovoServico {
                     VisitaAgendada.VisitType.ONE_OFF,
                     VisitaAgendada.Recurrence.NONE,
                     dataInicio,
-                    tituloField == null ? "" : tituloField.getText(),
+                    titulo,
                     "servico",
                     "",
                     dataInicio.atStartOfDay(),
@@ -120,7 +126,7 @@ public class ControladorNovoServico {
                     UtilComboBox.idSelecionado(responsavelCombo),
                     false,
                     0,
-                    mergeDescricao()
+                    mergeDescricao(titulo, descricao)
             ));
             gerenciadorNavegacao.navigateTo(VisaoAplicacao.SERVICES);
             UtilJanela.fecharJanela(clienteCombo);
@@ -134,21 +140,13 @@ public class ControladorNovoServico {
         UtilJanela.fecharJanela(clienteCombo);
     }
 
-    private String mergeDescricao() {
-        String descricao = descricaoField == null ? "" : descricaoField.getText().trim();
-        if (descricao.isBlank()) {
-            throw new IllegalArgumentException("Descreva o servico prestado.");
-        }
-        String titulo = tituloField == null ? "" : tituloField.getText().trim();
-        String texto = titulo.isBlank() ? descricao : titulo + " - " + descricao;
-        return diaInteiroCheck != null && diaInteiroCheck.isSelected() ? texto + " | Dia inteiro" : texto;
+    private String mergeDescricao(String titulo, String descricao) {
+        String base = titulo.isBlank() ? descricao : titulo + " - " + descricao;
+        return diaInteiroCheck != null && diaInteiroCheck.isSelected() ? base + " | Dia inteiro" : base;
     }
 
-    private OpcaoId requiredOption(OpcaoId value, String message) {
-        if (value == null) {
-            throw new IllegalArgumentException(message);
-        }
-        return value;
+    private String texto(TextField campo) {
+        return campo == null || campo.getText() == null ? "" : campo.getText();
     }
 
     private void setFeedback(String message) {

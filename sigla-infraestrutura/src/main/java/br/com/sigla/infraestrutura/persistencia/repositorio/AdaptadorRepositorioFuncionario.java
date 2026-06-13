@@ -5,6 +5,8 @@ import br.com.sigla.dominio.funcionarios.Funcionario;
 import br.com.sigla.infraestrutura.persistencia.PersistenciaIds;
 import br.com.sigla.infraestrutura.persistencia.entidade.ClienteEntidade;
 import jakarta.persistence.EntityManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -27,16 +29,19 @@ public class AdaptadorRepositorioFuncionario implements RepositorioFuncionario {
     }
 
     @Override
+    @CacheEvict(value = "ref.funcionarios", allEntries = true)
     public void save(Funcionario employee) {
         repository.save(toEntity(employee));
     }
 
     @Override
+    @CacheEvict(value = "ref.funcionarios", allEntries = true)
     public void deleteById(String id) {
         repository.deleteById(PersistenciaIds.toUuid(id));
     }
 
     @Override
+    @Cacheable("ref.funcionarios")
     public List<Funcionario> findAll() {
         return repository.findByTipo("FUNCIONARIO").stream().map(this::toDomain).toList();
     }

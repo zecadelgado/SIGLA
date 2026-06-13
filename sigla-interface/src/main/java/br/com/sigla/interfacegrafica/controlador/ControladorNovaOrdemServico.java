@@ -9,6 +9,7 @@ import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import br.com.sigla.interfacegrafica.util.UtilComboBox;
 import br.com.sigla.interfacegrafica.util.UtilJanela;
+import br.com.sigla.interfacegrafica.util.ValidadorEntrada;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
@@ -105,7 +106,12 @@ public class ControladorNovaOrdemServico {
     @FXML
     private void onConfirmar() {
         try {
-            OpcaoId cliente = requiredOption(UtilComboBox.selecionado(clienteCombo), "Selecione um cliente.");
+            ValidadorEntrada validador = ValidadorEntrada.nova();
+            OpcaoId cliente = validador.selecao(UtilComboBox.selecionado(clienteCombo), "o cliente");
+            String titulo = validador.texto(texto(tituloField), "o título da ordem de serviço");
+            String tipoServico = validador.texto(texto(tipoServicoField), "o tipo de serviço");
+            validador.validar();
+
             OpcaoId contrato = UtilComboBox.selecionado(contratoCombo);
             LocalDate dataAgendada = dataAgendadaPicker == null ? LocalDate.now() : dataAgendadaPicker.getValue();
             LocalDate dataInicio = dataInicioPicker == null || dataInicioPicker.getValue() == null ? dataAgendada : dataInicioPicker.getValue();
@@ -117,9 +123,9 @@ public class ControladorNovaOrdemServico {
                     UUID.randomUUID().toString(),
                     cliente.id(),
                     contrato == null ? "" : contrato.id(),
-                    tituloField == null ? "" : tituloField.getText(),
+                    titulo,
                     descricaoField == null ? "" : descricaoField.getText(),
-                    tipoServicoField == null ? "" : tipoServicoField.getText(),
+                    tipoServico,
                     parseEnum(OrdemServico.OrdemServicoStatus.class, statusField == null ? "" : statusField.getText(), OrdemServico.OrdemServicoStatus.AGENDADA),
                     dataAgendada.atStartOfDay(),
                     inicio,
@@ -141,11 +147,8 @@ public class ControladorNovaOrdemServico {
         UtilJanela.fecharJanela(clienteCombo);
     }
 
-    private OpcaoId requiredOption(OpcaoId value, String message) {
-        if (value == null) {
-            throw new IllegalArgumentException(message);
-        }
-        return value;
+    private String texto(TextField campo) {
+        return campo == null || campo.getText() == null ? "" : campo.getText();
     }
 
     private String chooseResponsible() {

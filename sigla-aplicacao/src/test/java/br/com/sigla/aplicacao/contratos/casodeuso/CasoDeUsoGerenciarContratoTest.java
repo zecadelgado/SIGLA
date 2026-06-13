@@ -134,5 +134,15 @@ class CasoDeUsoGerenciarContratoTest {
         public Optional<VisitaAgendada> findById(String id) {
             return Optional.ofNullable(storage.get(id));
         }
+
+        @Override
+        public List<VisitaAgendada> findByResponsavel(String responsibleId) {
+            if (responsibleId == null || responsibleId.isBlank()) {
+                return List.of();
+            }
+            return storage.values().stream()
+                    .filter(schedule -> responsibleId.equals(schedule.responsibleId()))
+                    .toList();
+        }
     }
 }

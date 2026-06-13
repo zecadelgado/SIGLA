@@ -11,6 +11,7 @@ import br.com.sigla.interfacegrafica.formatador.FormatadorMascaraMoeda;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto;
+import br.com.sigla.interfacegrafica.util.ValidadorEntrada;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -178,11 +179,10 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
         if (selected == null) {
             return;
         }
-        Optional<CasoDeUsoOrdemServico.AdicionarProdutoOrdemCommand> command = abrirDialogoProduto(selected.id());
-        command.ifPresent(value -> {
-            executar(() -> casoDeUsoOrdemServico.adicionarProduto(value));
+        executar(() -> abrirDialogoProduto(selected.id()).ifPresent(value -> {
+            casoDeUsoOrdemServico.adicionarProduto(value);
             refresh();
-        });
+        }));
     }
 
     @FXML
@@ -245,7 +245,7 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
         configureColumn(responsavelColumn, 4, row -> row.responsible());
         configureColumn(emissaoColumn, 5, row -> apresentadorData.format(row.emissionDate()));
         configureColumn(valorColumn, 6, row -> apresentadorMoeda.format(row.amount()));
-        configureColumn(pagoColumn, 7, row -> row.paid() ? "Sim" : "Nao");
+        configureColumn(pagoColumn, 7, row -> row.paid() ? "Sim" : "Não");
         configureColumn(statusColumn, 8, row -> row.status());
     }
 
@@ -268,21 +268,22 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
         GridPane grid = grid();
         grid.addRow(0, new Label("Produto"), produto);
         grid.addRow(1, new Label("Quantidade"), quantidade);
-        grid.addRow(2, new Label("Valor unitario"), valor);
+        grid.addRow(2, new Label("Valor unitário"), valor);
         dialog.getDialogPane().setContent(grid);
         dialog.setResultConverter(button -> {
             if (button != ButtonType.OK) {
                 return null;
             }
+            ValidadorEntrada validador = ValidadorEntrada.nova();
             var opcao = ResolvedorEntradaTexto.resolveOpcional(servicoConsultaReferencias.produtos(), produto.getText());
-            if (opcao == null) {
-                throw new IllegalArgumentException("Selecione um produto valido.");
-            }
+            validador.selecao(opcao, "um produto válido");
+            int qtd = validador.inteiroPositivo(quantidade.getText(), "a quantidade");
+            validador.validar();
             return new CasoDeUsoOrdemServico.AdicionarProdutoOrdemCommand(
                     ordemId,
                     UUID.randomUUID().toString(),
                     opcao.id(),
-                    Integer.parseInt(quantidade.getText()),
+                    qtd,
                     formatadorMoeda.valor(valor)
             );
         });
@@ -306,12 +307,12 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
         observacoes.setPrefRowCount(3);
         GridPane grid = grid();
         grid.addRow(0, new Label("Cliente"), cliente);
-        grid.addRow(1, new Label("Titulo"), titulo);
-        grid.addRow(2, new Label("Descricao"), descricao);
+        grid.addRow(1, new Label("Título"), titulo);
+        grid.addRow(2, new Label("Descrição"), descricao);
         grid.addRow(3, new Label("Tipo"), tipo);
-        grid.addRow(4, new Label("Responsavel"), responsavel);
-        grid.addRow(5, new Label("Valor servico"), valor);
-        grid.addRow(6, new Label("Observacoes"), observacoes);
+        grid.addRow(4, new Label("Responsável"), responsavel);
+        grid.addRow(5, new Label("Valor do serviço"), valor);
+        grid.addRow(6, new Label("Observações"), observacoes);
         dialog.getDialogPane().setContent(grid);
         dialog.setResultConverter(button -> {
             if (button != ButtonType.OK) {
@@ -353,10 +354,10 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
         descricao.setPrefRowCount(3);
         GridPane grid = grid();
         grid.addRow(0, new Label("Tipo"), tipo);
-        grid.addRow(1, new Label("Nome arquivo"), nome);
-        grid.addRow(2, new Label("Caminho storage"), caminho);
+        grid.addRow(1, new Label("Nome do arquivo"), nome);
+        grid.addRow(2, new Label("Caminho"), caminho);
         grid.addRow(3, new Label("MIME"), mime);
-        grid.addRow(4, new Label("Descricao"), descricao);
+        grid.addRow(4, new Label("Descrição"), descricao);
         dialog.getDialogPane().setContent(grid);
         dialog.setResultConverter(button -> button == ButtonType.OK ? new CasoDeUsoOrdemServico.AnexarOrdemServicoCommand(
                 ordemId,

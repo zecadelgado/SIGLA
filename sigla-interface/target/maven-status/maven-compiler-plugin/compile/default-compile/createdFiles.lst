@@ -3,9 +3,11 @@ br\com\sigla\interfacegrafica\controlador\ControladorClientes.class
 br\com\sigla\interfacegrafica\aplicativo\SessaoLocalAplicacao.class
 br\com\sigla\interfacegrafica\controlador\ControladorOrdemServico.class
 br\com\sigla\interfacegrafica\controlador\ControladorAgenda$Option.class
+br\com\sigla\interfacegrafica\util\ValidadorEntrada.class
 br\com\sigla\interfacegrafica\controlador\ControladorCadastro.class
 br\com\sigla\interfacegrafica\navegacao\VisaoAplicacao.class
 br\com\sigla\interfacegrafica\controlador\ControladorEstruturaAplicacao.class
+br\com\sigla\interfacegrafica\async\ExecutorTarefasUi.class
 br\com\sigla\interfacegrafica\controlador\ControladorServicos$ItemCalendario.class
 br\com\sigla\interfacegrafica\modelo\OpcaoId.class
 br\com\sigla\interfacegrafica\controlador\ControladorNovoServico.class
@@ -41,11 +43,13 @@ br\com\sigla\interfacegrafica\controlador\ControladorAgenda.class
 br\com\sigla\interfacegrafica\controlador\ControladorFinanceiro$1.class
 br\com\sigla\interfacegrafica\controlador\ControladorComMenuPrincipal.class
 br\com\sigla\interfacegrafica\util\TradutorInterface$1.class
+br\com\sigla\interfacegrafica\async\ExecutorTarefasUi$2.class
 br\com\sigla\interfacegrafica\aplicativo\AplicacaoDesktopSigla.class
 br\com\sigla\interfacegrafica\aplicativo\EstruturaAplicacao.class
 br\com\sigla\interfacegrafica\controlador\ControladorEstoque$ProdutoRow.class
 br\com\sigla\interfacegrafica\controlador\ControladorNovaIndicacao.class
 br\com\sigla\interfacegrafica\controlador\ControladorDetalhesServicosDia.class
+br\com\sigla\interfacegrafica\controlador\ControladorDashboard$DadosDashboard.class
 br\com\sigla\interfacegrafica\aplicativo\FluxoAplicacao.class
 br\com\sigla\interfacegrafica\controlador\ControladorContratosCertificados$ClienteOption.class
 br\com\sigla\interfacegrafica\controlador\ControladorUsuarios.class
@@ -74,3 +78,4 @@ br\com\sigla\interfacegrafica\apresentacao\ApresentadorData.class
 br\com\sigla\interfacegrafica\util\TradutorInterface.class
 br\com\sigla\interfacegrafica\controlador\ControladorDashboard.class
 br\com\sigla\interfacegrafica\inicializacao\LancadorSigla.class
+br\com\sigla\interfacegrafica\async\ExecutorTarefasUi$1.class

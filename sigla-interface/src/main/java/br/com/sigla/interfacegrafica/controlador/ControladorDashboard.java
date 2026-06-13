@@ -9,6 +9,7 @@ import br.com.sigla.dominio.financeiro.LancamentoFinanceiro;
 import br.com.sigla.dominio.potenciaisclientes.PotencialCliente;
 import br.com.sigla.dominio.servicos.OrdemServico;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorMoeda;
+import br.com.sigla.interfacegrafica.async.ExecutorTarefasUi;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import javafx.fxml.FXML;
@@ -40,6 +41,7 @@ public class ControladorDashboard {
     private final CasoDeUsoPotencialCliente casoDeUsoPotencialCliente;
     private final GerenciadorNavegacao gerenciadorNavegacao;
     private final ApresentadorMoeda apresentadorMoeda;
+    private final ExecutorTarefasUi executorTarefasUi;
 
     @FXML
     private Label osAbertasLabel;
@@ -74,7 +76,8 @@ public class ControladorDashboard {
             CasoDeUsoEstoque casoDeUsoEstoque,
             CasoDeUsoPotencialCliente casoDeUsoPotencialCliente,
             GerenciadorNavegacao gerenciadorNavegacao,
-            ApresentadorMoeda apresentadorMoeda
+            ApresentadorMoeda apresentadorMoeda,
+            ExecutorTarefasUi executorTarefasUi
     ) {
         this.casoDeUsoOrdemServico = casoDeUsoOrdemServico;
         this.casoDeUsoFinanceiro = casoDeUsoFinanceiro;
@@ -82,6 +85,7 @@ public class ControladorDashboard {
         this.casoDeUsoPotencialCliente = casoDeUsoPotencialCliente;
         this.gerenciadorNavegacao = gerenciadorNavegacao;
         this.apresentadorMoeda = apresentadorMoeda;
+        this.executorTarefasUi = executorTarefasUi;
     }
 
     @FXML
@@ -91,12 +95,34 @@ public class ControladorDashboard {
     }
 
     public void refresh() {
+        // Carrega os 4 conjuntos fora da thread da UI (consultas remotas) e so atualiza a tela ao final.
+        executorTarefasUi.executar(this::carregarDados, this::atualizarTela);
+    }
+
+    private DadosDashboard carregarDados() {
+        return new DadosDashboard(
+                casoDeUsoOrdemServico.listAll(),
+                casoDeUsoFinanceiro.listLancamentos(null),
+                casoDeUsoEstoque.listAll(),
+                casoDeUsoPotencialCliente.listAll()
+        );
+    }
+
+    private record DadosDashboard(
+            List<OrdemServico> ordens,
+            List<LancamentoFinanceiro> lancamentos,
+            List<ItemEstoque> itens,
+            List<PotencialCliente> indicacoes
+    ) {
+    }
+
+    private void atualizarTela(DadosDashboard dados) {
         LocalDate hoje = LocalDate.now();
         YearMonth mesAtual = YearMonth.from(hoje);
-        List<OrdemServico> ordens = casoDeUsoOrdemServico.listAll();
-        List<LancamentoFinanceiro> lancamentos = casoDeUsoFinanceiro.listLancamentos(null);
-        List<ItemEstoque> itens = casoDeUsoEstoque.listAll();
-        List<PotencialCliente> indicacoes = casoDeUsoPotencialCliente.listAll();
+        List<OrdemServico> ordens = dados.ordens();
+        List<LancamentoFinanceiro> lancamentos = dados.lancamentos();
+        List<ItemEstoque> itens = dados.itens();
+        List<PotencialCliente> indicacoes = dados.indicacoes();
 
         long osAbertas = ordens.stream()
                 .filter(os -> os.status() != OrdemServico.OrdemServicoStatus.CONCLUIDA)

@@ -306,12 +306,12 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
         grid.setHgap(8);
         grid.setVgap(8);
         grid.addRow(0, new Label("Nome"), nome);
-        grid.addRow(1, new Label("Descricao"), descricao);
+        grid.addRow(1, new Label("Descrição"), descricao);
         grid.addRow(2, new Label("SKU"), sku);
         grid.addRow(3, new Label("Unidade"), unidade);
         grid.addRow(4, new Label("Custo"), custo);
         grid.addRow(5, new Label("Venda"), venda);
-        grid.addRow(6, new Label("Minimo"), minimo);
+        grid.addRow(6, new Label("Mínimo"), minimo);
         grid.add(ativo, 1, 7);
         dialog.getDialogPane().setContent(grid);
         dialog.setResultConverter(button -> button == ButtonType.OK ? new CasoDeUsoEstoque.RegisterItemEstoqueCommand(

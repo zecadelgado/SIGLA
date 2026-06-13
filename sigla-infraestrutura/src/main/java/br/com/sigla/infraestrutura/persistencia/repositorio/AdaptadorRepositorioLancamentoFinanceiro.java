@@ -9,8 +9,10 @@ import br.com.sigla.infraestrutura.persistencia.entidade.FinanceiroCategoriaEnti
 import br.com.sigla.infraestrutura.persistencia.entidade.FinanceiroFormaPagamentoEntidade;
 import br.com.sigla.infraestrutura.persistencia.entidade.FinanceiroLancamentoEntidade;
 import br.com.sigla.infraestrutura.persistencia.entidade.FinanceiroParcelaEntidade;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +20,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Repository
 public class AdaptadorRepositorioLancamentoFinanceiro implements RepositorioLancamentoFinanceiro {
@@ -37,6 +40,7 @@ public class AdaptadorRepositorioLancamentoFinanceiro implements RepositorioLanc
     }
 
     @Override
+    @Transactional
     public LancamentoFinanceiro save(LancamentoFinanceiro lancamento) {
         FinanceiroLancamentoEntidade entity = lancamentoRepository.findById(PersistenciaIds.toUuid(lancamento.id()))
                 .orElseGet(FinanceiroLancamentoEntidade::new);
@@ -71,11 +75,13 @@ public class AdaptadorRepositorioLancamentoFinanceiro implements RepositorioLanc
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<LancamentoFinanceiro> findById(String id) {
         return lancamentoRepository.findById(PersistenciaIds.toUuid(id)).map(this::toDomain);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<LancamentoFinanceiro> findByOrdemServicoId(String ordemServicoId) {
         UUID id = PersistenciaIds.toUuid(ordemServicoId);
         if (id == null) {
@@ -85,11 +91,17 @@ public class AdaptadorRepositorioLancamentoFinanceiro implements RepositorioLanc
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<LancamentoFinanceiro> findAll() {
-        return lancamentoRepository.findAll().stream().map(this::toDomain).toList();
+        Map<UUID, String> categorias = nomesCategorias();
+        Map<UUID, String> formas = nomesFormas();
+        return lancamentoRepository.findAll().stream()
+                .map(entity -> toDomain(entity, categorias, formas))
+                .toList();
     }
 
     @Override
+    @Cacheable("ref.categoriasFinanceiras")
     public List<CategoriaFinanceira> findCategoriasAtivas() {
         return categoriaRepository.findAll().stream()
                 .filter(FinanceiroCategoriaEntidade::isAtivo)
@@ -102,6 +114,7 @@ public class AdaptadorRepositorioLancamentoFinanceiro implements RepositorioLanc
     }
 
     @Override
+    @Cacheable("ref.formasPagamento")
     public List<FormaPagamentoFinanceira> findFormasPagamentoAtivas() {
         return formaPagamentoRepository.findAll().stream()
                 .filter(FinanceiroFormaPagamentoEntidade::isAtivo)
@@ -113,13 +126,23 @@ public class AdaptadorRepositorioLancamentoFinanceiro implements RepositorioLanc
     }
 
     private LancamentoFinanceiro toDomain(FinanceiroLancamentoEntidade entity) {
+        return toDomain(entity, null, null);
+    }
+
+    private LancamentoFinanceiro toDomain(FinanceiroLancamentoEntidade entity, Map<UUID, String> categorias, Map<UUID, String> formas) {
+        String categoriaNome = categorias != null
+                ? categorias.getOrDefault(entity.getCategoriaId(), "")
+                : categoriaNome(entity.getCategoriaId());
+        String formaNome = formas != null
+                ? formas.getOrDefault(entity.getFormaPagamentoId(), "")
+                : formaNome(entity.getFormaPagamentoId());
         return new LancamentoFinanceiro(
                 PersistenciaIds.toString(entity.getId()),
                 LancamentoFinanceiro.Tipo.from(entity.getTipo()),
                 PersistenciaIds.toString(entity.getCategoriaId()),
-                categoriaNome(entity.getCategoriaId()),
+                categoriaNome,
                 PersistenciaIds.toString(entity.getFormaPagamentoId()),
-                formaNome(entity.getFormaPagamentoId()),
+                formaNome,
                 entity.getDescricao() == null || entity.getDescricao().isBlank() ? "Lancamento financeiro" : entity.getDescricao(),
                 PersistenciaIds.toString(entity.getClienteId()),
                 PersistenciaIds.toString(entity.getOrdemServicoId()),
@@ -150,6 +173,22 @@ public class AdaptadorRepositorioLancamentoFinanceiro implements RepositorioLanc
 
     private String formaNome(UUID id) {
         return id == null ? "" : formaPagamentoRepository.findById(id).map(FinanceiroFormaPagamentoEntidade::getNome).orElse("");
+    }
+
+    private Map<UUID, String> nomesCategorias() {
+        return categoriaRepository.findAll().stream()
+                .collect(Collectors.toMap(
+                        FinanceiroCategoriaEntidade::getId,
+                        entity -> entity.getNome() == null ? "" : entity.getNome(),
+                        (left, right) -> left));
+    }
+
+    private Map<UUID, String> nomesFormas() {
+        return formaPagamentoRepository.findAll().stream()
+                .collect(Collectors.toMap(
+                        FinanceiroFormaPagamentoEntidade::getId,
+                        entity -> entity.getNome() == null ? "" : entity.getNome(),
+                        (left, right) -> left));
     }
 }
 
