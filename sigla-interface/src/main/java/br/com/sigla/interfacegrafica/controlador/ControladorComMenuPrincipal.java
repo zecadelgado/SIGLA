@@ -3,10 +3,13 @@ package br.com.sigla.interfacegrafica.controlador;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import javafx.fxml.FXML;
+import javafx.scene.layout.Region;
 
 public abstract class ControladorComMenuPrincipal {
 
     private final GerenciadorNavegacao gerenciadorNavegacao;
+    @FXML
+    private Region menuLateral;
 
     protected ControladorComMenuPrincipal(GerenciadorNavegacao gerenciadorNavegacao) {
         this.gerenciadorNavegacao = gerenciadorNavegacao;
@@ -45,5 +48,10 @@ public abstract class ControladorComMenuPrincipal {
     @FXML
     protected void onClientesClick() {
         gerenciadorNavegacao.navigateTo(VisaoAplicacao.CUSTOMERS);
+    }
+
+    @FXML
+    protected void onAlternarMenuLateral() {
+        gerenciadorNavegacao.alternarMenuLateral();
     }
 }

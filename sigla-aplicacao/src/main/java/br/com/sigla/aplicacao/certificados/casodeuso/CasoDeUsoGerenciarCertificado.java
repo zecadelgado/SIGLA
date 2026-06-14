@@ -1,8 +1,11 @@
 package br.com.sigla.aplicacao.certificados.casodeuso;
 
+import br.com.sigla.aplicacao.agenda.porta.saida.RepositorioAgenda;
 import br.com.sigla.aplicacao.certificados.porta.entrada.CasoDeUsoCertificado;
 import br.com.sigla.aplicacao.certificados.porta.saida.RepositorioCertificado;
+import br.com.sigla.dominio.agenda.VisitaAgendada;
 import br.com.sigla.dominio.certificados.Certificado;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -12,22 +15,110 @@ import java.util.List;
 public class CasoDeUsoGerenciarCertificado implements CasoDeUsoCertificado {
 
     private final RepositorioCertificado repository;
+    private final RepositorioAgenda agendaRepository;
+
+    @Autowired
+    public CasoDeUsoGerenciarCertificado(RepositorioCertificado repository, RepositorioAgenda agendaRepository) {
+        this.repository = repository;
+        this.agendaRepository = agendaRepository;
+    }
 
     public CasoDeUsoGerenciarCertificado(RepositorioCertificado repository) {
         this.repository = repository;
+        this.agendaRepository = null;
     }
 
     @Override
     public void issue(IssueCertificadoCommand command) {
-        LocalDate validUntil = command.validUntil() == null ? command.issuedOn().plusMonths(6) : command.validUntil();
-        repository.save(new Certificado(
+        int intervalMonths = command.intervalMonths() <= 0 ? 6 : command.intervalMonths();
+        LocalDate validUntil = command.validUntil() == null ? command.issuedOn().plusMonths(intervalMonths) : command.validUntil();
+        int alertDays = command.renewalAlertDays() <= 0 ? 15 : command.renewalAlertDays();
+        Certificado certificado = new Certificado(
                 command.id(),
+                command.customerId(),
                 command.serviceProvidedId(),
+                command.orderId(),
+                command.description(),
                 command.issuedOn(),
                 validUntil,
+                intervalMonths,
+                command.alertActive(),
                 command.status(),
-                command.renewalAlertDays()
-        ));
+                alertDays,
+                command.notes()
+        );
+        repository.save(certificado);
+        sincronizarCalendario(certificado);
+    }
+
+    @Override
+    public void update(UpdateCertificadoCommand command) {
+        Certificado atual = find(command.id());
+        int intervalMonths = command.intervalMonths() <= 0 ? atual.intervalMonths() : command.intervalMonths();
+        LocalDate validUntil = command.validUntil() == null ? command.issuedOn().plusMonths(intervalMonths) : command.validUntil();
+        int alertDays = command.renewalAlertDays() <= 0 ? atual.renewalAlertDays() : command.renewalAlertDays();
+        Certificado certificado = new Certificado(
+                command.id(),
+                command.customerId(),
+                atual.serviceProvidedId(),
+                atual.orderId(),
+                command.description(),
+                command.issuedOn(),
+                validUntil,
+                intervalMonths,
+                command.alertActive(),
+                atual.status(),
+                alertDays,
+                command.notes()
+        );
+        repository.save(certificado);
+        sincronizarCalendario(certificado);
+    }
+
+    @Override
+    public String renovar(RenovarCertificadoCommand command) {
+        Certificado atual = find(command.id());
+        if (atual.status() == Certificado.CertificadoStatus.REPLACED) {
+            throw new IllegalArgumentException("Certificado ja substituido.");
+        }
+        Certificado substituido = atual.comStatus(Certificado.CertificadoStatus.REPLACED);
+        repository.save(substituido);
+        sincronizarCalendario(substituido);
+
+        LocalDate emissao = command.issuedOn() == null ? LocalDate.now() : command.issuedOn();
+        int intervalMonths = command.intervalMonths() <= 0 ? atual.intervalMonths() : command.intervalMonths();
+        String novoId = java.util.UUID.randomUUID().toString();
+        Certificado novo = new Certificado(
+                novoId,
+                atual.customerId(),
+                atual.serviceProvidedId(),
+                atual.orderId(),
+                atual.description(),
+                emissao,
+                emissao.plusMonths(intervalMonths),
+                intervalMonths,
+                atual.alertActive(),
+                Certificado.CertificadoStatus.ACTIVE,
+                atual.renewalAlertDays(),
+                atual.notes()
+        );
+        repository.save(novo);
+        sincronizarCalendario(novo);
+        return novoId;
+    }
+
+    @Override
+    public List<Certificado> marcarVencidos(LocalDate referenceDate) {
+        LocalDate hoje = referenceDate == null ? LocalDate.now() : referenceDate;
+        List<Certificado> afetados = new java.util.ArrayList<>();
+        for (Certificado certificado : repository.findAll()) {
+            if (certificado.status() == Certificado.CertificadoStatus.ACTIVE && certificado.validUntil().isBefore(hoje)) {
+                Certificado vencido = certificado.comStatus(Certificado.CertificadoStatus.EXPIRED);
+                repository.save(vencido);
+                afetados.add(vencido);
+            }
+        }
+        return afetados;
     }
 
     @Override
@@ -40,6 +131,41 @@ public class CasoDeUsoGerenciarCertificado implements CasoDeUsoCertificado {
         return repository.findAll().stream()
                 .filter(certificate -> certificate.isExpiringWithin(referenceDate))
                 .toList();
+    }
+
+    private Certificado find(String id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Certificado nao encontrado."));
+    }
+
+    private void sincronizarCalendario(Certificado certificado) {
+        if (agendaRepository == null || certificado.validUntil() == null) {
+            return;
+        }
+        agendaRepository.save(new VisitaAgendada(
+                "certificado-vencimento-" + certificado.id(),
+                certificado.customerId(),
+                certificado.orderId(),
+                "",
+                certificado.id(),
+                VisitaAgendada.VisitType.ONE_OFF,
+                VisitaAgendada.Recurrence.NONE,
+                certificado.validUntil(),
+                "Vencimento de certificado",
+                "certificado_vencimento",
+                "",
+                certificado.validUntil().atStartOfDay(),
+                certificado.validUntil().atStartOfDay(),
+                true,
+                certificado.status() == Certificado.CertificadoStatus.REPLACED
+                        ? VisitaAgendada.VisitStatus.CANCELLED
+                        : VisitaAgendada.VisitStatus.SCHEDULED,
+                VisitaAgendada.VisitPriority.HIGH,
+                "",
+                certificado.alertActive(),
+                certificado.renewalAlertDays(),
+                certificado.description()
+        ));
     }
 }
 

@@ -1,123 +1,168 @@
 package br.com.sigla.infraestrutura.persistencia.repositorio;
 
+import br.com.sigla.aplicacao.servicos.porta.saida.RepositorioOrdemServico;
 import br.com.sigla.aplicacao.servicos.porta.saida.RepositorioServicoPrestado;
+import br.com.sigla.dominio.servicos.OrdemServico;
 import br.com.sigla.dominio.servicos.ServicoPrestado;
-import br.com.sigla.infraestrutura.persistencia.entidade.ServicoPrestadoEntidade;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Persiste {@link ServicoPrestado} reaproveitando as tabelas que ja existem e ja
+ * gravam ({@code ordens_servico} + {@code ordem_servico_anexos}), via a porta
+ * {@link RepositorioOrdemServico}. Antes este adaptador caia num mapa em memoria
+ * (a interface Spring Data estava {@code @NoRepositoryBean} e apontava para a
+ * tabela inexistente {@code provided_servicos}), perdendo os dados ao reiniciar.
+ *
+ * <p>Os registros de servico prestado sao marcados com {@code tipoServico =}
+ * {@value #TIPO_SERVICO_PRESTADO} para serem reconhecidos na leitura sem se
+ * confundir com ordens de servico comuns. Alguns campos do agregado original
+ * (prioridade, agendamento e granularidade de status de pagamento) nao tem
+ * coluna correspondente e nao sao preservados no retorno.
+ */
 @Repository
-@ConditionalOnBean(SpringDataRepositorioServicoPrestado.class)
 public class AdaptadorRepositorioServicoPrestado implements RepositorioServicoPrestado {
 
-    private final SpringDataRepositorioServicoPrestado repository;
+    static final String TIPO_SERVICO_PRESTADO = "SERVICO_PRESTADO";
 
-    public AdaptadorRepositorioServicoPrestado(SpringDataRepositorioServicoPrestado repository) {
-        this.repository = repository;
+    private final RepositorioOrdemServico repositorioOrdemServico;
+
+    public AdaptadorRepositorioServicoPrestado(RepositorioOrdemServico repositorioOrdemServico) {
+        this.repositorioOrdemServico = repositorioOrdemServico;
     }
 
     @Override
     public void save(ServicoPrestado serviceProvided) {
-        repository.save(toEntity(serviceProvided));
+        repositorioOrdemServico.save(toOrdemServico(serviceProvided));
     }
 
     @Override
     public List<ServicoPrestado> findAll() {
-        return repository.findAll().stream().map(this::toDomain).toList();
+        return repositorioOrdemServico.findAll().stream()
+                .filter(this::isServicoPrestado)
+                .map(this::toServicoPrestado)
+                .toList();
     }
 
     @Override
     public Optional<ServicoPrestado> findById(String id) {
-        return repository.findById(id).map(this::toDomain);
+        return repositorioOrdemServico.findById(id)
+                .filter(this::isServicoPrestado)
+                .map(this::toServicoPrestado);
     }
 
-    private ServicoPrestado toDomain(ServicoPrestadoEntidade entity) {
-        return new ServicoPrestado(
-                entity.getId(),
-                entity.getClienteId(),
-                entity.getContratoId(),
-                entity.getScheduleId(),
-                entity.getFuncionarioId(),
-                entity.getExecutionDate(),
-                entity.getDescription(),
-                entity.getAmountCharged(),
-                entity.getPaymentStatus(),
-                entity.getSignatureType(),
-                entity.getSignaturePath(),
-                entity.getAttachments().stream()
-                        .map(attachment -> new ServicoPrestado.Attachment(
-                                attachment.getName(),
-                                attachment.getStoragePath(),
-                                attachment.getContentType()
-                        ))
-                        .toList(),
-                entity.getServiceStatus(),
-                entity.getPriority(),
-                entity.getNotes()
+    private boolean isServicoPrestado(OrdemServico ordem) {
+        return TIPO_SERVICO_PRESTADO.equalsIgnoreCase(ordem.tipoServico());
+    }
+
+    private OrdemServico toOrdemServico(ServicoPrestado servico) {
+        LocalDateTime momento = servico.executionDate().atStartOfDay();
+        List<OrdemServico.Anexo> anexos = new ArrayList<>();
+        if (servico.signaturePath() != null && !servico.signaturePath().isBlank()) {
+            anexos.add(new OrdemServico.Anexo(
+                    null,
+                    OrdemServico.TipoAnexo.ASSINATURA,
+                    "assinatura",
+                    servico.signaturePath(),
+                    null,
+                    0L,
+                    "Assinatura do servico prestado",
+                    servico.employeeId()
+            ));
+        }
+        for (ServicoPrestado.Attachment anexo : servico.attachments()) {
+            anexos.add(new OrdemServico.Anexo(
+                    null,
+                    OrdemServico.TipoAnexo.OUTRO,
+                    anexo.name(),
+                    anexo.storagePath(),
+                    anexo.contentType(),
+                    0L,
+                    null,
+                    servico.employeeId()
+            ));
+        }
+        return new OrdemServico(
+                servico.id(),
+                null,
+                servico.customerId(),
+                servico.contractId() == null ? "" : servico.contractId(),
+                servico.description(),
+                servico.description(),
+                TIPO_SERVICO_PRESTADO,
+                statusOrdem(servico.serviceStatus()),
+                momento,
+                null,
+                momento,
+                servico.employeeId(),
+                servico.employeeId(),
+                servico.serviceStatus() == ServicoPrestado.ServiceStatus.COMPLETED,
+                servico.paymentStatus() == ServicoPrestado.PaymentStatus.PAID,
+                servico.amountCharged(),
+                servico.signatureType() != ServicoPrestado.SignatureType.NONE,
+                List.of(),
+                anexos,
+                servico.notes()
         );
     }
 
-    private ServicoPrestadoEntidade toEntity(ServicoPrestado serviceProvided) {
-        ServicoPrestadoEntidade entity = new ServicoPrestadoEntidade();
-        entity.setId(serviceProvided.id());
-        entity.setClienteId(serviceProvided.customerId());
-        entity.setContratoId(serviceProvided.contractId());
-        entity.setScheduleId(serviceProvided.scheduleId());
-        entity.setFuncionarioId(serviceProvided.employeeId());
-        entity.setExecutionDate(serviceProvided.executionDate());
-        entity.setDescription(serviceProvided.description());
-        entity.setAmountCharged(serviceProvided.amountCharged());
-        entity.setPaymentStatus(serviceProvided.paymentStatus());
-        entity.setSignatureType(serviceProvided.signatureType());
-        entity.setServiceStatus(serviceProvided.serviceStatus());
-        entity.setPriority(serviceProvided.priority());
-        entity.setSignaturePath(serviceProvided.signaturePath());
-        entity.setNotes(serviceProvided.notes());
-        List<ServicoPrestadoEntidade.AttachmentEmbeddable> attachments = new ArrayList<>();
-        for (ServicoPrestado.Attachment attachment : serviceProvided.attachments()) {
-            ServicoPrestadoEntidade.AttachmentEmbeddable embeddable = new ServicoPrestadoEntidade.AttachmentEmbeddable();
-            embeddable.setName(attachment.name());
-            embeddable.setStoragePath(attachment.storagePath());
-            embeddable.setContentType(attachment.contentType());
-            attachments.add(embeddable);
+    private ServicoPrestado toServicoPrestado(OrdemServico ordem) {
+        String assinaturaPath = null;
+        List<ServicoPrestado.Attachment> anexos = new ArrayList<>();
+        for (OrdemServico.Anexo anexo : ordem.anexos()) {
+            if (anexo.tipo() == OrdemServico.TipoAnexo.ASSINATURA) {
+                assinaturaPath = anexo.caminhoStorage();
+            } else {
+                anexos.add(new ServicoPrestado.Attachment(
+                        anexo.nomeArquivo(),
+                        anexo.caminhoStorage(),
+                        anexo.mimeType() == null || anexo.mimeType().isBlank() ? "application/octet-stream" : anexo.mimeType()
+                ));
+            }
         }
-        entity.setAttachments(attachments);
-        return entity;
+        LocalDate dataExecucao = ordem.dataFim() != null ? ordem.dataFim().toLocalDate()
+                : ordem.dataAgendada() != null ? ordem.dataAgendada().toLocalDate()
+                : LocalDate.now();
+        return new ServicoPrestado(
+                ordem.id(),
+                ordem.clienteId(),
+                ordem.contratoId() == null || ordem.contratoId().isBlank() ? null : ordem.contratoId(),
+                null,
+                ordem.executadoPorId() == null || ordem.executadoPorId().isBlank() ? "-" : ordem.executadoPorId(),
+                dataExecucao,
+                ordem.titulo(),
+                ordem.valorServico() == null ? BigDecimal.ZERO : ordem.valorServico(),
+                ordem.pago() ? ServicoPrestado.PaymentStatus.PAID : ServicoPrestado.PaymentStatus.PENDING,
+                ordem.assinaturaCliente() ? ServicoPrestado.SignatureType.MANUAL : ServicoPrestado.SignatureType.NONE,
+                assinaturaPath,
+                anexos,
+                statusServico(ordem.status()),
+                ServicoPrestado.ServicePriority.NORMAL,
+                ordem.observacoes()
+        );
+    }
+
+    private OrdemServico.OrdemServicoStatus statusOrdem(ServicoPrestado.ServiceStatus status) {
+        return switch (status) {
+            case IN_PROGRESS -> OrdemServico.OrdemServicoStatus.EM_ANDAMENTO;
+            case COMPLETED -> OrdemServico.OrdemServicoStatus.CONCLUIDA;
+            case CANCELLED -> OrdemServico.OrdemServicoStatus.CANCELADA;
+            default -> OrdemServico.OrdemServicoStatus.AGENDADA;
+        };
+    }
+
+    private ServicoPrestado.ServiceStatus statusServico(OrdemServico.OrdemServicoStatus status) {
+        return switch (status) {
+            case EM_ANDAMENTO -> ServicoPrestado.ServiceStatus.IN_PROGRESS;
+            case CONCLUIDA -> ServicoPrestado.ServiceStatus.COMPLETED;
+            case CANCELADA -> ServicoPrestado.ServiceStatus.CANCELLED;
+            default -> ServicoPrestado.ServiceStatus.SCHEDULED;
+        };
     }
 }
-
-@Repository
-@ConditionalOnMissingBean(SpringDataRepositorioServicoPrestado.class)
-class InMemoryAdaptadorRepositorioServicoPrestado implements RepositorioServicoPrestado {
-
-    private final Map<String, ServicoPrestado> storage = new ConcurrentHashMap<>();
-
-    @Override
-    public void save(ServicoPrestado serviceProvided) {
-        storage.put(serviceProvided.id(), serviceProvided);
-    }
-
-    @Override
-    public List<ServicoPrestado> findAll() {
-        return storage.values().stream().toList();
-    }
-
-    @Override
-    public Optional<ServicoPrestado> findById(String id) {
-        return Optional.ofNullable(storage.get(id));
-    }
-}
-
-@NoRepositoryBean
-interface SpringDataRepositorioServicoPrestado extends JpaRepository<ServicoPrestadoEntidade, String> {
-}
-

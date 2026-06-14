@@ -1,24 +1,29 @@
 package br.com.sigla.interfacegrafica.controlador;
 
 import br.com.sigla.aplicacao.financeiro.porta.entrada.CasoDeUsoFinanceiro;
+import br.com.sigla.dominio.financeiro.CategoriaFinanceira;
+import br.com.sigla.dominio.financeiro.FormaPagamentoFinanceira;
+import br.com.sigla.interfacegrafica.aplicativo.SessaoLocalAplicacao;
 import br.com.sigla.interfacegrafica.consulta.ServicoConsultaReferencias;
+import br.com.sigla.interfacegrafica.formatador.FormatadorMascaraMoeda;
+import br.com.sigla.interfacegrafica.modelo.OpcaoId;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
+import br.com.sigla.interfacegrafica.util.TradutorInterface;
+import br.com.sigla.interfacegrafica.util.UtilComboBox;
 import br.com.sigla.interfacegrafica.util.UtilJanela;
+import br.com.sigla.interfacegrafica.util.ValidadorEntrada;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.util.StringConverter;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
-
-import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.parseBoolean;
-import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.parseEnum;
-import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.resolveOpcional;
 
 @Component
 public class ControladorNovaTransacao {
@@ -26,19 +31,21 @@ public class ControladorNovaTransacao {
     private final CasoDeUsoFinanceiro casoDeUsoFinanceiro;
     private final ServicoConsultaReferencias servicoConsultaReferencias;
     private final GerenciadorNavegacao gerenciadorNavegacao;
+    private final SessaoLocalAplicacao sessaoLocalAplicacao;
+    private final FormatadorMascaraMoeda formatadorMoeda;
 
     @FXML
     private ComboBox<CasoDeUsoFinanceiro.TransactionType> tipoCombo;
     @FXML
-    private TextField categoriaField;
+    private ComboBox<CategoriaFinanceira> categoriaCombo;
     @FXML
     private TextField descricaoField;
     @FXML
-    private TextField clienteField;
+    private ComboBox<OpcaoId> clienteCombo;
     @FXML
     private TextField valorField;
     @FXML
-    private TextField ordemField;
+    private ComboBox<OpcaoId> ordemCombo;
     @FXML
     private DatePicker emissaoPicker;
     @FXML
@@ -46,9 +53,9 @@ public class ControladorNovaTransacao {
     @FXML
     private DatePicker pagamentoPicker;
     @FXML
-    private TextField formaPagamentoField;
+    private ComboBox<FormaPagamentoFinanceira> formaPagamentoCombo;
     @FXML
-    private TextField parceladoField;
+    private ComboBox<Boolean> parceladoCombo;
     @FXML
     private TextField parcelasField;
     @FXML
@@ -56,31 +63,50 @@ public class ControladorNovaTransacao {
     @FXML
     private TextField criadoPorField;
     @FXML
-    private TextField statusField;
+    private ComboBox<CasoDeUsoFinanceiro.TransactionStatus> statusCombo;
     @FXML
     private Label feedbackLabel;
 
     public ControladorNovaTransacao(
             CasoDeUsoFinanceiro casoDeUsoFinanceiro,
             ServicoConsultaReferencias servicoConsultaReferencias,
-            GerenciadorNavegacao gerenciadorNavegacao
+            GerenciadorNavegacao gerenciadorNavegacao,
+            SessaoLocalAplicacao sessaoLocalAplicacao,
+            FormatadorMascaraMoeda formatadorMoeda
     ) {
         this.casoDeUsoFinanceiro = casoDeUsoFinanceiro;
         this.servicoConsultaReferencias = servicoConsultaReferencias;
         this.gerenciadorNavegacao = gerenciadorNavegacao;
+        this.sessaoLocalAplicacao = sessaoLocalAplicacao;
+        this.formatadorMoeda = formatadorMoeda;
     }
 
     @FXML
     public void initialize() {
         if (tipoCombo != null) {
+            TradutorInterface.aplicar(tipoCombo);
             tipoCombo.getItems().setAll(CasoDeUsoFinanceiro.TransactionType.values());
             tipoCombo.getSelectionModel().select(CasoDeUsoFinanceiro.TransactionType.ENTRY);
+            tipoCombo.valueProperty().addListener((observable, oldValue, newValue) -> carregarCategorias());
         }
+        configurarCombos();
+        UtilComboBox.preencher(clienteCombo, servicoConsultaReferencias.clientes(), true);
+        UtilComboBox.preencher(ordemCombo, servicoConsultaReferencias.ordensServico(), true);
+        if (clienteCombo != null) {
+            clienteCombo.valueProperty().addListener((observable, oldValue, newValue) ->
+                    UtilComboBox.preencher(ordemCombo, servicoConsultaReferencias.ordensServicoDoCliente(UtilComboBox.idSelecionado(clienteCombo)), true)
+            );
+        }
+        formatadorMoeda.aplicar(valorField);
+        carregarCategorias();
         if (emissaoPicker != null) {
             emissaoPicker.setValue(LocalDate.now());
         }
-        if (statusField != null && statusField.getText().isBlank()) {
-            statusField.setText(CasoDeUsoFinanceiro.TransactionStatus.PENDING.name());
+        if (criadoPorField != null) {
+            criadoPorField.setEditable(false);
+            if (sessaoLocalAplicacao.usuarioAtual() != null) {
+                criadoPorField.setText(sessaoLocalAplicacao.usuarioAtual().nome());
+            }
         }
         setFeedback("");
     }
@@ -88,26 +114,37 @@ public class ControladorNovaTransacao {
     @FXML
     private void onAdicionar() {
         try {
-            var cliente = resolveOpcional(servicoConsultaReferencias.clientes(), clienteField == null ? "" : clienteField.getText());
-            var ordem = resolveOpcional(servicoConsultaReferencias.ordensServico(), ordemField == null ? "" : ordemField.getText());
+            ValidadorEntrada validador = ValidadorEntrada.nova();
+            String descricao = validador.texto(texto(descricaoField), "a descrição da transação");
+            BigDecimal valor = validador.valorPositivo(formatadorMoeda.valor(valorField), "o valor da transação");
+            boolean parcelado = parceladoCombo != null && Boolean.TRUE.equals(parceladoCombo.getValue());
+            String parcelasTexto = texto(parcelasField);
+            int parcelas = 1;
+            if (parcelado || !parcelasTexto.isBlank()) {
+                parcelas = validador.inteiroPositivo(parcelasTexto, "o número de parcelas");
+            }
+            validador.validar();
+
+            var cliente = UtilComboBox.selecionado(clienteCombo);
+            var ordem = UtilComboBox.selecionado(ordemCombo);
             casoDeUsoFinanceiro.registerTransaction(new CasoDeUsoFinanceiro.RegisterTransacaoFinanceiraCommand(
                     UUID.randomUUID().toString(),
                     tipoCombo == null || tipoCombo.getValue() == null ? CasoDeUsoFinanceiro.TransactionType.ENTRY : tipoCombo.getValue(),
-                    categoriaField.getText(),
-                    descricaoField.getText(),
+                    categoriaCombo == null || categoriaCombo.getValue() == null ? "" : categoriaCombo.getValue().id(),
+                    descricao,
                     cliente == null ? "" : cliente.id(),
                     "",
                     ordem == null ? "" : ordem.id(),
-                    new BigDecimal(valorField.getText()),
+                    valor,
                     emissaoPicker == null ? LocalDate.now() : emissaoPicker.getValue(),
                     vencimentoPicker == null ? null : vencimentoPicker.getValue(),
                     pagamentoPicker == null ? null : pagamentoPicker.getValue(),
-                    formaPagamentoField.getText(),
-                    parseBoolean(parceladoField == null ? "" : parceladoField.getText()),
-                    parcelasField.getText().isBlank() ? 1 : Integer.parseInt(parcelasField.getText()),
-                    criadoPorField == null ? "" : criadoPorField.getText(),
+                    formaPagamentoCombo == null || formaPagamentoCombo.getValue() == null ? "" : formaPagamentoCombo.getValue().id(),
+                    parcelado,
+                    parcelas,
+                    resolveUsuarioAtual(),
                     observacoesField == null ? "" : observacoesField.getText(),
-                    parseEnum(CasoDeUsoFinanceiro.TransactionStatus.class, statusField == null ? "" : statusField.getText(), CasoDeUsoFinanceiro.TransactionStatus.PENDING)
+                    statusCombo == null || statusCombo.getValue() == null ? CasoDeUsoFinanceiro.TransactionStatus.PENDING : statusCombo.getValue()
             ));
             gerenciadorNavegacao.navigateTo(VisaoAplicacao.FINANCE);
             UtilJanela.fecharJanela(tipoCombo);
@@ -121,9 +158,78 @@ public class ControladorNovaTransacao {
         UtilJanela.fecharJanela(tipoCombo);
     }
 
+    private String texto(TextField campo) {
+        return campo == null || campo.getText() == null ? "" : campo.getText();
+    }
+
     private void setFeedback(String message) {
         if (feedbackLabel != null) {
             feedbackLabel.setText(message == null ? "" : message);
+        }
+    }
+
+    private String resolveUsuarioAtual() {
+        // criado_por tem FK para usuarios(id); usa sempre o id da sessao (o campo so exibe o nome).
+        return sessaoLocalAplicacao.usuarioAtual() == null ? "" : sessaoLocalAplicacao.usuarioAtual().id();
+    }
+
+    private void configurarCombos() {
+        if (categoriaCombo != null) {
+            categoriaCombo.setConverter(new StringConverter<>() {
+                @Override
+                public String toString(CategoriaFinanceira categoria) {
+                    return categoria == null ? "" : TradutorInterface.texto(categoria.nome());
+                }
+
+                @Override
+                public CategoriaFinanceira fromString(String string) {
+                    return null;
+                }
+            });
+        }
+        if (formaPagamentoCombo != null) {
+            formaPagamentoCombo.setConverter(new StringConverter<>() {
+                @Override
+                public String toString(FormaPagamentoFinanceira forma) {
+                    return forma == null ? "" : forma.nome();
+                }
+
+                @Override
+                public FormaPagamentoFinanceira fromString(String string) {
+                    return null;
+                }
+            });
+            formaPagamentoCombo.getItems().setAll(casoDeUsoFinanceiro.listFormasPagamentoAtivas());
+            if (!formaPagamentoCombo.getItems().isEmpty()) {
+                formaPagamentoCombo.getSelectionModel().selectFirst();
+            }
+        }
+        if (parceladoCombo != null) {
+            TradutorInterface.aplicar(parceladoCombo);
+            parceladoCombo.getItems().setAll(Boolean.FALSE, Boolean.TRUE);
+            parceladoCombo.getSelectionModel().select(Boolean.FALSE);
+        }
+        if (statusCombo != null) {
+            TradutorInterface.aplicar(statusCombo);
+            statusCombo.getItems().setAll(CasoDeUsoFinanceiro.TransactionStatus.PENDING, CasoDeUsoFinanceiro.TransactionStatus.PAID);
+            statusCombo.getSelectionModel().select(CasoDeUsoFinanceiro.TransactionStatus.PENDING);
+        }
+    }
+
+    private void carregarCategorias() {
+        if (categoriaCombo == null) {
+            return;
+        }
+        CasoDeUsoFinanceiro.TransactionType tipo = tipoCombo == null || tipoCombo.getValue() == null
+                ? CasoDeUsoFinanceiro.TransactionType.ENTRY
+                : tipoCombo.getValue();
+        categoriaCombo.getItems().setAll(casoDeUsoFinanceiro.listCategoriasAtivas().stream()
+                .filter(categoria -> tipo == CasoDeUsoFinanceiro.TransactionType.EXPENSE
+                        ? categoria.tipo().equalsIgnoreCase("EXPENSE")
+                        : categoria.tipo().equalsIgnoreCase("ENTRY"))
+                .toList());
+        if (!categoriaCombo.getItems().isEmpty()) {
+            categoriaCombo.getSelectionModel().selectFirst();
         }
     }
 }

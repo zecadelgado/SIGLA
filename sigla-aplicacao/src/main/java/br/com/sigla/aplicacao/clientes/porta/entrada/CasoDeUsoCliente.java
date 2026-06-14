@@ -8,10 +8,21 @@ public interface CasoDeUsoCliente {
 
     void register(RegisterClienteCommand command);
 
+    void update(RegisterClienteCommand command);
+
+    void inativar(String id);
+
+    void reativar(String id);
+
+    void excluirFisicamente(String id);
+
     List<Cliente> listAll();
+
+    List<Cliente> filtrar(FiltroCliente filtro);
 
     record RegisterClienteCommand(
             String id,
+            Cliente.TipoCliente tipo,
             String name,
             String razaoSocial,
             String nomeFantasia,
@@ -33,6 +44,49 @@ public interface CasoDeUsoCliente {
         public RegisterClienteCommand(
                 String id,
                 String name,
+                String razaoSocial,
+                String nomeFantasia,
+                String cpf,
+                String cnpj,
+                String phone,
+                String email,
+                String cep,
+                String rua,
+                String numero,
+                String complemento,
+                String bairro,
+                String cidade,
+                String estado,
+                List<ContactCommand> contacts,
+                String notes,
+                boolean ativo
+        ) {
+            this(
+                    id,
+                    cnpj == null || cnpj.isBlank() ? Cliente.TipoCliente.PESSOA_FISICA : Cliente.TipoCliente.PESSOA_JURIDICA,
+                    name,
+                    razaoSocial,
+                    nomeFantasia,
+                    cpf,
+                    cnpj,
+                    phone,
+                    email,
+                    cep,
+                    rua,
+                    numero,
+                    complemento,
+                    bairro,
+                    cidade,
+                    estado,
+                    contacts,
+                    notes,
+                    ativo
+            );
+        }
+
+        public RegisterClienteCommand(
+                String id,
+                String name,
                 String location,
                 String cnpj,
                 String phone,
@@ -41,6 +95,7 @@ public interface CasoDeUsoCliente {
         ) {
             this(
                     id,
+                    cnpj == null || cnpj.isBlank() ? Cliente.TipoCliente.PESSOA_FISICA : Cliente.TipoCliente.PESSOA_JURIDICA,
                     name,
                     name,
                     name,
@@ -63,9 +118,22 @@ public interface CasoDeUsoCliente {
     }
 
     record ContactCommand(
+            String id,
             String name,
             String role,
-            String contact
+            String phone,
+            String email,
+            boolean principal
+    ) {
+        public ContactCommand(String name, String role, String contact) {
+            this("", name, role, contact == null || contact.contains("@") ? "" : contact, contact != null && contact.contains("@") ? contact : "", false);
+        }
+    }
+
+    record FiltroCliente(
+            String texto,
+            Boolean ativo,
+            Cliente.TipoCliente tipo
     ) {
     }
 }

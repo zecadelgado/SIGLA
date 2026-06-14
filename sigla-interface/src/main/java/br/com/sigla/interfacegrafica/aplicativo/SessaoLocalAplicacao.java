@@ -1,34 +1,36 @@
 package br.com.sigla.interfacegrafica.aplicativo;
 
-import org.springframework.beans.factory.annotation.Value;
+import br.com.sigla.aplicacao.usuarios.porta.entrada.CasoDeUsoUsuario;
 import org.springframework.stereotype.Component;
 
 @Component
 public class SessaoLocalAplicacao {
 
-    private final String configuredUsername;
-    private final String configuredPassword;
+    private final CasoDeUsoUsuario casoDeUsoUsuario;
     private boolean authenticated;
+    private CasoDeUsoUsuario.UsuarioAutenticado usuarioAtual;
 
-    public SessaoLocalAplicacao(
-            @Value("${sigla.auth.username:admin}") String configuredUsername,
-            @Value("${sigla.auth.password:sigla123}") String configuredPassword
-    ) {
-        this.configuredUsername = configuredUsername;
-        this.configuredPassword = configuredPassword;
+    public SessaoLocalAplicacao(CasoDeUsoUsuario casoDeUsoUsuario) {
+        this.casoDeUsoUsuario = casoDeUsoUsuario;
     }
 
     public boolean login(String username, String password) {
-        authenticated = configuredUsername.equals(username == null ? "" : username.trim())
-                && configuredPassword.equals(password == null ? "" : password);
+        usuarioAtual = casoDeUsoUsuario.autenticar(new CasoDeUsoUsuario.AutenticarUsuarioCommand(username, password))
+                .orElse(null);
+        authenticated = usuarioAtual != null;
         return authenticated;
     }
 
     public void logout() {
         authenticated = false;
+        usuarioAtual = null;
     }
 
     public boolean isAuthenticated() {
         return authenticated;
+    }
+
+    public CasoDeUsoUsuario.UsuarioAutenticado usuarioAtual() {
+        return usuarioAtual;
     }
 }

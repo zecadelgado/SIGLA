@@ -2,390 +2,130 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="650.0" prefWidth="670.0" style="-fx-background-color: lightgrey;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.sigla.interfacegrafica.controlador.ControladorNovoCadastro">
-   <children>
-      <VBox prefHeight="650.0" prefWidth="670.0" style="-fx-background-color: lightgrey;">
+<ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="700.0" prefWidth="720.0" style="-fx-background-color: lightgrey;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.sigla.interfacegrafica.controlador.ControladorNovoCadastro">
+   <content>
+      <VBox spacing="14.0" style="-fx-background-color: lightgrey;">
+         <padding>
+            <Insets bottom="22.0" left="28.0" right="28.0" top="24.0" />
+         </padding>
          <children>
-            <Label prefHeight="52.0" prefWidth="358.0" text="Novo Cadastro" textFill="#00417e">
+            <Label text="Novo Cadastro" textFill="#00417e">
                <font>
-                  <Font name="Ebrima Bold" size="36.0" />
+                  <Font name="System Bold" size="40.0" />
                </font>
-               <VBox.margin>
-                  <Insets left="20.0" top="15.0" />
-               </VBox.margin>
             </Label>
-            <HBox prefHeight="76.0" prefWidth="656.0">
+
+            <GridPane hgap="18.0" vgap="8.0">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="ALWAYS" percentWidth="50.0" />
+                  <ColumnConstraints hgrow="ALWAYS" percentWidth="50.0" />
+               </columnConstraints>
                <children>
-                  <VBox prefHeight="76.0" prefWidth="330.0">
-                     <children>
-                        <Label text="Nome Completo">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="25.0" top="5.0" />
-                           </VBox.margin>
-                        </Label>
-                        <TextField fx:id="nomeField" prefHeight="30.0" prefWidth="300.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="25.0" />
-                           </VBox.margin>
-                        </TextField>
-                     </children>
-                  </VBox>
-                  <Region prefHeight="76.0" prefWidth="40.0" />
-                  <VBox prefHeight="76.0" prefWidth="320.0">
-                     <children>
-                        <Label text="CPF">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets top="5.0" />
-                           </VBox.margin>
-                        </Label>
-                        <TextField fx:id="cpfField" prefHeight="30.0" prefWidth="320.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets right="25.0" />
-                           </VBox.margin>
-                        </TextField>
-                     </children>
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                  </VBox>
+                  <Label text="Tipo de Cadastro" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                  <ComboBox fx:id="tipoCombo" maxWidth="Infinity" prefHeight="32.0" style="-fx-background-color: white; -fx-background-radius: 5;" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+
+                  <Label text="Status do Funcionário" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                  <ComboBox fx:id="statusFuncionarioCombo" maxWidth="Infinity" prefHeight="32.0" style="-fx-background-color: white; -fx-background-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                  <Label text="Nome Completo" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                  <TextField fx:id="nomeField" maxWidth="Infinity" prefHeight="32.0" promptText="Nome do cliente ou funcionário" style="-fx-background-radius: 5;" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+
+                  <Label text="Cargo do Funcionário" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <TextField fx:id="cargoField" maxWidth="Infinity" prefHeight="32.0" promptText="Ex.: Técnico, Financeiro" style="-fx-background-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+                  <Label text="CPF" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                  <TextField fx:id="cpfField" maxWidth="Infinity" prefHeight="32.0" promptText="Somente números" style="-fx-background-radius: 5;" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+
+                  <Label text="CNPJ" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                  <TextField fx:id="cnpjField" maxWidth="Infinity" prefHeight="32.0" promptText="Somente números" style="-fx-background-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+
+                  <Label text="Razão Social" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+                  <TextField fx:id="razaoSocialField" maxWidth="Infinity" prefHeight="32.0" style="-fx-background-radius: 5;" GridPane.columnIndex="0" GridPane.rowIndex="7" />
+
+                  <Label text="Telefone" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                  <TextField fx:id="telefoneField" maxWidth="Infinity" prefHeight="32.0" promptText="DDD + número" style="-fx-background-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+
+                  <Label text="E-mail" GridPane.columnIndex="0" GridPane.rowIndex="8" />
+                  <TextField fx:id="emailField" maxWidth="Infinity" prefHeight="32.0" style="-fx-background-radius: 5;" GridPane.columnIndex="0" GridPane.rowIndex="9" />
+
+                  <Label text="CEP" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                  <TextField fx:id="cepField" maxWidth="Infinity" prefHeight="32.0" promptText="Somente números" style="-fx-background-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+
+                  <Label text="Rua" GridPane.columnIndex="0" GridPane.rowIndex="10" />
+                  <TextField fx:id="ruaField" maxWidth="Infinity" prefHeight="32.0" style="-fx-background-radius: 5;" GridPane.columnIndex="0" GridPane.rowIndex="11" />
+
+                  <Label text="Número" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                  <TextField fx:id="numeroField" maxWidth="Infinity" prefHeight="32.0" promptText="Somente números" style="-fx-background-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+
+                  <Label text="Complemento" GridPane.columnIndex="0" GridPane.rowIndex="12" />
+                  <TextField fx:id="complementoField" maxWidth="Infinity" prefHeight="32.0" style="-fx-background-radius: 5;" GridPane.columnIndex="0" GridPane.rowIndex="13" />
+
+                  <Label text="Bairro" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+                  <TextField fx:id="bairroField" maxWidth="Infinity" prefHeight="32.0" style="-fx-background-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="13" />
+
+                  <Label text="Cidade" GridPane.columnIndex="0" GridPane.rowIndex="14" />
+                  <TextField fx:id="cidadeField" maxWidth="Infinity" prefHeight="32.0" style="-fx-background-radius: 5;" GridPane.columnIndex="0" GridPane.rowIndex="15" />
+
+                  <Label text="Estado" GridPane.columnIndex="1" GridPane.rowIndex="14" />
+                  <TextField fx:id="estadoField" maxWidth="Infinity" prefHeight="32.0" promptText="UF" style="-fx-background-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="15" />
                </children>
-               <VBox.margin>
-                  <Insets top="10.0" />
-               </VBox.margin>
-            </HBox>
-            <HBox prefHeight="76.0" prefWidth="656.0">
+               <rowConstraints>
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+               </rowConstraints>
+            </GridPane>
+
+            <VBox prefHeight="98.0" prefWidth="662.0" spacing="6.0">
                <children>
-                  <VBox prefHeight="76.0" prefWidth="330.0">
-                     <children>
-                        <Label text="Razão Social">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="25.0" top="5.0" />
-                           </VBox.margin>
-                        </Label>
-                        <TextField fx:id="razaoSocialField" prefHeight="30.0" prefWidth="466.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="25.0" />
-                           </VBox.margin>
-                        </TextField>
-                     </children>
-                  </VBox>
-                  <Region prefHeight="76.0" prefWidth="40.0" />
-                  <VBox prefHeight="76.0" prefWidth="320.0">
-                     <children>
-                        <Label text="CNPJ">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets top="5.0" />
-                           </VBox.margin>
-                        </Label>
-                        <TextField fx:id="cnpjField" prefHeight="30.0" prefWidth="466.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets right="25.0" />
-                           </VBox.margin>
-                        </TextField>
-                     </children>
-                  </VBox>
+                  <Label text="Observações" />
+                  <TextField fx:id="observacoesField" maxWidth="Infinity" prefHeight="41.0" prefWidth="662.0" style="-fx-background-radius: 5;" />
                </children>
-               <VBox.margin>
-                  <Insets top="-5.0" />
-               </VBox.margin>
-            </HBox>
-            <HBox prefHeight="76.0" prefWidth="656.0">
+            </VBox>
+
+            <HBox alignment="CENTER" spacing="24.0">
                <children>
-                  <VBox prefHeight="76.0" prefWidth="330.0">
-                     <children>
-                        <Label text="Telefone">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="25.0" top="5.0" />
-                           </VBox.margin>
-                        </Label>
-                        <TextField fx:id="telefoneField" prefHeight="30.0" prefWidth="466.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="25.0" />
-                           </VBox.margin>
-                        </TextField>
-                     </children>
-                  </VBox>
-                  <Region prefHeight="76.0" prefWidth="40.0" />
-                  <VBox prefHeight="76.0" prefWidth="320.0">
-                     <children>
-                        <Label text="Email">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets top="5.0" />
-                           </VBox.margin>
-                        </Label>
-                        <TextField fx:id="emailField" prefHeight="30.0" prefWidth="466.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets right="25.0" />
-                           </VBox.margin>
-                        </TextField>
-                     </children>
-                  </VBox>
-               </children>
-               <VBox.margin>
-                  <Insets top="-5.0" />
-               </VBox.margin>
-            </HBox>
-            <HBox prefHeight="76.0" prefWidth="656.0">
-               <children>
-                  <VBox prefHeight="76.0" prefWidth="330.0">
-                     <children>
-                        <Label text="Rua">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="25.0" top="5.0" />
-                           </VBox.margin>
-                        </Label>
-                        <TextField fx:id="ruaField" prefHeight="30.0" prefWidth="466.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="25.0" />
-                           </VBox.margin>
-                        </TextField>
-                     </children>
-                  </VBox>
-                  <Region prefHeight="76.0" prefWidth="40.0" />
-                  <VBox prefHeight="76.0" prefWidth="320.0">
-                     <children>
-                        <Label text="Número">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets top="5.0" />
-                           </VBox.margin>
-                        </Label>
-                        <TextField fx:id="numeroField" prefHeight="30.0" prefWidth="466.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets right="25.0" />
-                           </VBox.margin>
-                        </TextField>
-                     </children>
-                  </VBox>
-               </children>
-               <VBox.margin>
-                  <Insets top="-5.0" />
-               </VBox.margin>
-            </HBox>
-            <HBox prefHeight="76.0" prefWidth="656.0">
-               <children>
-                  <VBox prefHeight="76.0" prefWidth="330.0">
-                     <children>
-                        <Label text="Complemento">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="25.0" top="5.0" />
-                           </VBox.margin>
-                        </Label>
-                        <TextField fx:id="complementoField" prefHeight="30.0" prefWidth="466.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="25.0" />
-                           </VBox.margin>
-                        </TextField>
-                     </children>
-                  </VBox>
-                  <Region prefHeight="76.0" prefWidth="40.0" />
-                  <VBox prefHeight="76.0" prefWidth="320.0">
-                     <children>
-                        <Label text="Bairro">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets top="5.0" />
-                           </VBox.margin>
-                        </Label>
-                        <TextField fx:id="bairroField" prefHeight="30.0" prefWidth="466.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets right="25.0" />
-                           </VBox.margin>
-                        </TextField>
-                     </children>
-                  </VBox>
-               </children>
-               <VBox.margin>
-                  <Insets top="-5.0" />
-               </VBox.margin>
-            </HBox>
-            <HBox prefHeight="76.0" prefWidth="656.0">
-               <children>
-                  <VBox prefHeight="76.0" prefWidth="330.0">
-                     <children>
-                        <Label text="Cidade">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="25.0" top="5.0" />
-                           </VBox.margin>
-                        </Label>
-                        <TextField fx:id="cidadeField" prefHeight="30.0" prefWidth="428.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="25.0" />
-                           </VBox.margin>
-                        </TextField>
-                     </children>
-                  </VBox>
-                  <Region prefHeight="76.0" prefWidth="40.0" />
-                  <VBox prefHeight="76.0" prefWidth="320.0">
-                     <children>
-                        <Label text="CEP">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets top="5.0" />
-                           </VBox.margin>
-                        </Label>
-                        <TextField fx:id="cepField" prefHeight="30.0" prefWidth="314.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets right="25.0" />
-                           </VBox.margin>
-                        </TextField>
-                     </children>
-                  </VBox>
-               </children>
-               <VBox.margin>
-                  <Insets top="-5.0" />
-               </VBox.margin>
-            </HBox>
-            <HBox prefHeight="76.0" prefWidth="656.0">
-               <children>
-                  <VBox prefHeight="76.0" prefWidth="330.0">
-                     <children>
-                        <Label text="Estado">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="25.0" top="5.0" />
-                           </VBox.margin>
-                        </Label>
-                        <TextField fx:id="estadoField" prefHeight="30.0" prefWidth="466.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="25.0" />
-                           </VBox.margin>
-                        </TextField>
-                     </children>
-                  </VBox>
-                  <Region prefHeight="76.0" prefWidth="40.0" />
-                  <VBox prefHeight="76.0" prefWidth="320.0">
-                     <children>
-                        <Label text="Observações">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets top="5.0" />
-                           </VBox.margin>
-                        </Label>
-                        <TextField fx:id="observacoesField" prefHeight="30.0" prefWidth="466.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets right="25.0" />
-                           </VBox.margin>
-                        </TextField>
-                     </children>
-                  </VBox>
-               </children>
-               <VBox.margin>
-                  <Insets top="-5.0" />
-               </VBox.margin>
-            </HBox>
-            <HBox prefHeight="46.0" prefWidth="670.0">
-               <children>
-                  <Button mnemonicParsing="false" onAction="#onCadastrar" prefWidth="310.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Cadastrar" textFill="WHITE">
-                     <HBox.margin>
-                        <Insets left="25.0" />
-                     </HBox.margin>
+                  <Button defaultButton="true" mnemonicParsing="false" onAction="#onCadastrar" prefHeight="40.0" prefWidth="220.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 8;" text="Cadastrar" textFill="WHITE">
                      <font>
-                        <Font name="Ebrima Bold" size="18.0" />
+                        <Font name="System Bold" size="15.0" />
                      </font>
                   </Button>
-                  <Region prefHeight="46.0" prefWidth="40.0" />
-                  <Button mnemonicParsing="false" onAction="#onCancelar" prefWidth="300.0" style="-fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5); -fx-background-color: white;" text="Cancelar">
-                     <HBox.margin>
-                        <Insets right="25.0" />
-                     </HBox.margin>
+                  <Button cancelButton="true" mnemonicParsing="false" onAction="#onCancelar" prefHeight="40.0" prefWidth="220.0" style="-fx-background-color: white; -fx-background-radius: 8;" text="Cancelar">
                      <font>
-                        <Font name="Ebrima Bold" size="18.0" />
+                        <Font name="System Bold" size="15.0" />
                      </font>
                   </Button>
                </children>
-               <VBox.margin>
-                  <Insets top="10.0" />
-               </VBox.margin>
+               <VBox.vgrow>
+                  <Priority fx:constant="NEVER" />
+               </VBox.vgrow>
             </HBox>
          </children>
       </VBox>
-   </children>
-</AnchorPane>
+   </content>
+</ScrollPane>

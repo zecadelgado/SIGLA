@@ -12,5 +12,7 @@ public interface RepositorioAgenda {
     List<VisitaAgendada> findAll();
 
     Optional<VisitaAgendada> findById(String id);
+
+    List<VisitaAgendada> findByResponsavel(String responsibleId);
 }
 

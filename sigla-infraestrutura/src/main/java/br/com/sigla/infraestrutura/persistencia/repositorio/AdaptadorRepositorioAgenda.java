@@ -4,10 +4,10 @@ import br.com.sigla.aplicacao.agenda.porta.saida.RepositorioAgenda;
 import br.com.sigla.dominio.agenda.VisitaAgendada;
 import br.com.sigla.infraestrutura.persistencia.PersistenciaIds;
 import br.com.sigla.infraestrutura.persistencia.entidade.VisitaAgendadaEntidade;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -16,7 +16,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
-@ConditionalOnBean(SpringDataRepositorioAgenda.class)
 public class AdaptadorRepositorioAgenda implements RepositorioAgenda {
 
     private final SpringDataRepositorioAgenda repository;
@@ -31,21 +30,36 @@ public class AdaptadorRepositorioAgenda implements RepositorioAgenda {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<VisitaAgendada> findAll() {
         return repository.findAll().stream().map(this::toDomain).toList();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<VisitaAgendada> findById(String id) {
         return repository.findById(PersistenciaIds.toUuid(id)).map(this::toDomain);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<VisitaAgendada> findByResponsavel(String responsibleId) {
+        UUID id = PersistenciaIds.toUuid(responsibleId);
+        if (id == null) {
+            return List.of();
+        }
+        return repository.findByResponsibleId(id).stream().map(this::toDomain).toList();
     }
 
     private VisitaAgendada toDomain(VisitaAgendadaEntidade entity) {
         return new VisitaAgendada(
                 PersistenciaIds.toString(entity.getId()),
                 PersistenciaIds.toString(entity.getClienteId()),
+                PersistenciaIds.toString(entity.getOrdemServicoId()),
                 PersistenciaIds.toString(entity.getContratoId()),
+                PersistenciaIds.toString(entity.getCertificadoId()),
                 parseVisitType(entity.getType()),
+                parseRecurrence(entity.getRecurrence(), entity.getType()),
                 entity.getStartAt().toLocalDate(),
                 entity.getTitle(),
                 entity.getServiceType(),
@@ -56,6 +70,8 @@ public class AdaptadorRepositorioAgenda implements RepositorioAgenda {
                 parseVisitStatus(entity.getStatus()),
                 parseVisitPriority(entity.getPriority()),
                 PersistenciaIds.toString(entity.getResponsibleId()),
+                entity.isReminderActive(),
+                entity.getReminderDaysBefore() == null ? 0 : entity.getReminderDaysBefore(),
                 entity.getNotes()
         );
     }
@@ -64,8 +80,11 @@ public class AdaptadorRepositorioAgenda implements RepositorioAgenda {
         VisitaAgendadaEntidade entity = new VisitaAgendadaEntidade();
         entity.setId(PersistenciaIds.toUuid(schedule.id()));
         entity.setClienteId(PersistenciaIds.toUuid(schedule.customerId()));
+        entity.setOrdemServicoId(PersistenciaIds.toUuid(schedule.orderId()));
         entity.setContratoId(PersistenciaIds.toUuid(schedule.contractId()));
+        entity.setCertificadoId(PersistenciaIds.toUuid(schedule.certificateId()));
         entity.setType(schedule.serviceType() == null || schedule.serviceType().isBlank() ? schedule.type().name() : schedule.serviceType());
+        entity.setRecurrence(toRecurrenceValue(schedule.recurrence()));
         entity.setTitle(schedule.title());
         entity.setServiceType(schedule.serviceType() == null || schedule.serviceType().isBlank() ? "servico" : schedule.serviceType());
         entity.setInternalResponsible(schedule.internalResponsible());
@@ -75,6 +94,8 @@ public class AdaptadorRepositorioAgenda implements RepositorioAgenda {
         entity.setStatus(schedule.status().name());
         entity.setPriority(schedule.priority().name());
         entity.setResponsibleId(PersistenciaIds.toUuid(schedule.responsibleId()));
+        entity.setReminderActive(schedule.reminderActive());
+        entity.setReminderDaysBefore(schedule.reminderDaysBefore());
         entity.setNotes(schedule.notes());
         return entity;
     }
@@ -86,8 +107,33 @@ public class AdaptadorRepositorioAgenda implements RepositorioAgenda {
         try {
             return VisitaAgendada.VisitType.valueOf(value.trim().toUpperCase());
         } catch (IllegalArgumentException exception) {
-            return VisitaAgendada.VisitType.ONE_OFF;
+            return switch (value.trim().toUpperCase()) {
+                case "VISITA_MENSAL", "MENSAL", "CONTRATO_MENSAL" -> VisitaAgendada.VisitType.MONTHLY;
+                case "VISITA_QUINZENAL", "QUINZENAL" -> VisitaAgendada.VisitType.BIWEEKLY;
+                default -> VisitaAgendada.VisitType.ONE_OFF;
+            };
         }
+    }
+
+    private VisitaAgendada.Recurrence parseRecurrence(String recurrence, String type) {
+        String value = recurrence == null || recurrence.isBlank() ? type : recurrence;
+        if (value == null || value.isBlank()) {
+            return VisitaAgendada.Recurrence.NONE;
+        }
+        return switch (value.trim().toUpperCase()) {
+            case "MENSAL", "MONTHLY", "RRULE:FREQ=MONTHLY" -> VisitaAgendada.Recurrence.MONTHLY;
+            case "QUINZENAL", "BIWEEKLY", "RRULE:FREQ=WEEKLY;INTERVAL=2" -> VisitaAgendada.Recurrence.BIWEEKLY;
+            case "NENHUMA", "NONE", "AVULSO", "ONE_OFF", "SERVICO_AVULSO" -> VisitaAgendada.Recurrence.NONE;
+            default -> VisitaAgendada.Recurrence.NONE;
+        };
+    }
+
+    private String toRecurrenceValue(VisitaAgendada.Recurrence recurrence) {
+        return switch (recurrence == null ? VisitaAgendada.Recurrence.NONE : recurrence) {
+            case MONTHLY -> "mensal";
+            case BIWEEKLY -> "quinzenal";
+            case NONE -> "nenhuma";
+        };
     }
 
     private VisitaAgendada.VisitStatus parseVisitStatus(String value) {
@@ -119,7 +165,7 @@ public class AdaptadorRepositorioAgenda implements RepositorioAgenda {
 }
 
 @Repository
-@ConditionalOnMissingBean(SpringDataRepositorioAgenda.class)
+@Profile("memoria")
 class InMemoryAdaptadorRepositorioAgenda implements RepositorioAgenda {
 
     private final Map<String, VisitaAgendada> storage = new ConcurrentHashMap<>();
@@ -138,8 +184,20 @@ class InMemoryAdaptadorRepositorioAgenda implements RepositorioAgenda {
     public Optional<VisitaAgendada> findById(String id) {
         return Optional.ofNullable(storage.get(id));
     }
+
+    @Override
+    public List<VisitaAgendada> findByResponsavel(String responsibleId) {
+        if (responsibleId == null || responsibleId.isBlank()) {
+            return List.of();
+        }
+        return storage.values().stream()
+                .filter(schedule -> responsibleId.equals(schedule.responsibleId()))
+                .toList();
+    }
 }
 
 interface SpringDataRepositorioAgenda extends JpaRepository<VisitaAgendadaEntidade, UUID> {
+
+    List<VisitaAgendadaEntidade> findByResponsibleId(UUID responsibleId);
 }
 

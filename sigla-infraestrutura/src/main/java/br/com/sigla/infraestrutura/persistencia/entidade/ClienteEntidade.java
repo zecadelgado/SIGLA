@@ -69,10 +69,16 @@ public class ClienteEntidade {
     @Column(name = "observacoes")
     private String observacoes;
 
+    @Column(name = "cargo")
+    private String cargo;
+
+    @Column(name = "situacao")
+    private String situacao;
+
     @Column(name = "ativo", nullable = false)
     private boolean ativo = true;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "cliente_id", nullable = false)
     private List<ResponsavelEntidade> responsaveis = new ArrayList<>();
 
@@ -210,6 +216,22 @@ public class ClienteEntidade {
 
     public void setObservacoes(String observacoes) {
         this.observacoes = observacoes;
+    }
+
+    public String getCargo() {
+        return cargo;
+    }
+
+    public void setCargo(String cargo) {
+        this.cargo = cargo;
+    }
+
+    public String getSituacao() {
+        return situacao;
+    }
+
+    public void setSituacao(String situacao) {
+        this.situacao = situacao;
     }
 
     public boolean isAtivo() {

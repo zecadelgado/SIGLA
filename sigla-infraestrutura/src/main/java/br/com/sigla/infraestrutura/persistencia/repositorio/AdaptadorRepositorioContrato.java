@@ -4,8 +4,7 @@ import br.com.sigla.aplicacao.contratos.porta.saida.RepositorioContrato;
 import br.com.sigla.dominio.contratos.Contrato;
 import br.com.sigla.infraestrutura.persistencia.PersistenciaIds;
 import br.com.sigla.infraestrutura.persistencia.entidade.ContratoEntidade;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,7 +15,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
-@ConditionalOnBean(SpringDataRepositorioContrato.class)
 public class AdaptadorRepositorioContrato implements RepositorioContrato {
 
     private final SpringDataRepositorioContrato repository;
@@ -44,13 +42,17 @@ public class AdaptadorRepositorioContrato implements RepositorioContrato {
         return new Contrato(
                 PersistenciaIds.toString(entity.getId()),
                 PersistenciaIds.toString(entity.getClienteId()),
+                entity.getDescricao(),
                 entity.getDataInicio(),
                 entity.getDataFim() == null ? entity.getDataInicio() : entity.getDataFim(),
                 parseType(entity.getTipoContrato()),
                 parseFrequency(entity.getTipoContrato()),
                 parseStatus(entity.getStatus()),
                 Contrato.RenewalRule.MANUAL,
-                entity.getDiasAlertaFim()
+                entity.getValorMensal(),
+                entity.isAlertaAtivo(),
+                entity.getDiasAlertaFim(),
+                entity.getObservacoes()
         );
     }
 
@@ -58,15 +60,15 @@ public class AdaptadorRepositorioContrato implements RepositorioContrato {
         ContratoEntidade entity = new ContratoEntidade();
         entity.setId(PersistenciaIds.toUuid(contract.id()));
         entity.setClienteId(PersistenciaIds.toUuid(contract.customerId()));
-        entity.setDescricao(contract.type().name());
+        entity.setDescricao(contract.description().isBlank() ? contract.type().name() : contract.description());
         entity.setTipoContrato(contract.type().name());
         entity.setDataInicio(contract.startDate());
         entity.setDataFim(contract.endDate());
-        entity.setValorMensal(java.math.BigDecimal.ZERO);
-        entity.setAlertaAtivo(true);
+        entity.setValorMensal(contract.monthlyValue());
+        entity.setAlertaAtivo(contract.alertActive());
         entity.setDiasAlertaFim(contract.alertDaysBeforeEnd());
         entity.setStatus(contract.status().name());
-        entity.setObservacoes(contract.renewalRule().name());
+        entity.setObservacoes(contract.notes().isBlank() ? contract.renewalRule().name() : contract.notes());
         return entity;
     }
 
@@ -107,7 +109,7 @@ public class AdaptadorRepositorioContrato implements RepositorioContrato {
 }
 
 @Repository
-@ConditionalOnMissingBean(SpringDataRepositorioContrato.class)
+@Profile("memoria")
 class InMemoryAdaptadorRepositorioContrato implements RepositorioContrato {
 
     private final Map<String, Contrato> storage = new ConcurrentHashMap<>();

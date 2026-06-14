@@ -4,8 +4,7 @@ import br.com.sigla.aplicacao.certificados.porta.saida.RepositorioCertificado;
 import br.com.sigla.dominio.certificados.Certificado;
 import br.com.sigla.infraestrutura.persistencia.PersistenciaIds;
 import br.com.sigla.infraestrutura.persistencia.entidade.CertificadoEntidade;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,7 +15,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
-@ConditionalOnBean(SpringDataRepositorioCertificado.class)
 public class AdaptadorRepositorioCertificado implements RepositorioCertificado {
 
     private final SpringDataRepositorioCertificado repository;
@@ -43,12 +41,16 @@ public class AdaptadorRepositorioCertificado implements RepositorioCertificado {
     private CertificadoEntidade toEntity(Certificado certificate) {
         CertificadoEntidade entity = new CertificadoEntidade();
         entity.setId(PersistenciaIds.toUuid(certificate.id()));
-        entity.setClienteId(PersistenciaIds.toUuid(certificate.serviceProvidedId()));
-        entity.setDescricao("Certificado");
+        entity.setClienteId(PersistenciaIds.toUuid(certificate.customerId()));
+        entity.setOrdemServicoId(PersistenciaIds.toUuid(certificate.orderId()));
+        entity.setDescricao(certificate.description().isBlank() ? "Certificado de higiene" : certificate.description());
         entity.setIssuedOn(certificate.issuedOn());
         entity.setValidUntil(certificate.validUntil());
+        entity.setIntervaloMeses(certificate.intervalMonths());
+        entity.setAlertaAtivo(certificate.alertActive());
         entity.setStatus(certificate.status().name());
         entity.setRenewalAlertDays(certificate.renewalAlertDays());
+        entity.setObservacoes(certificate.notes());
         return entity;
     }
 
@@ -56,10 +58,16 @@ public class AdaptadorRepositorioCertificado implements RepositorioCertificado {
         return new Certificado(
                 PersistenciaIds.toString(entity.getId()),
                 PersistenciaIds.toString(entity.getClienteId()),
+                "",
+                PersistenciaIds.toString(entity.getOrdemServicoId()),
+                entity.getDescricao(),
                 entity.getIssuedOn(),
                 entity.getValidUntil(),
+                entity.getIntervaloMeses() <= 0 ? 6 : entity.getIntervaloMeses(),
+                entity.isAlertaAtivo(),
                 parseStatus(entity.getStatus()),
-                entity.getRenewalAlertDays()
+                entity.getRenewalAlertDays() <= 0 ? 15 : entity.getRenewalAlertDays(),
+                entity.getObservacoes()
         );
     }
 
@@ -76,7 +84,7 @@ public class AdaptadorRepositorioCertificado implements RepositorioCertificado {
 }
 
 @Repository
-@ConditionalOnMissingBean(SpringDataRepositorioCertificado.class)
+@Profile("memoria")
 class InMemoryAdaptadorRepositorioCertificado implements RepositorioCertificado {
 
     private final Map<String, Certificado> storage = new ConcurrentHashMap<>();

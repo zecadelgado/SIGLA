@@ -4,10 +4,15 @@ import br.com.sigla.aplicacao.clientes.porta.saida.RepositorioCliente;
 import br.com.sigla.dominio.clientes.Cliente;
 import br.com.sigla.infraestrutura.persistencia.PersistenciaIds;
 import br.com.sigla.infraestrutura.persistencia.entidade.ClienteEntidade;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import jakarta.persistence.EntityManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,33 +22,88 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
-@ConditionalOnBean(SpringDataRepositorioCliente.class)
 public class AdaptadorRepositorioCliente implements RepositorioCliente {
 
     private final SpringDataRepositorioCliente repository;
+    private final EntityManager entityManager;
 
-    public AdaptadorRepositorioCliente(SpringDataRepositorioCliente repository) {
+    public AdaptadorRepositorioCliente(SpringDataRepositorioCliente repository, EntityManager entityManager) {
         this.repository = repository;
+        this.entityManager = entityManager;
     }
 
     @Override
+    @CacheEvict(value = "ref.clientes", allEntries = true)
     public void save(Cliente customer) {
         repository.save(toEntity(customer));
     }
 
     @Override
-    public List<Cliente> findAll() {
-        return repository.findAll().stream().map(this::toDomain).toList();
+    @CacheEvict(value = "ref.clientes", allEntries = true)
+    public void deleteById(String id) {
+        repository.deleteById(PersistenciaIds.toUuid(id));
     }
 
     @Override
+    @Cacheable("ref.clientes")
+    @Transactional(readOnly = true)
+    public List<Cliente> findAll() {
+        return repository.findByTipoNot("FUNCIONARIO").stream()
+                .map(this::toDomain)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Optional<Cliente> findById(String id) {
-        return repository.findById(PersistenciaIds.toUuid(id)).map(this::toDomain);
+        return repository.findById(PersistenciaIds.toUuid(id))
+                .filter(entity -> !"FUNCIONARIO".equals(entity.getTipo()))
+                .map(this::toDomain);
+    }
+
+    @Override
+    public boolean existsActiveCpf(String cpf, String exceptId) {
+        String digits = onlyDigits(cpf);
+        if (digits.isBlank()) {
+            return false;
+        }
+        return repository.existsActiveCpfDigits(digits, PersistenciaIds.toUuidIfValid(exceptId));
+    }
+
+    @Override
+    public boolean existsActiveCnpj(String cnpj, String exceptId) {
+        String digits = onlyDigits(cnpj);
+        if (digits.isBlank()) {
+            return false;
+        }
+        return repository.existsActiveCnpjDigits(digits, PersistenciaIds.toUuidIfValid(exceptId));
+    }
+
+    @Override
+    public boolean existsActiveEmail(String email, String exceptId) {
+        String normalized = email == null ? "" : email.trim().toLowerCase();
+        if (normalized.isBlank()) {
+            return false;
+        }
+        return repository.existsActiveEmailLower(normalized, PersistenciaIds.toUuidIfValid(exceptId));
+    }
+
+    @Override
+    public boolean hasLinkedRecords(String id) {
+        UUID uuid = PersistenciaIds.toUuid(id);
+        return count("select count(*) from ordens_servico where cliente_id = :id or responsavel_interno_id = :id or executado_por_id = :id", uuid) > 0
+                || count("select count(*) from financeiro_lancamentos where cliente_id = :id", uuid) > 0
+                || count("select count(*) from cliente_indicacoes where cliente_indicador_id = :id", uuid) > 0
+                || count("select count(*) from contratos where cliente_id = :id", uuid) > 0
+                || count("select count(*) from certificados where cliente_id = :id", uuid) > 0
+                || count("select count(*) from agenda_eventos where cliente_id = :id or responsavel_id = :id", uuid) > 0
+                || count("select count(*) from estoque_movimentacoes where cliente_id = :id or funcionario_id = :id", uuid) > 0;
     }
 
     private Cliente toDomain(ClienteEntidade entity) {
         return new Cliente(
                 PersistenciaIds.toString(entity.getId()),
+                tipoCliente(entity),
                 prefer(entity.getNome(), prefer(entity.getNomeFantasia(), entity.getRazaoSocial())),
                 entity.getRazaoSocial(),
                 entity.getNomeFantasia(),
@@ -59,7 +119,14 @@ public class AdaptadorRepositorioCliente implements RepositorioCliente {
                 entity.getCidade(),
                 entity.getEstado(),
                 entity.getResponsaveis().stream()
-                        .map(contact -> new Cliente.ContactPerson(contact.getNome(), contact.getCargo(), prefer(contact.getTelefone(), contact.getEmail())))
+                        .map(contact -> new Cliente.ContactPerson(
+                                PersistenciaIds.toString(contact.getId()),
+                                contact.getNome(),
+                                contact.getCargo(),
+                                contact.getTelefone(),
+                                contact.getEmail(),
+                                contact.isPrincipal()
+                        ))
                         .toList(),
                 entity.getObservacoes(),
                 entity.isAtivo()
@@ -69,6 +136,7 @@ public class AdaptadorRepositorioCliente implements RepositorioCliente {
     private ClienteEntidade toEntity(Cliente customer) {
         ClienteEntidade entity = new ClienteEntidade();
         entity.setId(PersistenciaIds.toUuid(customer.id()));
+        // cadastro.tipo canonico: cliente = 'CLIENTE' (PF/PJ deriva do CNPJ na leitura); funcionario usa 'FUNCIONARIO'.
         entity.setTipo("CLIENTE");
         entity.setNome(customer.name());
         entity.setRazaoSocial(customer.razaoSocial());
@@ -86,30 +154,59 @@ public class AdaptadorRepositorioCliente implements RepositorioCliente {
         entity.setEstado(customer.estado());
         entity.setObservacoes(customer.notes());
         entity.setAtivo(customer.ativo());
+
         List<ClienteEntidade.ResponsavelEntidade> contacts = new ArrayList<>();
         boolean principal = true;
+
         for (Cliente.ContactPerson contact : customer.contacts()) {
             ClienteEntidade.ResponsavelEntidade embeddable = new ClienteEntidade.ResponsavelEntidade();
-            embeddable.setId(UUID.randomUUID());
+            embeddable.setId(PersistenciaIds.toUuidIfValid(contact.id()) == null
+                    ? UUID.randomUUID()
+                    : PersistenciaIds.toUuidIfValid(contact.id()));
             embeddable.setNome(contact.name());
             embeddable.setCargo(contact.role());
-            embeddable.setTelefone(contact.contact());
-            embeddable.setEmail("");
-            embeddable.setPrincipal(principal);
-            principal = false;
+            embeddable.setTelefone(contact.phone());
+            embeddable.setEmail(contact.email());
+            embeddable.setPrincipal(contact.principal() && principal);
+
+            if (embeddable.isPrincipal()) {
+                principal = false;
+            }
+
             contacts.add(embeddable);
         }
+
         entity.setResponsaveis(contacts);
         return entity;
+    }
+
+    private long count(String sql, UUID id) {
+        Number result = (Number) entityManager.createNativeQuery(sql)
+                .setParameter("id", id)
+                .getSingleResult();
+        return result.longValue();
     }
 
     private String prefer(String first, String second) {
         return first == null || first.isBlank() ? second : first;
     }
+
+    private Cliente.TipoCliente tipoCliente(ClienteEntidade entity) {
+        if ("CLIENTE".equals(entity.getTipo())) {
+            return entity.getCnpj() == null || entity.getCnpj().isBlank()
+                    ? Cliente.TipoCliente.PESSOA_FISICA
+                    : Cliente.TipoCliente.PESSOA_JURIDICA;
+        }
+        return Cliente.TipoCliente.from(entity.getTipo());
+    }
+
+    private String onlyDigits(String value) {
+        return value == null ? "" : value.replaceAll("\\D", "");
+    }
 }
 
 @Repository
-@ConditionalOnMissingBean(SpringDataRepositorioCliente.class)
+@Profile("memoria")
 class InMemoryAdaptadorRepositorioCliente implements RepositorioCliente {
 
     private final Map<String, Cliente> storage = new ConcurrentHashMap<>();
@@ -117,6 +214,11 @@ class InMemoryAdaptadorRepositorioCliente implements RepositorioCliente {
     @Override
     public void save(Cliente customer) {
         storage.put(customer.id(), customer);
+    }
+
+    @Override
+    public void deleteById(String id) {
+        storage.remove(id);
     }
 
     @Override
@@ -128,8 +230,78 @@ class InMemoryAdaptadorRepositorioCliente implements RepositorioCliente {
     public Optional<Cliente> findById(String id) {
         return Optional.ofNullable(storage.get(id));
     }
+
+    @Override
+    public boolean existsActiveCpf(String cpf, String exceptId) {
+        String digits = onlyDigits(cpf);
+        return storage.values().stream()
+                .filter(Cliente::ativo)
+                .filter(cliente -> !cliente.id().equals(exceptId))
+                .anyMatch(cliente -> onlyDigits(cliente.cpf()).equals(digits));
+    }
+
+    @Override
+    public boolean existsActiveCnpj(String cnpj, String exceptId) {
+        String digits = onlyDigits(cnpj);
+        return storage.values().stream()
+                .filter(Cliente::ativo)
+                .filter(cliente -> !cliente.id().equals(exceptId))
+                .anyMatch(cliente -> onlyDigits(cliente.cnpj()).equals(digits));
+    }
+
+    @Override
+    public boolean existsActiveEmail(String email, String exceptId) {
+        String normalized = email == null ? "" : email.trim();
+        return storage.values().stream()
+                .filter(Cliente::ativo)
+                .filter(cliente -> !cliente.id().equals(exceptId))
+                .anyMatch(cliente -> cliente.email().equalsIgnoreCase(normalized));
+    }
+
+    @Override
+    public boolean hasLinkedRecords(String id) {
+        return false;
+    }
+
+    private String onlyDigits(String value) {
+        return value == null ? "" : value.replaceAll("\\D", "");
+    }
 }
 
 interface SpringDataRepositorioCliente extends JpaRepository<ClienteEntidade, UUID> {
-}
 
+    List<ClienteEntidade> findByTipoNot(String tipo);
+
+    @Query(value = """
+            select exists(
+                select 1 from cadastro c
+                where c.tipo <> 'FUNCIONARIO'
+                  and c.ativo = true
+                  and (cast(:exceptId as uuid) is null or c.id <> cast(:exceptId as uuid))
+                  and regexp_replace(coalesce(c.cpf, ''), '\\D', '', 'g') = :digits
+            )
+            """, nativeQuery = true)
+    boolean existsActiveCpfDigits(@Param("digits") String digits, @Param("exceptId") UUID exceptId);
+
+    @Query(value = """
+            select exists(
+                select 1 from cadastro c
+                where c.tipo <> 'FUNCIONARIO'
+                  and c.ativo = true
+                  and (cast(:exceptId as uuid) is null or c.id <> cast(:exceptId as uuid))
+                  and regexp_replace(coalesce(c.cnpj, ''), '\\D', '', 'g') = :digits
+            )
+            """, nativeQuery = true)
+    boolean existsActiveCnpjDigits(@Param("digits") String digits, @Param("exceptId") UUID exceptId);
+
+    @Query(value = """
+            select exists(
+                select 1 from cadastro c
+                where c.tipo <> 'FUNCIONARIO'
+                  and c.ativo = true
+                  and (cast(:exceptId as uuid) is null or c.id <> cast(:exceptId as uuid))
+                  and lower(coalesce(c.email, '')) = :email
+            )
+            """, nativeQuery = true)
+    boolean existsActiveEmailLower(@Param("email") String email, @Param("exceptId") UUID exceptId);
+}

@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -10,9 +11,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="670.0" style="-fx-background-color: lightgrey;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.sigla.interfacegrafica.controlador.ControladorNovoProduto">
+<AnchorPane prefHeight="520.0" prefWidth="670.0" style="-fx-background-color: lightgrey;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.sigla.interfacegrafica.controlador.ControladorNovoProduto">
    <children>
-      <VBox prefHeight="400.0" prefWidth="670.0" style="-fx-background-color: lightgrey;">
+      <VBox prefHeight="520.0" prefWidth="670.0" style="-fx-background-color: lightgrey;">
          <children>
             <Label prefHeight="52.0" prefWidth="398.0" text="Novo Produto" textFill="#0b2a6f">
                <font>
@@ -71,6 +72,51 @@
                </children>
                <VBox.margin>
                   <Insets top="10.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox prefHeight="76.0" prefWidth="656.0">
+               <children>
+                  <VBox prefHeight="76.0" prefWidth="330.0">
+                     <children>
+                        <Label text="SKU">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets left="25.0" top="5.0" />
+                           </VBox.margin>
+                        </Label>
+                        <TextField fx:id="skuField" prefHeight="30.0" prefWidth="300.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets left="25.0" />
+                           </VBox.margin>
+                        </TextField>
+                     </children>
+                  </VBox>
+                  <Region prefHeight="76.0" prefWidth="40.0" />
+                  <VBox prefHeight="76.0" prefWidth="320.0">
+                     <children>
+                        <Label text="Unidade">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="5.0" />
+                           </VBox.margin>
+                        </Label>
+                        <ComboBox fx:id="unidadeCombo" prefHeight="30.0" prefWidth="320.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
+                           <VBox.margin>
+                              <Insets right="25.0" />
+                           </VBox.margin>
+                        </ComboBox>
+                     </children>
+                  </VBox>
+               </children>
+               <VBox.margin>
+                  <Insets top="-5.0" />
                </VBox.margin>
             </HBox>
             <HBox prefHeight="76.0" prefWidth="656.0">
@@ -169,6 +215,11 @@
                   <Insets top="-5.0" />
                </VBox.margin>
             </HBox>
+            <Label fx:id="feedbackLabel" prefHeight="20.0" prefWidth="620.0" textFill="#0B2A6F">
+               <VBox.margin>
+                  <Insets left="25.0" top="5.0" />
+               </VBox.margin>
+            </Label>
             <HBox prefHeight="46.0" prefWidth="670.0">
                <children>
                   <Button mnemonicParsing="false" onAction="#onConfirmar" prefHeight="40.0" prefWidth="300.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Adicionar Produto" textFill="WHITE">

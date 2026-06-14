@@ -12,6 +12,7 @@ Sistema Integrado de Gestao Logistica e Administrativa para operacao de detetiza
 
 ## Guia Da Estrutura
 
+- documentacao geral do projeto: `docs/contexto-geral-do-projeto.md`
 - guia rapido do repositorio: `docs/guia-estrutura-sigla.md`
 - documento arquitetural da detetizadora: `docs/arquitetura-detetizadora.md`
 
@@ -19,11 +20,16 @@ Sistema Integrado de Gestao Logistica e Administrativa para operacao de detetiza
 
 - Java 25
 - Maven Wrapper (`mvnw` / `mvnw.cmd`)
+- Acesso ao banco PostgreSQL configurado em `sigla-interface/src/main/resources/application-supabase.yml`
 
 ## Build rapido
 
+O perfil padrao usa o banco Supabase versionado no repositorio, incluindo URL, usuario, senha e chaves JWT/API.
+Nao e necessario Docker para rodar a aplicacao.
+
 ```bash
 ./mvnw clean test
+./mvnw -pl sigla-interface -am -DskipTests install
 ./mvnw -pl sigla-interface spring-boot:run
 ```
 
@@ -31,6 +37,19 @@ No Windows PowerShell:
 
 ```powershell
 .\mvnw.cmd clean test
+.\mvnw.cmd -pl sigla-interface -am -DskipTests install
 .\mvnw.cmd -pl sigla-interface spring-boot:run
+```
+
+Tambem e possivel usar os scripts de desenvolvimento:
+
+```bash
+./scripts/dev/run-desktop.sh
+```
+
+No Windows PowerShell:
+
+```powershell
+.\scripts\dev\run-desktop.ps1
 ```
 

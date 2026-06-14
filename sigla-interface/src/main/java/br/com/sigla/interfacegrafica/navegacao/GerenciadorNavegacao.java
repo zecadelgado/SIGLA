@@ -2,6 +2,11 @@ package br.com.sigla.interfacegrafica.navegacao;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +19,8 @@ public class GerenciadorNavegacao {
     private final ConfigurableApplicationContext context;
     private final br.com.sigla.interfacegrafica.aplicativo.FluxoAplicacao fluxoAplicacao;
     private VisaoAplicacao currentView;
+    private BorderPane shellContentHost;
+    private Node shellMenu;
 
     public GerenciadorNavegacao(
             ConfigurableApplicationContext context,
@@ -24,8 +31,46 @@ public class GerenciadorNavegacao {
     }
 
     public void navigateTo(VisaoAplicacao view) {
+        if (view.isSobreposta()) {
+            fluxoAplicacao.showView(view);
+            currentView = view;
+            return;
+        }
+        if (view.isShellContent() && shellContentHost != null) {
+            shellContentHost.setCenter(loadShellContent(view));
+            return;
+        }
         fluxoAplicacao.showView(view);
         currentView = view;
+    }
+
+    public void registerShellContentHost(BorderPane shellContentHost) {
+        this.shellContentHost = shellContentHost;
+    }
+
+    public void registerShellMenu(Node shellMenu) {
+        this.shellMenu = shellMenu;
+    }
+
+    public void alternarMenuLateral() {
+        if (shellContentHost == null || shellMenu == null) {
+            return;
+        }
+        if (shellContentHost.getLeft() == null) {
+            shellContentHost.setLeft(shellMenu);
+        } else {
+            shellContentHost.setLeft(null);
+        }
+    }
+
+    public Node loadShellContent(VisaoAplicacao view) {
+        if (!view.isShellContent()) {
+            throw new IllegalArgumentException("View is not shell content: " + view);
+        }
+        Node content = extractShellContent(loadView(view));
+        configureResponsiveContent(content);
+        currentView = view;
+        return content;
     }
 
     public Node loadView(VisaoAplicacao view) {
@@ -41,6 +86,69 @@ public class GerenciadorNavegacao {
 
     public VisaoAplicacao currentView() {
         return currentView;
+    }
+
+    private Node extractShellContent(Node viewRoot) {
+        if (viewRoot instanceof ScrollPane scrollPane && scrollPane.getContent() != null) {
+            Node extracted = extractShellContent(scrollPane.getContent());
+            return extracted == scrollPane.getContent() ? viewRoot : extracted;
+        }
+        if (viewRoot instanceof AnchorPane anchorPane && anchorPane.getChildren().size() == 1) {
+            Node child = anchorPane.getChildren().getFirst();
+            if (child instanceof HBox) {
+                return extractContentFromMenuLayout((HBox) child);
+            }
+            if (child instanceof BorderPane) {
+                return extractContentFromMenuLayout((BorderPane) child);
+            }
+        }
+        if (viewRoot instanceof HBox hBox) {
+            return extractContentFromMenuLayout(hBox);
+        }
+        if (viewRoot instanceof BorderPane borderPane) {
+            return extractContentFromMenuLayout(borderPane);
+        }
+        return viewRoot;
+    }
+
+    void configureResponsiveContent(Node content) {
+        if (content instanceof ScrollPane scrollPane) {
+            scrollPane.setFitToWidth(true);
+            scrollPane.setFitToHeight(true);
+            configureResponsiveContent(scrollPane.getContent());
+        }
+        if (content instanceof Region region) {
+            region.setMinWidth(0.0);
+            region.setMinHeight(0.0);
+            region.setMaxWidth(Double.MAX_VALUE);
+            region.setMaxHeight(Double.MAX_VALUE);
+        }
+    }
+
+    private Node extractContentFromMenuLayout(HBox hBox) {
+        if (hBox.getChildren().size() < 2 || !looksLikeEmbeddedMenu(hBox.getChildren().getFirst())) {
+            return hBox;
+        }
+        Node content = hBox.getChildren().get(1);
+        hBox.getChildren().remove(content);
+        return content;
+    }
+
+    private Node extractContentFromMenuLayout(BorderPane borderPane) {
+        Node left = borderPane.getLeft();
+        Node center = borderPane.getCenter();
+        if (center == null || !looksLikeEmbeddedMenu(left)) {
+            return borderPane;
+        }
+        borderPane.setCenter(null);
+        return center;
+    }
+
+    private boolean looksLikeEmbeddedMenu(Node node) {
+        if (!(node instanceof Region region)) {
+            return false;
+        }
+        return region.getPrefWidth() >= 220.0 && region.getPrefWidth() <= 340.0;
     }
 }
 

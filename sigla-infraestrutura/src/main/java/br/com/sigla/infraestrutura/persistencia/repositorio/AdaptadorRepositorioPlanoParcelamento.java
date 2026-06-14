@@ -5,8 +5,7 @@ import br.com.sigla.dominio.financeiro.PlanoParcelamento;
 import br.com.sigla.infraestrutura.persistencia.PersistenciaIds;
 import br.com.sigla.infraestrutura.persistencia.entidade.FinanceiroLancamentoEntidade;
 import br.com.sigla.infraestrutura.persistencia.entidade.FinanceiroParcelaEntidade;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
@@ -19,7 +18,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
-@ConditionalOnBean(SpringDataRepositorioFinanceiroLancamento.class)
 public class AdaptadorRepositorioPlanoParcelamento implements RepositorioPlanoParcelamento {
 
     private final SpringDataRepositorioFinanceiroLancamento repository;
@@ -85,7 +83,7 @@ public class AdaptadorRepositorioPlanoParcelamento implements RepositorioPlanoPa
 }
 
 @Repository
-@ConditionalOnMissingBean(SpringDataRepositorioFinanceiroLancamento.class)
+@Profile("memoria")
 class InMemoryAdaptadorRepositorioPlanoParcelamento implements RepositorioPlanoParcelamento {
 
     private final Map<String, PlanoParcelamento> storage = new ConcurrentHashMap<>();

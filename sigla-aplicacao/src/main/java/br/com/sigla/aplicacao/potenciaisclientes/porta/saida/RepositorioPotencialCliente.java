@@ -12,5 +12,6 @@ public interface RepositorioPotencialCliente {
     List<PotencialCliente> findAll();
 
     Optional<PotencialCliente> findById(String id);
-}
 
+    Optional<PotencialCliente> findConvertedByClienteId(String clienteId);
+}

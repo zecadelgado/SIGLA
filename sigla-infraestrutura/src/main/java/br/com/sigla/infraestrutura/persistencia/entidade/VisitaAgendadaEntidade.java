@@ -22,6 +22,12 @@ public class VisitaAgendadaEntidade {
     @Column(name = "ordem_servico_id")
     private UUID orderId;
 
+    @Column(name = "contrato_id")
+    private UUID contractId;
+
+    @Column(name = "certificado_id")
+    private UUID certificateId;
+
     @Column(name = "titulo", nullable = false)
     private String title;
 
@@ -30,6 +36,9 @@ public class VisitaAgendadaEntidade {
 
     @Column(name = "tipo_evento", nullable = false)
     private String type;
+
+    @Column(name = "recorrencia")
+    private String recurrence;
 
     @Column(name = "data_inicio", nullable = false)
     private LocalDateTime startAt;
@@ -49,6 +58,12 @@ public class VisitaAgendadaEntidade {
     @Column(name = "responsavel_id")
     private UUID responsibleId;
 
+    @Column(name = "lembrete_ativo", nullable = false)
+    private boolean reminderActive;
+
+    @Column(name = "dias_antecedencia_lembrete")
+    private Integer reminderDaysBefore;
+
     public UUID getId() {
         return id;
     }
@@ -66,11 +81,27 @@ public class VisitaAgendadaEntidade {
     }
 
     public UUID getContratoId() {
+        return contractId;
+    }
+
+    public void setContratoId(UUID contractId) {
+        this.contractId = contractId;
+    }
+
+    public UUID getOrdemServicoId() {
         return orderId;
     }
 
-    public void setContratoId(UUID orderId) {
+    public void setOrdemServicoId(UUID orderId) {
         this.orderId = orderId;
+    }
+
+    public UUID getCertificadoId() {
+        return certificateId;
+    }
+
+    public void setCertificadoId(UUID certificateId) {
+        this.certificateId = certificateId;
     }
 
     public String getType() {
@@ -79,6 +110,14 @@ public class VisitaAgendadaEntidade {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getRecurrence() {
+        return recurrence;
+    }
+
+    public void setRecurrence(String recurrence) {
+        this.recurrence = recurrence;
     }
 
     public String getTitle() {
@@ -150,6 +189,22 @@ public class VisitaAgendadaEntidade {
 
     public void setResponsibleId(UUID responsibleId) {
         this.responsibleId = responsibleId;
+    }
+
+    public boolean isReminderActive() {
+        return reminderActive;
+    }
+
+    public void setReminderActive(boolean reminderActive) {
+        this.reminderActive = reminderActive;
+    }
+
+    public Integer getReminderDaysBefore() {
+        return reminderDaysBefore;
+    }
+
+    public void setReminderDaysBefore(Integer reminderDaysBefore) {
+        this.reminderDaysBefore = reminderDaysBefore;
     }
 
     public String getNotes() {

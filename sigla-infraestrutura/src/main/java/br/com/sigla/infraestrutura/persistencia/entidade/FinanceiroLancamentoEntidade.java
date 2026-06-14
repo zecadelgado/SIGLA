@@ -68,7 +68,7 @@ public class FinanceiroLancamentoEntidade {
     @Column(name = "criado_por")
     private UUID criadoPor;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "lancamento_id", nullable = false)
     private List<FinanceiroParcelaEntidade> parcelas = new ArrayList<>();
 

@@ -54,11 +54,11 @@ public class FluxoAplicacao {
     }
 
     public void showShell() {
-        showView(VisaoAplicacao.DASHBOARD);
+        showView(VisaoAplicacao.SHELL);
     }
 
     public void showView(VisaoAplicacao view) {
-        if (view != VisaoAplicacao.LOGIN && !sessaoLocalAplicacao.isAuthenticated()) {
+        if (view.requiresAuthentication() && !sessaoLocalAplicacao.isAuthenticated()) {
             throw new IllegalStateException("Authentication required before opening the application");
         }
         if (view.isSobreposta()) {
@@ -100,6 +100,11 @@ public class FluxoAplicacao {
     private void showFloatingView(VisaoAplicacao view) {
         Stage existingStage = floatingStages.get(view);
         if (existingStage != null && existingStage.isShowing()) {
+            Parent root = loadRoot(view);
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("/css/base.css").toExternalForm());
+            existingStage.setScene(scene);
+            resizeFloatingStage(existingStage, root);
             existingStage.toFront();
             existingStage.requestFocus();
             return;
@@ -132,13 +137,15 @@ public class FluxoAplicacao {
 
         Rectangle2D screenBounds = resolveBounds(stage);
         stage.setResizable(true);
-        stage.setTitle(view == VisaoAplicacao.LOGIN ? "S.I.G.L.A - Login" : "S.I.G.L.A");
+        stage.setTitle(view.requiresAuthentication() ? "S.I.G.L.A" : "S.I.G.L.A - " + view.tituloJanela());
 
-        if (view == VisaoAplicacao.LOGIN) {
+        if (!view.requiresAuthentication()) {
+            setStageMinimum(stage, screenBounds, 420, 260);
             resizeStageToContent(stage, stage.getScene().getRoot(), screenBounds, LOGIN_MAX_WIDTH_RATIO, LOGIN_MAX_HEIGHT_RATIO);
         } else {
-            double width = clamp(screenBounds.getWidth() * MAIN_WIDTH_RATIO, 960, screenBounds.getWidth());
-            double height = clamp(screenBounds.getHeight() * MAIN_HEIGHT_RATIO, 640, screenBounds.getHeight());
+            setStageMinimum(stage, screenBounds, 960, 640);
+            double width = clamp(screenBounds.getWidth() * MAIN_WIDTH_RATIO, Math.min(960, screenBounds.getWidth()), screenBounds.getWidth());
+            double height = clamp(screenBounds.getHeight() * MAIN_HEIGHT_RATIO, Math.min(640, screenBounds.getHeight()), screenBounds.getHeight());
             stage.setWidth(width);
             stage.setHeight(height);
         }
@@ -164,10 +171,15 @@ public class FluxoAplicacao {
     private void resizeStageToContent(Stage targetStage, Parent root, Rectangle2D screenBounds, double maxWidthRatio, double maxHeightRatio) {
         double preferredWidth = resolvePreferredSize(root.prefWidth(-1), 720);
         double preferredHeight = resolvePreferredSize(root.prefHeight(-1), 480);
-        double width = clamp(preferredWidth, 420, screenBounds.getWidth() * maxWidthRatio);
-        double height = clamp(preferredHeight, 260, screenBounds.getHeight() * maxHeightRatio);
+        double width = clamp(preferredWidth, Math.min(420, screenBounds.getWidth()), screenBounds.getWidth() * maxWidthRatio);
+        double height = clamp(preferredHeight, Math.min(260, screenBounds.getHeight()), screenBounds.getHeight() * maxHeightRatio);
         targetStage.setWidth(width);
         targetStage.setHeight(height);
+    }
+
+    private void setStageMinimum(Stage targetStage, Rectangle2D screenBounds, double minWidth, double minHeight) {
+        targetStage.setMinWidth(Math.min(minWidth, screenBounds.getWidth()));
+        targetStage.setMinHeight(Math.min(minHeight, screenBounds.getHeight()));
     }
 
     private void adaptRootToAvailableSpace(Parent root) {
@@ -204,6 +216,9 @@ public class FluxoAplicacao {
     }
 
     private double clamp(double value, double min, double max) {
+        if (max < min) {
+            return max;
+        }
         return Math.max(min, Math.min(value, max));
     }
 

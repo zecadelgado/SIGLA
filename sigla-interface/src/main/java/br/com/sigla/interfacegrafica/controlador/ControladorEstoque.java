@@ -2,18 +2,29 @@ package br.com.sigla.interfacegrafica.controlador;
 
 import br.com.sigla.aplicacao.clientes.porta.entrada.CasoDeUsoCliente;
 import br.com.sigla.aplicacao.estoque.porta.entrada.CasoDeUsoEstoque;
+import br.com.sigla.dominio.estoque.ItemEstoque;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorData;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorMoeda;
+import br.com.sigla.interfacegrafica.formatador.FormatadorMascaraMoeda;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
 
 @Component
 public class ControladorEstoque extends ControladorComMenuPrincipal {
@@ -23,6 +34,7 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
     private final GerenciadorNavegacao gerenciadorNavegacao;
     private final ApresentadorMoeda apresentadorMoeda;
     private final ApresentadorData apresentadorData;
+    private final FormatadorMascaraMoeda formatadorMoeda;
 
     @FXML
     private Label totalProdutosLabel;
@@ -47,6 +59,8 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
     @FXML
     private TableColumn<ProdutoRow, String> produtoMinimoColumn;
     @FXML
+    private TableColumn<ProdutoRow, String> produtoStatusColumn;
+    @FXML
     private TableView<CasoDeUsoEstoque.InventoryMovementView> movimentacoesTable;
     @FXML
     private TableColumn<CasoDeUsoEstoque.InventoryMovementView, String> movimentoProdutoColumn;
@@ -57,6 +71,8 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
     @FXML
     private TableColumn<CasoDeUsoEstoque.InventoryMovementView, String> movimentoValorColumn;
     @FXML
+    private TableColumn<CasoDeUsoEstoque.InventoryMovementView, String> movimentoValorTotalColumn;
+    @FXML
     private TableColumn<CasoDeUsoEstoque.InventoryMovementView, String> movimentoUsuarioColumn;
     @FXML
     private TableColumn<CasoDeUsoEstoque.InventoryMovementView, String> movimentoClienteColumn;
@@ -66,13 +82,15 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
     private TableColumn<CasoDeUsoEstoque.InventoryMovementView, String> movimentoDestinoColumn;
     @FXML
     private TableColumn<CasoDeUsoEstoque.InventoryMovementView, String> movimentoObservacoesColumn;
+    private boolean somenteBaixoEstoque;
 
     public ControladorEstoque(
             CasoDeUsoCliente casoDeUsoCliente,
             CasoDeUsoEstoque casoDeUsoEstoque,
             GerenciadorNavegacao gerenciadorNavegacao,
             ApresentadorMoeda apresentadorMoeda,
-            ApresentadorData apresentadorData
+            ApresentadorData apresentadorData,
+            FormatadorMascaraMoeda formatadorMoeda
     ) {
         super(gerenciadorNavegacao);
         this.casoDeUsoCliente = casoDeUsoCliente;
@@ -80,6 +98,7 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
         this.gerenciadorNavegacao = gerenciadorNavegacao;
         this.apresentadorMoeda = apresentadorMoeda;
         this.apresentadorData = apresentadorData;
+        this.formatadorMoeda = formatadorMoeda;
     }
 
     @FXML
@@ -98,8 +117,54 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
         gerenciadorNavegacao.navigateTo(VisaoAplicacao.NEW_MOVEMENT);
     }
 
+    @FXML
+    private void onEditarProduto() {
+        ProdutoRow row = produtosTable == null ? null : produtosTable.getSelectionModel().getSelectedItem();
+        if (row == null) {
+            mostrar("Selecione um produto.");
+            return;
+        }
+        ItemEstoque item = casoDeUsoEstoque.listAll().stream().filter(produto -> produto.id().equals(row.id())).findFirst().orElse(null);
+        if (item == null) {
+            return;
+        }
+        Optional<CasoDeUsoEstoque.RegisterItemEstoqueCommand> command = abrirDialogoProduto(item);
+        command.ifPresent(value -> {
+            executar(() -> casoDeUsoEstoque.updateItem(value));
+            refresh();
+        });
+    }
+
+    @FXML
+    private void onInativarProduto() {
+        ProdutoRow row = produtosTable == null ? null : produtosTable.getSelectionModel().getSelectedItem();
+        if (row == null) {
+            mostrar("Selecione um produto.");
+            return;
+        }
+        executar(() -> casoDeUsoEstoque.inativarItem(row.id()));
+        refresh();
+    }
+
+    @FXML
+    private void onReativarProduto() {
+        ProdutoRow row = produtosTable == null ? null : produtosTable.getSelectionModel().getSelectedItem();
+        if (row == null) {
+            mostrar("Selecione um produto.");
+            return;
+        }
+        executar(() -> casoDeUsoEstoque.reativarItem(row.id()));
+        refresh();
+    }
+
+    @FXML
+    private void onFiltrarBaixoEstoque() {
+        somenteBaixoEstoque = !somenteBaixoEstoque;
+        refresh();
+    }
+
     private void refresh() {
-        var items = casoDeUsoEstoque.listAll();
+        List<ItemEstoque> items = somenteBaixoEstoque ? casoDeUsoEstoque.listLowStock() : casoDeUsoEstoque.listAll();
         if (totalProdutosLabel != null) {
             totalProdutosLabel.setText(String.valueOf(items.size()));
         }
@@ -126,12 +191,17 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
         if (produtosTable != null) {
             produtosTable.getItems().setAll(items.stream()
                     .map(item -> new ProdutoRow(
+                            item.id(),
                             item.name(),
                             item.description(),
+                            item.sku(),
+                            item.unit(),
                             item.costPrice(),
                             item.salePrice(),
                             item.quantity(),
-                            item.minimumQuantity()
+                            item.minimumQuantity(),
+                            item.ativo(),
+                            item.isLowStock()
                     ))
                     .toList());
         }
@@ -145,13 +215,15 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
         configureProdutoColumn(produtoDescricaoColumn, 1, row -> row.descricao());
         configureProdutoColumn(produtoCustoColumn, 2, row -> apresentadorMoeda.format(row.custo()));
         configureProdutoColumn(produtoVendaColumn, 3, row -> apresentadorMoeda.format(row.venda()));
-        configureProdutoColumn(produtoQuantidadeColumn, 4, row -> String.valueOf(row.quantidade()));
+        configureProdutoColumn(produtoQuantidadeColumn, 4, row -> row.quantidade() + " " + row.unidade() + (row.baixoEstoque() ? " - baixo" : ""));
         configureProdutoColumn(produtoMinimoColumn, 5, row -> String.valueOf(row.minimo()));
+        configureProdutoColumn(produtoStatusColumn, 6, row -> row.ativo() ? "Ativo" : "Inativo");
 
         configureMovimentoColumn(movimentoProdutoColumn, 0, row -> row.itemName());
         configureMovimentoColumn(movimentoTipoColumn, 1, row -> row.type().name());
         configureMovimentoColumn(movimentoQuantidadeColumn, 2, row -> String.valueOf(row.amount()));
-        configureMovimentoColumn(movimentoValorColumn, 4, row -> apresentadorMoeda.format(row.totalPrice()));
+        configureMovimentoColumn(movimentoValorColumn, 3, row -> apresentadorMoeda.format(row.unitPrice()));
+        configureMovimentoColumn(movimentoValorTotalColumn, 4, row -> apresentadorMoeda.format(row.totalPrice()));
         configureMovimentoColumn(movimentoUsuarioColumn, 5, row -> row.createdBy());
         configureMovimentoColumn(movimentoClienteColumn, 6, row -> resolveCliente(row.customerId()));
         configureMovimentoColumn(movimentoOrdemColumn, 7, row -> blankAsDash(row.orderReference()));
@@ -211,6 +283,68 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
         return value == null || value.isBlank() ? "-" : value;
     }
 
-    private record ProdutoRow(String nome, String descricao, BigDecimal custo, BigDecimal venda, int quantidade, int minimo) {
+    private Optional<CasoDeUsoEstoque.RegisterItemEstoqueCommand> abrirDialogoProduto(ItemEstoque item) {
+        Dialog<CasoDeUsoEstoque.RegisterItemEstoqueCommand> dialog = new Dialog<>();
+        dialog.setTitle("Editar Produto");
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        TextField nome = new TextField(item.name());
+        TextField descricao = new TextField(item.description());
+        TextField sku = new TextField(item.sku());
+        ComboBox<String> unidade = new ComboBox<>();
+        unidade.getItems().setAll("un", "litro", "kg", "caixa", "pacote", "frasco");
+        unidade.getSelectionModel().select(item.unit());
+        TextField custo = new TextField();
+        formatadorMoeda.aplicar(custo);
+        formatadorMoeda.definir(custo, item.costPrice());
+        TextField venda = new TextField();
+        formatadorMoeda.aplicar(venda);
+        formatadorMoeda.definir(venda, item.salePrice());
+        TextField minimo = new TextField(String.valueOf(item.minimumQuantity()));
+        CheckBox ativo = new CheckBox("Ativo");
+        ativo.setSelected(item.ativo());
+        GridPane grid = new GridPane();
+        grid.setHgap(8);
+        grid.setVgap(8);
+        grid.addRow(0, new Label("Nome"), nome);
+        grid.addRow(1, new Label("Descrição"), descricao);
+        grid.addRow(2, new Label("SKU"), sku);
+        grid.addRow(3, new Label("Unidade"), unidade);
+        grid.addRow(4, new Label("Custo"), custo);
+        grid.addRow(5, new Label("Venda"), venda);
+        grid.addRow(6, new Label("Mínimo"), minimo);
+        grid.add(ativo, 1, 7);
+        dialog.getDialogPane().setContent(grid);
+        dialog.setResultConverter(button -> button == ButtonType.OK ? new CasoDeUsoEstoque.RegisterItemEstoqueCommand(
+                item.id(), nome.getText(), descricao.getText(), sku.getText(), formatadorMoeda.valor(custo),
+                formatadorMoeda.valor(venda), item.quantity(), Integer.parseInt(minimo.getText()),
+                unidade.getValue(), ativo.isSelected()) : null);
+        return dialog.showAndWait();
+    }
+
+    private void executar(Runnable runnable) {
+        try {
+            runnable.run();
+        } catch (IllegalArgumentException exception) {
+            mostrar(exception.getMessage());
+        }
+    }
+
+    private void mostrar(String message) {
+        new Alert(Alert.AlertType.INFORMATION, message, ButtonType.OK).showAndWait();
+    }
+
+    private record ProdutoRow(
+            String id,
+            String nome,
+            String descricao,
+            String sku,
+            String unidade,
+            BigDecimal custo,
+            BigDecimal venda,
+            int quantidade,
+            int minimo,
+            boolean ativo,
+            boolean baixoEstoque
+    ) {
     }
 }

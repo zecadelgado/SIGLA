@@ -31,7 +31,7 @@ public class ControladorFuncionarios {
                 employeeUseCase.listAll().stream()
                         .map(employee -> employee.name()
                                 + " | " + employee.role()
-                                + " | " + employee.contact()
+                                + " | " + employee.contato()
                                 + " | " + employee.status())
                         .toList(),
                 "Nenhum funcionario cadastrado."
