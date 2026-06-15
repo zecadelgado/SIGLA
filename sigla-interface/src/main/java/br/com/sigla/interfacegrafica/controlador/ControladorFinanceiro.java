@@ -2,6 +2,7 @@ package br.com.sigla.interfacegrafica.controlador;
 
 import br.com.sigla.aplicacao.clientes.porta.entrada.CasoDeUsoCliente;
 import br.com.sigla.aplicacao.financeiro.porta.entrada.CasoDeUsoFinanceiro;
+import br.com.sigla.relatorios.recibo.ServicoRelatorioRecibo;
 import br.com.sigla.dominio.financeiro.CategoriaFinanceira;
 import br.com.sigla.dominio.financeiro.FormaPagamentoFinanceira;
 import br.com.sigla.dominio.financeiro.LancamentoFinanceiro;
@@ -29,6 +30,7 @@ import javafx.util.StringConverter;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -40,6 +42,7 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
     private final GerenciadorNavegacao gerenciadorNavegacao;
     private final ApresentadorMoeda apresentadorMoeda;
     private final ApresentadorData apresentadorData;
+    private final ServicoRelatorioRecibo servicoRelatorioRecibo;
 
     @FXML
     private Label receitasLabel;
@@ -85,7 +88,8 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
             CasoDeUsoFinanceiro casoDeUsoFinanceiro,
             GerenciadorNavegacao gerenciadorNavegacao,
             ApresentadorMoeda apresentadorMoeda,
-            ApresentadorData apresentadorData
+            ApresentadorData apresentadorData,
+            ServicoRelatorioRecibo servicoRelatorioRecibo
     ) {
         super(gerenciadorNavegacao);
         this.casoDeUsoCliente = casoDeUsoCliente;
@@ -93,6 +97,7 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
         this.gerenciadorNavegacao = gerenciadorNavegacao;
         this.apresentadorMoeda = apresentadorMoeda;
         this.apresentadorData = apresentadorData;
+        this.servicoRelatorioRecibo = servicoRelatorioRecibo;
     }
 
     @FXML
@@ -230,6 +235,33 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
             }
             executar(() -> casoDeUsoFinanceiro.cancel(selected.id(), motivo));
         });
+    }
+
+    @FXML
+    private void onImprimirRecibo() {
+        var selected = selecionada();
+        if (selected == null) {
+            return;
+        }
+        if (selected.type() != CasoDeUsoFinanceiro.TransactionType.ENTRY) {
+            mostrar("O recibo é emitido apenas para recebimentos (entradas).");
+            return;
+        }
+        try {
+            Path arquivo = servicoRelatorioRecibo.imprimir(new ServicoRelatorioRecibo.DadosRecibo(
+                    selected.id(),
+                    resolveCliente(selected.customerId()),
+                    blankAsDash(selected.description()),
+                    apresentadorMoeda.format(selected.amount()),
+                    blankAsDash(selected.paymentMethod()),
+                    apresentadorData.format(selected.paymentDate()),
+                    TradutorInterface.texto(selected.status()),
+                    selected.notes()
+            ));
+            new Alert(Alert.AlertType.INFORMATION, "Recibo gerado em:\n" + arquivo, ButtonType.OK).showAndWait();
+        } catch (Exception exception) {
+            mostrar("Não foi possível gerar o recibo: " + exception.getMessage());
+        }
     }
 
     private void refresh() {

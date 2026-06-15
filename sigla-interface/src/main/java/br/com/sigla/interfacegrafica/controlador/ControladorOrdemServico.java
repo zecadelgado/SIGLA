@@ -1,6 +1,7 @@
 package br.com.sigla.interfacegrafica.controlador;
 
 import br.com.sigla.aplicacao.servicos.porta.entrada.CasoDeUsoOrdemServico;
+import br.com.sigla.relatorios.ordemservico.ServicoRelatorioOrdemServico;
 import br.com.sigla.dominio.servicos.OrdemServico;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorData;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorMoeda;
@@ -26,6 +27,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import org.springframework.stereotype.Component;
 
+import java.nio.file.Path;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
@@ -41,6 +43,7 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
     private final ApresentadorMoeda apresentadorMoeda;
     private final ApresentadorData apresentadorData;
     private final FormatadorMascaraMoeda formatadorMoeda;
+    private final ServicoRelatorioOrdemServico servicoRelatorioOrdemServico;
 
     @FXML
     private Label abertasLabel;
@@ -83,7 +86,8 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
             ContextoDetalheOrdemServico contextoDetalheOrdemServico,
             ApresentadorMoeda apresentadorMoeda,
             ApresentadorData apresentadorData,
-            FormatadorMascaraMoeda formatadorMoeda
+            FormatadorMascaraMoeda formatadorMoeda,
+            ServicoRelatorioOrdemServico servicoRelatorioOrdemServico
     ) {
         super(gerenciadorNavegacao);
         this.servicoConsultaOrdemServico = servicoConsultaOrdemServico;
@@ -94,6 +98,7 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
         this.apresentadorMoeda = apresentadorMoeda;
         this.apresentadorData = apresentadorData;
         this.formatadorMoeda = formatadorMoeda;
+        this.servicoRelatorioOrdemServico = servicoRelatorioOrdemServico;
     }
 
     @FXML
@@ -206,6 +211,36 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
         }
         contextoDetalheOrdemServico.selecionarOrdem(selected.emissionDate(), selected.id());
         gerenciadorNavegacao.navigateTo(VisaoAplicacao.SERVICE_DAY_DETAILS);
+    }
+
+    @FXML
+    private void onImprimirOrdem() {
+        var selected = selecionada();
+        if (selected == null) {
+            return;
+        }
+        try {
+            java.util.List<String> itens = new java.util.ArrayList<>();
+            if (selected.productCount() > 0) {
+                itens.add(selected.productCount() + " produto(s) - total " + apresentadorMoeda.format(selected.productTotal()));
+            }
+            Path arquivo = servicoRelatorioOrdemServico.imprimir(new ServicoRelatorioOrdemServico.DadosOrdemServico(
+                    selected.numero(),
+                    selected.customerName(),
+                    selected.title(),
+                    selected.description(),
+                    selected.serviceType(),
+                    selected.responsible(),
+                    apresentadorData.format(selected.emissionDate()),
+                    selected.status(),
+                    apresentadorMoeda.format(selected.amount()),
+                    itens,
+                    selected.notes()
+            ));
+            new Alert(Alert.AlertType.INFORMATION, "OS gerada em:\n" + arquivo, ButtonType.OK).showAndWait();
+        } catch (Exception exception) {
+            mostrar("Não foi possível gerar a OS: " + exception.getMessage());
+        }
     }
 
     private void refresh() {

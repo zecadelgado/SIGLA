@@ -46,7 +46,7 @@ Tabelas centrais adicionadas/ajustadas:
 - `funcionarios`
 - `contratos`
 - `visit_schedules`
-- `provided_servicos` e `service_attachments`
+- `ordens_servico` e `ordem_servico_anexos` (a Ordem de Servico registra execucao, assinatura e anexos)
 - `certificados`
 - `financial_entries`, `financial_expenses`, `installment_plans`
 - `estoque_items` e `estoque_movements`

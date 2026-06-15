@@ -157,6 +157,14 @@
                                     <Insets left="10.0" top="40.0" />
                                  </HBox.margin>
                               </Button>
+                              <Button mnemonicParsing="false" onAction="#onImprimirEtiqueta" prefHeight="46.0" prefWidth="150.0" style="-fx-background-color: white; -fx-background-radius: 5;" text="Imprimir etiqueta" textFill="#0B2A6F">
+                                 <font>
+                                    <Font name="Ebrima Bold" size="15.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets left="10.0" top="40.0" />
+                                 </HBox.margin>
+                              </Button>
                            </children>
                         </HBox>
                         <HBox prefHeight="110.0" prefWidth="1252.0" style="-fx-background-color: #cccccc; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">

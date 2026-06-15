@@ -2,6 +2,7 @@ package br.com.sigla.interfacegrafica.controlador;
 
 import br.com.sigla.aplicacao.clientes.porta.entrada.CasoDeUsoCliente;
 import br.com.sigla.aplicacao.estoque.porta.entrada.CasoDeUsoEstoque;
+import br.com.sigla.relatorios.etiqueta.ServicoRelatorioEtiqueta;
 import br.com.sigla.dominio.estoque.ItemEstoque;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorData;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorMoeda;
@@ -23,6 +24,7 @@ import javafx.scene.layout.GridPane;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,6 +37,7 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
     private final ApresentadorMoeda apresentadorMoeda;
     private final ApresentadorData apresentadorData;
     private final FormatadorMascaraMoeda formatadorMoeda;
+    private final ServicoRelatorioEtiqueta servicoRelatorioEtiqueta;
 
     @FXML
     private Label totalProdutosLabel;
@@ -90,7 +93,8 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
             GerenciadorNavegacao gerenciadorNavegacao,
             ApresentadorMoeda apresentadorMoeda,
             ApresentadorData apresentadorData,
-            FormatadorMascaraMoeda formatadorMoeda
+            FormatadorMascaraMoeda formatadorMoeda,
+            ServicoRelatorioEtiqueta servicoRelatorioEtiqueta
     ) {
         super(gerenciadorNavegacao);
         this.casoDeUsoCliente = casoDeUsoCliente;
@@ -99,6 +103,7 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
         this.apresentadorMoeda = apresentadorMoeda;
         this.apresentadorData = apresentadorData;
         this.formatadorMoeda = formatadorMoeda;
+        this.servicoRelatorioEtiqueta = servicoRelatorioEtiqueta;
     }
 
     @FXML
@@ -161,6 +166,26 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
     private void onFiltrarBaixoEstoque() {
         somenteBaixoEstoque = !somenteBaixoEstoque;
         refresh();
+    }
+
+    @FXML
+    private void onImprimirEtiqueta() {
+        ProdutoRow row = produtosTable == null ? null : produtosTable.getSelectionModel().getSelectedItem();
+        if (row == null) {
+            mostrar("Selecione um produto.");
+            return;
+        }
+        try {
+            Path arquivo = servicoRelatorioEtiqueta.imprimir(new ServicoRelatorioEtiqueta.DadosEtiqueta(
+                    row.sku() == null || row.sku().isBlank() ? row.id() : row.sku(),
+                    row.nome(),
+                    row.unidade(),
+                    apresentadorMoeda.format(row.venda())
+            ));
+            new Alert(Alert.AlertType.INFORMATION, "Etiqueta gerada em:\n" + arquivo, ButtonType.OK).showAndWait();
+        } catch (Exception exception) {
+            mostrar("Não foi possível gerar a etiqueta: " + exception.getMessage());
+        }
     }
 
     private void refresh() {

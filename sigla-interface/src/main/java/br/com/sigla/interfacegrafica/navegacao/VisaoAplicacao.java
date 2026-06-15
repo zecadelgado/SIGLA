@@ -21,6 +21,7 @@ public enum VisaoAplicacao {
     NEW_SERVICE_ORDER("/fxml/telas/TelaNovaOrdemdeServi\u00e7o.fxml", true, "Nova Ordem de Serviço", ModoExibicao.SOBREPOSTA),
     SERVICE_DAY_DETAILS("/fxml/telas/TelaDetalhesServicosDia.fxml", true, "Detalhes dos Servicos", ModoExibicao.SOBREPOSTA),
     CONTRACTS_CERTIFICATES("/fxml/telas/TelaContratosCertificados.fxml", true, "Contratos e Certificados", ModoExibicao.PRINCIPAL),
+    USERS("/fxml/telas/TelaUsuarios.fxml", true, "Usuários", ModoExibicao.PRINCIPAL),
     ;
 
     private final String fxmlPath;

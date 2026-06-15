@@ -9,7 +9,6 @@ import br.com.sigla.aplicacao.estoque.porta.entrada.CasoDeUsoEstoque;
 import br.com.sigla.aplicacao.potenciaisclientes.porta.entrada.CasoDeUsoPotencialCliente;
 import br.com.sigla.aplicacao.notificacoes.porta.entrada.CasoDeUsoNotificacao;
 import br.com.sigla.aplicacao.agenda.porta.entrada.CasoDeUsoAgenda;
-import br.com.sigla.aplicacao.servicos.porta.entrada.CasoDeUsoServicoPrestado;
 import br.com.sigla.dominio.certificados.Certificado;
 import br.com.sigla.dominio.contratos.Contrato;
 import br.com.sigla.dominio.funcionarios.Funcionario;
@@ -19,7 +18,6 @@ import br.com.sigla.dominio.financeiro.PlanoParcelamento;
 import br.com.sigla.dominio.estoque.ItemEstoque;
 import br.com.sigla.dominio.potenciaisclientes.PotencialCliente;
 import br.com.sigla.dominio.agenda.VisitaAgendada;
-import br.com.sigla.dominio.servicos.ServicoPrestado;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,7 +38,6 @@ public class InicializadorDadosDesenvolvimento {
             CasoDeUsoFuncionario employeeUseCase,
             CasoDeUsoContrato contractUseCase,
             CasoDeUsoAgenda agendaUseCase,
-            CasoDeUsoServicoPrestado serviceProvidedUseCase,
             CasoDeUsoFinanceiro financeiroUseCase,
             CasoDeUsoEstoque estoqueUseCase,
             CasoDeUsoCertificado certificateUseCase,
@@ -118,23 +115,6 @@ public class InicializadorDadosDesenvolvimento {
                     false,
                     VisitaAgendada.VisitStatus.SCHEDULED,
                     "Visita nao concluida, precisa retorno."
-            ));
-
-            serviceProvidedUseCase.register(new CasoDeUsoServicoPrestado.RegisterServicoPrestadoCommand(
-                    "SRV-001",
-                    "CUS-001",
-                    "CTR-001",
-                    "VIS-001",
-                    "EMP-001",
-                    today.minusMonths(5),
-                    "Controle de pragas com aplicacao em cozinha e deposito.",
-                    new BigDecimal("850.00"),
-                    ServicoPrestado.PaymentStatus.PARTIALLY_PAID,
-                    ServicoPrestado.SignatureType.DIGITAL,
-                    null,
-                    null,
-                    List.of(),
-                    "Cliente solicitou reforco no proximo ciclo."
             ));
 
             financeiroUseCase.registerTransaction(new CasoDeUsoFinanceiro.RegisterTransacaoFinanceiraCommand(

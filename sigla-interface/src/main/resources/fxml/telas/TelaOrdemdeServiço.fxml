@@ -335,6 +335,10 @@
                            <font>
                               <Font name="Ebrima Bold" size="14.0" />
                            </font></Button>
+                        <Button mnemonicParsing="false" onAction="#onImprimirOrdem" prefHeight="38.0" prefWidth="130.0" style="-fx-background-color: #178c1b; -fx-background-radius: 5;" text="Imprimir OS" textFill="WHITE">
+                           <font>
+                              <Font name="Ebrima Bold" size="14.0" />
+                           </font></Button>
                      </children>
                      <opaqueInsets>
                         <Insets />

@@ -32,7 +32,6 @@ D:\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\persiste
 D:\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioOrdemServico.java
 D:\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioPlanoParcelamento.java
 D:\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioPotencialCliente.java
-D:\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioServicoPrestado.java
 D:\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioUsuario.java
 D:\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\persistencia\repositorio\SpringDataRepositorioUsuario.java
 D:\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\relogio\ProvedorRelogioSistema.java

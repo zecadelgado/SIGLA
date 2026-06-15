@@ -1,29 +1,50 @@
 package br.com.sigla.relatorios.etiqueta;
 
 import br.com.sigla.relatorios.impressao.DespachanteImpressao;
-import br.com.sigla.relatorios.modelo.ProvedorModeloRelatorio;
+import br.com.sigla.relatorios.modelo.DocumentoRelatorio;
+import br.com.sigla.relatorios.pdf.GeradorPdfDocumento;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.util.List;
 
+/**
+ * Gera a etiqueta de um produto de estoque em PDF e a envia para impressao.
+ */
 @Service
 public class ServicoRelatorioEtiqueta {
 
-    private final ProvedorModeloRelatorio templateProvider;
-    private final DespachanteImpressao printDispatcher;
+    private final GeradorPdfDocumento gerador;
+    private final DespachanteImpressao despachante;
 
-    public ServicoRelatorioEtiqueta(ProvedorModeloRelatorio templateProvider, DespachanteImpressao printDispatcher) {
-        this.templateProvider = templateProvider;
-        this.printDispatcher = printDispatcher;
+    public ServicoRelatorioEtiqueta(GeradorPdfDocumento gerador, DespachanteImpressao despachante) {
+        this.gerador = gerador;
+        this.despachante = despachante;
     }
 
-    public byte[] generate(String sku) {
-        String content = "LABEL " + sku + " template=" + templateProvider.modeloEtiqueta();
-        return content.getBytes(StandardCharsets.UTF_8);
+    public byte[] gerar(DadosEtiqueta dados) {
+        return gerador.gerar(montar(dados));
     }
 
-    public void print(String sku) {
-        printDispatcher.print("LABEL-" + sku, generate(sku));
+    public Path imprimir(DadosEtiqueta dados) {
+        return despachante.imprimir("etiqueta-" + dados.codigo(), gerar(dados));
+    }
+
+    private DocumentoRelatorio montar(DadosEtiqueta dados) {
+        List<DocumentoRelatorio.Campo> campos = List.of(
+                new DocumentoRelatorio.Campo("Produto", dados.nome()),
+                new DocumentoRelatorio.Campo("Codigo", dados.codigo()),
+                new DocumentoRelatorio.Campo("Unidade", dados.unidade()),
+                new DocumentoRelatorio.Campo("Preco de venda", dados.preco())
+        );
+        return new DocumentoRelatorio("ETIQUETA", dados.nome(), campos, List.of(), "");
+    }
+
+    public record DadosEtiqueta(
+            String codigo,
+            String nome,
+            String unidade,
+            String preco
+    ) {
     }
 }
-

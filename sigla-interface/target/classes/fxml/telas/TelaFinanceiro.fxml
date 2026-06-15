@@ -159,9 +159,83 @@
                               <Font name="Ebrima Bold" size="15.0" />
                            </font>
                         </Button>
+                        <Button mnemonicParsing="false" onAction="#onVencidos" prefHeight="30.0" prefWidth="135.0" style="-fx-background-radius: 5;" text="Vencidos" textFill="#484848">
+                           <HBox.margin>
+                              <Insets left="5.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font name="System Bold" size="15.0" />
+                           </font>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#onFiltrar" prefHeight="30.0" prefWidth="135.0" style="-fx-background-radius: 5;" text="Filtros" textFill="#484848">
+                           <HBox.margin>
+                              <Insets left="5.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font name="System Bold" size="15.0" />
+                           </font>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#onImprimirRecibo" prefHeight="30.0" prefWidth="160.0" style="-fx-background-radius: 5; -fx-background-color: #178c1b;" text="Imprimir recibo" textFill="WHITE">
+                           <HBox.margin>
+                              <Insets left="5.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font name="System Bold" size="15.0" />
+                           </font>
+                        </Button>
                      </children>
                      <padding>
                         <Insets bottom="15.0" right="20.0" top="15.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets left="28.0" right="40.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox prefHeight="58.0" prefWidth="1200.0" spacing="10.0" style="-fx-background-color: WHITE; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#onEditarTransacao" prefHeight="30.0" prefWidth="135.0" style="-fx-background-radius: 5; -fx-background-color: #00417e;" text="Editar" textFill="WHITE">
+                           <HBox.margin>
+                              <Insets left="15.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font name="System Bold" size="15.0" />
+                           </font>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#onMarcarPago" prefHeight="30.0" prefWidth="135.0" style="-fx-background-radius: 5;" text="Marcar pago" textFill="#484848">
+                           <HBox.margin>
+                              <Insets left="5.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font name="System Bold" size="15.0" />
+                           </font>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#onBaixarParcela" prefHeight="30.0" prefWidth="150.0" style="-fx-background-radius: 5;" text="Baixar parcela" textFill="#484848">
+                           <HBox.margin>
+                              <Insets left="5.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font name="System Bold" size="15.0" />
+                           </font>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#onEstornarPagamento" prefHeight="30.0" prefWidth="135.0" style="-fx-background-radius: 5;" text="Estornar" textFill="#484848">
+                           <HBox.margin>
+                              <Insets left="5.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font name="System Bold" size="15.0" />
+                           </font>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#onCancelarTransacao" prefHeight="30.0" prefWidth="135.0" style="-fx-background-radius: 5;" text="Cancelar" textFill="#484848">
+                           <HBox.margin>
+                              <Insets left="5.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font name="System Bold" size="15.0" />
+                           </font>
+                        </Button>
+                     </children>
+                     <padding>
+                        <Insets bottom="15.0" right="20.0" />
                      </padding>
                      <VBox.margin>
                         <Insets left="28.0" right="40.0" />

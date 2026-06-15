@@ -53,6 +53,7 @@
                         <Button fx:id="navOrdemServico" maxWidth="Infinity" mnemonicParsing="false" onAction="#onOrdemServicoClick" styleClass="app-nav-button" text="Ordem de Serviço" />
                         <Button fx:id="navEstoque" maxWidth="Infinity" mnemonicParsing="false" onAction="#onEstoqueClick" styleClass="app-nav-button" text="Estoque" />
                         <Button fx:id="navContratos" maxWidth="Infinity" mnemonicParsing="false" onAction="#onContratosCertificadosClick" styleClass="app-nav-button" text="Contratos / Certificados" />
+                        <Button fx:id="navUsuarios" maxWidth="Infinity" mnemonicParsing="false" onAction="#onUsuariosClick" styleClass="app-nav-button" text="Usuários" />
                         <Region maxWidth="Infinity" VBox.vgrow="ALWAYS" />
                         <Button fx:id="navSair" maxWidth="Infinity" mnemonicParsing="false" onAction="#onLogoutClick" styleClass="app-nav-button, shell-logout-button" text="Sair" />
                      </children>

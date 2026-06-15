@@ -37,7 +37,7 @@ Aqui mora o coracao do negocio. Nao entra Spring, JavaFX, JPA nem gambiarra de f
 
 Exemplos do que fica aqui:
 
-- entidades como `Cliente`, `Contrato`, `VisitaAgendada`, `ServicoPrestado`
+- entidades como `Cliente`, `Contrato`, `VisitaAgendada`, `OrdemServico`
 - validacoes de negocio
 - enums de status
 - comportamento do dominio, como alerta de vencimento e atraso

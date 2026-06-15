@@ -1,5 +1,4 @@
 br\com\sigla\aplicacao\contratos\porta\entrada\CasoDeUsoContrato$EncerrarContratoCommand.class
-br\com\sigla\aplicacao\servicos\porta\entrada\CasoDeUsoServicoPrestado.class
 br\com\sigla\aplicacao\agenda\porta\entrada\CasoDeUsoAgenda$ScheduleVisitCommand.class
 br\com\sigla\aplicacao\servicos\porta\entrada\CasoDeUsoOrdemServico$AdicionarProdutoOrdemCommand.class
 br\com\sigla\aplicacao\usuarios\porta\entrada\CasoDeUsoUsuario.class
@@ -9,7 +8,6 @@ br\com\sigla\aplicacao\potenciaisclientes\porta\entrada\CasoDeUsoPotencialClient
 br\com\sigla\aplicacao\agenda\porta\entrada\CasoDeUsoAgenda$ChangeVisitStatusCommand.class
 br\com\sigla\aplicacao\auditoria\casodeuso\ServicoAuditoriaFuncional.class
 br\com\sigla\aplicacao\servicos\porta\entrada\CasoDeUsoOrdemServico.class
-br\com\sigla\aplicacao\servicos\porta\entrada\CasoDeUsoServicoPrestado$AttachmentCommand.class
 br\com\sigla\aplicacao\potenciaisclientes\porta\entrada\CasoDeUsoPotencialCliente.class
 br\com\sigla\aplicacao\financeiro\porta\saida\RepositorioEntradaFinanceira.class
 br\com\sigla\aplicacao\agenda\porta\saida\RepositorioAgenda.class
@@ -27,7 +25,6 @@ br\com\sigla\aplicacao\financeiro\porta\entrada\CasoDeUsoFinanceiro.class
 br\com\sigla\aplicacao\financeiro\casodeuso\CasoDeUsoGerenciarFinanceiro$1.class
 br\com\sigla\aplicacao\notificacoes\porta\saida\PortaWebhookNotificacao$PayloadWebhook.class
 br\com\sigla\aplicacao\potenciaisclientes\porta\saida\RepositorioPotencialCliente.class
-br\com\sigla\aplicacao\servicos\porta\saida\RepositorioServicoPrestado.class
 br\com\sigla\aplicacao\financeiro\porta\entrada\CasoDeUsoFinanceiro$FiltroFinanceiro.class
 br\com\sigla\aplicacao\estoque\porta\entrada\CasoDeUsoEstoque$RecordInventoryMovementCommand.class
 br\com\sigla\aplicacao\notificacoes\porta\saida\RepositorioNotificacao.class
@@ -54,14 +51,12 @@ br\com\sigla\aplicacao\estoque\porta\entrada\CasoDeUsoEstoque.class
 br\com\sigla\aplicacao\contratos\porta\saida\RepositorioContrato.class
 br\com\sigla\aplicacao\financeiro\porta\saida\RepositorioDespesaFinanceira.class
 br\com\sigla\aplicacao\clientes\porta\entrada\CasoDeUsoCliente$RegisterClienteCommand.class
-br\com\sigla\aplicacao\servicos\casodeuso\CasoDeUsoRegistrarServicoPrestado.class
 br\com\sigla\aplicacao\servicos\porta\entrada\CasoDeUsoOrdemServico$CancelarOrdemServicoCommand.class
 br\com\sigla\aplicacao\contratos\porta\entrada\CasoDeUsoContrato.class
 br\com\sigla\aplicacao\notificacoes\porta\saida\PortaWebhookNotificacao$ResultadoEnvio.class
 br\com\sigla\aplicacao\potenciaisclientes\porta\entrada\CasoDeUsoPotencialCliente$FiltroIndicacao.class
 br\com\sigla\aplicacao\usuarios\porta\entrada\CasoDeUsoUsuario$TrocarSenhaCommand.class
 br\com\sigla\aplicacao\funcionarios\porta\entrada\CasoDeUsoFuncionario$RegisterFuncionarioCommand.class
-br\com\sigla\aplicacao\servicos\porta\entrada\CasoDeUsoServicoPrestado$RegisterServicoPrestadoCommand.class
 br\com\sigla\aplicacao\financeiro\porta\entrada\CasoDeUsoFinanceiro$RegisterEntradaFinanceiraCommand.class
 br\com\sigla\aplicacao\certificados\casodeuso\CasoDeUsoGerenciarCertificado.class
 br\com\sigla\aplicacao\servicos\porta\entrada\CasoDeUsoOrdemServico$CreateOrdemServicoCommand.class

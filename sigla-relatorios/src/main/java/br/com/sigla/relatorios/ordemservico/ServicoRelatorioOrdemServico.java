@@ -1,4 +1,4 @@
-package br.com.sigla.relatorios.recibo;
+package br.com.sigla.relatorios.ordemservico;
 
 import br.com.sigla.relatorios.impressao.DespachanteImpressao;
 import br.com.sigla.relatorios.modelo.DocumentoRelatorio;
@@ -12,50 +12,56 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Gera o recibo de um lancamento financeiro em PDF e o envia para impressao.
+ * Gera o documento de uma ordem de servico em PDF e o envia para impressao.
  */
 @Service
-public class ServicoRelatorioRecibo {
+public class ServicoRelatorioOrdemServico {
 
     private final GeradorPdfDocumento gerador;
     private final DespachanteImpressao despachante;
 
-    public ServicoRelatorioRecibo(GeradorPdfDocumento gerador, DespachanteImpressao despachante) {
+    public ServicoRelatorioOrdemServico(GeradorPdfDocumento gerador, DespachanteImpressao despachante) {
         this.gerador = gerador;
         this.despachante = despachante;
     }
 
-    public byte[] gerar(DadosRecibo dados) {
+    public byte[] gerar(DadosOrdemServico dados) {
         return gerador.gerar(montar(dados));
     }
 
-    public Path imprimir(DadosRecibo dados) {
-        return despachante.imprimir("recibo-" + dados.numero(), gerar(dados));
+    public Path imprimir(DadosOrdemServico dados) {
+        return despachante.imprimir("ordem-servico-" + dados.numero(), gerar(dados));
     }
 
-    private DocumentoRelatorio montar(DadosRecibo dados) {
+    private DocumentoRelatorio montar(DadosOrdemServico dados) {
         List<DocumentoRelatorio.Campo> campos = new ArrayList<>();
         campos.add(new DocumentoRelatorio.Campo("Cliente", dados.cliente()));
+        campos.add(new DocumentoRelatorio.Campo("Titulo", dados.titulo()));
         campos.add(new DocumentoRelatorio.Campo("Descricao", dados.descricao()));
-        campos.add(new DocumentoRelatorio.Campo("Valor", dados.valor()));
-        campos.add(new DocumentoRelatorio.Campo("Forma de pagamento", dados.formaPagamento()));
-        campos.add(new DocumentoRelatorio.Campo("Data do pagamento", dados.dataPagamento()));
+        campos.add(new DocumentoRelatorio.Campo("Tipo de servico", dados.tipoServico()));
+        campos.add(new DocumentoRelatorio.Campo("Responsavel", dados.responsavel()));
+        campos.add(new DocumentoRelatorio.Campo("Data", dados.data()));
         campos.add(new DocumentoRelatorio.Campo("Situacao", dados.situacao()));
+        campos.add(new DocumentoRelatorio.Campo("Valor total", dados.valor()));
         if (dados.observacoes() != null && !dados.observacoes().isBlank()) {
             campos.add(new DocumentoRelatorio.Campo("Observacoes", dados.observacoes()));
         }
+        List<String> itens = dados.itens() == null ? List.of() : dados.itens();
         String rodape = "Emitido em " + LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-        return new DocumentoRelatorio("RECIBO", "No " + dados.numero(), campos, List.of(), rodape);
+        return new DocumentoRelatorio("ORDEM DE SERVICO", "No " + dados.numero(), campos, itens, rodape);
     }
 
-    public record DadosRecibo(
+    public record DadosOrdemServico(
             String numero,
             String cliente,
+            String titulo,
             String descricao,
-            String valor,
-            String formaPagamento,
-            String dataPagamento,
+            String tipoServico,
+            String responsavel,
+            String data,
             String situacao,
+            String valor,
+            List<String> itens,
             String observacoes
     ) {
     }

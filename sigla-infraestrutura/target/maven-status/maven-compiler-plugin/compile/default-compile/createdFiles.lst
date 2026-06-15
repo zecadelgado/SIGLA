@@ -53,7 +53,6 @@ br\com\sigla\infraestrutura\persistencia\PersistenciaIds.class
 br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioAgenda$1.class
 br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioNotificacao.class
 br\com\sigla\infraestrutura\persistencia\entidade\OrdemServicoEntidade.class
-br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioServicoPrestado$1.class
 br\com\sigla\infraestrutura\persistencia\repositorio\SpringDataRepositorioAgenda.class
 br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioEstoque.class
 br\com\sigla\infraestrutura\persistencia\entidade\FinanceiroFormaPagamentoEntidade.class
@@ -69,6 +68,5 @@ br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioCertifi
 br\com\sigla\infraestrutura\persistencia\repositorio\InMemoryAdaptadorRepositorioLancamentoFinanceiro.class
 br\com\sigla\infraestrutura\persistencia\repositorio\SpringDataRepositorioFinanceiroCategoria.class
 br\com\sigla\infraestrutura\persistencia\entidade\OrdemServicoEntidade$ProdutoEntidade.class
-br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioServicoPrestado.class
 br\com\sigla\infraestrutura\persistencia\repositorio\InMemoryAdaptadorRepositorioCliente.class
 br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioContrato.class
