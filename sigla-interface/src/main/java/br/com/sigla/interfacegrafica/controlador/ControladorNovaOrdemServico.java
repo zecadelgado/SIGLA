@@ -138,7 +138,7 @@ public class ControladorNovaOrdemServico {
             gerenciadorNavegacao.navigateTo(VisaoAplicacao.SERVICE_ORDER);
             UtilJanela.fecharJanela(clienteCombo);
         } catch (Exception exception) {
-            setFeedback(exception.getMessage());
+            setFeedback(br.com.sigla.interfacegrafica.util.MensagensErro.descrever(exception));
         }
     }
 

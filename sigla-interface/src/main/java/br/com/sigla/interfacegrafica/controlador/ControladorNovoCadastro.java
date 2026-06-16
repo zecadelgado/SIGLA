@@ -115,7 +115,7 @@ public class ControladorNovoCadastro {
             gerenciadorNavegacao.navigateTo(VisaoAplicacao.REGISTRY);
             UtilJanela.fecharJanela(nomeField);
         } catch (RuntimeException exception) {
-            setFeedback(exception.getMessage());
+            setFeedback(br.com.sigla.interfacegrafica.util.MensagensErro.descrever(exception));
         }
     }
 
@@ -185,6 +185,8 @@ public class ControladorNovoCadastro {
         ValidadorEntrada validador = ValidadorEntrada.nova();
         validador.exigir(!(texto(nomeField).isBlank() && texto(razaoSocialField).isBlank()),
                 "Informe o nome completo ou a razão social.");
+        validador.exigir(!(texto(cpfField).isBlank() && texto(cnpjField).isBlank()),
+                "Informe o CPF ou o CNPJ do cliente.");
         validarEmail(validador);
         validador.validar();
     }

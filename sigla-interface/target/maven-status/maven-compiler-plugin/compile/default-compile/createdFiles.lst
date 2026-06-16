@@ -73,4 +73,5 @@ br\com\sigla\interfacegrafica\apresentacao\ApresentadorData.class
 br\com\sigla\interfacegrafica\util\TradutorInterface.class
 br\com\sigla\interfacegrafica\controlador\ControladorDashboard.class
 br\com\sigla\interfacegrafica\inicializacao\LancadorSigla.class
+br\com\sigla\interfacegrafica\util\MensagensErro.class
 br\com\sigla\interfacegrafica\async\ExecutorTarefasUi$1.class

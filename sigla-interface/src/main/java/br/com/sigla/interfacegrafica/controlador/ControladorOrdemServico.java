@@ -1,7 +1,12 @@
 package br.com.sigla.interfacegrafica.controlador;
 
+import br.com.sigla.aplicacao.clientes.porta.entrada.CasoDeUsoCliente;
 import br.com.sigla.aplicacao.servicos.porta.entrada.CasoDeUsoOrdemServico;
+import br.com.sigla.relatorios.formulario.FormularioOrdemServico;
+import br.com.sigla.relatorios.formulario.FormularioVisita;
 import br.com.sigla.relatorios.ordemservico.ServicoRelatorioOrdemServico;
+import br.com.sigla.relatorios.visita.ServicoRelatorioVisita;
+import br.com.sigla.dominio.clientes.Cliente;
 import br.com.sigla.dominio.servicos.OrdemServico;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorData;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorMoeda;
@@ -18,6 +23,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -28,6 +34,7 @@ import javafx.scene.layout.GridPane;
 import org.springframework.stereotype.Component;
 
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
@@ -44,6 +51,8 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
     private final ApresentadorData apresentadorData;
     private final FormatadorMascaraMoeda formatadorMoeda;
     private final ServicoRelatorioOrdemServico servicoRelatorioOrdemServico;
+    private final ServicoRelatorioVisita servicoRelatorioVisita;
+    private final CasoDeUsoCliente casoDeUsoCliente;
 
     @FXML
     private Label abertasLabel;
@@ -87,7 +96,9 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
             ApresentadorMoeda apresentadorMoeda,
             ApresentadorData apresentadorData,
             FormatadorMascaraMoeda formatadorMoeda,
-            ServicoRelatorioOrdemServico servicoRelatorioOrdemServico
+            ServicoRelatorioOrdemServico servicoRelatorioOrdemServico,
+            ServicoRelatorioVisita servicoRelatorioVisita,
+            CasoDeUsoCliente casoDeUsoCliente
     ) {
         super(gerenciadorNavegacao);
         this.servicoConsultaOrdemServico = servicoConsultaOrdemServico;
@@ -99,6 +110,8 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
         this.apresentadorData = apresentadorData;
         this.formatadorMoeda = formatadorMoeda;
         this.servicoRelatorioOrdemServico = servicoRelatorioOrdemServico;
+        this.servicoRelatorioVisita = servicoRelatorioVisita;
+        this.casoDeUsoCliente = casoDeUsoCliente;
     }
 
     @FXML
@@ -220,27 +233,83 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
             return;
         }
         try {
-            java.util.List<String> itens = new java.util.ArrayList<>();
-            if (selected.productCount() > 0) {
-                itens.add(selected.productCount() + " produto(s) - total " + apresentadorMoeda.format(selected.productTotal()));
-            }
-            Path arquivo = servicoRelatorioOrdemServico.imprimir(new ServicoRelatorioOrdemServico.DadosOrdemServico(
-                    selected.numero(),
-                    selected.customerName(),
-                    selected.title(),
-                    selected.description(),
-                    selected.serviceType(),
-                    selected.responsible(),
+            Cliente cliente = clientePorId(selected.customerId());
+            Path arquivo = servicoRelatorioOrdemServico.imprimir(new FormularioOrdemServico.Dados(
                     apresentadorData.format(selected.emissionDate()),
-                    selected.status(),
-                    apresentadorMoeda.format(selected.amount()),
-                    itens,
-                    selected.notes()
+                    semTraco(selected.responsible()),
+                    selected.customerName(),
+                    documentoCliente(cliente),
+                    cliente == null ? "" : cliente.email(),
+                    cliente == null ? "" : cliente.phone(),
+                    "",
+                    "",
+                    semTraco(selected.notes())
             ));
             new Alert(Alert.AlertType.INFORMATION, "OS gerada em:\n" + arquivo, ButtonType.OK).showAndWait();
         } catch (Exception exception) {
-            mostrar("Não foi possível gerar a OS: " + exception.getMessage());
+            mostrar(br.com.sigla.interfacegrafica.util.MensagensErro.descrever("Não foi possível gerar a OS:", exception));
         }
+    }
+
+    @FXML
+    private void onRelatorioVisita() {
+        var selected = selecionada();
+        if (selected == null) {
+            return;
+        }
+        try {
+            Cliente cliente = clientePorId(selected.customerId());
+            Path arquivo = servicoRelatorioVisita.imprimir(new FormularioVisita.Dados(
+                    apresentadorData.format(selected.emissionDate()),
+                    semTraco(selected.responsible()),
+                    "",
+                    "",
+                    selected.customerName(),
+                    documentoCliente(cliente),
+                    cliente == null ? "" : cliente.location(),
+                    cliente == null ? "" : cliente.phone(),
+                    cliente == null ? "" : cliente.cidade(),
+                    cliente == null ? "" : cliente.estado(),
+                    responsavelCliente(cliente),
+                    selected.customerName(),
+                    semTraco(selected.responsible())
+            ));
+            new Alert(Alert.AlertType.INFORMATION, "Relatório de visita gerado em:\n" + arquivo, ButtonType.OK).showAndWait();
+        } catch (Exception exception) {
+            mostrar(br.com.sigla.interfacegrafica.util.MensagensErro.descrever("Não foi possível gerar o relatório de visita:", exception));
+        }
+    }
+
+    private Cliente clientePorId(String id) {
+        if (id == null || id.isBlank()) {
+            return null;
+        }
+        return casoDeUsoCliente.listAll().stream()
+                .filter(cliente -> cliente.id().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private String documentoCliente(Cliente cliente) {
+        if (cliente == null) {
+            return "";
+        }
+        return cliente.cnpj().isBlank() ? cliente.cpf() : cliente.cnpj();
+    }
+
+    private String responsavelCliente(Cliente cliente) {
+        if (cliente == null) {
+            return "";
+        }
+        return cliente.contacts().stream()
+                .filter(Cliente.ContactPerson::principal)
+                .map(Cliente.ContactPerson::name)
+                .findFirst()
+                .orElse(cliente.contacts().isEmpty() ? "" : cliente.contacts().getFirst().name());
+    }
+
+    private String semTraco(String valor) {
+        return valor == null || valor.equals("-") ? "" : valor;
     }
 
     private void refresh() {
@@ -335,6 +404,7 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
         descricao.setPrefRowCount(2);
         TextField tipo = new TextField(selected.serviceType());
         TextField responsavel = new TextField(selected.responsible().equals("-") ? "" : selected.responsible());
+        DatePicker dataPicker = new DatePicker(selected.emissionDate() == null ? LocalDate.now() : selected.emissionDate());
         TextField valor = new TextField();
         formatadorMoeda.aplicar(valor);
         formatadorMoeda.definir(valor, selected.amount().subtract(selected.productTotal()));
@@ -346,8 +416,9 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
         grid.addRow(2, new Label("Descrição"), descricao);
         grid.addRow(3, new Label("Tipo"), tipo);
         grid.addRow(4, new Label("Responsável"), responsavel);
-        grid.addRow(5, new Label("Valor do serviço"), valor);
-        grid.addRow(6, new Label("Observações"), observacoes);
+        grid.addRow(5, new Label("Data agendada"), dataPicker);
+        grid.addRow(6, new Label("Valor do serviço"), valor);
+        grid.addRow(7, new Label("Observações"), observacoes);
         dialog.getDialogPane().setContent(grid);
         dialog.setResultConverter(button -> {
             if (button != ButtonType.OK) {
@@ -366,7 +437,7 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
                         titulo.getText(),
                         descricao.getText(),
                     tipo.getText(),
-                    selected.emissionDate().atStartOfDay(),
+                    (dataPicker.getValue() == null ? LocalDate.now() : dataPicker.getValue()).atStartOfDay(),
                     responsavelId,
                     formatadorMoeda.valor(valor),
                     observacoes.getText()
@@ -419,7 +490,7 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
         try {
             runnable.run();
         } catch (Exception exception) {
-            mostrar(exception.getMessage());
+            mostrar(br.com.sigla.interfacegrafica.util.MensagensErro.descrever(exception));
         }
     }
 

@@ -108,6 +108,12 @@
                </children>
             </VBox>
 
+            <Label fx:id="feedbackLabel" maxWidth="Infinity" textFill="#c0392b" wrapText="true">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+
             <HBox alignment="CENTER" spacing="24.0">
                <children>
                   <Button defaultButton="true" mnemonicParsing="false" onAction="#onCadastrar" prefHeight="40.0" prefWidth="220.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 8;" text="Cadastrar" textFill="WHITE">

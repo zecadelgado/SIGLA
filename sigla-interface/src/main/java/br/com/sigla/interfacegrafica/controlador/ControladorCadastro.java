@@ -544,7 +544,7 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
         try {
             runnable.run();
         } catch (IllegalArgumentException exception) {
-            mostrar(exception.getMessage());
+            mostrar(br.com.sigla.interfacegrafica.util.MensagensErro.descrever(exception));
         }
     }
 

@@ -271,7 +271,9 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
                 visitType(ordemServico.tipoServico()),
                 recurrence(ordemServico.tipoServico()),
                 ordemServico.dataAgendada().toLocalDate(),
-                "OS " + (ordemServico.numeroOs() == null ? ordemServico.id() : ordemServico.numeroOs()) + " - " + ordemServico.titulo(),
+                (ordemServico.titulo() != null && !ordemServico.titulo().isBlank()
+                        ? ordemServico.titulo()
+                        : "Ordem de servico"),
                 "os",
                 ordemServico.responsavelInternoId(),
                 ordemServico.dataAgendada(),

@@ -134,14 +134,11 @@
                               <Insets top="5.0" />
                            </VBox.margin>
                         </Label>
-                        <TextField fx:id="statusField" prefHeight="30.0" prefWidth="466.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
+                        <ComboBox fx:id="statusCombo" maxWidth="Infinity" prefHeight="30.0" prefWidth="466.0" style="-fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
                            <VBox.margin>
                               <Insets />
                            </VBox.margin>
-                        </TextField>
+                        </ComboBox>
                      </children>
                   </VBox>
                   <Region prefHeight="76.0" prefWidth="314.0" />

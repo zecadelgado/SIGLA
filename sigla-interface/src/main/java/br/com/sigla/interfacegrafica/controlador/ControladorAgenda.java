@@ -212,6 +212,16 @@ public class ControladorAgenda {
         TradutorInterface.aplicar(recorrenciaCombo);
         recorrenciaCombo.getItems().setAll(VisitaAgendada.Recurrence.values());
         recorrenciaCombo.getSelectionModel().select(atual == null ? VisitaAgendada.Recurrence.NONE : atual.recurrence());
+        // Evento avulso (ONE_OFF) nao tem recorrencia: desabilita e forca NONE.
+        Runnable sincronizarRecorrencia = () -> {
+            boolean avulso = tipoCombo.getValue() == VisitaAgendada.VisitType.ONE_OFF;
+            recorrenciaCombo.setDisable(avulso);
+            if (avulso) {
+                recorrenciaCombo.getSelectionModel().select(VisitaAgendada.Recurrence.NONE);
+            }
+        };
+        tipoCombo.valueProperty().addListener((observable, oldValue, newValue) -> sincronizarRecorrencia.run());
+        sincronizarRecorrencia.run();
         ComboBox<VisitaAgendada.VisitStatus> statusCombo = new ComboBox<>();
         TradutorInterface.aplicar(statusCombo);
         statusCombo.getItems().setAll(VisitaAgendada.VisitStatus.values());
@@ -364,7 +374,7 @@ public class ControladorAgenda {
             action.run();
             refresh();
         } catch (RuntimeException exception) {
-            mostrar(exception.getMessage());
+            mostrar(br.com.sigla.interfacegrafica.util.MensagensErro.descrever(exception));
         }
     }
 

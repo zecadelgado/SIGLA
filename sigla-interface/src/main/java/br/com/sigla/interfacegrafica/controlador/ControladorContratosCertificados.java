@@ -8,6 +8,7 @@ import br.com.sigla.dominio.clientes.Cliente;
 import br.com.sigla.dominio.contratos.Contrato;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorData;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorMoeda;
+import br.com.sigla.interfacegrafica.formatador.FormatadorMascaraMoeda;
 import br.com.sigla.interfacegrafica.util.TradutorInterface;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.fxml.FXML;
@@ -44,6 +45,7 @@ public class ControladorContratosCertificados {
     private final CasoDeUsoCliente casoDeUsoCliente;
     private final ApresentadorData apresentadorData;
     private final ApresentadorMoeda apresentadorMoeda;
+    private final FormatadorMascaraMoeda formatadorMoeda;
 
     @FXML
     private Label totalAtivosLabel;
@@ -81,13 +83,15 @@ public class ControladorContratosCertificados {
             CasoDeUsoCertificado casoDeUsoCertificado,
             CasoDeUsoCliente casoDeUsoCliente,
             ApresentadorData apresentadorData,
-            ApresentadorMoeda apresentadorMoeda
+            ApresentadorMoeda apresentadorMoeda,
+            FormatadorMascaraMoeda formatadorMoeda
     ) {
         this.casoDeUsoContrato = casoDeUsoContrato;
         this.casoDeUsoCertificado = casoDeUsoCertificado;
         this.casoDeUsoCliente = casoDeUsoCliente;
         this.apresentadorData = apresentadorData;
         this.apresentadorMoeda = apresentadorMoeda;
+        this.formatadorMoeda = formatadorMoeda;
     }
 
     @FXML
@@ -197,7 +201,7 @@ public class ControladorContratosCertificados {
         try {
             acao.run();
         } catch (RuntimeException exception) {
-            alerta(exception.getMessage());
+            alerta(br.com.sigla.interfacegrafica.util.MensagensErro.descrever(exception));
         }
     }
 
@@ -324,7 +328,9 @@ public class ControladorContratosCertificados {
         TradutorInterface.aplicar(frequenciaCombo);
         frequenciaCombo.getItems().setAll(Contrato.ServiceFrequency.values());
         frequenciaCombo.getSelectionModel().select(Contrato.ServiceFrequency.MONTHLY);
-        TextField valorMensalField = new TextField("0");
+        TextField valorMensalField = new TextField();
+        formatadorMoeda.aplicar(valorMensalField);
+        formatadorMoeda.definir(valorMensalField, BigDecimal.ZERO);
         TextField diasAlertaField = new TextField("15");
         CheckBox alertaAtivoCheck = new CheckBox("Alerta ativo");
         alertaAtivoCheck.setSelected(true);
@@ -338,7 +344,7 @@ public class ControladorContratosCertificados {
             fimPicker.setValue(existente.endDate());
             tipoCombo.getSelectionModel().select(existente.type());
             frequenciaCombo.getSelectionModel().select(existente.serviceFrequency());
-            valorMensalField.setText(existente.monthlyValue().toPlainString());
+            formatadorMoeda.definir(valorMensalField, existente.monthlyValue());
             diasAlertaField.setText(String.valueOf(existente.alertDaysBeforeEnd()));
             alertaAtivoCheck.setSelected(existente.alertActive());
             observacoesArea.setText(existente.notes());
@@ -374,7 +380,7 @@ public class ControladorContratosCertificados {
                             frequenciaCombo.getValue(),
                             Contrato.ContratoStatus.ACTIVE,
                             Contrato.RenewalRule.MANUAL,
-                            parseMoney(valorMensalField.getText()),
+                            formatadorMoeda.valor(valorMensalField),
                             alertaAtivoCheck.isSelected(),
                             parseInt(diasAlertaField.getText(), 15),
                             observacoesArea.getText()
@@ -389,7 +395,7 @@ public class ControladorContratosCertificados {
                             tipoCombo.getValue(),
                             frequenciaCombo.getValue(),
                             Contrato.RenewalRule.MANUAL,
-                            parseMoney(valorMensalField.getText()),
+                            formatadorMoeda.valor(valorMensalField),
                             alertaAtivoCheck.isSelected(),
                             parseInt(diasAlertaField.getText(), 15),
                             observacoesArea.getText()

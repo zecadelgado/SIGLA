@@ -122,7 +122,7 @@ public class ControladorNovaMovimentacao {
             gerenciadorNavegacao.navigateTo(VisaoAplicacao.INVENTORY);
             UtilJanela.fecharJanela(produtoCombo);
         } catch (Exception exception) {
-            setFeedback(exception.getMessage());
+            setFeedback(br.com.sigla.interfacegrafica.util.MensagensErro.descrever(exception));
         }
     }
 

@@ -271,9 +271,10 @@
                         </VBox>
                      </children>
                   </HBox>
-                  <ScrollPane prefHeight="365.0" prefWidth="1222.0" style="-fx-background-radius: 10; -fx-border-radius: 10;">
-                     <content>
-                        <VBox prefHeight="355.0" prefWidth="1223.0" style="-fx-border-radius: 10;">
+                  <VBox prefHeight="365.0" prefWidth="1223.0" style="-fx-border-radius: 10;">
+                     <VBox.margin>
+                        <Insets left="30.0" right="30.0" top="30.0" />
+                     </VBox.margin>
                            <children>
                               <TableView fx:id="ordensTable" prefHeight="355.0" prefWidth="1223.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5); -fx-background-radius: 10;">
                                 <columns>
@@ -293,11 +294,6 @@
                               </TableView>
                            </children>
                         </VBox>
-                     </content>
-                     <VBox.margin>
-                        <Insets left="30.0" right="30.0" top="30.0" />
-                     </VBox.margin>
-                  </ScrollPane>
                   <HBox prefHeight="48.0" prefWidth="1222.0" spacing="20.0">
                      <VBox.margin>
                         <Insets left="30.0" right="30.0" top="5.0" />
@@ -336,6 +332,10 @@
                               <Font name="Ebrima Bold" size="14.0" />
                            </font></Button>
                         <Button mnemonicParsing="false" onAction="#onImprimirOrdem" prefHeight="38.0" prefWidth="130.0" style="-fx-background-color: #178c1b; -fx-background-radius: 5;" text="Imprimir OS" textFill="WHITE">
+                           <font>
+                              <Font name="Ebrima Bold" size="14.0" />
+                           </font></Button>
+                        <Button mnemonicParsing="false" onAction="#onRelatorioVisita" prefHeight="38.0" prefWidth="160.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 5;" text="Relatorio de visita" textFill="WHITE">
                            <font>
                               <Font name="Ebrima Bold" size="14.0" />
                            </font></Button>

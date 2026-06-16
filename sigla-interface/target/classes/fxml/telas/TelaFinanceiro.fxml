@@ -241,9 +241,10 @@
                         <Insets left="28.0" right="40.0" />
                      </VBox.margin>
                   </HBox>
-                  <ScrollPane prefHeight="400.0" prefWidth="1900.0">
-                     <content>
-                        <VBox prefHeight="405.0" prefWidth="1900.0">
+                  <VBox prefHeight="405.0" prefWidth="1900.0">
+                     <VBox.margin>
+                        <Insets left="28.0" right="40.0" />
+                     </VBox.margin>
                            <children>
                               <TableView fx:id="transacoesTable" prefHeight="400.0" prefWidth="1900.0" style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
                                 <columns>
@@ -270,11 +271,6 @@
                               </TableView>
                            </children>
                         </VBox>
-                     </content>
-                     <VBox.margin>
-                        <Insets left="28.0" right="40.0" />
-                     </VBox.margin>
-                  </ScrollPane>
                </children>
             </VBox>
          </center>

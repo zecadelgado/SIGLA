@@ -1,7 +1,7 @@
-package br.com.sigla.relatorios.ordemservico;
+package br.com.sigla.relatorios.visita;
 
 import br.com.sigla.relatorios.formulario.DadosEmpresa;
-import br.com.sigla.relatorios.formulario.FormularioOrdemServico;
+import br.com.sigla.relatorios.formulario.FormularioVisita;
 import br.com.sigla.relatorios.impressao.DespachanteImpressao;
 import br.com.sigla.relatorios.modelo.ProvedorModeloRelatorio;
 import org.springframework.stereotype.Service;
@@ -9,25 +9,25 @@ import org.springframework.stereotype.Service;
 import java.nio.file.Path;
 
 /**
- * Gera a Ordem de Servico no formulario LIDER (PDF) e a envia para impressao.
+ * Gera o Relatorio de Visita no formulario LIDER (PDF) e o envia para impressao.
  */
 @Service
-public class ServicoRelatorioOrdemServico {
+public class ServicoRelatorioVisita {
 
     private final ProvedorModeloRelatorio modelo;
     private final DespachanteImpressao despachante;
 
-    public ServicoRelatorioOrdemServico(ProvedorModeloRelatorio modelo, DespachanteImpressao despachante) {
+    public ServicoRelatorioVisita(ProvedorModeloRelatorio modelo, DespachanteImpressao despachante) {
         this.modelo = modelo;
         this.despachante = despachante;
     }
 
-    public byte[] gerar(FormularioOrdemServico.Dados dados) {
-        return FormularioOrdemServico.gerar(dados, empresa());
+    public byte[] gerar(FormularioVisita.Dados dados) {
+        return FormularioVisita.gerar(dados, empresa());
     }
 
-    public Path imprimir(FormularioOrdemServico.Dados dados) {
-        return despachante.imprimir("ordem-servico", gerar(dados));
+    public Path imprimir(FormularioVisita.Dados dados) {
+        return despachante.imprimir("relatorio-visita", gerar(dados));
     }
 
     private DadosEmpresa empresa() {

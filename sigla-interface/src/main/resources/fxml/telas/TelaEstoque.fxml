@@ -165,6 +165,14 @@
                                     <Insets left="10.0" top="40.0" />
                                  </HBox.margin>
                               </Button>
+                              <Button mnemonicParsing="false" onAction="#onFiltrarBaixoEstoque" prefHeight="46.0" prefWidth="150.0" style="-fx-background-color: #fee2e2; -fx-background-radius: 5;" text="Estoque baixo" textFill="#891111">
+                                 <font>
+                                    <Font name="Ebrima Bold" size="15.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets left="10.0" top="40.0" />
+                                 </HBox.margin>
+                              </Button>
                            </children>
                         </HBox>
                         <HBox prefHeight="110.0" prefWidth="1252.0" style="-fx-background-color: #cccccc; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">

@@ -63,9 +63,16 @@ public class ExecutorTarefasUi {
             Throwable erro = task.getException();
             if (aoFalhar != null) {
                 aoFalhar.accept(erro);
-            } else {
-                System.err.println("Falha em tarefa de UI: " + (erro == null ? "desconhecida" : erro.getMessage()));
+                return;
             }
+            // Sem tratamento especifico: nao falha em silencio. Registra e mostra a causa ao usuario.
+            String descricao = br.com.sigla.interfacegrafica.util.MensagensErro.descrever(erro);
+            System.err.println("Falha em tarefa de UI: " + descricao);
+            new javafx.scene.control.Alert(
+                    javafx.scene.control.Alert.AlertType.ERROR,
+                    descricao,
+                    javafx.scene.control.ButtonType.OK
+            ).showAndWait();
         });
         executor.execute(task);
     }

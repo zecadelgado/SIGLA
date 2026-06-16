@@ -185,7 +185,7 @@ public class ControladorUsuarios {
         try {
             runnable.run();
         } catch (Exception exception) {
-            mostrar(exception.getMessage());
+            mostrar(br.com.sigla.interfacegrafica.util.MensagensErro.descrever(exception));
         }
     }
 

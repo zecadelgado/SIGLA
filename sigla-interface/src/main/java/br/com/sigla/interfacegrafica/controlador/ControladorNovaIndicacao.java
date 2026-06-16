@@ -7,6 +7,7 @@ import br.com.sigla.interfacegrafica.formatador.FormatadorMascaraCpf;
 import br.com.sigla.interfacegrafica.modelo.OpcaoId;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
+import br.com.sigla.interfacegrafica.util.TradutorInterface;
 import br.com.sigla.interfacegrafica.util.UtilComboBox;
 import br.com.sigla.interfacegrafica.util.UtilJanela;
 import br.com.sigla.interfacegrafica.util.ValidadorEntrada;
@@ -21,7 +22,6 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.util.UUID;
 
-import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.parseEnum;
 @Component
 public class ControladorNovaIndicacao {
 
@@ -39,7 +39,7 @@ public class ControladorNovaIndicacao {
     @FXML
     private DatePicker dataPicker;
     @FXML
-    private TextField statusField;
+    private ComboBox<PotencialCliente.PotencialClienteStatus> statusCombo;
     @FXML
     private TextArea observacoesArea;
     @FXML
@@ -62,8 +62,17 @@ public class ControladorNovaIndicacao {
         if (dataPicker != null) {
             dataPicker.setValue(LocalDate.now());
         }
-        if (statusField != null && statusField.getText().isBlank()) {
-            statusField.setText(PotencialCliente.PotencialClienteStatus.NOVO.name());
+        if (statusCombo != null) {
+            TradutorInterface.aplicar(statusCombo);
+            statusCombo.getItems().setAll(
+                    PotencialCliente.PotencialClienteStatus.NOVO,
+                    PotencialCliente.PotencialClienteStatus.CONTATADO,
+                    PotencialCliente.PotencialClienteStatus.AGUARDANDO_RETORNO,
+                    PotencialCliente.PotencialClienteStatus.CONVERTIDO,
+                    PotencialCliente.PotencialClienteStatus.PERDIDO,
+                    PotencialCliente.PotencialClienteStatus.CANCELADO
+            );
+            statusCombo.getSelectionModel().select(PotencialCliente.PotencialClienteStatus.NOVO);
         }
         UtilComboBox.preencher(clienteCombo, servicoConsultaReferencias.clientes(), true);
         formatadorMascaraCpf.aplicarTelefone(telefoneField);
@@ -86,7 +95,7 @@ public class ControladorNovaIndicacao {
                     telefone,
                     "INDICACAO:" + customerId,
                     customerId,
-                    parseEnum(PotencialCliente.PotencialClienteStatus.class, statusField == null ? "" : statusField.getText(), PotencialCliente.PotencialClienteStatus.NOVO),
+                    statusCombo == null || statusCombo.getValue() == null ? PotencialCliente.PotencialClienteStatus.NOVO : statusCombo.getValue(),
                     dataPicker == null ? LocalDate.now() : dataPicker.getValue(),
                     "Indicacao",
                     observacoesArea == null ? "" : observacoesArea.getText()
@@ -94,7 +103,7 @@ public class ControladorNovaIndicacao {
             gerenciadorNavegacao.navigateTo(VisaoAplicacao.CUSTOMERS);
             UtilJanela.fecharJanela(nomeField);
         } catch (IllegalArgumentException exception) {
-            setFeedback(exception.getMessage());
+            setFeedback(br.com.sigla.interfacegrafica.util.MensagensErro.descrever(exception));
         }
     }
 

@@ -131,7 +131,7 @@ public class ControladorNovoServico {
             gerenciadorNavegacao.navigateTo(VisaoAplicacao.SERVICES);
             UtilJanela.fecharJanela(clienteCombo);
         } catch (Exception exception) {
-            setFeedback(exception.getMessage());
+            setFeedback(br.com.sigla.interfacegrafica.util.MensagensErro.descrever(exception));
         }
     }
 

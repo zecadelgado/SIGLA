@@ -7,6 +7,7 @@ import javafx.scene.layout.VBox;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -40,7 +41,7 @@ class GerenciadorNavegacaoTest {
         gerenciadorNavegacao.configureResponsiveContent(scrollPane);
 
         assertTrue(scrollPane.isFitToWidth());
-        assertTrue(scrollPane.isFitToHeight());
+        assertFalse(scrollPane.isFitToHeight());
         assertEquals(0.0, scrollPane.getMinWidth());
         assertEquals(0.0, scrollPane.getMinHeight());
         assertEquals(Double.MAX_VALUE, scrollPane.getMaxWidth());

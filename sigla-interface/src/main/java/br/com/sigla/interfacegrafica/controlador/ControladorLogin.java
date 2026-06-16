@@ -51,7 +51,7 @@ public class ControladorLogin {
         try {
             validador.validar();
         } catch (IllegalArgumentException erro) {
-            mostrarErro(erro.getMessage());
+            mostrarErro(br.com.sigla.interfacegrafica.util.MensagensErro.descrever(erro));
             return;
         }
 

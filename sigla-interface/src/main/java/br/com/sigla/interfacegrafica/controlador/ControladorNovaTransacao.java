@@ -149,7 +149,7 @@ public class ControladorNovaTransacao {
             gerenciadorNavegacao.navigateTo(VisaoAplicacao.FINANCE);
             UtilJanela.fecharJanela(tipoCombo);
         } catch (Exception exception) {
-            setFeedback(exception.getMessage());
+            setFeedback(br.com.sigla.interfacegrafica.util.MensagensErro.descrever(exception));
         }
     }
 

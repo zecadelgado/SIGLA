@@ -56,7 +56,7 @@ public class ControladorCadastroUsuario {
             ));
             fluxoAplicacao.showLogin();
         } catch (IllegalArgumentException exception) {
-            setFeedback(exception.getMessage());
+            setFeedback(br.com.sigla.interfacegrafica.util.MensagensErro.descrever(exception));
         }
     }
 

@@ -184,7 +184,7 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
             ));
             new Alert(Alert.AlertType.INFORMATION, "Etiqueta gerada em:\n" + arquivo, ButtonType.OK).showAndWait();
         } catch (Exception exception) {
-            mostrar("Não foi possível gerar a etiqueta: " + exception.getMessage());
+            mostrar(br.com.sigla.interfacegrafica.util.MensagensErro.descrever("Não foi possível gerar a etiqueta:", exception));
         }
     }
 
@@ -350,7 +350,7 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
         try {
             runnable.run();
         } catch (IllegalArgumentException exception) {
-            mostrar(exception.getMessage());
+            mostrar(br.com.sigla.interfacegrafica.util.MensagensErro.descrever(exception));
         }
     }
 

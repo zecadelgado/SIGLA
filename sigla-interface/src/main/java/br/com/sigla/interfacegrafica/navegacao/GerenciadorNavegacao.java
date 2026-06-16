@@ -114,7 +114,9 @@ public class GerenciadorNavegacao {
     void configureResponsiveContent(Node content) {
         if (content instanceof ScrollPane scrollPane) {
             scrollPane.setFitToWidth(true);
-            scrollPane.setFitToHeight(true);
+            // Mantem rolagem vertical: fitToHeight=true impedia o scroll e cortava
+            // telas mais altas que a viewport (ex.: Dashboard em tela cheia).
+            scrollPane.setFitToHeight(false);
             configureResponsiveContent(scrollPane.getContent());
         }
         if (content instanceof Region region) {

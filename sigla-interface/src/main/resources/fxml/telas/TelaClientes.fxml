@@ -237,9 +237,10 @@
                               <Insets top="20.0" />
                            </VBox.margin>
                         </HBox>
-                        <ScrollPane fitToWidth="true" prefHeight="400.0" prefWidth="1222.0">
-                           <content>
-                              <VBox prefHeight="400.0" prefWidth="1222.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
+                        <VBox prefHeight="470.0" prefWidth="1222.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
+                           <VBox.margin>
+                              <Insets left="35.0" right="30.0" top="20.0" />
+                           </VBox.margin>
                                  <children>
                                     <Label prefHeight="39.0" prefWidth="566.0" text="Top Clientes por Faturamento">
                                        <font>
@@ -263,14 +264,10 @@
                                     </TableView>
                                  </children>
                               </VBox>
-                           </content>
-                           <VBox.margin>
-                              <Insets left="35.0" right="30.0" top="20.0" />
-                           </VBox.margin>
-                        </ScrollPane>
-                        <ScrollPane fitToWidth="true" prefHeight="400.0" prefWidth="1222.0">
-                           <content>
-                              <VBox prefHeight="400.0" prefWidth="1178.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
+                              <VBox prefHeight="520.0" prefWidth="1178.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
+                                 <VBox.margin>
+                                    <Insets left="35.0" right="30.0" top="20.0" />
+                                 </VBox.margin>
                                  <children>
                                     <Label prefHeight="39.0" prefWidth="566.0" text="Indicações de Clientes">
                                        <font>
@@ -310,11 +307,6 @@
                                     </TableView>
                                  </children>
                               </VBox>
-                           </content>
-                           <VBox.margin>
-                              <Insets left="35.0" right="30.0" top="20.0" />
-                           </VBox.margin>
-                        </ScrollPane>
                      </children>
                   </VBox>
                </center>

@@ -119,16 +119,23 @@ public class CasoDeUsoGerenciarCliente implements CasoDeUsoCliente {
     }
 
     private void validar(Cliente cliente, boolean novo) {
-        if (cliente.tipo() == Cliente.TipoCliente.PESSOA_FISICA) {
-            require(cliente.name(), "Informe o nome da pessoa fisica.");
-            require(cliente.cpf(), "Informe o CPF da pessoa fisica.");
+        // Cliente exige nome OU razao social, e ao menos um documento (CPF OU CNPJ).
+        // Valida formato/duplicidade apenas do(s) documento(s) informado(s).
+        if (cliente.name().isBlank() && cliente.razaoSocial().isBlank()) {
+            throw new IllegalArgumentException("Informe o nome ou a razao social do cliente.");
+        }
+        boolean temCpf = !cliente.cpf().isBlank();
+        boolean temCnpj = !cliente.cnpj().isBlank();
+        if (!temCpf && !temCnpj) {
+            throw new IllegalArgumentException("Informe o CPF ou o CNPJ do cliente.");
+        }
+        if (temCpf) {
             validarCpf(cliente.cpf());
             if (repository.existsActiveCpf(onlyDigits(cliente.cpf()), cliente.id())) {
                 throw new IllegalArgumentException("CPF ja cadastrado em outro cliente ativo.");
             }
-        } else {
-            require(cliente.razaoSocial(), "Informe a razao social da pessoa juridica.");
-            require(cliente.cnpj(), "Informe o CNPJ da pessoa juridica.");
+        }
+        if (temCnpj) {
             validarCnpj(cliente.cnpj());
             if (repository.existsActiveCnpj(onlyDigits(cliente.cnpj()), cliente.id())) {
                 throw new IllegalArgumentException("CNPJ ja cadastrado em outro cliente ativo.");

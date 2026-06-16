@@ -260,7 +260,7 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
             ));
             new Alert(Alert.AlertType.INFORMATION, "Recibo gerado em:\n" + arquivo, ButtonType.OK).showAndWait();
         } catch (Exception exception) {
-            mostrar("Não foi possível gerar o recibo: " + exception.getMessage());
+            mostrar(br.com.sigla.interfacegrafica.util.MensagensErro.descrever("Não foi possível gerar o recibo:", exception));
         }
     }
 
@@ -448,7 +448,7 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
             runnable.run();
             refresh();
         } catch (Exception exception) {
-            mostrar(exception.getMessage());
+            mostrar(br.com.sigla.interfacegrafica.util.MensagensErro.descrever(exception));
         }
     }
 

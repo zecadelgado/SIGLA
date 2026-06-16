@@ -118,7 +118,9 @@ public class FluxoAplicacao {
         floatingStage.initOwner(stage);
         floatingStage.initModality(Modality.NONE);
         floatingStage.initStyle(StageStyle.UTILITY);
-        floatingStage.setResizable(true);
+        // Janelas de formulario (Novo Cadastro, Nova Transacao, etc.) ficam com tamanho
+        // fixo ajustado ao conteudo, evitando que a janela mude de tamanho conforme a selecao.
+        floatingStage.setResizable(false);
         floatingStage.setTitle("S.I.G.L.A - " + view.tituloJanela());
         floatingStage.setScene(scene);
         floatingStage.setOnHidden(event -> floatingStages.remove(view));
