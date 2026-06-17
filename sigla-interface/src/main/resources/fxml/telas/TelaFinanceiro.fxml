@@ -18,9 +18,6 @@
       <BorderPane prefHeight="790.0" prefWidth="1530.0">
          <center>
             <VBox prefHeight="200.0" prefWidth="100.0" spacing="20.0" style="-fx-background-color: lightgrey;" BorderPane.alignment="CENTER">
-               <padding>
-                  <Insets top="20.0" />
-               </padding>
                <children>
                   <HBox prefHeight="114.0" prefWidth="1280.0">
                      <children>
@@ -48,17 +45,17 @@
                            </children>
                         </VBox>
                         <Region prefHeight="114.0" prefWidth="550.0" HBox.hgrow="ALWAYS" />
-                        <Button mnemonicParsing="false" onAction="#onNovaTransacao" prefHeight="46.0" prefWidth="211.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Entradas" textFill="WHITE">
+                        <Button mnemonicParsing="false" onAction="#onNovaTransacao" prefHeight="46.0" prefWidth="211.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Lançamentos" textFill="WHITE">
                            <font>
                               <Font name="Ebrima Bold" size="22.0" />
                            </font>
                            <HBox.margin>
-                              <Insets bottom="20.0" right="42.0" top="40.0" />
+                              <Insets bottom="20.0" right="45.0" top="40.0" />
                            </HBox.margin>
                         </Button>
                      </children>
                   </HBox>
-                  <HBox prefHeight="109.0" prefWidth="1213.0" spacing="15.0">
+                  <HBox prefHeight="109.0" prefWidth="1213.0" spacing="10.0">
                      <VBox.margin>
                         <Insets left="28.0" right="40.0" />
                      </VBox.margin>
@@ -132,6 +129,9 @@
                            </children>
                         </VBox>
                      </children>
+                     <padding>
+                        <Insets bottom="15.0" top="5.0" />
+                     </padding>
                   </HBox>
                   <HBox prefHeight="58.0" prefWidth="1200.0" spacing="10.0" style="-fx-background-color: WHITE; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
                      <children>
@@ -209,7 +209,7 @@
                               <Font name="System Bold" size="15.0" />
                            </font>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#onBaixarParcela" prefHeight="30.0" prefWidth="150.0" style="-fx-background-radius: 5;" text="Baixar parcela" textFill="#484848">
+                        <Button mnemonicParsing="false" onAction="#onBaixarParcela" prefHeight="31.0" prefWidth="135.0" style="-fx-background-radius: 5;" text="Baixar parcela" textFill="#484848">
                            <HBox.margin>
                               <Insets left="5.0" />
                            </HBox.margin>
@@ -225,7 +225,7 @@
                               <Font name="System Bold" size="15.0" />
                            </font>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#onCancelarTransacao" prefHeight="30.0" prefWidth="135.0" style="-fx-background-radius: 5;" text="Cancelar" textFill="#484848">
+                        <Button mnemonicParsing="false" onAction="#onCancelarTransacao" prefHeight="31.0" prefWidth="136.0" style="-fx-background-radius: 5;" text="Cancelar" textFill="#484848">
                            <HBox.margin>
                               <Insets left="5.0" />
                            </HBox.margin>
@@ -235,7 +235,7 @@
                         </Button>
                      </children>
                      <padding>
-                        <Insets bottom="15.0" right="20.0" />
+                        <Insets bottom="10.0" right="20.0" top="10.0" />
                      </padding>
                      <VBox.margin>
                         <Insets left="28.0" right="40.0" />

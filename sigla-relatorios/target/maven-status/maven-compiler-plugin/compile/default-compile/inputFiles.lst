@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 D:\SIGLA\sigla-relatorios\src\main\java\br\com\sigla\relatorios\etiqueta\ServicoRelatorioEtiqueta.java
 D:\SIGLA\sigla-relatorios\src\main\java\br\com\sigla\relatorios\formulario\DadosEmpresa.java
 D:\SIGLA\sigla-relatorios\src\main\java\br\com\sigla\relatorios\formulario\DesenhoFormulario.java
@@ -10,3 +11,12 @@ D:\SIGLA\sigla-relatorios\src\main\java\br\com\sigla\relatorios\ordemservico\Ser
 D:\SIGLA\sigla-relatorios\src\main\java\br\com\sigla\relatorios\pdf\GeradorPdfDocumento.java
 D:\SIGLA\sigla-relatorios\src\main\java\br\com\sigla\relatorios\recibo\ServicoRelatorioRecibo.java
 D:\SIGLA\sigla-relatorios\src\main\java\br\com\sigla\relatorios\visita\ServicoRelatorioVisita.java
+=======
+C:\Users\Marina\OneDrive\Documentos\GitHub\SIGLA\sigla-relatorios\src\main\java\br\com\sigla\relatorios\etiqueta\ServicoRelatorioEtiqueta.java
+C:\Users\Marina\OneDrive\Documentos\GitHub\SIGLA\sigla-relatorios\src\main\java\br\com\sigla\relatorios\impressao\DespachanteImpressao.java
+C:\Users\Marina\OneDrive\Documentos\GitHub\SIGLA\sigla-relatorios\src\main\java\br\com\sigla\relatorios\modelo\DocumentoRelatorio.java
+C:\Users\Marina\OneDrive\Documentos\GitHub\SIGLA\sigla-relatorios\src\main\java\br\com\sigla\relatorios\modelo\ProvedorModeloRelatorio.java
+C:\Users\Marina\OneDrive\Documentos\GitHub\SIGLA\sigla-relatorios\src\main\java\br\com\sigla\relatorios\ordemservico\ServicoRelatorioOrdemServico.java
+C:\Users\Marina\OneDrive\Documentos\GitHub\SIGLA\sigla-relatorios\src\main\java\br\com\sigla\relatorios\pdf\GeradorPdfDocumento.java
+C:\Users\Marina\OneDrive\Documentos\GitHub\SIGLA\sigla-relatorios\src\main\java\br\com\sigla\relatorios\recibo\ServicoRelatorioRecibo.java
+>>>>>>> df60d1d4ea21fc219c348e75e93e717974391d05
