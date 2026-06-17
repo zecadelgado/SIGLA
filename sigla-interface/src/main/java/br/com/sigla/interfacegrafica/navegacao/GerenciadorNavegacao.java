@@ -31,17 +31,27 @@ public class GerenciadorNavegacao {
     }
 
     public void navigateTo(VisaoAplicacao view) {
-        if (view.isSobreposta()) {
+        try {
+            if (view.isSobreposta()) {
+                fluxoAplicacao.showView(view);
+                currentView = view;
+                return;
+            }
+            if (view.isShellContent() && shellContentHost != null) {
+                shellContentHost.setCenter(loadShellContent(view));
+                return;
+            }
             fluxoAplicacao.showView(view);
             currentView = view;
-            return;
+        } catch (RuntimeException erro) {
+            // Falha ao carregar/inicializar a tela (ex.: erro de banco) nao pode quebrar a
+            // navegacao em silencio: mostra a causa em vez de deixar a tela morta.
+            new javafx.scene.control.Alert(
+                    javafx.scene.control.Alert.AlertType.ERROR,
+                    br.com.sigla.interfacegrafica.util.MensagensErro.descrever("Nao foi possivel abrir a tela:", erro),
+                    javafx.scene.control.ButtonType.OK
+            ).showAndWait();
         }
-        if (view.isShellContent() && shellContentHost != null) {
-            shellContentHost.setCenter(loadShellContent(view));
-            return;
-        }
-        fluxoAplicacao.showView(view);
-        currentView = view;
     }
 
     public void registerShellContentHost(BorderPane shellContentHost) {

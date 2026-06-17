@@ -55,7 +55,14 @@ public class ControladorLogin {
             return;
         }
 
-        boolean authenticated = sessaoLocalAplicacao.login(username, password);
+        boolean authenticated;
+        try {
+            authenticated = sessaoLocalAplicacao.login(username, password);
+        } catch (RuntimeException erro) {
+            mostrarErro(br.com.sigla.interfacegrafica.util.MensagensErro.descrever(
+                    "Nao foi possivel validar o login (verifique a conexao com o banco):", erro));
+            return;
+        }
         if (authenticated) {
             try {
                 setErrorVisible(false);

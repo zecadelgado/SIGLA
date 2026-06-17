@@ -12,7 +12,9 @@ public class ApresentadorMoeda {
     private final NumberFormat numberFormat = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
 
     public String format(BigDecimal value) {
-        return numberFormat.format(value);
+        // NumberFormat.format(null) lanca excecao; trata valor ausente como zero
+        // para nunca quebrar a renderizacao de tabelas/labels.
+        return numberFormat.format(value == null ? BigDecimal.ZERO : value);
     }
 }
 
