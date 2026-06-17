@@ -8,6 +8,7 @@ import br.com.sigla.dominio.clientes.Cliente;
 import br.com.sigla.dominio.contratos.Contrato;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorData;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorMoeda;
+import br.com.sigla.interfacegrafica.async.ExecutorTarefasUi;
 import br.com.sigla.interfacegrafica.formatador.FormatadorMascaraMoeda;
 import br.com.sigla.interfacegrafica.util.TradutorInterface;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -46,6 +47,9 @@ public class ControladorContratosCertificados {
     private final ApresentadorData apresentadorData;
     private final ApresentadorMoeda apresentadorMoeda;
     private final FormatadorMascaraMoeda formatadorMoeda;
+    private final ExecutorTarefasUi executorTarefasUi;
+
+    private int geracaoRefresh;
 
     @FXML
     private Label totalAtivosLabel;
@@ -84,7 +88,8 @@ public class ControladorContratosCertificados {
             CasoDeUsoCliente casoDeUsoCliente,
             ApresentadorData apresentadorData,
             ApresentadorMoeda apresentadorMoeda,
-            FormatadorMascaraMoeda formatadorMoeda
+            FormatadorMascaraMoeda formatadorMoeda,
+            ExecutorTarefasUi executorTarefasUi
     ) {
         this.casoDeUsoContrato = casoDeUsoContrato;
         this.casoDeUsoCertificado = casoDeUsoCertificado;
@@ -92,6 +97,7 @@ public class ControladorContratosCertificados {
         this.apresentadorData = apresentadorData;
         this.apresentadorMoeda = apresentadorMoeda;
         this.formatadorMoeda = formatadorMoeda;
+        this.executorTarefasUi = executorTarefasUi;
     }
 
     @FXML
@@ -233,12 +239,26 @@ public class ControladorContratosCertificados {
     }
 
     private void refresh() {
+        int geracao = ++geracaoRefresh;
+        executorTarefasUi.executar(
+                () -> new VencimentoSnapshot(casoDeUsoCliente.listAll(), casoDeUsoContrato.listAll(), casoDeUsoCertificado.listAll()),
+                dados -> {
+                    if (geracao == geracaoRefresh) {
+                        aplicar(dados);
+                    }
+                });
+    }
+
+    private record VencimentoSnapshot(List<Cliente> clientes, List<Contrato> contratos, List<Certificado> certificados) {
+    }
+
+    private void aplicar(VencimentoSnapshot dados) {
         LocalDate hoje = LocalDate.now();
-        Map<String, Cliente> clientes = casoDeUsoCliente.listAll().stream()
+        Map<String, Cliente> clientes = dados.clientes().stream()
                 .collect(Collectors.toMap(Cliente::id, Function.identity(), (left, right) -> left));
         List<ItemVencimentoRow> rows = new ArrayList<>();
 
-        for (Contrato contrato : casoDeUsoContrato.listAll()) {
+        for (Contrato contrato : dados.contratos()) {
             String cliente = nomeCliente(clientes, contrato.customerId());
             String situacao = situacao(contrato.status() == Contrato.ContratoStatus.CANCELLED, contrato.endDate(), contrato.alertDaysBeforeEnd(), hoje);
             rows.add(new ItemVencimentoRow(
@@ -255,7 +275,7 @@ public class ControladorContratosCertificados {
             ));
         }
 
-        for (Certificado certificado : casoDeUsoCertificado.listAll()) {
+        for (Certificado certificado : dados.certificados()) {
             String cliente = nomeCliente(clientes, certificado.customerId());
             String situacao = situacao(certificado.status() == Certificado.CertificadoStatus.REPLACED, certificado.validUntil(), certificado.renewalAlertDays(), hoje);
             rows.add(new ItemVencimentoRow(

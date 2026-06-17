@@ -1,5 +1,7 @@
+br\com\sigla\interfacegrafica\controlador\ControladorClientes$ClientesSnapshot.class
 br\com\sigla\interfacegrafica\controlador\ControladorNovaTransacao$2.class
 br\com\sigla\interfacegrafica\controlador\ControladorClientes.class
+br\com\sigla\interfacegrafica\controlador\ControladorFinanceiro$FinanceiroSnapshot.class
 br\com\sigla\interfacegrafica\aplicativo\SessaoLocalAplicacao.class
 br\com\sigla\interfacegrafica\controlador\ControladorOrdemServico.class
 br\com\sigla\interfacegrafica\controlador\ControladorAgenda$Option.class
@@ -24,13 +26,16 @@ br\com\sigla\interfacegrafica\controlador\ControladorClientes$ClienteRankingRow.
 br\com\sigla\interfacegrafica\controlador\ControladorFinanceiro$2.class
 br\com\sigla\interfacegrafica\controlador\ControladorCadastro$CadastroRow.class
 br\com\sigla\interfacegrafica\navegacao\VisaoAplicacao$ModoExibicao.class
+br\com\sigla\interfacegrafica\controlador\ControladorEstoque$EstoqueSnapshot.class
 br\com\sigla\interfacegrafica\inicializacao\AplicacaoSpringSigla.class
 br\com\sigla\interfacegrafica\inicializacao\AgendadorNotificacoesVencimento.class
+br\com\sigla\interfacegrafica\controlador\ControladorAgenda$AgendaSnapshot.class
 br\com\sigla\interfacegrafica\consulta\ContextoDetalheOrdemServico.class
 br\com\sigla\interfacegrafica\controlador\ControladorClientes$IndicacaoRow.class
 br\com\sigla\interfacegrafica\controlador\ControladorNovaTransacao.class
 br\com\sigla\interfacegrafica\controlador\ControladorAgenda$1.class
 br\com\sigla\interfacegrafica\formatador\FormatadorMascaraCpf.class
+br\com\sigla\interfacegrafica\controlador\ControladorOrdemServico$OsSnapshot.class
 br\com\sigla\interfacegrafica\inicializacao\InicializadorDadosDesenvolvimento.class
 br\com\sigla\interfacegrafica\formatador\FormatadorMascaraMoeda.class
 br\com\sigla\interfacegrafica\util\ResolvedorEntradaTexto.class
@@ -67,7 +72,9 @@ br\com\sigla\interfacegrafica\controlador\ControladorCadastro$ResponsavelRow.cla
 br\com\sigla\interfacegrafica\util\UtilJanela.class
 br\com\sigla\interfacegrafica\controlador\ControladorNovaTransacao$1.class
 br\com\sigla\interfacegrafica\controlador\ControladorAgenda$ResponsavelOption.class
+br\com\sigla\interfacegrafica\controlador\ControladorContratosCertificados$VencimentoSnapshot.class
 br\com\sigla\interfacegrafica\util\TradutorInterface$2.class
+br\com\sigla\interfacegrafica\controlador\ControladorCadastro$CadastroSnapshot.class
 br\com\sigla\interfacegrafica\controlador\ControladorNovaMovimentacao.class
 br\com\sigla\interfacegrafica\apresentacao\ApresentadorData.class
 br\com\sigla\interfacegrafica\util\TradutorInterface.class

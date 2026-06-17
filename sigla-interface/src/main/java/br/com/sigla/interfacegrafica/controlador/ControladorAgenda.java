@@ -7,6 +7,7 @@ import br.com.sigla.dominio.agenda.VisitaAgendada;
 import br.com.sigla.dominio.clientes.Cliente;
 import br.com.sigla.dominio.funcionarios.Funcionario;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorData;
+import br.com.sigla.interfacegrafica.async.ExecutorTarefasUi;
 import br.com.sigla.interfacegrafica.util.TradutorInterface;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.fxml.FXML;
@@ -39,6 +40,9 @@ public class ControladorAgenda {
     private final CasoDeUsoCliente clienteUseCase;
     private final CasoDeUsoFuncionario funcionarioUseCase;
     private final ApresentadorData apresentadorData;
+    private final ExecutorTarefasUi executorTarefasUi;
+
+    private int geracaoRefresh;
 
     @FXML
     private Label periodoLabel;
@@ -73,12 +77,14 @@ public class ControladorAgenda {
             CasoDeUsoAgenda agendaUseCase,
             CasoDeUsoCliente clienteUseCase,
             CasoDeUsoFuncionario funcionarioUseCase,
-            ApresentadorData apresentadorData
+            ApresentadorData apresentadorData,
+            ExecutorTarefasUi executorTarefasUi
     ) {
         this.agendaUseCase = agendaUseCase;
         this.clienteUseCase = clienteUseCase;
         this.funcionarioUseCase = funcionarioUseCase;
         this.apresentadorData = apresentadorData;
+        this.executorTarefasUi = executorTarefasUi;
     }
 
     @FXML
@@ -184,12 +190,22 @@ public class ControladorAgenda {
             }
         }
         periodoLabel.setText(apresentadorData.format(start) + " a " + apresentadorData.format(end));
-        List<Cliente> clientes = clienteUseCase.listAll();
-        List<Funcionario> funcionarios = funcionarioUseCase.listAll();
-        eventosTable.getItems().setAll(agendaUseCase.listBetween(start, end).stream()
-                .map(evento -> toRow(evento, clientes, funcionarios))
-                .sorted(Comparator.comparing(AgendaRow::dataBase).thenComparing(AgendaRow::inicioHora).thenComparing(AgendaRow::titulo))
-                .toList());
+        LocalDate inicio = start;
+        LocalDate fim = end;
+        int geracao = ++geracaoRefresh;
+        executorTarefasUi.executar(
+                () -> new AgendaSnapshot(clienteUseCase.listAll(), funcionarioUseCase.listAll(), agendaUseCase.listBetween(inicio, fim)),
+                dados -> {
+                    if (geracao == geracaoRefresh) {
+                        eventosTable.getItems().setAll(dados.eventos().stream()
+                                .map(evento -> toRow(evento, dados.clientes(), dados.funcionarios()))
+                                .sorted(Comparator.comparing(AgendaRow::dataBase).thenComparing(AgendaRow::inicioHora).thenComparing(AgendaRow::titulo))
+                                .toList());
+                    }
+                });
+    }
+
+    private record AgendaSnapshot(List<Cliente> clientes, List<Funcionario> funcionarios, List<VisitaAgendada> eventos) {
     }
 
     private void abrirDialogo(VisitaAgendada atual) {

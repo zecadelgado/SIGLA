@@ -5,6 +5,7 @@ import br.com.sigla.aplicacao.funcionarios.porta.entrada.CasoDeUsoFuncionario;
 import br.com.sigla.dominio.clientes.Cliente;
 import br.com.sigla.dominio.funcionarios.Funcionario;
 import br.com.sigla.interfacegrafica.formatador.FormatadorMascaraCpf;
+import br.com.sigla.interfacegrafica.async.ExecutorTarefasUi;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import br.com.sigla.interfacegrafica.util.TradutorInterface;
@@ -36,6 +37,10 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
     private final CasoDeUsoFuncionario casoDeUsoFuncionario;
     private final GerenciadorNavegacao gerenciadorNavegacao;
     private final FormatadorMascaraCpf formatadorMascaraCpf;
+    private final ExecutorTarefasUi executorTarefasUi;
+
+    private int geracaoRefresh;
+    private List<Cliente> clientesCarregados = List.of();
 
     @FXML
     private TextField searchField;
@@ -81,13 +86,15 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
             CasoDeUsoCliente casoDeUsoCliente,
             CasoDeUsoFuncionario casoDeUsoFuncionario,
             GerenciadorNavegacao gerenciadorNavegacao,
-            FormatadorMascaraCpf formatadorMascaraCpf
+            FormatadorMascaraCpf formatadorMascaraCpf,
+            ExecutorTarefasUi executorTarefasUi
     ) {
         super(gerenciadorNavegacao);
         this.casoDeUsoCliente = casoDeUsoCliente;
         this.casoDeUsoFuncionario = casoDeUsoFuncionario;
         this.gerenciadorNavegacao = gerenciadorNavegacao;
         this.formatadorMascaraCpf = formatadorMascaraCpf;
+        this.executorTarefasUi = executorTarefasUi;
     }
 
     @FXML
@@ -134,51 +141,74 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
     }
 
     private void refresh() {
+        String filtroTipo = filtroAtual;
+        String filtroStatus = filtroAtivo;
         String termo = normalizeSearch(searchField == null ? "" : searchField.getText());
+        int geracao = ++geracaoRefresh;
+        executorTarefasUi.executar(
+                () -> carregar(termo, filtroTipo, filtroStatus),
+                dados -> {
+                    if (geracao == geracaoRefresh) {
+                        aplicar(termo, dados);
+                    }
+                });
+    }
+
+    private CadastroSnapshot carregar(String termo, String filtroTipo, String filtroStatus) {
+        Boolean ativo = switch (filtroStatus) {
+            case "INATIVOS" -> false;
+            case "TODOS" -> null;
+            default -> true;
+        };
+        List<Cliente> clientes = "FUNCIONARIO".equals(filtroTipo)
+                ? List.of()
+                : casoDeUsoCliente.filtrar(new CasoDeUsoCliente.FiltroCliente(termo, ativo, null));
+        List<Funcionario> funcionarios = "CLIENTE".equals(filtroTipo)
+                ? List.of()
+                : casoDeUsoFuncionario.listAll();
+        return new CadastroSnapshot(clientes, funcionarios, filtroStatus);
+    }
+
+    private record CadastroSnapshot(List<Cliente> clientes, List<Funcionario> funcionarios, String filtroStatus) {
+    }
+
+    private void aplicar(String termo, CadastroSnapshot dados) {
+        clientesCarregados = dados.clientes();
         List<CadastroRow> registros = new ArrayList<>();
-        if (!"FUNCIONARIO".equals(filtroAtual)) {
-            Boolean ativo = switch (filtroAtivo) {
-                case "INATIVOS" -> false;
-                case "TODOS" -> null;
-                default -> true;
-            };
-            casoDeUsoCliente.filtrar(new CasoDeUsoCliente.FiltroCliente(termo, ativo, null)).forEach(customer -> registros.add(new CadastroRow(
-                    customer.id(),
-                    true,
-                    customer.tipo().name(),
-                    customer.name(),
-                    customer.cpf(),
-                    customer.cnpj(),
-                    customer.razaoSocial(),
-                    customer.phone(),
-                    customer.email().isBlank() ? "-" : customer.email(),
-                    blankAsDash(customer.cep()),
-                    blankAsDash(customer.cidade()),
-                    customer.ativo() ? "Ativo" : "Inativo"
-            )));
-        }
-        if (!"CLIENTE".equals(filtroAtual)) {
-            casoDeUsoFuncionario.listAll().stream()
-                    .filter(employee -> switch (filtroAtivo) {
-                        case "INATIVOS" -> employee.status() != Funcionario.FuncionarioStatus.ACTIVE;
-                        case "TODOS" -> true;
-                        default -> employee.status() == Funcionario.FuncionarioStatus.ACTIVE;
-                    })
-                    .forEach(employee -> registros.add(new CadastroRow(
-                    employee.id(),
-                    false,
-                    "FUNCIONARIO",
-                    employee.name(),
-                    employee.cpf().isBlank() ? "-" : employee.cpf(),
-                    "-",
-                    employee.role(),
-                    employee.contato(),
-                    employee.email().isBlank() ? "-" : employee.email(),
-                    blankAsDash(employee.cep()),
-                    blankAsDash(employee.cidade()),
-                    TradutorInterface.texto(employee.status())
-            )));
-        }
+        dados.clientes().forEach(customer -> registros.add(new CadastroRow(
+                customer.id(),
+                true,
+                customer.tipo().name(),
+                customer.name(),
+                customer.cpf(),
+                customer.cnpj(),
+                customer.razaoSocial(),
+                customer.phone(),
+                customer.email().isBlank() ? "-" : customer.email(),
+                blankAsDash(customer.cep()),
+                blankAsDash(customer.cidade()),
+                customer.ativo() ? "Ativo" : "Inativo"
+        )));
+        dados.funcionarios().stream()
+                .filter(employee -> switch (dados.filtroStatus()) {
+                    case "INATIVOS" -> employee.status() != Funcionario.FuncionarioStatus.ACTIVE;
+                    case "TODOS" -> true;
+                    default -> employee.status() == Funcionario.FuncionarioStatus.ACTIVE;
+                })
+                .forEach(employee -> registros.add(new CadastroRow(
+                employee.id(),
+                false,
+                "FUNCIONARIO",
+                employee.name(),
+                employee.cpf().isBlank() ? "-" : employee.cpf(),
+                "-",
+                employee.role(),
+                employee.contato(),
+                employee.email().isBlank() ? "-" : employee.email(),
+                blankAsDash(employee.cep()),
+                blankAsDash(employee.cidade()),
+                TradutorInterface.texto(employee.status())
+        )));
 
         if (cadastroTable == null) {
             return;
@@ -499,7 +529,7 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
             responsaveisTable.getItems().clear();
             return;
         }
-        casoDeUsoCliente.listAll().stream()
+        clientesCarregados.stream()
                 .filter(cliente -> cliente.id().equals(row.id()))
                 .findFirst()
                 .ifPresentOrElse(cliente -> responsaveisTable.getItems().setAll(cliente.contacts().stream()

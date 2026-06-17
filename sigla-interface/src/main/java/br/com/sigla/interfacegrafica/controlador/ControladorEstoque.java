@@ -6,6 +6,7 @@ import br.com.sigla.relatorios.etiqueta.ServicoRelatorioEtiqueta;
 import br.com.sigla.dominio.estoque.ItemEstoque;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorData;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorMoeda;
+import br.com.sigla.interfacegrafica.async.ExecutorTarefasUi;
 import br.com.sigla.interfacegrafica.formatador.FormatadorMascaraMoeda;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
@@ -26,7 +27,9 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class ControladorEstoque extends ControladorComMenuPrincipal {
@@ -38,6 +41,10 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
     private final ApresentadorData apresentadorData;
     private final FormatadorMascaraMoeda formatadorMoeda;
     private final ServicoRelatorioEtiqueta servicoRelatorioEtiqueta;
+    private final ExecutorTarefasUi executorTarefasUi;
+
+    private Map<String, String> clienteNomes = Map.of();
+    private int geracaoRefresh;
 
     @FXML
     private Label totalProdutosLabel;
@@ -94,7 +101,8 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
             ApresentadorMoeda apresentadorMoeda,
             ApresentadorData apresentadorData,
             FormatadorMascaraMoeda formatadorMoeda,
-            ServicoRelatorioEtiqueta servicoRelatorioEtiqueta
+            ServicoRelatorioEtiqueta servicoRelatorioEtiqueta,
+            ExecutorTarefasUi executorTarefasUi
     ) {
         super(gerenciadorNavegacao);
         this.casoDeUsoCliente = casoDeUsoCliente;
@@ -104,6 +112,7 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
         this.apresentadorData = apresentadorData;
         this.formatadorMoeda = formatadorMoeda;
         this.servicoRelatorioEtiqueta = servicoRelatorioEtiqueta;
+        this.executorTarefasUi = executorTarefasUi;
     }
 
     @FXML
@@ -189,7 +198,35 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
     }
 
     private void refresh() {
-        List<ItemEstoque> items = somenteBaixoEstoque ? casoDeUsoEstoque.listLowStock() : casoDeUsoEstoque.listAll();
+        boolean baixo = somenteBaixoEstoque;
+        int geracao = ++geracaoRefresh;
+        executorTarefasUi.executar(
+                () -> carregar(baixo),
+                dados -> {
+                    if (geracao == geracaoRefresh) {
+                        aplicar(dados);
+                    }
+                });
+    }
+
+    private EstoqueSnapshot carregar(boolean baixo) {
+        List<ItemEstoque> items = baixo ? casoDeUsoEstoque.listLowStock() : casoDeUsoEstoque.listAll();
+        List<CasoDeUsoEstoque.InventoryMovementView> movimentos = casoDeUsoEstoque.listMovements();
+        Map<String, String> nomes = casoDeUsoCliente.listAll().stream()
+                .collect(Collectors.toMap(cliente -> cliente.id(), cliente -> cliente.name(), (a, b) -> a));
+        return new EstoqueSnapshot(items, movimentos, nomes);
+    }
+
+    private record EstoqueSnapshot(
+            List<ItemEstoque> items,
+            List<CasoDeUsoEstoque.InventoryMovementView> movimentos,
+            Map<String, String> clienteNomes
+    ) {
+    }
+
+    private void aplicar(EstoqueSnapshot dados) {
+        clienteNomes = dados.clienteNomes();
+        List<ItemEstoque> items = dados.items();
         if (totalProdutosLabel != null) {
             totalProdutosLabel.setText(String.valueOf(items.size()));
         }
@@ -231,7 +268,7 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
                     .toList());
         }
         if (movimentacoesTable != null) {
-            movimentacoesTable.getItems().setAll(casoDeUsoEstoque.listMovements());
+            movimentacoesTable.getItems().setAll(dados.movimentos());
         }
     }
 
@@ -290,11 +327,7 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
         if (customerId == null || customerId.isBlank()) {
             return "-";
         }
-        return casoDeUsoCliente.listAll().stream()
-                .filter(customer -> customer.id().equals(customerId))
-                .map(customer -> customer.name())
-                .findFirst()
-                .orElse(customerId);
+        return clienteNomes.getOrDefault(customerId, customerId);
     }
 
     private String buildObservacao(CasoDeUsoEstoque.InventoryMovementView movement) {

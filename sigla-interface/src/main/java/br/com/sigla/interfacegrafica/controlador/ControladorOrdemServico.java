@@ -14,6 +14,7 @@ import br.com.sigla.interfacegrafica.consulta.ContextoDetalheOrdemServico;
 import br.com.sigla.interfacegrafica.consulta.ServicoConsultaOrdemServico;
 import br.com.sigla.interfacegrafica.consulta.ServicoConsultaReferencias;
 import br.com.sigla.interfacegrafica.formatador.FormatadorMascaraMoeda;
+import br.com.sigla.interfacegrafica.async.ExecutorTarefasUi;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto;
@@ -53,6 +54,9 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
     private final ServicoRelatorioOrdemServico servicoRelatorioOrdemServico;
     private final ServicoRelatorioVisita servicoRelatorioVisita;
     private final CasoDeUsoCliente casoDeUsoCliente;
+    private final ExecutorTarefasUi executorTarefasUi;
+
+    private int geracaoRefresh;
 
     @FXML
     private Label abertasLabel;
@@ -98,7 +102,8 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
             FormatadorMascaraMoeda formatadorMoeda,
             ServicoRelatorioOrdemServico servicoRelatorioOrdemServico,
             ServicoRelatorioVisita servicoRelatorioVisita,
-            CasoDeUsoCliente casoDeUsoCliente
+            CasoDeUsoCliente casoDeUsoCliente,
+            ExecutorTarefasUi executorTarefasUi
     ) {
         super(gerenciadorNavegacao);
         this.servicoConsultaOrdemServico = servicoConsultaOrdemServico;
@@ -112,6 +117,7 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
         this.servicoRelatorioOrdemServico = servicoRelatorioOrdemServico;
         this.servicoRelatorioVisita = servicoRelatorioVisita;
         this.casoDeUsoCliente = casoDeUsoCliente;
+        this.executorTarefasUi = executorTarefasUi;
     }
 
     @FXML
@@ -313,7 +319,24 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
     }
 
     private void refresh() {
-        var resumo = servicoConsultaOrdemServico.summary();
+        int geracao = ++geracaoRefresh;
+        executorTarefasUi.executar(
+                () -> new OsSnapshot(servicoConsultaOrdemServico.summary(), servicoConsultaOrdemServico.listAll()),
+                dados -> {
+                    if (geracao == geracaoRefresh) {
+                        aplicar(dados);
+                    }
+                });
+    }
+
+    private record OsSnapshot(
+            ServicoConsultaOrdemServico.OrdemServicoResumo resumo,
+            java.util.List<ServicoConsultaOrdemServico.OrdemServicoView> ordens
+    ) {
+    }
+
+    private void aplicar(OsSnapshot dados) {
+        var resumo = dados.resumo();
         if (abertasLabel != null) {
             abertasLabel.setText(String.valueOf(resumo.abertas()));
         }
@@ -329,7 +352,7 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
         if (ordensTable != null) {
             String termo = searchField == null || searchField.getText() == null ? "" : searchField.getText().toLowerCase(Locale.ROOT);
             String filtroStatus = statusCombo == null || statusCombo.getValue() == null ? "Todos" : statusCombo.getValue();
-            ordensTable.getItems().setAll(servicoConsultaOrdemServico.listAll().stream()
+            ordensTable.getItems().setAll(dados.ordens().stream()
                     .filter(order -> termo.isBlank()
                             || order.id().toLowerCase(Locale.ROOT).contains(termo)
                             || order.customerName().toLowerCase(Locale.ROOT).contains(termo)

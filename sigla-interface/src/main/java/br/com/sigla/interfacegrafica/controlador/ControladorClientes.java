@@ -9,6 +9,7 @@ import br.com.sigla.interfacegrafica.apresentacao.ApresentadorData;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorMoeda;
 import br.com.sigla.interfacegrafica.consulta.ServicoConsultaOrdemServico;
 import br.com.sigla.interfacegrafica.formatador.FormatadorMascaraCpf;
+import br.com.sigla.interfacegrafica.async.ExecutorTarefasUi;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import br.com.sigla.interfacegrafica.util.TradutorInterface;
@@ -47,6 +48,9 @@ public class ControladorClientes extends ControladorComMenuPrincipal {
     private final ApresentadorMoeda apresentadorMoeda;
     private final ApresentadorData apresentadorData;
     private final FormatadorMascaraCpf formatadorMascaraCpf;
+    private final ExecutorTarefasUi executorTarefasUi;
+
+    private int geracaoRefresh;
 
     @FXML
     private Label totalClientesLabel;
@@ -99,7 +103,8 @@ public class ControladorClientes extends ControladorComMenuPrincipal {
             GerenciadorNavegacao gerenciadorNavegacao,
             ApresentadorMoeda apresentadorMoeda,
             ApresentadorData apresentadorData,
-            FormatadorMascaraCpf formatadorMascaraCpf
+            FormatadorMascaraCpf formatadorMascaraCpf,
+            ExecutorTarefasUi executorTarefasUi
     ) {
         super(gerenciadorNavegacao);
         this.casoDeUsoCliente = casoDeUsoCliente;
@@ -110,6 +115,7 @@ public class ControladorClientes extends ControladorComMenuPrincipal {
         this.apresentadorMoeda = apresentadorMoeda;
         this.apresentadorData = apresentadorData;
         this.formatadorMascaraCpf = formatadorMascaraCpf;
+        this.executorTarefasUi = executorTarefasUi;
     }
 
     @FXML
@@ -129,22 +135,46 @@ public class ControladorClientes extends ControladorComMenuPrincipal {
     }
 
     private void refresh() {
-        Map<String, Cliente> clienteMap = casoDeUsoCliente.listAll().stream()
-                .collect(Collectors.toMap(Cliente::id, customer -> customer));
+        var filtro = filtroIndicacao();
+        int geracao = ++geracaoRefresh;
+        executorTarefasUi.executar(
+                () -> new ClientesSnapshot(
+                        casoDeUsoCliente.listAll(),
+                        casoDeUsoPotencialCliente.filtrar(filtro),
+                        casoDeUsoFinanceiro.listTransactions(),
+                        servicoConsultaOrdemServico.listAll()),
+                dados -> {
+                    if (geracao == geracaoRefresh) {
+                        aplicar(dados);
+                    }
+                });
+    }
+
+    private record ClientesSnapshot(
+            List<Cliente> clientes,
+            List<PotencialCliente> indicacoesBrutas,
+            List<CasoDeUsoFinanceiro.TransacaoFinanceiraView> transacoes,
+            List<ServicoConsultaOrdemServico.OrdemServicoView> ordens
+    ) {
+    }
+
+    private void aplicar(ClientesSnapshot dados) {
+        Map<String, Cliente> clienteMap = dados.clientes().stream()
+                .collect(Collectors.toMap(Cliente::id, customer -> customer, (a, b) -> a));
         Map<String, String> clientes = clienteMap.values().stream()
-                .collect(Collectors.toMap(Cliente::id, Cliente::name));
-        List<PotencialCliente> indicacoes = casoDeUsoPotencialCliente.filtrar(filtroIndicacao()).stream()
+                .collect(Collectors.toMap(Cliente::id, Cliente::name, (a, b) -> a));
+        List<PotencialCliente> indicacoes = dados.indicacoesBrutas().stream()
                 .filter(lead -> lead.origin().startsWith("INDICACAO"))
                 .toList();
         Map<String, Long> indicacoesPorCliente = indicacoes.stream()
                 .collect(Collectors.groupingBy(this::extractCustomerId, Collectors.counting()));
-        Map<String, BigDecimal> faturamentoPorCliente = casoDeUsoFinanceiro.listTransactions().stream()
+        Map<String, BigDecimal> faturamentoPorCliente = dados.transacoes().stream()
                 .filter(transaction -> transaction.type() == CasoDeUsoFinanceiro.TransactionType.ENTRY)
                 .collect(Collectors.groupingBy(
                         transaction -> transaction.customerId() == null ? "" : transaction.customerId(),
                         Collectors.reducing(BigDecimal.ZERO, CasoDeUsoFinanceiro.TransacaoFinanceiraView::amount, BigDecimal::add)
                 ));
-        Map<String, Long> servicosPorCliente = servicoConsultaOrdemServico.listAll().stream()
+        Map<String, Long> servicosPorCliente = dados.ordens().stream()
                 .collect(Collectors.groupingBy(ServicoConsultaOrdemServico.OrdemServicoView::customerId, Collectors.counting()));
 
         if (totalClientesLabel != null) {

@@ -8,6 +8,7 @@ import br.com.sigla.dominio.financeiro.FormaPagamentoFinanceira;
 import br.com.sigla.dominio.financeiro.LancamentoFinanceiro;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorData;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorMoeda;
+import br.com.sigla.interfacegrafica.async.ExecutorTarefasUi;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import br.com.sigla.interfacegrafica.util.TradutorInterface;
@@ -32,7 +33,9 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class ControladorFinanceiro extends ControladorComMenuPrincipal {
@@ -43,6 +46,10 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
     private final ApresentadorMoeda apresentadorMoeda;
     private final ApresentadorData apresentadorData;
     private final ServicoRelatorioRecibo servicoRelatorioRecibo;
+    private final ExecutorTarefasUi executorTarefasUi;
+
+    private Map<String, String> clienteNomes = Map.of();
+    private int geracaoRefresh;
 
     @FXML
     private Label receitasLabel;
@@ -89,7 +96,8 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
             GerenciadorNavegacao gerenciadorNavegacao,
             ApresentadorMoeda apresentadorMoeda,
             ApresentadorData apresentadorData,
-            ServicoRelatorioRecibo servicoRelatorioRecibo
+            ServicoRelatorioRecibo servicoRelatorioRecibo,
+            ExecutorTarefasUi executorTarefasUi
     ) {
         super(gerenciadorNavegacao);
         this.casoDeUsoCliente = casoDeUsoCliente;
@@ -98,6 +106,7 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
         this.apresentadorMoeda = apresentadorMoeda;
         this.apresentadorData = apresentadorData;
         this.servicoRelatorioRecibo = servicoRelatorioRecibo;
+        this.executorTarefasUi = executorTarefasUi;
     }
 
     @FXML
@@ -265,7 +274,35 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
     }
 
     private void refresh() {
+        var filtro = filtroAtual;
+        int geracao = ++geracaoRefresh;
+        executorTarefasUi.executar(
+                () -> carregar(filtro),
+                dados -> {
+                    if (geracao == geracaoRefresh) {
+                        aplicar(dados);
+                    }
+                });
+    }
+
+    private FinanceiroSnapshot carregar(CasoDeUsoFinanceiro.FiltroFinanceiro filtro) {
         var lancamentos = casoDeUsoFinanceiro.listLancamentos(null);
+        var transacoes = casoDeUsoFinanceiro.listTransactions(filtro);
+        Map<String, String> nomes = casoDeUsoCliente.listAll().stream()
+                .collect(Collectors.toMap(cliente -> cliente.id(), cliente -> cliente.name(), (a, b) -> a));
+        return new FinanceiroSnapshot(lancamentos, transacoes, nomes);
+    }
+
+    private record FinanceiroSnapshot(
+            java.util.List<LancamentoFinanceiro> lancamentos,
+            java.util.List<CasoDeUsoFinanceiro.TransacaoFinanceiraView> transacoes,
+            Map<String, String> clienteNomes
+    ) {
+    }
+
+    private void aplicar(FinanceiroSnapshot dados) {
+        clienteNomes = dados.clienteNomes();
+        var lancamentos = dados.lancamentos();
         BigDecimal receitas = lancamentos.stream()
                 .filter(lancamento -> lancamento.tipo() == LancamentoFinanceiro.Tipo.ENTRY)
                 .filter(lancamento -> lancamento.status() == LancamentoFinanceiro.Status.PAID)
@@ -287,7 +324,7 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
         despesasLabel.setText(apresentadorMoeda.format(despesas));
         saldoLabel.setText(apresentadorMoeda.format(receitas.subtract(despesas)));
         receberLabel.setText(apresentadorMoeda.format(receber));
-        transacoesTable.getItems().setAll(casoDeUsoFinanceiro.listTransactions(filtroAtual));
+        transacoesTable.getItems().setAll(dados.transacoes());
     }
 
     private void configureTable() {
@@ -471,11 +508,7 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
         if (customerId == null || customerId.isBlank()) {
             return "-";
         }
-        return casoDeUsoCliente.listAll().stream()
-                .filter(customer -> customer.id().equals(customerId))
-                .map(customer -> customer.name())
-                .findFirst()
-                .orElse(customerId);
+        return clienteNomes.getOrDefault(customerId, customerId);
     }
 
     private String blankAsDash(String value) {
