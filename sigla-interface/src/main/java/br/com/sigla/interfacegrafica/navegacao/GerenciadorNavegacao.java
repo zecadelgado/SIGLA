@@ -78,9 +78,36 @@ public class GerenciadorNavegacao {
             throw new IllegalArgumentException("View is not shell content: " + view);
         }
         Node content = extractShellContent(loadView(view));
-        configureResponsiveContent(content);
+        ScrollPane container = garantirRolagem(content);
+        configureResponsiveContent(container);
+        ajustarPreenchimentoVertical(container);
         currentView = view;
-        return content;
+        return container;
+    }
+
+    // As telas tem estruturas de FXML diferentes: algumas ja vem dentro de um
+    // ScrollPane, outras tem AnchorPane/VBox como raiz com tamanhos fixos. Para
+    // que todas abram com o mesmo tamanho e rolem quando o conteudo passa da area
+    // visivel, padronizamos tudo dentro de um ScrollPane unico na navegacao.
+    private ScrollPane garantirRolagem(Node content) {
+        if (content instanceof ScrollPane scrollPane) {
+            return scrollPane;
+        }
+        ScrollPane scrollPane = new ScrollPane(content);
+        scrollPane.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
+        return scrollPane;
+    }
+
+    // O conteudo ocupa no minimo a altura visivel do shell. Assim a tela nao
+    // "sobra" cinza quando e menor que a janela e nao "muda de tamanho" quando
+    // os dados chegam de forma assincrona: em vez de redimensionar a tela inteira,
+    // ela apenas passa a rolar.
+    private void ajustarPreenchimentoVertical(ScrollPane scrollPane) {
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        if (scrollPane.getContent() instanceof Region regiao) {
+            scrollPane.viewportBoundsProperty().addListener((observavel, anterior, atual) ->
+                    regiao.setMinHeight(atual.getHeight()));
+        }
     }
 
     public Node loadView(VisaoAplicacao view) {
