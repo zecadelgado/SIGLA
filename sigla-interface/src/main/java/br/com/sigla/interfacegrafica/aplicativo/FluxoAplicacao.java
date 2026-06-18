@@ -27,8 +27,6 @@ public class FluxoAplicacao {
     private static final double MAIN_HEIGHT_RATIO = 0.94;
     private static final double FLOATING_MAX_WIDTH_RATIO = 0.62;
     private static final double FLOATING_MAX_HEIGHT_RATIO = 0.84;
-    private static final double LOGIN_MAX_WIDTH_RATIO = 0.55;
-    private static final double LOGIN_MAX_HEIGHT_RATIO = 0.55;
 
     private final ConfigurableApplicationContext context;
     private final SessaoLocalAplicacao sessaoLocalAplicacao;
@@ -143,7 +141,11 @@ public class FluxoAplicacao {
 
         if (!view.requiresAuthentication()) {
             setStageMinimum(stage, screenBounds, 420, 260);
-            resizeStageToContent(stage, stage.getScene().getRoot(), screenBounds, LOGIN_MAX_WIDTH_RATIO, LOGIN_MAX_HEIGHT_RATIO);
+            // A tela de login tem tamanho fixo (655x450 de conteudo). Dimensionar pelo
+            // conteudo da cena (sizeToScene) garante que a area util receba o tamanho
+            // cheio: o SO acrescenta a barra de titulo/bordas POR FORA. Antes o stage
+            // recebia 655x450 no total e, descontada a moldura, o login aparecia menor.
+            stage.sizeToScene();
         } else {
             setStageMinimum(stage, screenBounds, 960, 640);
             double width = clamp(screenBounds.getWidth() * MAIN_WIDTH_RATIO, Math.min(960, screenBounds.getWidth()), screenBounds.getWidth());
