@@ -190,7 +190,7 @@ public class ControladorUsuarios {
     }
 
     private void mostrar(String message) {
-        new Alert(Alert.AlertType.INFORMATION, message == null ? "Ação não realizada." : message, ButtonType.OK).showAndWait();
+        br.com.sigla.interfacegrafica.util.DialogoUi.informacao(message);
     }
 
     private record UsuarioRow(

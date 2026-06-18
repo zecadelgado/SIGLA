@@ -421,12 +421,17 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
         Dialog<CasoDeUsoOrdemServico.UpdateOrdemServicoCommand> dialog = new Dialog<>();
         dialog.setTitle("Editar OS");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-        TextField cliente = new TextField(selected.customerId());
+        TextField cliente = new TextField(selected.customerName());
         TextField titulo = new TextField(selected.title());
         TextArea descricao = new TextArea(selected.description());
         descricao.setPrefRowCount(2);
         TextField tipo = new TextField(selected.serviceType());
-        TextField responsavel = new TextField(selected.responsible().equals("-") ? "" : selected.responsible());
+        String responsavelLabel = servicoConsultaReferencias.funcionarios().stream()
+                .filter(opcao -> opcao.id().equals(selected.responsible()))
+                .map(opcao -> opcao.label())
+                .findFirst()
+                .orElse(selected.responsible().equals("-") ? "" : selected.responsible());
+        TextField responsavel = new TextField(responsavelLabel);
         DatePicker dataPicker = new DatePicker(selected.emissionDate() == null ? LocalDate.now() : selected.emissionDate());
         TextField valor = new TextField();
         formatadorMoeda.aplicar(valor);
@@ -518,7 +523,7 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
     }
 
     private void mostrar(String message) {
-        new Alert(Alert.AlertType.INFORMATION, message, ButtonType.OK).showAndWait();
+        br.com.sigla.interfacegrafica.util.DialogoUi.informacao(message);
     }
 
     private void configureColumn(TableColumn<ServicoConsultaOrdemServico.OrdemServicoView, String> column, int fallbackIndex, java.util.function.Function<ServicoConsultaOrdemServico.OrdemServicoView, String> getter) {

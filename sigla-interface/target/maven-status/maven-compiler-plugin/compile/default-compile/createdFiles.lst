@@ -50,6 +50,7 @@ br\com\sigla\interfacegrafica\async\ExecutorTarefasUi$2.class
 br\com\sigla\interfacegrafica\aplicativo\AplicacaoDesktopSigla.class
 br\com\sigla\interfacegrafica\aplicativo\EstruturaAplicacao.class
 br\com\sigla\interfacegrafica\controlador\ControladorEstoque$ProdutoRow.class
+br\com\sigla\interfacegrafica\util\DialogoUi.class
 br\com\sigla\interfacegrafica\controlador\ControladorNovaIndicacao.class
 br\com\sigla\interfacegrafica\controlador\ControladorDetalhesServicosDia.class
 br\com\sigla\interfacegrafica\controlador\ControladorDashboard$DadosDashboard.class

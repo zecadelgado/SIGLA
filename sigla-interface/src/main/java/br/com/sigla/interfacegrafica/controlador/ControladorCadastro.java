@@ -579,8 +579,7 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
     }
 
     private void mostrar(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION, message, ButtonType.OK);
-        alert.showAndWait();
+        br.com.sigla.interfacegrafica.util.DialogoUi.informacao(message);
     }
 
     private String normalizeSearch(String text) {

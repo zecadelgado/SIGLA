@@ -212,9 +212,7 @@ public class ControladorContratosCertificados {
     }
 
     private void alerta(String mensagem) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION, mensagem == null ? "" : mensagem);
-        alert.setHeaderText(null);
-        alert.showAndWait();
+        br.com.sigla.interfacegrafica.util.DialogoUi.informacao(mensagem);
     }
 
     private void configurarFiltros() {

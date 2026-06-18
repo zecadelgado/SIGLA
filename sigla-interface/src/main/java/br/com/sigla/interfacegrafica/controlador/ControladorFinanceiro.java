@@ -490,7 +490,7 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
     }
 
     private void mostrar(String message) {
-        new Alert(Alert.AlertType.WARNING, message == null ? "Ação não realizada." : message, ButtonType.OK).showAndWait();
+        br.com.sigla.interfacegrafica.util.DialogoUi.aviso(message);
     }
 
     private GridPane grid() {

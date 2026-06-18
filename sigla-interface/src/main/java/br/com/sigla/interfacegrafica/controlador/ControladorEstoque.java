@@ -396,7 +396,7 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
     }
 
     private void mostrar(String message) {
-        new Alert(Alert.AlertType.INFORMATION, message, ButtonType.OK).showAndWait();
+        br.com.sigla.interfacegrafica.util.DialogoUi.informacao(message);
     }
 
     private record ProdutoRow(

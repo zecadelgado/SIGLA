@@ -438,8 +438,7 @@ public class ControladorClientes extends ControladorComMenuPrincipal {
     }
 
     private void mostrar(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION, message, ButtonType.OK);
-        alert.showAndWait();
+        br.com.sigla.interfacegrafica.util.DialogoUi.informacao(message);
     }
 
     private void configureRankingColumn(TableColumn<ClienteRankingRow, String> column, int fallbackIndex, java.util.function.Function<ClienteRankingRow, String> getter) {
