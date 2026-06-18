@@ -2,6 +2,7 @@ package br.com.sigla.interfacegrafica.controlador;
 
 import br.com.sigla.aplicacao.clientes.porta.entrada.CasoDeUsoCliente;
 import br.com.sigla.aplicacao.servicos.porta.entrada.CasoDeUsoOrdemServico;
+import br.com.sigla.aplicacao.servicos.porta.saida.PortaArmazenamentoAnexo;
 import br.com.sigla.relatorios.formulario.FormularioOrdemServico;
 import br.com.sigla.relatorios.formulario.FormularioVisita;
 import br.com.sigla.relatorios.ordemservico.ServicoRelatorioOrdemServico;
@@ -23,6 +24,7 @@ import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Dialog;
@@ -32,8 +34,11 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.stage.FileChooser;
 import org.springframework.stereotype.Component;
 
+import java.awt.Desktop;
+import java.io.File;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.Locale;
@@ -55,6 +60,7 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
     private final ServicoRelatorioVisita servicoRelatorioVisita;
     private final CasoDeUsoCliente casoDeUsoCliente;
     private final ExecutorTarefasUi executorTarefasUi;
+    private final PortaArmazenamentoAnexo portaArmazenamentoAnexo;
 
     private int geracaoRefresh;
 
@@ -103,7 +109,8 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
             ServicoRelatorioOrdemServico servicoRelatorioOrdemServico,
             ServicoRelatorioVisita servicoRelatorioVisita,
             CasoDeUsoCliente casoDeUsoCliente,
-            ExecutorTarefasUi executorTarefasUi
+            ExecutorTarefasUi executorTarefasUi,
+            PortaArmazenamentoAnexo portaArmazenamentoAnexo
     ) {
         super(gerenciadorNavegacao);
         this.servicoConsultaOrdemServico = servicoConsultaOrdemServico;
@@ -118,6 +125,7 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
         this.servicoRelatorioVisita = servicoRelatorioVisita;
         this.casoDeUsoCliente = casoDeUsoCliente;
         this.executorTarefasUi = executorTarefasUi;
+        this.portaArmazenamentoAnexo = portaArmazenamentoAnexo;
     }
 
     @FXML
@@ -220,6 +228,76 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
             executar(() -> casoDeUsoOrdemServico.anexar(value));
             refresh();
         });
+    }
+
+    @FXML
+    private void onVerAnexos() {
+        var selected = selecionada();
+        if (selected == null) {
+            return;
+        }
+        OrdemServico ordem = casoDeUsoOrdemServico.listAll().stream()
+                .filter(os -> os.id().equals(selected.id()))
+                .findFirst()
+                .orElse(null);
+        if (ordem == null || ordem.anexos().isEmpty()) {
+            mostrar("Esta OS nao possui anexos.");
+            return;
+        }
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("Anexos da OS");
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+        javafx.scene.control.ListView<OrdemServico.Anexo> lista = new javafx.scene.control.ListView<>();
+        lista.getItems().setAll(ordem.anexos());
+        lista.setCellFactory(view -> new javafx.scene.control.ListCell<>() {
+            @Override
+            protected void updateItem(OrdemServico.Anexo anexo, boolean vazio) {
+                super.updateItem(anexo, vazio);
+                setText(vazio || anexo == null ? null
+                        : anexo.nomeArquivo() + "  [" + anexo.tipo() + "]"
+                        + (anexo.descricao() == null || anexo.descricao().isBlank() ? "" : " - " + anexo.descricao()));
+            }
+        });
+        lista.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2 && lista.getSelectionModel().getSelectedItem() != null) {
+                abrirArquivo(lista.getSelectionModel().getSelectedItem().caminhoStorage());
+            }
+        });
+        javafx.scene.control.Button abrir = new javafx.scene.control.Button("Abrir selecionado");
+        abrir.setMaxWidth(Double.MAX_VALUE);
+        abrir.setOnAction(event -> {
+            OrdemServico.Anexo anexo = lista.getSelectionModel().getSelectedItem();
+            if (anexo == null) {
+                mostrar("Selecione um anexo na lista.");
+                return;
+            }
+            abrirArquivo(anexo.caminhoStorage());
+        });
+        javafx.scene.layout.VBox caixa = new javafx.scene.layout.VBox(8, lista, abrir);
+        caixa.setPrefSize(480, 360);
+        dialog.getDialogPane().setContent(caixa);
+        dialog.showAndWait();
+    }
+
+    private void abrirArquivo(String caminho) {
+        if (caminho == null || caminho.isBlank()) {
+            mostrar("Anexo sem arquivo associado.");
+            return;
+        }
+        File arquivo = new File(caminho);
+        if (!arquivo.exists()) {
+            mostrar("Arquivo nao encontrado em: " + caminho);
+            return;
+        }
+        try {
+            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
+                Desktop.getDesktop().open(arquivo);
+            } else {
+                mostrar("Nao foi possivel abrir automaticamente. Arquivo em: " + caminho);
+            }
+        } catch (Exception excecao) {
+            mostrar(br.com.sigla.interfacegrafica.util.MensagensErro.descrever("Nao foi possivel abrir o anexo:", excecao));
+        }
     }
 
     @FXML
@@ -481,29 +559,59 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
         ComboBox<OrdemServico.TipoAnexo> tipo = new ComboBox<>();
         tipo.getItems().setAll(OrdemServico.TipoAnexo.values());
         tipo.getSelectionModel().select(OrdemServico.TipoAnexo.OUTRO);
-        TextField nome = new TextField();
-        TextField caminho = new TextField();
-        TextField mime = new TextField("application/octet-stream");
+        Label arquivoLabel = new Label("Nenhum arquivo selecionado");
         TextArea descricao = new TextArea();
         descricao.setPrefRowCount(3);
+
+        String[] caminhoStore = {""};
+        String[] nomeArquivo = {""};
+        String[] mime = {"application/octet-stream"};
+        long[] tamanho = {0L};
+
+        Button escolher = new Button("Escolher arquivo...");
+        escolher.setOnAction(event -> {
+            FileChooser chooser = new FileChooser();
+            chooser.setTitle("Selecionar arquivo para anexar");
+            File arquivo = chooser.showOpenDialog(escolher.getScene() == null ? null : escolher.getScene().getWindow());
+            if (arquivo == null) {
+                return;
+            }
+            try {
+                byte[] conteudo = java.nio.file.Files.readAllBytes(arquivo.toPath());
+                String tipoDetectado = java.nio.file.Files.probeContentType(arquivo.toPath());
+                // Copia o arquivo para o armazenamento da aplicacao (var/attachments) e guarda o caminho.
+                caminhoStore[0] = portaArmazenamentoAnexo.store("os-" + ordemId, arquivo.getName(), conteudo);
+                nomeArquivo[0] = arquivo.getName();
+                mime[0] = tipoDetectado == null || tipoDetectado.isBlank() ? "application/octet-stream" : tipoDetectado;
+                tamanho[0] = conteudo.length;
+                arquivoLabel.setText(arquivo.getName() + "  (" + Math.max(1, conteudo.length / 1024) + " KB)");
+            } catch (Exception excecao) {
+                mostrar(br.com.sigla.interfacegrafica.util.MensagensErro.descrever("Falha ao anexar o arquivo:", excecao));
+            }
+        });
+
         GridPane grid = grid();
         grid.addRow(0, new Label("Tipo"), tipo);
-        grid.addRow(1, new Label("Nome do arquivo"), nome);
-        grid.addRow(2, new Label("Caminho"), caminho);
-        grid.addRow(3, new Label("MIME"), mime);
-        grid.addRow(4, new Label("Descrição"), descricao);
+        grid.addRow(1, new Label("Arquivo"), escolher);
+        grid.addRow(2, new Label(""), arquivoLabel);
+        grid.addRow(3, new Label("Descrição"), descricao);
         dialog.getDialogPane().setContent(grid);
-        dialog.setResultConverter(button -> button == ButtonType.OK ? new CasoDeUsoOrdemServico.AnexarOrdemServicoCommand(
-                ordemId,
-                UUID.randomUUID().toString(),
-                tipo.getValue(),
-                nome.getText(),
-                caminho.getText(),
-                mime.getText(),
-                0,
-                descricao.getText(),
-                ""
-        ) : null);
+        dialog.setResultConverter(button -> {
+            if (button != ButtonType.OK || caminhoStore[0].isBlank()) {
+                return null;
+            }
+            return new CasoDeUsoOrdemServico.AnexarOrdemServicoCommand(
+                    ordemId,
+                    UUID.randomUUID().toString(),
+                    tipo.getValue(),
+                    nomeArquivo[0],
+                    caminhoStore[0],
+                    mime[0],
+                    tamanho[0],
+                    descricao.getText(),
+                    ""
+            );
+        });
         return dialog.showAndWait();
     }
 

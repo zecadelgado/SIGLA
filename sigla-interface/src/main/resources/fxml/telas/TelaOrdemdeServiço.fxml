@@ -327,6 +327,10 @@
                            <font>
                               <Font name="Ebrima Bold" size="14.0" />
                            </font></Button>
+                        <Button mnemonicParsing="false" onAction="#onVerAnexos" prefHeight="38.0" prefWidth="120.0" style="-fx-background-color: white; -fx-background-radius: 5;" text="Anexos">
+                           <font>
+                              <Font name="Ebrima Bold" size="14.0" />
+                           </font></Button>
                         <Button mnemonicParsing="false" onAction="#onCancelarOrdem" prefHeight="38.0" prefWidth="120.0" style="-fx-background-color: white; -fx-background-radius: 5;" text="Cancelar">
                            <font>
                               <Font name="Ebrima Bold" size="14.0" />

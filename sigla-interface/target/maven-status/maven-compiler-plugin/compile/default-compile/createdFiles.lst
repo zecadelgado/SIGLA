@@ -13,6 +13,7 @@ br\com\sigla\interfacegrafica\async\ExecutorTarefasUi.class
 br\com\sigla\interfacegrafica\controlador\ControladorServicos$ItemCalendario.class
 br\com\sigla\interfacegrafica\modelo\OpcaoId.class
 br\com\sigla\interfacegrafica\controlador\ControladorNovoServico.class
+br\com\sigla\interfacegrafica\controlador\ControladorOrdemServico$1.class
 br\com\sigla\interfacegrafica\controlador\ControladorNovoCadastro.class
 br\com\sigla\interfacegrafica\consulta\ServicoConsultaOrdemServico$OrdemServicoResumo.class
 br\com\sigla\interfacegrafica\controlador\ControladorServicos.class
