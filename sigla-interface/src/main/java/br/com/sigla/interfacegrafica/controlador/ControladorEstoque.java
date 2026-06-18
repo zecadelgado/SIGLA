@@ -22,6 +22,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -52,6 +53,8 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
     private Label valorTotalLabel;
     @FXML
     private Label produtosBaixaLabel;
+    @FXML
+    private VBox alertaBox;
     @FXML
     private Label alertaLabel;
     @FXML
@@ -239,6 +242,11 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
         long lowCount = items.stream().filter(item -> item.isLowStock()).count();
         if (produtosBaixaLabel != null) {
             produtosBaixaLabel.setText(String.valueOf(lowCount));
+        }
+        if (alertaBox != null) {
+            boolean alertaVisivel = lowCount > 0;
+            alertaBox.setVisible(alertaVisivel);
+            alertaBox.setManaged(alertaVisivel);
         }
         if (alertaLabel != null) {
             alertaLabel.setText(lowCount == 0

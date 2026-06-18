@@ -136,6 +136,21 @@ class TelaFxmlResourcesTest {
         }
     }
 
+    @Test
+    void shouldKeepEstoqueTablesUnwrappedAndLowStockAlertHiddenByDefault() throws IOException {
+        try (InputStream stream = VisaoAplicacao.class.getResourceAsStream(VisaoAplicacao.INVENTORY.fxmlPath())) {
+            assertNotNull(stream, "Missing FXML for " + VisaoAplicacao.INVENTORY);
+            String content = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
+            int alertIndex = content.indexOf("fx:id=\"alertaBox\"");
+
+            assertTrue(alertIndex >= 0, "Missing low stock alert box");
+            assertTrue(content.contains("fx:id=\"alertaBox\" managed=\"false\" visible=\"false\""),
+                    "Low stock alert should start hidden and unmanaged");
+            assertFalse(content.substring(alertIndex).contains("<ScrollPane"),
+                    "Inventory tables should not be wrapped by nested ScrollPane nodes");
+        }
+    }
+
     private boolean hasField(Class<?> type, String name) {
         Class<?> current = type;
         while (current != null) {
