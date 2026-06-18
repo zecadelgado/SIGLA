@@ -3,6 +3,7 @@ br\com\sigla\interfacegrafica\controlador\ControladorNovaTransacao$2.class
 br\com\sigla\interfacegrafica\controlador\ControladorClientes.class
 br\com\sigla\interfacegrafica\controlador\ControladorFinanceiro$FinanceiroSnapshot.class
 br\com\sigla\interfacegrafica\aplicativo\SessaoLocalAplicacao.class
+br\com\sigla\interfacegrafica\util\DestaqueFiltro.class
 br\com\sigla\interfacegrafica\controlador\ControladorOrdemServico.class
 br\com\sigla\interfacegrafica\controlador\ControladorAgenda$Option.class
 br\com\sigla\interfacegrafica\util\ValidadorEntrada.class

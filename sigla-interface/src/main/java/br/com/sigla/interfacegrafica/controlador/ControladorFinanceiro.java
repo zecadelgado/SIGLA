@@ -15,6 +15,7 @@ import br.com.sigla.interfacegrafica.util.TradutorInterface;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -51,6 +52,14 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
     private Map<String, String> clienteNomes = Map.of();
     private int geracaoRefresh;
 
+    @FXML
+    private Button botaoTodos;
+    @FXML
+    private Button botaoPagos;
+    @FXML
+    private Button botaoPendentes;
+    @FXML
+    private Button botaoVencidos;
     @FXML
     private Label receitasLabel;
     @FXML
@@ -112,6 +121,7 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
     @FXML
     public void initialize() {
         configureTable();
+        br.com.sigla.interfacegrafica.util.DestaqueFiltro.destacar(botaoTodos, botaoTodos, botaoPagos, botaoPendentes, botaoVencidos);
         refresh();
     }
 
@@ -123,24 +133,28 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
     @FXML
     private void onTodos() {
         filtroAtual = null;
+        br.com.sigla.interfacegrafica.util.DestaqueFiltro.destacar(botaoTodos, botaoTodos, botaoPagos, botaoPendentes, botaoVencidos);
         refresh();
     }
 
     @FXML
     private void onPagos() {
         filtroAtual = new CasoDeUsoFinanceiro.FiltroFinanceiro(null, null, null, CasoDeUsoFinanceiro.TransactionStatus.PAID, "", "", "", "", false);
+        br.com.sigla.interfacegrafica.util.DestaqueFiltro.destacar(botaoPagos, botaoTodos, botaoPagos, botaoPendentes, botaoVencidos);
         refresh();
     }
 
     @FXML
     private void onPendentes() {
         filtroAtual = new CasoDeUsoFinanceiro.FiltroFinanceiro(null, null, null, CasoDeUsoFinanceiro.TransactionStatus.PENDING, "", "", "", "", false);
+        br.com.sigla.interfacegrafica.util.DestaqueFiltro.destacar(botaoPendentes, botaoTodos, botaoPagos, botaoPendentes, botaoVencidos);
         refresh();
     }
 
     @FXML
     private void onVencidos() {
         filtroAtual = new CasoDeUsoFinanceiro.FiltroFinanceiro(null, null, null, null, "", "", "", "", true);
+        br.com.sigla.interfacegrafica.util.DestaqueFiltro.destacar(botaoVencidos, botaoTodos, botaoPagos, botaoPendentes, botaoVencidos);
         refresh();
     }
 

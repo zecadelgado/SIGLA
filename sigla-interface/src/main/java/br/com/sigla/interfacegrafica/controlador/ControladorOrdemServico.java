@@ -18,7 +18,9 @@ import br.com.sigla.interfacegrafica.formatador.FormatadorMascaraMoeda;
 import br.com.sigla.interfacegrafica.async.ExecutorTarefasUi;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
+import br.com.sigla.interfacegrafica.modelo.OpcaoId;
 import br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto;
+import br.com.sigla.interfacegrafica.util.UtilComboBox;
 import br.com.sigla.interfacegrafica.util.ValidadorEntrada;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.fxml.FXML;
@@ -466,7 +468,9 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
         Dialog<CasoDeUsoOrdemServico.AdicionarProdutoOrdemCommand> dialog = new Dialog<>();
         dialog.setTitle("Produto da OS");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-        TextField produto = new TextField();
+        ComboBox<OpcaoId> produto = new ComboBox<>();
+        UtilComboBox.preencher(produto, servicoConsultaReferencias.produtos(), true);
+        produto.setMaxWidth(Double.MAX_VALUE);
         TextField quantidade = new TextField("1");
         TextField valor = new TextField();
         formatadorMoeda.aplicar(valor);
@@ -480,7 +484,7 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
                 return null;
             }
             ValidadorEntrada validador = ValidadorEntrada.nova();
-            var opcao = ResolvedorEntradaTexto.resolveOpcional(servicoConsultaReferencias.produtos(), produto.getText());
+            var opcao = UtilComboBox.selecionado(produto);
             validador.selecao(opcao, "um produto válido");
             int qtd = validador.inteiroPositivo(quantidade.getText(), "a quantidade");
             validador.validar();

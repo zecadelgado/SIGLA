@@ -12,6 +12,7 @@ import br.com.sigla.interfacegrafica.util.TradutorInterface;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
@@ -42,6 +43,12 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
     private int geracaoRefresh;
     private List<Cliente> clientesCarregados = List.of();
 
+    @FXML
+    private Button botaoTodos;
+    @FXML
+    private Button botaoFuncionarios;
+    @FXML
+    private Button botaoClientes;
     @FXML
     private TextField searchField;
     @FXML
@@ -79,7 +86,7 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
     @FXML
     private TableColumn<ResponsavelRow, String> responsavelPrincipalColumn;
 
-    private String filtroAtual = "TODOS";
+    private String filtroAtual = "CLIENTE";
     private String filtroAtivo = "ATIVOS";
 
     public ControladorCadastro(
@@ -114,6 +121,7 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
         if (cadastroTable != null) {
             cadastroTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> atualizarResponsaveis(newValue));
         }
+        br.com.sigla.interfacegrafica.util.DestaqueFiltro.destacar(botaoClientes, botaoTodos, botaoFuncionarios, botaoClientes);
         refresh();
     }
 
@@ -125,18 +133,21 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
     @FXML
     private void onTodos() {
         filtroAtual = "TODOS";
+        br.com.sigla.interfacegrafica.util.DestaqueFiltro.destacar(botaoTodos, botaoTodos, botaoFuncionarios, botaoClientes);
         refresh();
     }
 
     @FXML
     private void onFuncionarios() {
         filtroAtual = "FUNCIONARIO";
+        br.com.sigla.interfacegrafica.util.DestaqueFiltro.destacar(botaoFuncionarios, botaoTodos, botaoFuncionarios, botaoClientes);
         refresh();
     }
 
     @FXML
     private void onClientes() {
         filtroAtual = "CLIENTE";
+        br.com.sigla.interfacegrafica.util.DestaqueFiltro.destacar(botaoClientes, botaoTodos, botaoFuncionarios, botaoClientes);
         refresh();
     }
 

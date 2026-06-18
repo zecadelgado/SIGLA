@@ -135,7 +135,7 @@
                   </HBox>
                   <HBox prefHeight="58.0" prefWidth="1200.0" spacing="10.0" style="-fx-background-color: WHITE; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
                      <children>
-                        <Button mnemonicParsing="false" onAction="#onTodos" prefHeight="30.0" prefWidth="135.0" style="-fx-background-radius: 5; -fx-background-color: #00417e;" text="Todos" textFill="WHITE">
+                        <Button fx:id="botaoTodos" mnemonicParsing="false" onAction="#onTodos" prefHeight="30.0" prefWidth="135.0" style="-fx-background-radius: 5; -fx-background-color: #00417e;" text="Todos" textFill="WHITE">
                            <HBox.margin>
                               <Insets left="15.0" />
                            </HBox.margin>
@@ -143,7 +143,7 @@
                               <Font name="System Bold" size="15.0" />
                            </font>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#onPagos" prefHeight="30.0" prefWidth="135.0" style="-fx-background-radius: 5;" text="Pagos" textFill="#484848">
+                        <Button fx:id="botaoPagos" mnemonicParsing="false" onAction="#onPagos" prefHeight="30.0" prefWidth="135.0" style="-fx-background-radius: 5;" text="Pagos" textFill="#484848">
                            <HBox.margin>
                               <Insets left="5.0" />
                            </HBox.margin>
@@ -151,7 +151,7 @@
                               <Font name="System Bold" size="15.0" />
                            </font>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#onPendentes" prefHeight="30.0" prefWidth="135.0" style="-fx-background-radius: 5;" text="Pendentes" textFill="#484848">
+                        <Button fx:id="botaoPendentes" mnemonicParsing="false" onAction="#onPendentes" prefHeight="30.0" prefWidth="135.0" style="-fx-background-radius: 5;" text="Pendentes" textFill="#484848">
                            <HBox.margin>
                               <Insets left="5.0" />
                            </HBox.margin>
@@ -159,7 +159,7 @@
                               <Font name="Ebrima Bold" size="15.0" />
                            </font>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#onVencidos" prefHeight="30.0" prefWidth="135.0" style="-fx-background-radius: 5;" text="Vencidos" textFill="#484848">
+                        <Button fx:id="botaoVencidos" mnemonicParsing="false" onAction="#onVencidos" prefHeight="30.0" prefWidth="135.0" style="-fx-background-radius: 5;" text="Vencidos" textFill="#484848">
                            <HBox.margin>
                               <Insets left="5.0" />
                            </HBox.margin>

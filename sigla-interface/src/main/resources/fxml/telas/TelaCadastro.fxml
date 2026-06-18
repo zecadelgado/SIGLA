@@ -149,7 +149,7 @@
                                     <Insets />
                                  </HBox.margin>
                               </ChoiceBox>
-                              <Button mnemonicParsing="false" onAction="#onTodos" prefHeight="30.0" prefWidth="70.0" style="-fx-background-radius: 5;" text="Todos" textFill="#484848">
+                              <Button fx:id="botaoTodos" mnemonicParsing="false" onAction="#onTodos" prefHeight="30.0" prefWidth="70.0" style="-fx-background-radius: 5;" text="Todos" textFill="#484848">
                                  <HBox.margin>
                                     <Insets />
                                  </HBox.margin>
@@ -157,7 +157,7 @@
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Button>
-                              <Button mnemonicParsing="false" onAction="#onFuncionarios" prefHeight="30.0" prefWidth="105.0" style="-fx-background-radius: 5;" text="Funcionários" textFill="#484848">
+                              <Button fx:id="botaoFuncionarios" mnemonicParsing="false" onAction="#onFuncionarios" prefHeight="30.0" prefWidth="105.0" style="-fx-background-radius: 5;" text="Funcionários" textFill="#484848">
                                  <HBox.margin>
                                     <Insets />
                                  </HBox.margin>
@@ -165,7 +165,7 @@
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Button>
-                              <Button mnemonicParsing="false" onAction="#onClientes" prefHeight="30.0" prefWidth="74.0" style="-fx-background-radius: 5;" text="Clientes" textFill="#484848">
+                              <Button fx:id="botaoClientes" mnemonicParsing="false" onAction="#onClientes" prefHeight="30.0" prefWidth="74.0" style="-fx-background-radius: 5;" text="Clientes" textFill="#484848">
                                  <HBox.margin>
                                     <Insets />
                                  </HBox.margin>
