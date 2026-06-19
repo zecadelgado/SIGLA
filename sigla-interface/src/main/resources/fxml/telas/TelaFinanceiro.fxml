@@ -248,19 +248,19 @@
                            <children>
                               <TableView fx:id="transacoesTable" prefHeight="400.0" prefWidth="1900.0" style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
                                 <columns>
-                                  <TableColumn fx:id="tipoColumn" prefWidth="150.0" style="-fx-background-color: white;" text="Tipo" />
-                                  <TableColumn fx:id="categoriaColumn" prefWidth="150.0" style="-fx-background-color: white;" text="Categoria" />
-                                    <TableColumn fx:id="descricaoColumn" prefWidth="150.0" style="-fx-background-color: white;" text="Descrição" />
-                                    <TableColumn fx:id="clienteColumn" prefWidth="150.0" style="-fx-background-color: white;" text="Cliente" />
-                                    <TableColumn fx:id="ordemColumn" prefWidth="150.0" style="-fx-background-color: white;" text="Ordem de Serviço" />
-                                    <TableColumn fx:id="valorColumn" prefWidth="150.0" style="-fx-background-color: white;" text="Valor Total" />
-                                    <TableColumn fx:id="emissaoColumn" prefWidth="150.0" style="-fx-background-color: white;" text="Data Emissão" />
-                                    <TableColumn fx:id="vencimentoColumn" prefWidth="150.0" style="-fx-background-color: white;" text="Data Vencimento" />
-                                    <TableColumn fx:id="pagamentoColumn" prefWidth="150.0" style="-fx-background-color: white;" text="Data Pagamento" />
-                                    <TableColumn fx:id="formaPagamentoColumn" prefWidth="150.0" style="-fx-background-color: white;" text="Forma de Pagamento" />
-                                    <TableColumn fx:id="parcelasColumn" prefWidth="110.0" style="-fx-background-color: white;" text="Quantidade de Parcelas" />
-                                    <TableColumn fx:id="observacoesColumn" prefWidth="150.0" style="-fx-background-color: white;" text="Observações" />
-                                    <TableColumn fx:id="statusColumn" prefWidth="100.0" style="-fx-background-color: white;" text="Status" />
+                                  <TableColumn fx:id="tipoColumn" prefWidth="150.0" text="Tipo" />
+                                  <TableColumn fx:id="categoriaColumn" prefWidth="150.0" text="Categoria" />
+                                    <TableColumn fx:id="descricaoColumn" prefWidth="150.0" text="Descrição" />
+                                    <TableColumn fx:id="clienteColumn" prefWidth="150.0" text="Cliente" />
+                                    <TableColumn fx:id="ordemColumn" prefWidth="150.0" text="Ordem de Serviço" />
+                                    <TableColumn fx:id="valorColumn" prefWidth="150.0" text="Valor Total" />
+                                    <TableColumn fx:id="emissaoColumn" prefWidth="150.0" text="Data Emissão" />
+                                    <TableColumn fx:id="vencimentoColumn" prefWidth="150.0" text="Data Vencimento" />
+                                    <TableColumn fx:id="pagamentoColumn" prefWidth="150.0" text="Data Pagamento" />
+                                    <TableColumn fx:id="formaPagamentoColumn" prefWidth="150.0" text="Forma de Pagamento" />
+                                    <TableColumn fx:id="parcelasColumn" prefWidth="110.0" text="Quantidade de Parcelas" />
+                                    <TableColumn fx:id="observacoesColumn" prefWidth="150.0" text="Observações" />
+                                    <TableColumn fx:id="statusColumn" prefWidth="100.0" text="Status" />
                                 </columns>
                                  <VBox.margin>
                                     <Insets />

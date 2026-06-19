@@ -7,7 +7,8 @@ import br.com.sigla.aplicacao.funcionarios.porta.entrada.CasoDeUsoFuncionario;
 import br.com.sigla.aplicacao.financeiro.porta.entrada.CasoDeUsoFinanceiro;
 import br.com.sigla.aplicacao.estoque.porta.entrada.CasoDeUsoEstoque;
 import br.com.sigla.aplicacao.potenciaisclientes.porta.entrada.CasoDeUsoPotencialCliente;
-import br.com.sigla.aplicacao.notificacoes.porta.entrada.CasoDeUsoNotificacao;
+import br.com.sigla.aplicacao.notificacoes.porta.entrada.CasoDeUsoEnvioNotificacao;
+import br.com.sigla.aplicacao.notificacoes.porta.entrada.CasoDeUsoGeracaoNotificacao;
 import br.com.sigla.aplicacao.agenda.porta.entrada.CasoDeUsoAgenda;
 import br.com.sigla.dominio.certificados.Certificado;
 import br.com.sigla.dominio.contratos.Contrato;
@@ -22,6 +23,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.annotation.Order;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -33,6 +35,7 @@ import java.util.List;
 public class InicializadorDadosDesenvolvimento {
 
     @Bean
+    @Order(10)
     ApplicationRunner seedDemoData(
             CasoDeUsoCliente customerUseCase,
             CasoDeUsoFuncionario employeeUseCase,
@@ -42,11 +45,13 @@ public class InicializadorDadosDesenvolvimento {
             CasoDeUsoEstoque estoqueUseCase,
             CasoDeUsoCertificado certificateUseCase,
             CasoDeUsoPotencialCliente leadUseCase,
-            CasoDeUsoNotificacao notificationUseCase
+            CasoDeUsoGeracaoNotificacao geracaoNotificacao,
+            CasoDeUsoEnvioNotificacao envioNotificacao
     ) {
         return arguments -> {
             if (!customerUseCase.listAll().isEmpty()) {
-                notificationUseCase.refresh(LocalDate.now());
+                geracaoNotificacao.gerar(LocalDate.now());
+                envioNotificacao.dispatchDue(LocalDateTime.now());
                 return;
             }
 
@@ -218,7 +223,8 @@ public class InicializadorDadosDesenvolvimento {
                     "Demonstrou interesse em plano quinzenal."
             ));
 
-            notificationUseCase.refresh(today);
+            geracaoNotificacao.gerar(today);
+            envioNotificacao.dispatchDue(LocalDateTime.now());
         };
     }
 

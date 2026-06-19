@@ -1,8 +1,10 @@
 package br.com.sigla.interfacegrafica.consulta;
 
 import br.com.sigla.aplicacao.clientes.porta.entrada.CasoDeUsoCliente;
+import br.com.sigla.aplicacao.funcionarios.porta.entrada.CasoDeUsoFuncionario;
 import br.com.sigla.aplicacao.servicos.porta.entrada.CasoDeUsoOrdemServico;
 import br.com.sigla.dominio.clientes.Cliente;
+import br.com.sigla.dominio.funcionarios.Funcionario;
 import br.com.sigla.dominio.servicos.OrdemServico;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +28,7 @@ class ServicoConsultaOrdemServicoTest {
                 new Cliente("cliente-1", "Cliente Um", "", "", "", "", "", "", "", "", "", "", "", "", "", List.of(), "", true),
                 new Cliente("cliente-2", "Cliente Dois", "", "", "", "", "", "", "", "", "", "", "", "", "", List.of(), "", true)
         ));
-        ServicoConsultaOrdemServico consulta = new ServicoConsultaOrdemServico(casoOrdemServico, casoCliente);
+        ServicoConsultaOrdemServico consulta = new ServicoConsultaOrdemServico(casoOrdemServico, casoCliente, new FakeFuncionario());
 
         var ordens = consulta.listByDate(LocalDate.of(2026, 5, 9));
 
@@ -115,6 +117,38 @@ class ServicoConsultaOrdemServicoTest {
         @Override
         public List<OrdemServico> filtrar(FiltroOrdemServico filtro) {
             return ordens;
+        }
+    }
+
+    private static final class FakeFuncionario implements CasoDeUsoFuncionario {
+        @Override
+        public void register(RegisterFuncionarioCommand command) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void update(RegisterFuncionarioCommand command) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void inativar(String id) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void reativar(String id) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void excluirFisicamente(String id) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public List<Funcionario> listAll() {
+            return List.of();
         }
     }
 

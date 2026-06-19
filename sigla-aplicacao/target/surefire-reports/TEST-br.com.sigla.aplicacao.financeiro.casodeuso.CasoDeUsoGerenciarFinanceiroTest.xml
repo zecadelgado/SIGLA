@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="br.com.sigla.aplicacao.financeiro.casodeuso.CasoDeUsoGerenciarFinanceiroTest" time="0.024" tests="5" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="br.com.sigla.aplicacao.financeiro.casodeuso.CasoDeUsoGerenciarFinanceiroTest" time="0.046" tests="5" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="25"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -15,7 +15,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="BR"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-25\bin"/>
-    <property name="sun.java.command" value="C:\Users\estef\AppData\Local\Temp\surefire3933991956928499380\surefirebooter-20260618153904888_6.jar C:\Users\estef\AppData\Local\Temp\surefire3933991956928499380 2026-06-18T15-39-03_777-jvmRun1 surefire-20260618153904888_4tmp surefire_1-20260618153904888_5tmp"/>
+    <property name="sun.java.command" value="C:\Users\estef\AppData\Local\Temp\surefire2188080980483775071\surefirebooter-20260619085038088_6.jar C:\Users\estef\AppData\Local\Temp\surefire2188080980483775071 2026-06-19T08-50-36_787-jvmRun1 surefire-20260619085038088_4tmp surefire_1-20260619085038088_5tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="D:\SIGLA\sigla-aplicacao\target\test-classes;D:\SIGLA\sigla-aplicacao\target\classes;D:\SIGLA\sigla-dominio\target\classes;C:\Users\estef\.m2\repository\org\springframework\spring-context\7.0.5\spring-context-7.0.5.jar;C:\Users\estef\.m2\repository\org\springframework\spring-aop\7.0.5\spring-aop-7.0.5.jar;C:\Users\estef\.m2\repository\org\springframework\spring-beans\7.0.5\spring-beans-7.0.5.jar;C:\Users\estef\.m2\repository\org\springframework\spring-core\7.0.5\spring-core-7.0.5.jar;C:\Users\estef\.m2\repository\commons-logging\commons-logging\1.3.5\commons-logging-1.3.5.jar;C:\Users\estef\.m2\repository\org\jspecify\jspecify\1.0.0\jspecify-1.0.0.jar;C:\Users\estef\.m2\repository\org\springframework\spring-expression\7.0.5\spring-expression-7.0.5.jar;C:\Users\estef\.m2\repository\io\micrometer\micrometer-observation\1.16.3\micrometer-observation-1.16.3.jar;C:\Users\estef\.m2\repository\io\micrometer\micrometer-commons\1.16.3\micrometer-commons-1.16.3.jar;C:\Users\estef\.m2\repository\org\junit\jupiter\junit-jupiter\6.0.3\junit-jupiter-6.0.3.jar;C:\Users\estef\.m2\repository\org\junit\jupiter\junit-jupiter-api\6.0.3\junit-jupiter-api-6.0.3.jar;C:\Users\estef\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\estef\.m2\repository\org\junit\platform\junit-platform-commons\6.0.3\junit-platform-commons-6.0.3.jar;C:\Users\estef\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\estef\.m2\repository\org\junit\jupiter\junit-jupiter-params\6.0.3\junit-jupiter-params-6.0.3.jar;C:\Users\estef\.m2\repository\org\junit\jupiter\junit-jupiter-engine\6.0.3\junit-jupiter-engine-6.0.3.jar;C:\Users\estef\.m2\repository\org\junit\platform\junit-platform-engine\6.0.3\junit-platform-engine-6.0.3.jar;C:\Users\estef\.m2\repository\org\mockito\mockito-core\5.20.0\mockito-core-5.20.0.jar;C:\Users\estef\.m2\repository\net\bytebuddy\byte-buddy\1.17.8\byte-buddy-1.17.8.jar;C:\Users\estef\.m2\repository\net\bytebuddy\byte-buddy-agent\1.17.8\byte-buddy-agent-1.17.8.jar;C:\Users\estef\.m2\repository\org\objenesis\objenesis\3.3\objenesis-3.3.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -30,7 +30,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
-    <property name="surefire.real.class.path" value="C:\Users\estef\AppData\Local\Temp\surefire3933991956928499380\surefirebooter-20260618153904888_6.jar"/>
+    <property name="surefire.real.class.path" value="C:\Users\estef\AppData\Local\Temp\surefire2188080980483775071\surefirebooter-20260619085038088_6.jar"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="25.0.1+8-LTS-27"/>
@@ -59,9 +59,9 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="69.0"/>
   </properties>
-  <testcase name="criaLancamentoSimplesERecusaValorNegativo" classname="br.com.sigla.aplicacao.financeiro.casodeuso.CasoDeUsoGerenciarFinanceiroTest" time="0.01"/>
-  <testcase name="cancelaEEstornaComAuditoriaEmObservacoes" classname="br.com.sigla.aplicacao.financeiro.casodeuso.CasoDeUsoGerenciarFinanceiroTest" time="0.004"/>
-  <testcase name="geraParcelasComSomaExataEBaixaIndividualAtualizaStatus" classname="br.com.sigla.aplicacao.financeiro.casodeuso.CasoDeUsoGerenciarFinanceiroTest" time="0.002"/>
-  <testcase name="registraTransacaoAceitandoIdsDaTela" classname="br.com.sigla.aplicacao.financeiro.casodeuso.CasoDeUsoGerenciarFinanceiroTest" time="0.003"/>
-  <testcase name="geraContaReceberDeOsSemDuplicidade" classname="br.com.sigla.aplicacao.financeiro.casodeuso.CasoDeUsoGerenciarFinanceiroTest" time="0.003"/>
+  <testcase name="criaLancamentoSimplesERecusaValorNegativo" classname="br.com.sigla.aplicacao.financeiro.casodeuso.CasoDeUsoGerenciarFinanceiroTest" time="0.024"/>
+  <testcase name="cancelaEEstornaComAuditoriaEmObservacoes" classname="br.com.sigla.aplicacao.financeiro.casodeuso.CasoDeUsoGerenciarFinanceiroTest" time="0.005"/>
+  <testcase name="geraParcelasComSomaExataEBaixaIndividualAtualizaStatus" classname="br.com.sigla.aplicacao.financeiro.casodeuso.CasoDeUsoGerenciarFinanceiroTest" time="0.003"/>
+  <testcase name="registraTransacaoAceitandoIdsDaTela" classname="br.com.sigla.aplicacao.financeiro.casodeuso.CasoDeUsoGerenciarFinanceiroTest" time="0.004"/>
+  <testcase name="geraContaReceberDeOsSemDuplicidade" classname="br.com.sigla.aplicacao.financeiro.casodeuso.CasoDeUsoGerenciarFinanceiroTest" time="0.007"/>
 </testsuite>

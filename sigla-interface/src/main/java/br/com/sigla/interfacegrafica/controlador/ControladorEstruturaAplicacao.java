@@ -45,6 +45,8 @@ public class ControladorEstruturaAplicacao {
     @FXML
     private Button navUsuarios;
     @FXML
+    private Button navNotificacoes;
+    @FXML
     private Button navSair;
 
     private final Map<VisaoAplicacao, Button> botoesNavegacao = new EnumMap<>(VisaoAplicacao.class);
@@ -73,6 +75,7 @@ public class ControladorEstruturaAplicacao {
         registrarBotao(VisaoAplicacao.INVENTORY, navEstoque);
         registrarBotao(VisaoAplicacao.CONTRACTS_CERTIFICATES, navContratos);
         registrarBotao(VisaoAplicacao.USERS, navUsuarios);
+        registrarBotao(VisaoAplicacao.NOTIFICATIONS, navNotificacoes);
     }
 
     private void registrarBotao(VisaoAplicacao view, Button botao) {
@@ -134,6 +137,11 @@ public class ControladorEstruturaAplicacao {
     @FXML
     private void onUsuariosClick() {
         navigate(VisaoAplicacao.USERS);
+    }
+
+    @FXML
+    private void onNotificacoesClick() {
+        navigate(VisaoAplicacao.NOTIFICATIONS);
     }
 
     @FXML

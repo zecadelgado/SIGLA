@@ -12,7 +12,17 @@ D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\financeiro\FormaPagame
 D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\financeiro\LancamentoFinanceiro.java
 D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\financeiro\PlanoParcelamento.java
 D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\funcionarios\Funcionario.java
+D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\notificacoes\CanalNotificacao.java
+D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\notificacoes\CatalogoVariaveisTemplate.java
+D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\notificacoes\Destinatario.java
+D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\notificacoes\DestinatarioNotificacao.java
+D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\notificacoes\FonteTelefone.java
 D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\notificacoes\Notificacao.java
+D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\notificacoes\NotificacaoConfiguracao.java
+D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\notificacoes\OrigemNotificacao.java
+D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\notificacoes\RemetenteNotificacao.java
+D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\notificacoes\RenderizadorTemplate.java
+D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\notificacoes\TelefoneWhatsapp.java
 D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\potenciaisclientes\PotencialCliente.java
 D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\servicos\OrdemServico.java
 D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\usuarios\Usuario.java

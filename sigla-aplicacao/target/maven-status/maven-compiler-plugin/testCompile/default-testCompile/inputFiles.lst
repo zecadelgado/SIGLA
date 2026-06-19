@@ -5,6 +5,8 @@ D:\SIGLA\sigla-aplicacao\src\test\java\br\com\sigla\aplicacao\contratos\casodeus
 D:\SIGLA\sigla-aplicacao\src\test\java\br\com\sigla\aplicacao\estoque\casodeuso\CasoDeUsoGerenciarEstoqueTest.java
 D:\SIGLA\sigla-aplicacao\src\test\java\br\com\sigla\aplicacao\financeiro\casodeuso\CasoDeUsoGerenciarFinanceiroTest.java
 D:\SIGLA\sigla-aplicacao\src\test\java\br\com\sigla\aplicacao\funcionarios\casodeuso\CasoDeUsoGerenciarFuncionarioTest.java
-D:\SIGLA\sigla-aplicacao\src\test\java\br\com\sigla\aplicacao\notificacoes\casodeuso\CasoDeUsoAtualizarNotificacaoTest.java
+D:\SIGLA\sigla-aplicacao\src\test\java\br\com\sigla\aplicacao\notificacoes\casodeuso\CasoDeUsoConfigurarNotificacoesTest.java
+D:\SIGLA\sigla-aplicacao\src\test\java\br\com\sigla\aplicacao\notificacoes\casodeuso\CasoDeUsoDispararNotificacoesTest.java
+D:\SIGLA\sigla-aplicacao\src\test\java\br\com\sigla\aplicacao\notificacoes\casodeuso\CasoDeUsoGerarNotificacoesTest.java
 D:\SIGLA\sigla-aplicacao\src\test\java\br\com\sigla\aplicacao\potenciaisclientes\casodeuso\CasoDeUsoGerenciarPotencialClienteTest.java
 D:\SIGLA\sigla-aplicacao\src\test\java\br\com\sigla\aplicacao\servicos\casodeuso\CasoDeUsoGerenciarOrdemServicoTest.java

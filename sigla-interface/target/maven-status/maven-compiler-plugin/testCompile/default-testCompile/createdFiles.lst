@@ -2,6 +2,7 @@ br\com\sigla\interfacegrafica\navegacao\GerenciadorNavegacaoTest$SpyFluxoAplicac
 br\com\sigla\interfacegrafica\controlador\ControladorDashboardTest$ExecutorSincrono.class
 br\com\sigla\interfacegrafica\controlador\ControladorDashboardTest$SpyGerenciadorNavegacao.class
 br\com\sigla\interfacegrafica\navegacao\VisaoAplicacaoTest.class
+br\com\sigla\interfacegrafica\consulta\ServicoConsultaOrdemServicoTest$FakeFuncionario.class
 br\com\sigla\interfacegrafica\consulta\ServicoConsultaOrdemServicoTest$FakeOrdemServico.class
 br\com\sigla\interfacegrafica\controlador\ControladorDashboardTest.class
 br\com\sigla\interfacegrafica\formatador\FormatadorMascaraCpfTest.class

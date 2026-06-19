@@ -19,7 +19,6 @@ import br.com.sigla.interfacegrafica.async.ExecutorTarefasUi;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import br.com.sigla.interfacegrafica.modelo.OpcaoId;
-import br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto;
 import br.com.sigla.interfacegrafica.util.UtilComboBox;
 import br.com.sigla.interfacegrafica.util.ValidadorEntrada;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -503,17 +502,18 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
         Dialog<CasoDeUsoOrdemServico.UpdateOrdemServicoCommand> dialog = new Dialog<>();
         dialog.setTitle("Editar OS");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-        TextField cliente = new TextField(selected.customerName());
+        ComboBox<OpcaoId> cliente = new ComboBox<>();
+        UtilComboBox.preencher(cliente, servicoConsultaReferencias.clientes(), false);
+        UtilComboBox.selecionarPorId(cliente, selected.customerId());
+        cliente.setMaxWidth(Double.MAX_VALUE);
         TextField titulo = new TextField(selected.title());
         TextArea descricao = new TextArea(selected.description());
         descricao.setPrefRowCount(2);
         TextField tipo = new TextField(selected.serviceType());
-        String responsavelLabel = servicoConsultaReferencias.funcionarios().stream()
-                .filter(opcao -> opcao.id().equals(selected.responsible()))
-                .map(opcao -> opcao.label())
-                .findFirst()
-                .orElse(selected.responsible().equals("-") ? "" : selected.responsible());
-        TextField responsavel = new TextField(responsavelLabel);
+        ComboBox<OpcaoId> responsavel = new ComboBox<>();
+        UtilComboBox.preencher(responsavel, servicoConsultaReferencias.funcionarios(), true);
+        UtilComboBox.selecionarPorId(responsavel, selected.responsibleId());
+        responsavel.setMaxWidth(Double.MAX_VALUE);
         DatePicker dataPicker = new DatePicker(selected.emissionDate() == null ? LocalDate.now() : selected.emissionDate());
         TextField valor = new TextField();
         formatadorMoeda.aplicar(valor);
@@ -534,12 +534,13 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
             if (button != ButtonType.OK) {
                 return null;
             }
-            // Evita gravar id inexistente (violacao de FK): so usa ids validos resolvidos das referencias.
-            // Cliente nao resolvido mantem o cliente atual da OS; responsavel nao resolvido fica vazio.
-            var opcaoCliente = ResolvedorEntradaTexto.resolveOpcional(servicoConsultaReferencias.clientes(), cliente.getText());
-            String clienteId = opcaoCliente != null ? opcaoCliente.id() : selected.customerId();
-            var opcaoResponsavel = ResolvedorEntradaTexto.resolveOpcional(servicoConsultaReferencias.funcionarios(), responsavel.getText());
-            String responsavelId = opcaoResponsavel != null ? opcaoResponsavel.id() : "";
+            // Cliente/responsavel vem de ComboBox (label = nome, valor = id), evitando gravar UUID/texto invalido.
+            // Cliente nao selecionado mantem o cliente atual da OS; responsavel vazio fica em branco.
+            String clienteId = UtilComboBox.idSelecionado(cliente);
+            if (clienteId.isBlank()) {
+                clienteId = selected.customerId();
+            }
+            String responsavelId = UtilComboBox.idSelecionado(responsavel);
             return new CasoDeUsoOrdemServico.UpdateOrdemServicoCommand(
                     selected.id(),
                     clienteId,

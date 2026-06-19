@@ -30,12 +30,12 @@ br\com\sigla\interfacegrafica\controlador\ControladorCadastro$CadastroRow.class
 br\com\sigla\interfacegrafica\navegacao\VisaoAplicacao$ModoExibicao.class
 br\com\sigla\interfacegrafica\controlador\ControladorEstoque$EstoqueSnapshot.class
 br\com\sigla\interfacegrafica\inicializacao\AplicacaoSpringSigla.class
-br\com\sigla\interfacegrafica\inicializacao\AgendadorNotificacoesVencimento.class
 br\com\sigla\interfacegrafica\controlador\ControladorAgenda$AgendaSnapshot.class
 br\com\sigla\interfacegrafica\consulta\ContextoDetalheOrdemServico.class
 br\com\sigla\interfacegrafica\controlador\ControladorClientes$IndicacaoRow.class
 br\com\sigla\interfacegrafica\controlador\ControladorNovaTransacao.class
 br\com\sigla\interfacegrafica\controlador\ControladorAgenda$1.class
+br\com\sigla\interfacegrafica\controlador\ControladorConfiguracaoNotificacoes.class
 br\com\sigla\interfacegrafica\formatador\FormatadorMascaraCpf.class
 br\com\sigla\interfacegrafica\controlador\ControladorOrdemServico$OsSnapshot.class
 br\com\sigla\interfacegrafica\inicializacao\InicializadorDadosDesenvolvimento.class
@@ -60,6 +60,7 @@ br\com\sigla\interfacegrafica\aplicativo\FluxoAplicacao.class
 br\com\sigla\interfacegrafica\controlador\ControladorContratosCertificados$ClienteOption.class
 br\com\sigla\interfacegrafica\controlador\ControladorUsuarios.class
 br\com\sigla\interfacegrafica\controlador\ControladorContratosCertificados$ItemVencimentoRow.class
+br\com\sigla\interfacegrafica\inicializacao\SemeadorTemplatesNotificacao.class
 br\com\sigla\interfacegrafica\util\UtilComboBox.class
 br\com\sigla\interfacegrafica\controlador\ControladorContratosCertificados.class
 br\com\sigla\interfacegrafica\controlador\ControladorLogin.class
@@ -69,6 +70,7 @@ br\com\sigla\interfacegrafica\consulta\ServicoConsultaReferencias.class
 br\com\sigla\interfacegrafica\controlador\ControladorUsuarios$UsuarioRow.class
 br\com\sigla\interfacegrafica\controlador\ControladorAgenda$ClienteOption.class
 br\com\sigla\interfacegrafica\inicializacao\SuporteContextoSpring.class
+br\com\sigla\interfacegrafica\inicializacao\AgendadorNotificacoes.class
 br\com\sigla\interfacegrafica\controlador\ControladorEstoque.class
 br\com\sigla\interfacegrafica\consulta\ServicoConsultaOrdemServico.class
 br\com\sigla\interfacegrafica\controlador\ControladorCadastro$ResponsavelRow.class

@@ -1,7 +1,9 @@
 package br.com.sigla.interfacegrafica.consulta;
 
 import br.com.sigla.aplicacao.clientes.porta.entrada.CasoDeUsoCliente;
+import br.com.sigla.aplicacao.funcionarios.porta.entrada.CasoDeUsoFuncionario;
 import br.com.sigla.aplicacao.servicos.porta.entrada.CasoDeUsoOrdemServico;
+import br.com.sigla.dominio.funcionarios.Funcionario;
 import br.com.sigla.dominio.servicos.OrdemServico;
 import org.springframework.stereotype.Component;
 
@@ -18,20 +20,25 @@ public class ServicoConsultaOrdemServico {
 
     private final CasoDeUsoOrdemServico casoDeUsoOrdemServico;
     private final CasoDeUsoCliente casoDeUsoCliente;
+    private final CasoDeUsoFuncionario casoDeUsoFuncionario;
 
     public ServicoConsultaOrdemServico(
             CasoDeUsoOrdemServico casoDeUsoOrdemServico,
-            CasoDeUsoCliente casoDeUsoCliente
+            CasoDeUsoCliente casoDeUsoCliente,
+            CasoDeUsoFuncionario casoDeUsoFuncionario
     ) {
         this.casoDeUsoOrdemServico = casoDeUsoOrdemServico;
         this.casoDeUsoCliente = casoDeUsoCliente;
+        this.casoDeUsoFuncionario = casoDeUsoFuncionario;
     }
 
     public List<OrdemServicoView> listAll() {
         Map<String, String> clientes = casoDeUsoCliente.listAll().stream()
-                .collect(Collectors.toMap(customer -> customer.id(), customer -> customer.name()));
+                .collect(Collectors.toMap(customer -> customer.id(), customer -> customer.name(), (left, right) -> left));
+        Map<String, String> funcionarios = casoDeUsoFuncionario.listAll().stream()
+                .collect(Collectors.toMap(Funcionario::id, Funcionario::name, (left, right) -> left));
         return casoDeUsoOrdemServico.listAll().stream()
-                .map(order -> toView(order, clientes))
+                .map(order -> toView(order, clientes, funcionarios))
                 .sorted(Comparator.comparing(
                         OrdemServicoView::emissionDate,
                         Comparator.nullsLast(Comparator.reverseOrder())
@@ -68,14 +75,17 @@ public class ServicoConsultaOrdemServico {
         return new OrdemServicoResumo((int) abertas, (int) emAndamento, (int) concluidas, faturamento);
     }
 
-    private OrdemServicoView toView(OrdemServico order, Map<String, String> clientes) {
+    private OrdemServicoView toView(OrdemServico order, Map<String, String> clientes, Map<String, String> funcionarios) {
+        String responsavelId = order.responsavelInternoId() == null ? "" : order.responsavelInternoId();
+        String responsavelNome = responsavelId.isBlank() ? "-" : funcionarios.getOrDefault(responsavelId, "-");
         return new OrdemServicoView(
                 order.id(),
                 order.numeroOs() == null ? order.id() : String.valueOf(order.numeroOs()),
                 order.titulo(),
                 order.descricao(),
-                clientes.getOrDefault(order.clienteId(), order.clienteId()),
-                blankAsDash(order.responsavelInternoId()),
+                clientes.getOrDefault(order.clienteId(), "-"),
+                responsavelNome,
+                responsavelId,
                 order.dataAgendada() == null ? null : order.dataAgendada().toLocalDate(),
                 order.status().name(),
                 order.totalGeral(),
@@ -101,6 +111,7 @@ public class ServicoConsultaOrdemServico {
             String description,
             String customerName,
             String responsible,
+            String responsibleId,
             LocalDate emissionDate,
             String status,
             BigDecimal amount,

@@ -22,6 +22,7 @@ public enum VisaoAplicacao {
     SERVICE_DAY_DETAILS("/fxml/telas/TelaDetalhesServicosDia.fxml", true, "Detalhes dos Servicos", ModoExibicao.SOBREPOSTA),
     CONTRACTS_CERTIFICATES("/fxml/telas/TelaContratosCertificados.fxml", true, "Contratos e Certificados", ModoExibicao.PRINCIPAL),
     USERS("/fxml/telas/TelaUsuarios.fxml", true, "Usuários", ModoExibicao.PRINCIPAL),
+    NOTIFICATIONS("/fxml/telas/TelaConfiguracaoNotificacoes.fxml", true, "Notificações", ModoExibicao.PRINCIPAL),
     ;
 
     private final String fxmlPath;

@@ -22,3 +22,11 @@ spring:
 sigla:
   armazenamento:
     attachment-root: var/attachments
+  notificacoes:
+    webhook:
+      url: ${SIGLA_NOTIFICACOES_WEBHOOK_URL:}
+      token: ${SIGLA_NOTIFICACOES_WEBHOOK_TOKEN:}
+    whatsapp:
+      enabled: ${SIGLA_NOTIFICACOES_WHATSAPP_ENABLED:false}
+    modo-teste: ${SIGLA_NOTIFICACOES_MODO_TESTE:false}
+    hora-envio-padrao: ${SIGLA_NOTIFICACOES_HORA_ENVIO:8}
