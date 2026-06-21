@@ -17,7 +17,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
@@ -132,8 +131,6 @@ public class ControladorNovoCadastro {
         String cnpj = texto(cnpjField);
         Cliente.TipoCliente tipoCliente = cnpj.isBlank() ? Cliente.TipoCliente.PESSOA_FISICA : Cliente.TipoCliente.PESSOA_JURIDICA;
         String nomeCliente = !razaoSocial.isBlank() ? razaoSocial : nome;
-        List<CasoDeUsoCliente.ContactCommand> contatos = contatosCliente(nomeCliente);
-
         casoDeUsoCliente.register(new CasoDeUsoCliente.RegisterClienteCommand(
                 id,
                 tipoCliente,
@@ -151,7 +148,7 @@ public class ControladorNovoCadastro {
                 texto(bairroField),
                 texto(cidadeField),
                 texto(estadoField),
-                contatos,
+                List.of(),
                 texto(observacoesField),
                 true
         ));
@@ -206,23 +203,6 @@ public class ControladorNovoCadastro {
         if (!email.isBlank() && !email.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")) {
             validador.erro("Informe um e-mail válido.");
         }
-    }
-
-    private List<CasoDeUsoCliente.ContactCommand> contatosCliente(String nomeCliente) {
-        List<CasoDeUsoCliente.ContactCommand> contatos = new ArrayList<>();
-        String telefone = texto(telefoneField);
-        String email = texto(emailField);
-        if (!telefone.isBlank() || !email.isBlank()) {
-            contatos.add(new CasoDeUsoCliente.ContactCommand(
-                    UUID.randomUUID().toString(),
-                    texto(nomeField).isBlank() ? nomeCliente : texto(nomeField),
-                    "Contato principal",
-                    telefone,
-                    email,
-                    true
-            ));
-        }
-        return contatos;
     }
 
     private boolean isCadastroFuncionario() {

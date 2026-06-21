@@ -340,7 +340,11 @@ public class ControladorContratosCertificados {
         DatePicker fimPicker = new DatePicker(LocalDate.now().plusMonths(12));
         ComboBox<Contrato.ContratoType> tipoCombo = new ComboBox<>();
         TradutorInterface.aplicar(tipoCombo);
-        tipoCombo.getItems().setAll(Contrato.ContratoType.values());
+        tipoCombo.getItems().setAll(
+            java.util.Arrays.stream(Contrato.ContratoType.values())
+                .filter(t -> t != Contrato.ContratoType.CORPORATE)
+                .toList()
+        );
         tipoCombo.getSelectionModel().select(Contrato.ContratoType.MONTHLY);
         ComboBox<Contrato.ServiceFrequency> frequenciaCombo = new ComboBox<>();
         TradutorInterface.aplicar(frequenciaCombo);

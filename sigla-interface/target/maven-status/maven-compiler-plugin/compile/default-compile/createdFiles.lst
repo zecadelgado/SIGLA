@@ -25,6 +25,7 @@ br\com\sigla\interfacegrafica\controlador\ControladorFinanceiro.class
 br\com\sigla\interfacegrafica\controlador\ControladorNovoProduto.class
 br\com\sigla\interfacegrafica\controlador\ControladorCadastroUsuario.class
 br\com\sigla\interfacegrafica\controlador\ControladorClientes$ClienteRankingRow.class
+br\com\sigla\interfacegrafica\controlador\ControladorCadastro$1.class
 br\com\sigla\interfacegrafica\controlador\ControladorFinanceiro$2.class
 br\com\sigla\interfacegrafica\controlador\ControladorCadastro$CadastroRow.class
 br\com\sigla\interfacegrafica\navegacao\VisaoAplicacao$ModoExibicao.class

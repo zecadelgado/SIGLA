@@ -123,10 +123,11 @@ public interface CasoDeUsoCliente {
             String role,
             String phone,
             String email,
-            boolean principal
+            boolean principal,
+            boolean ativo
     ) {
         public ContactCommand(String name, String role, String contact) {
-            this("", name, role, contact == null || contact.contains("@") ? "" : contact, contact != null && contact.contains("@") ? contact : "", false);
+            this("", name, role, contact == null || contact.contains("@") ? "" : contact, contact != null && contact.contains("@") ? contact : "", false, true);
         }
     }
 

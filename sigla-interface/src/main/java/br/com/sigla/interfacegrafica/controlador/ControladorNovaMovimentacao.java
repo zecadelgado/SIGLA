@@ -11,6 +11,7 @@ import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import br.com.sigla.interfacegrafica.util.UtilComboBox;
 import br.com.sigla.interfacegrafica.util.UtilJanela;
 import br.com.sigla.interfacegrafica.util.ValidadorEntrada;
+import br.com.sigla.interfacegrafica.util.TradutorInterface;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -78,6 +79,7 @@ public class ControladorNovaMovimentacao {
             );
         }
         if (tipoCombo != null) {
+            TradutorInterface.aplicar(tipoCombo);
             tipoCombo.getItems().setAll(ItemEstoque.MovementType.values());
             tipoCombo.getSelectionModel().select(ItemEstoque.MovementType.SAIDA);
         }

@@ -125,7 +125,8 @@ public class AdaptadorRepositorioCliente implements RepositorioCliente {
                                 contact.getCargo(),
                                 contact.getTelefone(),
                                 contact.getEmail(),
-                                contact.isPrincipal()
+                                contact.isPrincipal(),
+                                contact.isAtivo()
                         ))
                         .toList(),
                 entity.getObservacoes(),
@@ -168,6 +169,7 @@ public class AdaptadorRepositorioCliente implements RepositorioCliente {
             embeddable.setTelefone(contact.phone());
             embeddable.setEmail(contact.email());
             embeddable.setPrincipal(contact.principal() && principal);
+            embeddable.setAtivo(contact.ativo());
 
             if (embeddable.isPrincipal()) {
                 principal = false;

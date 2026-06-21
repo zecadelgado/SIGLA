@@ -4,6 +4,7 @@ import br.com.sigla.aplicacao.clientes.porta.entrada.CasoDeUsoCliente;
 import br.com.sigla.aplicacao.estoque.porta.entrada.CasoDeUsoEstoque;
 import br.com.sigla.relatorios.etiqueta.ServicoRelatorioEtiqueta;
 import br.com.sigla.dominio.estoque.ItemEstoque;
+import br.com.sigla.interfacegrafica.aplicativo.SessaoLocalAplicacao;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorData;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorMoeda;
 import br.com.sigla.interfacegrafica.async.ExecutorTarefasUi;
@@ -27,9 +28,11 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -43,6 +46,7 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
     private final FormatadorMascaraMoeda formatadorMoeda;
     private final ServicoRelatorioEtiqueta servicoRelatorioEtiqueta;
     private final ExecutorTarefasUi executorTarefasUi;
+    private final SessaoLocalAplicacao sessaoLocalAplicacao;
 
     private Map<String, String> clienteNomes = Map.of();
     private int geracaoRefresh;
@@ -105,7 +109,8 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
             ApresentadorData apresentadorData,
             FormatadorMascaraMoeda formatadorMoeda,
             ServicoRelatorioEtiqueta servicoRelatorioEtiqueta,
-            ExecutorTarefasUi executorTarefasUi
+            ExecutorTarefasUi executorTarefasUi,
+            SessaoLocalAplicacao sessaoLocalAplicacao
     ) {
         super(gerenciadorNavegacao);
         this.casoDeUsoCliente = casoDeUsoCliente;
@@ -116,6 +121,7 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
         this.formatadorMoeda = formatadorMoeda;
         this.servicoRelatorioEtiqueta = servicoRelatorioEtiqueta;
         this.executorTarefasUi = executorTarefasUi;
+        this.sessaoLocalAplicacao = sessaoLocalAplicacao;
     }
 
     @FXML
@@ -132,6 +138,66 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
     @FXML
     private void onMovimentar() {
         gerenciadorNavegacao.navigateTo(VisaoAplicacao.NEW_MOVEMENT);
+    }
+
+    @FXML
+    private void onSaida() {
+        ProdutoRow row = produtosTable == null ? null : produtosTable.getSelectionModel().getSelectedItem();
+        if (row == null) {
+            mostrar("Selecione um produto.");
+            return;
+        }
+        try {
+            abrirDialogoSaida(row).ifPresent(command -> {
+                casoDeUsoEstoque.recordMovement(command);
+                refresh();
+            });
+        } catch (Exception exception) {
+            mostrar(br.com.sigla.interfacegrafica.util.MensagensErro.descrever(exception));
+        }
+    }
+
+    private Optional<CasoDeUsoEstoque.RecordInventoryMovementCommand> abrirDialogoSaida(ProdutoRow row) {
+        Dialog<CasoDeUsoEstoque.RecordInventoryMovementCommand> dialog = new Dialog<>();
+        dialog.setTitle("Saída de Estoque");
+        dialog.setHeaderText("Dar baixa/descartar itens de: " + row.nome());
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        TextField quantidade = new TextField();
+        quantidade.setPromptText("Quantidade (disponível: " + row.quantidade() + " " + row.unidade() + ")");
+        TextField motivo = new TextField();
+        motivo.setPromptText("Motivo do descarte");
+        GridPane grid = new GridPane();
+        grid.setHgap(8);
+        grid.setVgap(8);
+        grid.addRow(0, new Label("Quantidade"), quantidade);
+        grid.addRow(1, new Label("Motivo"), motivo);
+        dialog.getDialogPane().setContent(grid);
+        dialog.setResultConverter(button -> {
+            if (button != ButtonType.OK) {
+                return null;
+            }
+            int qtd = Integer.parseInt(quantidade.getText().trim());
+            return new CasoDeUsoEstoque.RecordInventoryMovementCommand(
+                    row.id(),
+                    UUID.randomUUID().toString(),
+                    ItemEstoque.MovementType.SAIDA,
+                    qtd,
+                    LocalDate.now(),
+                    BigDecimal.ZERO,
+                    BigDecimal.ZERO,
+                    usuarioAtual(),
+                    "",
+                    "",
+                    "Descarte",
+                    motivo.getText() == null ? "" : motivo.getText().trim());
+        });
+        return dialog.showAndWait();
+    }
+
+    private String usuarioAtual() {
+        return sessaoLocalAplicacao == null || sessaoLocalAplicacao.usuarioAtual() == null
+                ? ""
+                : sessaoLocalAplicacao.usuarioAtual().id();
     }
 
     @FXML

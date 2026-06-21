@@ -253,7 +253,7 @@
                                     <TableView fx:id="rankingTable" prefHeight="385.0" prefWidth="200.0" styleClass="registry-table">
                                        <columns>
                                           <TableColumn fx:id="rankingClienteColumn" prefWidth="231.0" text="Nome" />
-                                          <TableColumn fx:id="rankingEmailColumn" prefWidth="231.0" style="-fx-background-color: White;" text="Email" />
+                                          <TableColumn fx:id="rankingEmailColumn" prefWidth="231.0" text="Email" />
                                           <TableColumn fx:id="rankingServicosColumn" prefWidth="231.0" text="Quantidade de Serviços" />
                                           <TableColumn fx:id="rankingFaturamentoColumn" prefWidth="231.0" text="Valor" />
                                           <TableColumn fx:id="rankingIndicacoesColumn" prefWidth="231.0" text="Indicações" />
@@ -296,7 +296,7 @@
                                     <TableView fx:id="indicacoesTable" prefHeight="340.0" prefWidth="200.0" styleClass="registry-table">
                                        <columns>
                                           <TableColumn fx:id="indicacaoNomeColumn" prefWidth="231.0" text="Nome Indicado" />
-                                          <TableColumn fx:id="indicacaoContatoColumn" prefWidth="231.0" style="-fx-background-color: White;" text="Telefone" />
+                                          <TableColumn fx:id="indicacaoContatoColumn" prefWidth="231.0" text="Telefone" />
                                           <TableColumn fx:id="indicacaoClienteColumn" prefWidth="231.0" text="Cliente Indicador" />
                                           <TableColumn fx:id="indicacaoDataColumn" prefWidth="231.0" text="Data" />
                                           <TableColumn fx:id="indicacaoStatusColumn" prefWidth="231.0" text="Status" />

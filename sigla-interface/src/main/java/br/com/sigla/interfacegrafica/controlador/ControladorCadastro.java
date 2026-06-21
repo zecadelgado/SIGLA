@@ -85,6 +85,8 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
     private TableColumn<ResponsavelRow, String> responsavelEmailColumn;
     @FXML
     private TableColumn<ResponsavelRow, String> responsavelPrincipalColumn;
+    @FXML
+    private TableColumn<ResponsavelRow, String> responsavelStatusColumn;
 
     private String filtroAtual = "CLIENTE";
     private String filtroAtivo = "ATIVOS";
@@ -250,6 +252,7 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
         configureResponsavelColumn(responsavelTelefoneColumn, 2, row -> row.telefone());
         configureResponsavelColumn(responsavelEmailColumn, 3, row -> row.email());
         configureResponsavelColumn(responsavelPrincipalColumn, 4, row -> row.principal() ? "Sim" : "Não");
+        configureResponsavelColumn(responsavelStatusColumn, 5, row -> row.ativo() ? "Ativo" : "Inativo");
     }
 
     private void configureColumn(TableColumn<CadastroRow, String> column, int fallbackIndex, java.util.function.Function<CadastroRow, String> getter) {
@@ -370,7 +373,7 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
     }
 
     @FXML
-    private void onRemoverResponsavel() {
+    private void onExcluirResponsavel() {
         CadastroRow row = clienteSelecionado();
         ResponsavelRow responsavel = responsaveisTable == null ? null : responsaveisTable.getSelectionModel().getSelectedItem();
         if (row == null || responsavel == null) {
@@ -386,6 +389,32 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
     }
 
     @FXML
+    private void onInativarResponsavel() {
+        definirAtivoResponsavel(false);
+    }
+
+    @FXML
+    private void onReativarResponsavel() {
+        definirAtivoResponsavel(true);
+    }
+
+    private void definirAtivoResponsavel(boolean ativo) {
+        CadastroRow row = clienteSelecionado();
+        ResponsavelRow responsavel = responsaveisTable == null ? null : responsaveisTable.getSelectionModel().getSelectedItem();
+        if (row == null || responsavel == null) {
+            return;
+        }
+        Cliente cliente = casoDeUsoCliente.listAll().stream().filter(item -> item.id().equals(row.id())).findFirst().orElseThrow();
+        List<CasoDeUsoCliente.ContactCommand> contatos = cliente.contacts().stream()
+                .map(item -> item.id().equals(responsavel.id())
+                        ? new CasoDeUsoCliente.ContactCommand(item.id(), item.name(), item.role(), item.phone(), item.email(), item.principal(), ativo)
+                        : toContactCommand(item))
+                .toList();
+        executar(() -> casoDeUsoCliente.update(toCommand(cliente, contatos)));
+        refresh();
+    }
+
+    @FXML
     private void onMarcarResponsavelPrincipal() {
         CadastroRow row = clienteSelecionado();
         ResponsavelRow responsavel = responsaveisTable == null ? null : responsaveisTable.getSelectionModel().getSelectedItem();
@@ -394,7 +423,7 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
         }
         Cliente cliente = casoDeUsoCliente.listAll().stream().filter(item -> item.id().equals(row.id())).findFirst().orElseThrow();
         List<CasoDeUsoCliente.ContactCommand> contatos = cliente.contacts().stream()
-                .map(item -> new CasoDeUsoCliente.ContactCommand(item.id(), item.name(), item.role(), item.phone(), item.email(), item.id().equals(responsavel.id())))
+                .map(item -> new CasoDeUsoCliente.ContactCommand(item.id(), item.name(), item.role(), item.phone(), item.email(), item.id().equals(responsavel.id()), item.ativo()))
                 .toList();
         executar(() -> casoDeUsoCliente.update(toCommand(cliente, contatos)));
         refresh();
@@ -518,17 +547,46 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
         TextField email = field(existente == null ? "" : existente.email());
         CheckBox principal = new CheckBox("Principal");
         principal.setSelected(existente != null && existente.principal());
+
+        ComboBox<Funcionario> funcionarioCombo = new ComboBox<>();
+        funcionarioCombo.setPromptText("Selecionar funcionário");
+        funcionarioCombo.setMaxWidth(Double.MAX_VALUE);
+        funcionarioCombo.getItems().setAll(casoDeUsoFuncionario.listAll().stream()
+                .filter(funcionario -> funcionario.status() == Funcionario.FuncionarioStatus.ACTIVE)
+                .toList());
+        funcionarioCombo.setConverter(new javafx.util.StringConverter<>() {
+            @Override
+            public String toString(Funcionario funcionario) {
+                return funcionario == null ? "" : funcionario.name();
+            }
+
+            @Override
+            public Funcionario fromString(String texto) {
+                return null;
+            }
+        });
+        funcionarioCombo.valueProperty().addListener((observable, anterior, selecionado) -> {
+            if (selecionado != null) {
+                nome.setText(selecionado.name());
+                cargo.setText(selecionado.role());
+                telefone.setText(selecionado.telefone());
+                email.setText(selecionado.email());
+            }
+        });
+
         GridPane grid = new GridPane();
         grid.setHgap(8);
         grid.setVgap(8);
-        grid.addRow(0, new javafx.scene.control.Label("Nome"), nome);
-        grid.addRow(1, new javafx.scene.control.Label("Cargo"), cargo);
-        grid.addRow(2, new javafx.scene.control.Label("Telefone"), telefone);
-        grid.addRow(3, new javafx.scene.control.Label("E-mail"), email);
-        grid.add(principal, 1, 4);
+        grid.addRow(0, new javafx.scene.control.Label("Funcionário"), funcionarioCombo);
+        grid.addRow(1, new javafx.scene.control.Label("Nome"), nome);
+        grid.addRow(2, new javafx.scene.control.Label("Cargo"), cargo);
+        grid.addRow(3, new javafx.scene.control.Label("Telefone"), telefone);
+        grid.addRow(4, new javafx.scene.control.Label("E-mail"), email);
+        grid.add(principal, 1, 5);
         dialog.getDialogPane().setContent(grid);
         dialog.setResultConverter(button -> button == ButtonType.OK ? new CasoDeUsoCliente.ContactCommand(
-                existente == null ? UUID.randomUUID().toString() : existente.id(), nome.getText(), cargo.getText(), telefone.getText(), email.getText(), principal.isSelected()) : null);
+                existente == null ? UUID.randomUUID().toString() : existente.id(), nome.getText(), cargo.getText(), telefone.getText(), email.getText(), principal.isSelected(),
+                existente == null || existente.ativo()) : null);
         return dialog.showAndWait();
     }
 
@@ -544,7 +602,7 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
                 .filter(cliente -> cliente.id().equals(row.id()))
                 .findFirst()
                 .ifPresentOrElse(cliente -> responsaveisTable.getItems().setAll(cliente.contacts().stream()
-                        .map(contact -> new ResponsavelRow(contact.id(), contact.name(), contact.role(), contact.phone(), contact.email(), contact.principal()))
+                        .map(contact -> new ResponsavelRow(contact.id(), contact.name(), contact.role(), contact.phone(), contact.email(), contact.principal(), contact.ativo()))
                         .toList()), () -> responsaveisTable.getItems().clear());
     }
 
@@ -574,7 +632,7 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
     }
 
     private CasoDeUsoCliente.ContactCommand toContactCommand(Cliente.ContactPerson contact) {
-        return new CasoDeUsoCliente.ContactCommand(contact.id(), contact.name(), contact.role(), contact.phone(), contact.email(), contact.principal());
+        return new CasoDeUsoCliente.ContactCommand(contact.id(), contact.name(), contact.role(), contact.phone(), contact.email(), contact.principal(), contact.ativo());
     }
 
     private TextField field(String value) {
@@ -642,7 +700,8 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
             String cargo,
             String telefone,
             String email,
-            boolean principal
+            boolean principal,
+            boolean ativo
     ) {
     }
 }

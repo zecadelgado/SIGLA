@@ -264,7 +264,17 @@
                                                 <Font name="Ebrima Bold" size="14.0" />
                                              </font>
                                           </Button>
-                                          <Button mnemonicParsing="false" onAction="#onRemoverResponsavel" prefHeight="30.0" prefWidth="90.0" style="-fx-background-color: white; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Remover" textFill="#0B2A6F">
+                                          <Button mnemonicParsing="false" onAction="#onInativarResponsavel" prefHeight="30.0" prefWidth="90.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Inativar" textFill="WHITE">
+                                             <font>
+                                                <Font name="Ebrima Bold" size="14.0" />
+                                             </font>
+                                          </Button>
+                                          <Button mnemonicParsing="false" onAction="#onReativarResponsavel" prefHeight="30.0" prefWidth="90.0" style="-fx-background-color: white; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Reativar" textFill="#0B2A6F">
+                                             <font>
+                                                <Font name="Ebrima Bold" size="14.0" />
+                                             </font>
+                                          </Button>
+                                          <Button mnemonicParsing="false" onAction="#onExcluirResponsavel" prefHeight="30.0" prefWidth="90.0" style="-fx-background-color: white; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Excluir" textFill="#0B2A6F">
                                              <font>
                                                 <Font name="Ebrima Bold" size="14.0" />
                                              </font>
@@ -282,7 +292,8 @@
                                           <TableColumn fx:id="responsavelCargoColumn" prefWidth="240.0" text="Cargo" />
                                           <TableColumn fx:id="responsavelTelefoneColumn" prefWidth="220.0" text="Telefone" />
                                           <TableColumn fx:id="responsavelEmailColumn" prefWidth="340.0" text="Email" />
-                                          <TableColumn fx:id="responsavelPrincipalColumn" prefWidth="160.0" text="Principal" />
+                                          <TableColumn fx:id="responsavelPrincipalColumn" prefWidth="120.0" text="Principal" />
+                                          <TableColumn fx:id="responsavelStatusColumn" prefWidth="120.0" text="Status" />
                                        </columns>
                                     </TableView>
                                  </children>

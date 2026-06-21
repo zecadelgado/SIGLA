@@ -77,10 +77,11 @@ public class AdaptadorRepositorioContrato implements RepositorioContrato {
             return Contrato.ContratoType.MONTHLY;
         }
         return switch (value.trim().toUpperCase()) {
-            case "MENSAL" -> Contrato.ContratoType.MONTHLY;
+            case "MENSAL", "MONTHLY" -> Contrato.ContratoType.MONTHLY;
             case "QUINZENAL" -> Contrato.ContratoType.QUINZENAL;
             case "AVULSO" -> Contrato.ContratoType.AVULSO;
-            default -> Contrato.ContratoType.CORPORATE;
+            case "CORPORATE" -> Contrato.ContratoType.CORPORATE;
+            default -> Contrato.ContratoType.MONTHLY;
         };
     }
 
@@ -89,8 +90,8 @@ public class AdaptadorRepositorioContrato implements RepositorioContrato {
             return Contrato.ServiceFrequency.MONTHLY;
         }
         return switch (value.trim().toUpperCase()) {
-            case "QUINZENAL" -> Contrato.ServiceFrequency.BIWEEKLY;
-            case "AVULSO" -> Contrato.ServiceFrequency.ONE_OFF;
+            case "QUINZENAL", "BIWEEKLY" -> Contrato.ServiceFrequency.BIWEEKLY;
+            case "AVULSO", "ONE_OFF" -> Contrato.ServiceFrequency.ONE_OFF;
             default -> Contrato.ServiceFrequency.MONTHLY;
         };
     }

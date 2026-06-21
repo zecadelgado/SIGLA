@@ -153,7 +153,8 @@ public record Cliente(
             String role,
             String phone,
             String email,
-            boolean principal
+            boolean principal,
+            boolean ativo
     ) {
         public ContactPerson {
             id = normalize(id);
@@ -164,7 +165,7 @@ public record Cliente(
         }
 
         public ContactPerson(String name, String role, String contact) {
-            this("", name, role, contact == null || contact.contains("@") ? "" : contact, contact != null && contact.contains("@") ? contact : "", false);
+            this("", name, role, contact == null || contact.contains("@") ? "" : contact, contact != null && contact.contains("@") ? contact : "", false, true);
         }
 
         public String contact() {

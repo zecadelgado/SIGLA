@@ -273,6 +273,9 @@ public class ClienteEntidade {
         @Column(name = "principal", nullable = false)
         private boolean principal;
 
+        @Column(name = "ativo", nullable = false)
+        private boolean ativo = true;
+
         public UUID getId() {
             return id;
         }
@@ -319,6 +322,14 @@ public class ClienteEntidade {
 
         public void setPrincipal(boolean principal) {
             this.principal = principal;
+        }
+
+        public boolean isAtivo() {
+            return ativo;
+        }
+
+        public void setAtivo(boolean ativo) {
+            this.ativo = ativo;
         }
     }
 }

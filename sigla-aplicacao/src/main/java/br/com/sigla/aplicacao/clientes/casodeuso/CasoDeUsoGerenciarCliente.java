@@ -92,7 +92,7 @@ public class CasoDeUsoGerenciarCliente implements CasoDeUsoCliente {
     private Cliente toCliente(RegisterClienteCommand command) {
         Objects.requireNonNull(command, "command is required");
         List<Cliente.ContactPerson> contacts = command.contacts() == null ? List.of() : command.contacts().stream()
-                .map(contact -> new Cliente.ContactPerson(contact.id(), contact.name(), contact.role(), contact.phone(), contact.email(), contact.principal()))
+                .map(contact -> new Cliente.ContactPerson(contact.id(), contact.name(), contact.role(), contact.phone(), contact.email(), contact.principal(), contact.ativo()))
                 .toList();
         contacts = normalizarResponsaveis(contacts);
         return new Cliente(
@@ -175,7 +175,7 @@ public class CasoDeUsoGerenciarCliente implements CasoDeUsoCliente {
             if (principal) {
                 principalEncontrado = true;
             }
-            normalizados.add(new Cliente.ContactPerson(contact.id(), contact.name(), contact.role(), contact.phone(), contact.email(), principal));
+            normalizados.add(new Cliente.ContactPerson(contact.id(), contact.name(), contact.role(), contact.phone(), contact.email(), principal, contact.ativo()));
         }
         return List.copyOf(normalizados);
     }

@@ -133,6 +133,14 @@
                                     <Insets top="40.0" />
                                  </HBox.margin>
                               </Button>
+                              <Button mnemonicParsing="false" onAction="#onSaida" prefHeight="46.0" prefWidth="150.0" style="-fx-background-color: #891111; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Saída" textFill="WHITE">
+                                 <font>
+                                    <Font name="Ebrima Bold" size="17.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets left="20.0" top="40.0" />
+                                 </HBox.margin>
+                              </Button>
                               <Button mnemonicParsing="false" onAction="#onNovoProduto" prefHeight="46.0" prefWidth="170.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="+ Novo Produto" textFill="WHITE">
                                  <font>
                                     <Font name="Ebrima Bold" size="17.0" />

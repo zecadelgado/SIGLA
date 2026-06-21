@@ -2,6 +2,7 @@ package br.com.sigla.interfacegrafica.controlador;
 
 import br.com.sigla.aplicacao.clientes.porta.entrada.CasoDeUsoCliente;
 import br.com.sigla.aplicacao.financeiro.porta.entrada.CasoDeUsoFinanceiro;
+import br.com.sigla.aplicacao.servicos.porta.entrada.CasoDeUsoOrdemServico;
 import br.com.sigla.relatorios.recibo.ServicoRelatorioRecibo;
 import br.com.sigla.dominio.financeiro.CategoriaFinanceira;
 import br.com.sigla.dominio.financeiro.FormaPagamentoFinanceira;
@@ -43,6 +44,7 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
 
     private final CasoDeUsoCliente casoDeUsoCliente;
     private final CasoDeUsoFinanceiro casoDeUsoFinanceiro;
+    private final CasoDeUsoOrdemServico casoDeUsoOrdemServico;
     private final GerenciadorNavegacao gerenciadorNavegacao;
     private final ApresentadorMoeda apresentadorMoeda;
     private final ApresentadorData apresentadorData;
@@ -50,6 +52,7 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
     private final ExecutorTarefasUi executorTarefasUi;
 
     private Map<String, String> clienteNomes = Map.of();
+    private Map<String, String> ordemNumeros = Map.of();
     private int geracaoRefresh;
 
     @FXML
@@ -102,6 +105,7 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
     public ControladorFinanceiro(
             CasoDeUsoCliente casoDeUsoCliente,
             CasoDeUsoFinanceiro casoDeUsoFinanceiro,
+            CasoDeUsoOrdemServico casoDeUsoOrdemServico,
             GerenciadorNavegacao gerenciadorNavegacao,
             ApresentadorMoeda apresentadorMoeda,
             ApresentadorData apresentadorData,
@@ -111,6 +115,7 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
         super(gerenciadorNavegacao);
         this.casoDeUsoCliente = casoDeUsoCliente;
         this.casoDeUsoFinanceiro = casoDeUsoFinanceiro;
+        this.casoDeUsoOrdemServico = casoDeUsoOrdemServico;
         this.gerenciadorNavegacao = gerenciadorNavegacao;
         this.apresentadorMoeda = apresentadorMoeda;
         this.apresentadorData = apresentadorData;
@@ -304,18 +309,25 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
         var transacoes = casoDeUsoFinanceiro.listTransactions(filtro);
         Map<String, String> nomes = casoDeUsoCliente.listAll().stream()
                 .collect(Collectors.toMap(cliente -> cliente.id(), cliente -> cliente.name(), (a, b) -> a));
-        return new FinanceiroSnapshot(lancamentos, transacoes, nomes);
+        Map<String, String> ordens = casoDeUsoOrdemServico.listAll().stream()
+                .collect(Collectors.toMap(
+                        ordem -> ordem.id(),
+                        ordem -> ordem.numeroOs() == null ? ordem.id() : String.valueOf(ordem.numeroOs()),
+                        (a, b) -> a));
+        return new FinanceiroSnapshot(lancamentos, transacoes, nomes, ordens);
     }
 
     private record FinanceiroSnapshot(
             java.util.List<LancamentoFinanceiro> lancamentos,
             java.util.List<CasoDeUsoFinanceiro.TransacaoFinanceiraView> transacoes,
-            Map<String, String> clienteNomes
+            Map<String, String> clienteNomes,
+            Map<String, String> ordemNumeros
     ) {
     }
 
     private void aplicar(FinanceiroSnapshot dados) {
         clienteNomes = dados.clienteNomes();
+        ordemNumeros = dados.ordemNumeros();
         var lancamentos = dados.lancamentos();
         BigDecimal receitas = lancamentos.stream()
                 .filter(lancamento -> lancamento.tipo() == LancamentoFinanceiro.Tipo.ENTRY)
@@ -346,7 +358,7 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
         configureColumn(categoriaColumn, 1, row -> blankAsDash(TradutorInterface.texto(row.category())));
         configureColumn(descricaoColumn, 2, row -> blankAsDash(row.description()));
         configureColumn(clienteColumn, 3, row -> resolveCliente(row.customerId()));
-        configureColumn(ordemColumn, 4, row -> blankAsDash(row.orderReference()));
+        configureColumn(ordemColumn, 4, row -> resolveOrdem(row.orderReference()));
         configureColumn(valorColumn, 5, row -> apresentadorMoeda.format(row.amount()));
         configureColumn(emissaoColumn, 6, row -> apresentadorData.format(row.issueDate()));
         configureColumn(vencimentoColumn, 7, row -> apresentadorData.format(row.dueDate()));
@@ -523,6 +535,13 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
             return "-";
         }
         return clienteNomes.getOrDefault(customerId, customerId);
+    }
+
+    private String resolveOrdem(String orderReference) {
+        if (orderReference == null || orderReference.isBlank()) {
+            return "-";
+        }
+        return ordemNumeros.getOrDefault(orderReference, orderReference);
     }
 
     private String blankAsDash(String value) {

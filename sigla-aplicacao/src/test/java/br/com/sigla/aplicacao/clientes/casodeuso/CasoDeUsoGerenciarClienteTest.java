@@ -79,8 +79,8 @@ class CasoDeUsoGerenciarClienteTest {
                 "",
                 "",
                 List.of(
-                        new CasoDeUsoCliente.ContactCommand("", "Maria", "Compras", "11988888888", "maria@sigla.local", true),
-                        new CasoDeUsoCliente.ContactCommand("", "Joao", "Financeiro", "11977777777", "joao@sigla.local", true)
+                        new CasoDeUsoCliente.ContactCommand("", "Maria", "Compras", "11988888888", "maria@sigla.local", true, true),
+                        new CasoDeUsoCliente.ContactCommand("", "Joao", "Financeiro", "11977777777", "joao@sigla.local", true, true)
                 ),
                 "",
                 true

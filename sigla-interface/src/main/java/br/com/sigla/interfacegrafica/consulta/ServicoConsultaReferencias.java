@@ -69,7 +69,7 @@ public class ServicoConsultaReferencias {
         Map<String, String> clientes = casoDeUsoCliente.listAll().stream()
                 .collect(Collectors.toMap(customer -> customer.id(), customer -> customer.name(), (left, right) -> left));
         return casoDeUsoContrato.listAll().stream()
-                .filter(contrato -> contrato.status() == Contrato.ContratoStatus.ACTIVE || contrato.status() == Contrato.ContratoStatus.DRAFT)
+                .filter(contrato -> contrato.status() != Contrato.ContratoStatus.CANCELLED)
                 .map(contrato -> new OpcaoId(contrato.id(), contratoLabel(contrato, clientes)))
                 .toList();
     }
