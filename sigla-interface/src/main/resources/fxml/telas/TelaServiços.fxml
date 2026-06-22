@@ -129,7 +129,7 @@
                      <children>
                         <VBox prefHeight="100.0" prefWidth="400.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
                            <children>
-                              <Label text="Total de Serviços">
+                              <Label style="-fx-text-fill: #303030;" text="Total de Serviços" textFill="#303030">
                                  <VBox.margin>
                                     <Insets left="10.0" top="10.0" />
                                  </VBox.margin>
@@ -149,7 +149,7 @@
                         </VBox>
                         <VBox prefHeight="100.0" prefWidth="400.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
                            <children>
-                              <Label text="Valores Recebidos">
+                              <Label style="-fx-text-fill: #303030;" text="Valores Recebidos" textFill="#303030">
                                  <VBox.margin>
                                     <Insets left="10.0" top="10.0" />
                                  </VBox.margin>
@@ -172,7 +172,7 @@
                         </VBox>
                         <VBox prefHeight="100.0" prefWidth="400.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
                            <children>
-                              <Label text="Valores Pendentes">
+                              <Label style="-fx-text-fill: #303030;" text="Valores Pendentes" textFill="#303030">
                                  <VBox.margin>
                                     <Insets left="10.0" top="10.0" />
                                  </VBox.margin>

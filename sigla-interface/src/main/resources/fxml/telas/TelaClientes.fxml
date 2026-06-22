@@ -145,7 +145,7 @@
                                     <Insets left="35.0" />
                                  </HBox.margin>
                                  <children>
-                                    <Label text="Total de Clientes">
+                                    <Label style="-fx-text-fill: #303030;" text="Total de Clientes" textFill="#303030">
                                        <VBox.margin>
                                           <Insets left="15.0" top="10.0" />
                                        </VBox.margin>
@@ -168,7 +168,7 @@
                                     <Insets left="15.0" />
                                  </HBox.margin>
                                  <children>
-                                    <Label text="Total de Indicações">
+                                    <Label style="-fx-text-fill: #303030;" text="Total de Indicações" textFill="#303030">
                                        <font>
                                           <Font name="Ebrima" size="14.0" />
                                        </font>
@@ -191,7 +191,7 @@
                                     <Insets left="15.0" />
                                  </HBox.margin>
                                  <children>
-                                    <Label text="Faturamento Total">
+                                    <Label style="-fx-text-fill: #303030;" text="Faturamento Total" textFill="#303030">
                                        <font>
                                           <Font name="Ebrima" size="14.0" />
                                        </font>
@@ -214,7 +214,7 @@
                                     <Insets left="15.0" />
                                  </HBox.margin>
                                  <children>
-                                    <Label text="Indicações Pendentes">
+                                    <Label style="-fx-text-fill: #303030;" text="Indicações Pendentes" textFill="#303030">
                                        <font>
                                           <Font name="Ebrima" size="14.0" />
                                        </font>

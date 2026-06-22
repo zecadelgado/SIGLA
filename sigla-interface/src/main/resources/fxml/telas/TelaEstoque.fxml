@@ -190,7 +190,7 @@
                                     <Insets bottom="10.0" left="10.0" top="10.0" />
                                  </HBox.margin>
                                  <children>
-                                    <Label text="Total de Produtos">
+                                    <Label style="-fx-text-fill: #303030;" text="Total de Produtos" textFill="#303030">
                                        <VBox.margin>
                                           <Insets left="20.0" top="15.0" />
                                        </VBox.margin>
@@ -210,7 +210,7 @@
                               </VBox>
                               <VBox prefHeight="80.0" prefWidth="392.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
                                  <children>
-                                    <Label text="Valor Total Estoque">
+                                    <Label style="-fx-text-fill: #303030;" text="Valor Total Estoque" textFill="#303030">
                                        <VBox.margin>
                                           <Insets left="20.0" top="15.0" />
                                        </VBox.margin>
@@ -233,7 +233,7 @@
                               </VBox>
                               <VBox prefHeight="90.0" prefWidth="392.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);">
                                  <children>
-                                    <Label text="Produtos em Baixa">
+                                    <Label style="-fx-text-fill: #303030;" text="Produtos em Baixa" textFill="#303030">
                                        <VBox.margin>
                                           <Insets left="20.0" top="15.0" />
                                        </VBox.margin>
