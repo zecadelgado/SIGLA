@@ -2,6 +2,7 @@ package br.com.sigla.interfacegrafica.async;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ExecutorService;
@@ -29,6 +30,10 @@ public class ExecutorTarefasUi {
 
     private final ExecutorService executor;
 
+    // Opcional: ausente nos testes (que usam um executor sincrono sem contexto Spring),
+    // por isso todo uso e protegido contra null.
+    private IndicadorCarregamento indicadorCarregamento;
+
     public ExecutorTarefasUi() {
         ThreadFactory threadFactory = new ThreadFactory() {
             private final AtomicInteger contador = new AtomicInteger(1);
@@ -43,6 +48,11 @@ public class ExecutorTarefasUi {
         this.executor = Executors.newFixedThreadPool(4, threadFactory);
     }
 
+    @Autowired(required = false)
+    public void setIndicadorCarregamento(IndicadorCarregamento indicadorCarregamento) {
+        this.indicadorCarregamento = indicadorCarregamento;
+    }
+
     public <T> void executar(Supplier<T> trabalho, Consumer<T> aoConcluir) {
         executar(trabalho, aoConcluir, null);
     }
@@ -54,12 +64,16 @@ public class ExecutorTarefasUi {
                 return trabalho.get();
             }
         };
+        iniciarIndicador();
         task.setOnSucceeded(event -> {
+            // Primeiro popula a tela; depois some o veu, revelando o conteudo ja pronto.
             if (aoConcluir != null) {
                 aoConcluir.accept(task.getValue());
             }
+            concluirIndicador();
         });
         task.setOnFailed(event -> {
+            concluirIndicador();
             Throwable erro = task.getException();
             if (aoFalhar != null) {
                 aoFalhar.accept(erro);
@@ -75,6 +89,18 @@ public class ExecutorTarefasUi {
             ).showAndWait();
         });
         executor.execute(task);
+    }
+
+    private void iniciarIndicador() {
+        if (indicadorCarregamento != null) {
+            indicadorCarregamento.iniciar();
+        }
+    }
+
+    private void concluirIndicador() {
+        if (indicadorCarregamento != null) {
+            indicadorCarregamento.concluir();
+        }
     }
 
     /** Executa uma acao na thread da UI (atalho para {@link Platform#runLater}). */

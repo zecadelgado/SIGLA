@@ -2,12 +2,15 @@ package br.com.sigla.interfacegrafica.controlador;
 
 import br.com.sigla.interfacegrafica.aplicativo.FluxoAplicacao;
 import br.com.sigla.interfacegrafica.aplicativo.SessaoLocalAplicacao;
+import br.com.sigla.interfacegrafica.async.ExecutorTarefasUi;
+import br.com.sigla.interfacegrafica.async.SobreposicaoCarregamento;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import br.com.sigla.interfacegrafica.util.ValidadorEntrada;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import org.springframework.stereotype.Component;
 
 import java.util.logging.Level;
@@ -20,6 +23,12 @@ public class ControladorLogin {
 
     private final SessaoLocalAplicacao sessaoLocalAplicacao;
     private final FluxoAplicacao fluxoAplicacao;
+    private final ExecutorTarefasUi executorTarefasUi;
+
+    private SobreposicaoCarregamento overlayCarregamento;
+
+    @FXML
+    private AnchorPane txtLoginInsira;
 
     @FXML
     private TextField usernameField;
@@ -30,14 +39,35 @@ public class ControladorLogin {
     @FXML
     private Label errorLabel;
 
-    public ControladorLogin(SessaoLocalAplicacao sessaoLocalAplicacao, FluxoAplicacao fluxoAplicacao) {
+    public ControladorLogin(
+            SessaoLocalAplicacao sessaoLocalAplicacao,
+            FluxoAplicacao fluxoAplicacao,
+            ExecutorTarefasUi executorTarefasUi
+    ) {
         this.sessaoLocalAplicacao = sessaoLocalAplicacao;
         this.fluxoAplicacao = fluxoAplicacao;
+        this.executorTarefasUi = executorTarefasUi;
     }
 
     @FXML
     public void initialize() {
         setErrorVisible(false);
+        instalarOverlay();
+    }
+
+    // Veu de "Entrando..." sobre a tela de login. A autenticacao bate no banco remoto e
+    // pode passar de 1 segundo; sem isso a tela congelava sem nenhum retorno ao usuario.
+    private void instalarOverlay() {
+        if (txtLoginInsira == null) {
+            return;
+        }
+        overlayCarregamento = new SobreposicaoCarregamento("Entrando...");
+        overlayCarregamento.setVisible(false);
+        AnchorPane.setTopAnchor(overlayCarregamento, 0.0);
+        AnchorPane.setRightAnchor(overlayCarregamento, 0.0);
+        AnchorPane.setBottomAnchor(overlayCarregamento, 0.0);
+        AnchorPane.setLeftAnchor(overlayCarregamento, 0.0);
+        txtLoginInsira.getChildren().add(overlayCarregamento);
     }
 
     @FXML
@@ -55,27 +85,57 @@ public class ControladorLogin {
             return;
         }
 
-        boolean authenticated;
-        try {
-            authenticated = sessaoLocalAplicacao.login(username, password);
-        } catch (RuntimeException erro) {
-            mostrarErro(br.com.sigla.interfacegrafica.util.MensagensErro.descrever(
-                    "Nao foi possivel validar o login (verifique a conexao com o banco):", erro));
-            return;
-        }
-        if (authenticated) {
-            try {
-                setErrorVisible(false);
-                fluxoAplicacao.showShell();
-            } catch (RuntimeException exception) {
-                LOGGER.log(Level.SEVERE, "Falha ao abrir a tela inicial apos login.", exception);
-                sessaoLocalAplicacao.logout();
-                mostrarErro("Login validado, mas não foi possível abrir a tela inicial. Veja o console.");
-            }
-            return;
-        }
+        // Autentica fora da thread de UI: a consulta ao banco remoto pode demorar e nao
+        // pode congelar a tela. O veu de carregamento da o retorno visual enquanto isso.
+        setErrorVisible(false);
+        mostrarCarregando(true);
+        executorTarefasUi.executar(
+                () -> sessaoLocalAplicacao.login(username, password),
+                autenticado -> {
+                    if (autenticado) {
+                        abrirTelaInicial();
+                    } else {
+                        mostrarCarregando(false);
+                        mostrarErro("Usuário ou senha inválidos.");
+                    }
+                },
+                erro -> {
+                    mostrarCarregando(false);
+                    mostrarErro(br.com.sigla.interfacegrafica.util.MensagensErro.descrever(
+                            "Nao foi possivel validar o login (verifique a conexao com o banco):", erro));
+                }
+        );
+    }
 
-        mostrarErro("Usuário ou senha inválidos.");
+    private void abrirTelaInicial() {
+        try {
+            setErrorVisible(false);
+            fluxoAplicacao.showShell();
+            // Sucesso: a cena troca para o shell e este overlay e descartado junto.
+        } catch (RuntimeException exception) {
+            LOGGER.log(Level.SEVERE, "Falha ao abrir a tela inicial apos login.", exception);
+            sessaoLocalAplicacao.logout();
+            mostrarCarregando(false);
+            mostrarErro("Login validado, mas não foi possível abrir a tela inicial. Veja o console.");
+        }
+    }
+
+    private void mostrarCarregando(boolean carregando) {
+        if (overlayCarregamento != null) {
+            overlayCarregamento.setVisible(carregando);
+            if (carregando) {
+                overlayCarregamento.toFront();
+                overlayCarregamento.iniciarAnimacao();
+            } else {
+                overlayCarregamento.pararAnimacao();
+            }
+        }
+        if (usernameField != null) {
+            usernameField.setDisable(carregando);
+        }
+        if (passwordField != null) {
+            passwordField.setDisable(carregando);
+        }
     }
 
     @FXML

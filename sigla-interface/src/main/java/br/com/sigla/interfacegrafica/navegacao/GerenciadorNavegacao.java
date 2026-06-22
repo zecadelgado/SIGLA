@@ -6,6 +6,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
@@ -20,6 +21,9 @@ public class GerenciadorNavegacao {
     private final br.com.sigla.interfacegrafica.aplicativo.FluxoAplicacao fluxoAplicacao;
     private VisaoAplicacao currentView;
     private BorderPane shellContentHost;
+    // Onde as telas do shell sao injetadas. E uma camada empilhavel (StackPane) para que a
+    // tela de carregamento possa ficar por cima do conteudo. Quando ausente, recai no setCenter.
+    private Pane shellContentSlot;
     private Node shellMenu;
 
     public GerenciadorNavegacao(
@@ -35,6 +39,10 @@ public class GerenciadorNavegacao {
             if (view.isSobreposta()) {
                 fluxoAplicacao.showView(view);
                 currentView = view;
+                return;
+            }
+            if (view.isShellContent() && shellContentSlot != null) {
+                shellContentSlot.getChildren().setAll(loadShellContent(view));
                 return;
             }
             if (view.isShellContent() && shellContentHost != null) {
@@ -56,6 +64,10 @@ public class GerenciadorNavegacao {
 
     public void registerShellContentHost(BorderPane shellContentHost) {
         this.shellContentHost = shellContentHost;
+    }
+
+    public void registerShellContentSlot(Pane shellContentSlot) {
+        this.shellContentSlot = shellContentSlot;
     }
 
     public void registerShellMenu(Node shellMenu) {

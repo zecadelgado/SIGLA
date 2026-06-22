@@ -1,12 +1,14 @@
 package br.com.sigla.interfacegrafica.controlador;
 
 import br.com.sigla.interfacegrafica.aplicativo.FluxoAplicacao;
+import br.com.sigla.interfacegrafica.async.IndicadorCarregamento;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import org.springframework.stereotype.Component;
 
 import java.util.EnumMap;
@@ -17,6 +19,7 @@ public class ControladorEstruturaAplicacao {
 
     private final GerenciadorNavegacao navigationManager;
     private final FluxoAplicacao fluxoAplicacao;
+    private final IndicadorCarregamento indicadorCarregamento;
 
     private static final String CLASSE_ATIVO = "active";
 
@@ -51,9 +54,14 @@ public class ControladorEstruturaAplicacao {
 
     private final Map<VisaoAplicacao, Button> botoesNavegacao = new EnumMap<>(VisaoAplicacao.class);
 
-    public ControladorEstruturaAplicacao(GerenciadorNavegacao navigationManager, FluxoAplicacao fluxoAplicacao) {
+    public ControladorEstruturaAplicacao(
+            GerenciadorNavegacao navigationManager,
+            FluxoAplicacao fluxoAplicacao,
+            IndicadorCarregamento indicadorCarregamento
+    ) {
         this.navigationManager = navigationManager;
         this.fluxoAplicacao = fluxoAplicacao;
+        this.indicadorCarregamento = indicadorCarregamento;
     }
 
     @FXML
@@ -61,7 +69,24 @@ public class ControladorEstruturaAplicacao {
         mapearBotoesNavegacao();
         navigationManager.registerShellContentHost(contentHost);
         navigationManager.registerShellMenu(menuLateral);
+        instalarAreaDeConteudo();
         navigate(VisaoAplicacao.DASHBOARD);
+    }
+
+    // O centro do shell vira uma pilha: a tela atual embaixo e a tela de carregamento por
+    // cima. A navegacao injeta as telas no hospedeiro (camada de baixo) e o indicador exibe
+    // o veu na camada de cima, cobrindo apenas o conteudo (a barra lateral continua ativa).
+    private void instalarAreaDeConteudo() {
+        if (contentHost == null) {
+            return;
+        }
+        StackPane hospedeiroConteudo = new StackPane();
+        StackPane pilhaConteudo = new StackPane(hospedeiroConteudo);
+        contentHost.setCenter(pilhaConteudo);
+        navigationManager.registerShellContentSlot(hospedeiroConteudo);
+        if (indicadorCarregamento != null) {
+            indicadorCarregamento.instalarEm(pilhaConteudo);
+        }
     }
 
     private void mapearBotoesNavegacao() {
@@ -147,6 +172,7 @@ public class ControladorEstruturaAplicacao {
     @FXML
     private void onLogoutClick() {
         navigationManager.registerShellContentHost(null);
+        navigationManager.registerShellContentSlot(null);
         fluxoAplicacao.showLogin();
     }
 

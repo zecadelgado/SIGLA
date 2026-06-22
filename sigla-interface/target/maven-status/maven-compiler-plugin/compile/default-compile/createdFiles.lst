@@ -49,7 +49,9 @@ br\com\sigla\interfacegrafica\controlador\ControladorAgenda.class
 br\com\sigla\interfacegrafica\controlador\ControladorFinanceiro$1.class
 br\com\sigla\interfacegrafica\controlador\ControladorComMenuPrincipal.class
 br\com\sigla\interfacegrafica\util\TradutorInterface$1.class
+br\com\sigla\interfacegrafica\async\IndicadorCarregamento.class
 br\com\sigla\interfacegrafica\async\ExecutorTarefasUi$2.class
+br\com\sigla\interfacegrafica\async\SobreposicaoCarregamento.class
 br\com\sigla\interfacegrafica\aplicativo\AplicacaoDesktopSigla.class
 br\com\sigla\interfacegrafica\aplicativo\EstruturaAplicacao.class
 br\com\sigla\interfacegrafica\controlador\ControladorEstoque$ProdutoRow.class

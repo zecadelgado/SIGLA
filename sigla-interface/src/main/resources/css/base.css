@@ -214,6 +214,26 @@
     -fx-wrap-text: true;
 }
 
+/* Tela de carregamento: veu translucido sobre o conteudo + cartao central com o anel animado. */
+.overlay-carregamento {
+    -fx-background-color: rgba(232, 237, 243, 0.82);
+}
+
+.overlay-carregamento-cartao {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-border-color: #dbe4f0;
+    -fx-padding: 30 44 26 44;
+    -fx-effect: dropshadow(gaussian, rgba(11, 42, 111, 0.22), 30, 0, 0, 12);
+}
+
+.overlay-carregamento-texto {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2a4a7f;
+}
+
 .table-view .table-row-cell:selected,
 .table-view .table-row-cell:focused:selected,
 .registry-table .table-row-cell:selected,

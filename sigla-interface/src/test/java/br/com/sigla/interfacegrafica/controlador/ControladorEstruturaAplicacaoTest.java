@@ -1,13 +1,18 @@
 package br.com.sigla.interfacegrafica.controlador;
 
 import br.com.sigla.interfacegrafica.aplicativo.FluxoAplicacao;
+import br.com.sigla.interfacegrafica.async.IndicadorCarregamento;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
+import javafx.application.Platform;
 import javafx.scene.layout.BorderPane;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -15,10 +20,23 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ControladorEstruturaAplicacaoTest {
 
+    // initialize() monta a area de conteudo com a tela de carregamento (nos JavaFX e animacao),
+    // que exige o toolkit ativo. Inicia uma vez, como no ControladorDashboardTest.
+    @BeforeAll
+    static void startJavaFx() throws Exception {
+        CountDownLatch latch = new CountDownLatch(1);
+        try {
+            Platform.startup(latch::countDown);
+        } catch (IllegalStateException alreadyStarted) {
+            latch.countDown();
+        }
+        assertTrue(latch.await(5, TimeUnit.SECONDS));
+    }
+
     @Test
     void shouldNavigateToDashboardFromMainMenu() throws Exception {
         SpyGerenciadorNavegacao navigationManager = new SpyGerenciadorNavegacao();
-        ControladorEstruturaAplicacao controller = new ControladorEstruturaAplicacao(navigationManager, new SpyFluxoAplicacao());
+        ControladorEstruturaAplicacao controller = new ControladorEstruturaAplicacao(navigationManager, new SpyFluxoAplicacao(), new IndicadorCarregamento());
 
         invoke(controller, "onDashboardClick");
         assertEquals(VisaoAplicacao.DASHBOARD, navigationManager.lastView);
@@ -27,7 +45,7 @@ class ControladorEstruturaAplicacaoTest {
     @Test
     void shouldRegisterShellContentHostBeforeInitialDashboardNavigation() throws Exception {
         SpyGerenciadorNavegacao navigationManager = new SpyGerenciadorNavegacao();
-        ControladorEstruturaAplicacao controller = new ControladorEstruturaAplicacao(navigationManager, new SpyFluxoAplicacao());
+        ControladorEstruturaAplicacao controller = new ControladorEstruturaAplicacao(navigationManager, new SpyFluxoAplicacao(), new IndicadorCarregamento());
         BorderPane contentHost = new BorderPane();
         setField(controller, "contentHost", contentHost);
 
@@ -40,7 +58,7 @@ class ControladorEstruturaAplicacaoTest {
     @Test
     void shouldNavigateThroughMainMenuActions() throws Exception {
         SpyGerenciadorNavegacao navigationManager = new SpyGerenciadorNavegacao();
-        ControladorEstruturaAplicacao controller = new ControladorEstruturaAplicacao(navigationManager, new SpyFluxoAplicacao());
+        ControladorEstruturaAplicacao controller = new ControladorEstruturaAplicacao(navigationManager, new SpyFluxoAplicacao(), new IndicadorCarregamento());
 
         invoke(controller, "onCadastrosClick");
         assertEquals(VisaoAplicacao.REGISTRY, navigationManager.lastView);
@@ -71,7 +89,7 @@ class ControladorEstruturaAplicacaoTest {
     void shouldLogoutFromMainMenu() throws Exception {
         SpyFluxoAplicacao applicationFlow = new SpyFluxoAplicacao();
         SpyGerenciadorNavegacao navigationManager = new SpyGerenciadorNavegacao();
-        ControladorEstruturaAplicacao controller = new ControladorEstruturaAplicacao(navigationManager, applicationFlow);
+        ControladorEstruturaAplicacao controller = new ControladorEstruturaAplicacao(navigationManager, applicationFlow, new IndicadorCarregamento());
 
         invoke(controller, "onLogoutClick");
 

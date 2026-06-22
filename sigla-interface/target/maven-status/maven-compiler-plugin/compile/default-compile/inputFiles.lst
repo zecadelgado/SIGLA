@@ -5,6 +5,8 @@ D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\aplicativo\
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\apresentacao\ApresentadorData.java
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\apresentacao\ApresentadorMoeda.java
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\async\ExecutorTarefasUi.java
+D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\async\IndicadorCarregamento.java
+D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\async\SobreposicaoCarregamento.java
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\consulta\ContextoDetalheOrdemServico.java
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\consulta\ServicoConsultaOrdemServico.java
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\consulta\ServicoConsultaReferencias.java
