@@ -1,5 +1,6 @@
 package br.com.sigla.aplicacao.servicos.porta.entrada;
 
+import br.com.sigla.dominio.servicos.DadosFormularioServico;
 import br.com.sigla.dominio.servicos.OrdemServico;
 
 import java.math.BigDecimal;
@@ -32,6 +33,9 @@ public interface CasoDeUsoOrdemServico {
 
     OrdemServico anexar(AnexarOrdemServicoCommand command);
 
+    /** Persiste apenas os dados extras dos formularios (PDF), preservando o restante da OS. */
+    OrdemServico atualizarDadosFormulario(String id, DadosFormularioServico dados);
+
     List<OrdemServico> listAll();
 
     List<OrdemServico> filtrar(FiltroOrdemServico filtro);
@@ -50,7 +54,8 @@ public interface CasoDeUsoOrdemServico {
             String responsavelInternoId,
             String executadoPorId,
             BigDecimal valorServico,
-            String observacoes
+            String observacoes,
+            DadosFormularioServico dadosFormulario
     ) {
         public CreateOrdemServicoCommand(
                 String id,
@@ -67,7 +72,26 @@ public interface CasoDeUsoOrdemServico {
                 BigDecimal valorServico,
                 String observacoes
         ) {
-            this(id, clienteId, "", titulo, descricao, tipoServico, status, dataAgendada, dataInicio, dataFim, responsavelInternoId, executadoPorId, valorServico, observacoes);
+            this(id, clienteId, "", titulo, descricao, tipoServico, status, dataAgendada, dataInicio, dataFim, responsavelInternoId, executadoPorId, valorServico, observacoes, DadosFormularioServico.vazio());
+        }
+
+        public CreateOrdemServicoCommand(
+                String id,
+                String clienteId,
+                String contratoId,
+                String titulo,
+                String descricao,
+                String tipoServico,
+                OrdemServico.OrdemServicoStatus status,
+                LocalDateTime dataAgendada,
+                LocalDateTime dataInicio,
+                LocalDateTime dataFim,
+                String responsavelInternoId,
+                String executadoPorId,
+                BigDecimal valorServico,
+                String observacoes
+        ) {
+            this(id, clienteId, contratoId, titulo, descricao, tipoServico, status, dataAgendada, dataInicio, dataFim, responsavelInternoId, executadoPorId, valorServico, observacoes, DadosFormularioServico.vazio());
         }
     }
 

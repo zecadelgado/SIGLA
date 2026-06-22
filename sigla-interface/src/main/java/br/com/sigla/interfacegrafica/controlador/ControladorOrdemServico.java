@@ -8,7 +8,9 @@ import br.com.sigla.relatorios.formulario.FormularioVisita;
 import br.com.sigla.relatorios.ordemservico.ServicoRelatorioOrdemServico;
 import br.com.sigla.relatorios.visita.ServicoRelatorioVisita;
 import br.com.sigla.dominio.clientes.Cliente;
+import br.com.sigla.dominio.servicos.DadosFormularioServico;
 import br.com.sigla.dominio.servicos.OrdemServico;
+import br.com.sigla.interfacegrafica.dialogo.DialogoDadosVisita;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorData;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorMoeda;
 import br.com.sigla.interfacegrafica.consulta.ContextoDetalheOrdemServico;
@@ -318,6 +320,10 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
             return;
         }
         try {
+            OrdemServico ordem = ordemPorId(selected.id());
+            DadosFormularioServico.Os os = ordem == null
+                    ? DadosFormularioServico.Os.vazio()
+                    : ordem.dadosFormulario().os();
             Cliente cliente = clientePorId(selected.customerId());
             Path arquivo = servicoRelatorioOrdemServico.imprimir(new FormularioOrdemServico.Dados(
                     apresentadorData.format(selected.emissionDate()),
@@ -326,9 +332,10 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
                     documentoCliente(cliente),
                     cliente == null ? "" : cliente.email(),
                     cliente == null ? "" : cliente.phone(),
-                    "",
-                    "",
-                    semTraco(selected.notes())
+                    os.horaInicio(),
+                    os.horaTermino(),
+                    semTraco(selected.notes()),
+                    os
             ));
             new Alert(Alert.AlertType.INFORMATION, "OS gerada em:\n" + arquivo, ButtonType.OK).showAndWait();
         } catch (Exception exception) {
@@ -343,12 +350,27 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
             return;
         }
         try {
+            OrdemServico ordem = ordemPorId(selected.id());
+            DadosFormularioServico.Visita atual = ordem == null
+                    ? DadosFormularioServico.Visita.vazio()
+                    : ordem.dadosFormulario().visita();
+            Optional<DadosFormularioServico.Visita> editado = DialogoDadosVisita.abrir(atual);
+            if (editado.isEmpty()) {
+                return;
+            }
+            DadosFormularioServico.Visita visita = editado.get();
+            if (ordem != null) {
+                executar(() -> casoDeUsoOrdemServico.atualizarDadosFormulario(
+                        ordem.id(),
+                        new DadosFormularioServico(ordem.dadosFormulario().os(), visita)));
+            }
             Cliente cliente = clientePorId(selected.customerId());
             Path arquivo = servicoRelatorioVisita.imprimir(new FormularioVisita.Dados(
                     apresentadorData.format(selected.emissionDate()),
                     semTraco(selected.responsible()),
-                    "",
-                    "",
+                    visita.horaInicio(),
+                    visita.horaTermino(),
+                    visita.horarioMarcado(),
                     selected.customerName(),
                     documentoCliente(cliente),
                     cliente == null ? "" : cliente.location(),
@@ -357,7 +379,8 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
                     cliente == null ? "" : cliente.estado(),
                     responsavelCliente(cliente),
                     selected.customerName(),
-                    semTraco(selected.responsible())
+                    semTraco(selected.responsible()),
+                    visita
             ));
             new Alert(Alert.AlertType.INFORMATION, "Relatório de visita gerado em:\n" + arquivo, ButtonType.OK).showAndWait();
         } catch (Exception exception) {
@@ -371,6 +394,16 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
         }
         return casoDeUsoCliente.listAll().stream()
                 .filter(cliente -> cliente.id().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private OrdemServico ordemPorId(String id) {
+        if (id == null || id.isBlank()) {
+            return null;
+        }
+        return casoDeUsoOrdemServico.listAll().stream()
+                .filter(ordem -> ordem.id().equals(id))
                 .findFirst()
                 .orElse(null);
     }

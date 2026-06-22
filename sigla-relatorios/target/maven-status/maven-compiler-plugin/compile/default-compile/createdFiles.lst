@@ -3,6 +3,7 @@ br\com\sigla\relatorios\etiqueta\ServicoRelatorioEtiqueta$DadosEtiqueta.class
 br\com\sigla\relatorios\etiqueta\ServicoRelatorioEtiqueta.class
 br\com\sigla\relatorios\modelo\DocumentoRelatorio$Campo.class
 br\com\sigla\relatorios\ordemservico\ServicoRelatorioOrdemServico.class
+br\com\sigla\relatorios\formulario\ModeloFormulario.class
 br\com\sigla\relatorios\formulario\FormularioVisita$Dados.class
 br\com\sigla\relatorios\formulario\DesenhoFormulario.class
 br\com\sigla\relatorios\formulario\FormularioOrdemServico$Dados.class

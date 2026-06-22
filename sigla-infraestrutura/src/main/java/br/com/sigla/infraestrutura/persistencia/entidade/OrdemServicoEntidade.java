@@ -8,6 +8,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import br.com.sigla.dominio.servicos.DadosFormularioServico;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -73,6 +76,10 @@ public class OrdemServicoEntidade {
 
     @Column(name = "observacoes")
     private String observacoes;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "dados_formulario", columnDefinition = "jsonb")
+    private DadosFormularioServico dadosFormulario;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "ordem_servico_id", nullable = false)
@@ -220,6 +227,14 @@ public class OrdemServicoEntidade {
 
     public void setObservacoes(String observacoes) {
         this.observacoes = observacoes;
+    }
+
+    public DadosFormularioServico getDadosFormulario() {
+        return dadosFormulario;
+    }
+
+    public void setDadosFormulario(DadosFormularioServico dadosFormulario) {
+        this.dadosFormulario = dadosFormulario;
     }
 
     public List<ProdutoEntidade> getProdutos() {

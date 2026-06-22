@@ -25,7 +25,8 @@ public record OrdemServico(
         boolean assinaturaCliente,
         List<ProdutoUsado> produtos,
         List<Anexo> anexos,
-        String observacoes
+        String observacoes,
+        DadosFormularioServico dadosFormulario
 ) {
     public OrdemServico {
         id = requireText(id, "id");
@@ -44,6 +45,7 @@ public record OrdemServico(
         produtos = List.copyOf(Objects.requireNonNullElse(produtos, List.of()));
         anexos = List.copyOf(Objects.requireNonNullElse(anexos, List.of()));
         observacoes = normalizeOptional(observacoes);
+        dadosFormulario = dadosFormulario == null ? DadosFormularioServico.vazio() : dadosFormulario;
         validarDatas(dataAgendada, dataInicio, dataFim);
     }
 
@@ -85,7 +87,8 @@ public record OrdemServico(
                 false,
                 List.of(),
                 List.of(),
-                observacoes
+                observacoes,
+                DadosFormularioServico.vazio()
         );
     }
 

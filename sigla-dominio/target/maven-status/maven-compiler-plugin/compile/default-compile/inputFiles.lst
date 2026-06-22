@@ -24,5 +24,7 @@ D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\notificacoes\Remetente
 D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\notificacoes\RenderizadorTemplate.java
 D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\notificacoes\TelefoneWhatsapp.java
 D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\potenciaisclientes\PotencialCliente.java
+D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\servicos\DadosFormularioServico.java
+D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\servicos\OpcoesFormularioServico.java
 D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\servicos\OrdemServico.java
 D:\SIGLA\sigla-dominio\src\main\java\br\com\sigla\dominio\usuarios\Usuario.java

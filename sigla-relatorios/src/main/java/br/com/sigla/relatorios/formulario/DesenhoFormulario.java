@@ -1,8 +1,10 @@
 package br.com.sigla.relatorios.formulario;
 
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.PDPageContentStream.AppendMode;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
@@ -42,6 +44,43 @@ final class DesenhoFormulario implements AutoCloseable {
         } catch (IOException excecao) {
             throw new UncheckedIOException("Falha ao iniciar o PDF do formulario", excecao);
         }
+    }
+
+    /**
+     * Abre o PDF do modelo (formulario LIDER pre-impresso) e prepara para desenhar
+     * os valores POR CIMA, preservando o layout original pixel a pixel. As coordenadas
+     * continuam medidas a partir do topo da pagina.
+     */
+    DesenhoFormulario(byte[] modelo) {
+        try {
+            this.documento = Loader.loadPDF(modelo);
+            PDPage pagina = documento.getPage(0);
+            PDRectangle caixa = pagina.getMediaBox();
+            this.largura = caixa.getWidth();
+            this.altura = caixa.getHeight();
+            this.conteudo = new PDPageContentStream(documento, pagina, AppendMode.APPEND, true, true);
+            this.fonteNormal = new PDType1Font(Standard14Fonts.FontName.HELVETICA);
+            this.fonteNegrito = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
+        } catch (IOException excecao) {
+            throw new UncheckedIOException("Falha ao carregar o modelo do formulario", excecao);
+        }
+    }
+
+    /** Marca um "X" centralizado em (centroX, centroY), util para checkboxes do modelo. */
+    void marcarCaixa(float centroX, float centroY, float tamanho) {
+        textoCentralizado(centroX, centroY - 0.65f * tamanho, tamanho, true, "X");
+    }
+
+    /** Texto que diminui a fonte ate caber em larguraMax (campos estreitos do modelo). */
+    void textoAjustado(float x, float topo, float larguraMax, float tamanho, String valor) {
+        if (valor == null || valor.isEmpty()) {
+            return;
+        }
+        float t = tamanho;
+        while (t > 5f && larguraDoTexto(valor, t, false) > larguraMax) {
+            t -= 0.5f;
+        }
+        texto(x, topo, t, false, valor);
     }
 
     float largura() {

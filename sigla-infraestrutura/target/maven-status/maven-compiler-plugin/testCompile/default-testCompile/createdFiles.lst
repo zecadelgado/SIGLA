@@ -1,2 +1,3 @@
 br\com\sigla\infraestrutura\integracao\AdaptadorEnvioWhatsappN8nTest.class
+br\com\sigla\infraestrutura\persistencia\DadosFormularioJsonTest.class
 br\com\sigla\infraestrutura\armazenamento\AdaptadorArmazenamentoAnexoSistemaArquivosTest.class

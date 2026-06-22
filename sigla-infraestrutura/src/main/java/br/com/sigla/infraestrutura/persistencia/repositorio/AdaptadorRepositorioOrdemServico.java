@@ -85,7 +85,8 @@ public class AdaptadorRepositorioOrdemServico implements RepositorioOrdemServico
                                 PersistenciaIds.toString(anexo.getUploadedBy())
                         ))
                         .toList(),
-                entity.getObservacoes()
+                entity.getObservacoes(),
+                entity.getDadosFormulario()
         );
     }
 
@@ -108,6 +109,7 @@ public class AdaptadorRepositorioOrdemServico implements RepositorioOrdemServico
         entity.setValorServico(ordemServico.valorServico());
         entity.setAssinaturaCliente(ordemServico.assinaturaCliente());
         entity.setObservacoes(ordemServico.observacoes());
+        entity.setDadosFormulario(ordemServico.dadosFormulario());
         List<OrdemServicoEntidade.ProdutoEntidade> produtos = new ArrayList<>();
         for (OrdemServico.ProdutoUsado produto : ordemServico.produtos()) {
             OrdemServicoEntidade.ProdutoEntidade produtoEntidade = new OrdemServicoEntidade.ProdutoEntidade();

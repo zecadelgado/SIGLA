@@ -33,6 +33,7 @@ D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\controlador
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\controlador\ControladorOrdemServico.java
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\controlador\ControladorServicos.java
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\controlador\ControladorUsuarios.java
+D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\dialogo\DialogoDadosVisita.java
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\formatador\FormatadorMascaraCpf.java
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\formatador\FormatadorMascaraMoeda.java
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\inicializacao\AgendadorNotificacoes.java
@@ -46,6 +47,8 @@ D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\navegacao\G
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\navegacao\VisaoAplicacao.java
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\util\DestaqueFiltro.java
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\util\DialogoUi.java
+D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\util\GrupoCheckboxes.java
+D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\util\GrupoProdutosQtde.java
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\util\MensagensErro.java
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\util\ResolvedorEntradaTexto.java
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\util\TradutorInterface.java

@@ -25,6 +25,7 @@ br\com\sigla\interfacegrafica\controlador\ControladorFinanceiro.class
 br\com\sigla\interfacegrafica\controlador\ControladorNovoProduto.class
 br\com\sigla\interfacegrafica\controlador\ControladorCadastroUsuario.class
 br\com\sigla\interfacegrafica\controlador\ControladorClientes$ClienteRankingRow.class
+br\com\sigla\interfacegrafica\dialogo\DialogoDadosVisita.class
 br\com\sigla\interfacegrafica\controlador\ControladorCadastro$1.class
 br\com\sigla\interfacegrafica\controlador\ControladorFinanceiro$2.class
 br\com\sigla\interfacegrafica\controlador\ControladorCadastro$CadastroRow.class
@@ -34,6 +35,7 @@ br\com\sigla\interfacegrafica\inicializacao\AplicacaoSpringSigla.class
 br\com\sigla\interfacegrafica\controlador\ControladorAgenda$AgendaSnapshot.class
 br\com\sigla\interfacegrafica\consulta\ContextoDetalheOrdemServico.class
 br\com\sigla\interfacegrafica\controlador\ControladorClientes$IndicacaoRow.class
+br\com\sigla\interfacegrafica\util\GrupoProdutosQtde.class
 br\com\sigla\interfacegrafica\controlador\ControladorNovaTransacao.class
 br\com\sigla\interfacegrafica\controlador\ControladorAgenda$1.class
 br\com\sigla\interfacegrafica\controlador\ControladorConfiguracaoNotificacoes.class
@@ -51,6 +53,7 @@ br\com\sigla\interfacegrafica\controlador\ControladorComMenuPrincipal.class
 br\com\sigla\interfacegrafica\util\TradutorInterface$1.class
 br\com\sigla\interfacegrafica\async\IndicadorCarregamento.class
 br\com\sigla\interfacegrafica\async\ExecutorTarefasUi$2.class
+br\com\sigla\interfacegrafica\util\GrupoCheckboxes.class
 br\com\sigla\interfacegrafica\async\SobreposicaoCarregamento.class
 br\com\sigla\interfacegrafica\aplicativo\AplicacaoDesktopSigla.class
 br\com\sigla\interfacegrafica\aplicativo\EstruturaAplicacao.class

@@ -58,7 +58,8 @@ class ServicoConsultaOrdemServicoTest {
                 false,
                 List.of(),
                 List.of(),
-                ""
+                "",
+                null
         );
     }
 
@@ -106,6 +107,11 @@ class ServicoConsultaOrdemServicoTest {
 
         @Override
         public OrdemServico anexar(AnexarOrdemServicoCommand command) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public OrdemServico atualizarDadosFormulario(String id, br.com.sigla.dominio.servicos.DadosFormularioServico dados) {
             throw new UnsupportedOperationException();
         }
 

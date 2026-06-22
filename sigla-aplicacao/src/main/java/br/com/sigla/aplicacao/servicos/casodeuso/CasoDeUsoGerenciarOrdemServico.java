@@ -9,6 +9,7 @@ import br.com.sigla.aplicacao.servicos.porta.entrada.CasoDeUsoOrdemServico;
 import br.com.sigla.aplicacao.servicos.porta.saida.RepositorioOrdemServico;
 import br.com.sigla.dominio.agenda.VisitaAgendada;
 import br.com.sigla.dominio.estoque.ItemEstoque;
+import br.com.sigla.dominio.servicos.DadosFormularioServico;
 import br.com.sigla.dominio.servicos.OrdemServico;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -81,7 +82,8 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
                 false,
                 List.of(),
                 List.of(),
-                command.observacoes()
+                command.observacoes(),
+                command.dadosFormulario()
         ));
         sincronizarAgenda(ordemServico);
         return ordemServico;
@@ -113,7 +115,8 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
                 atual.assinaturaCliente(),
                 atual.produtos(),
                 atual.anexos(),
-                command.observacoes()
+                command.observacoes(),
+                atual.dadosFormulario()
         ));
         sincronizarAgenda(atualizada);
         return atualizada;
@@ -145,7 +148,8 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
                 ordemServico.assinaturaCliente(),
                 ordemServico.produtos(),
                 ordemServico.anexos(),
-                ordemServico.observacoes()
+                ordemServico.observacoes(),
+                ordemServico.dadosFormulario()
         ));
         gerarFinanceiroSePossivel(concluida);
         sincronizarAgenda(concluida);
@@ -190,7 +194,8 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
                 assinatura,
                 ordemServico.produtos(),
                 ordemServico.anexos(),
-                ordemServico.observacoes()
+                ordemServico.observacoes(),
+                ordemServico.dadosFormulario()
         ));
         gerarFinanceiroSePossivel(concluida);
         sincronizarAgenda(concluida);
@@ -221,7 +226,8 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
                 ordemServico.assinaturaCliente(),
                 ordemServico.produtos(),
                 ordemServico.anexos(),
-                observacoes
+                observacoes,
+                ordemServico.dadosFormulario()
         ));
         auditarOs(cancelada.id(), "OS_CANCELADA", command.motivo(), cancelada.executadoPorId());
         cancelarFinanceiroVinculado(cancelada, command.motivo());
@@ -252,7 +258,8 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
                 ordemServico.assinaturaCliente(),
                 ordemServico.produtos(),
                 ordemServico.anexos(),
-                ordemServico.observacoes()
+                ordemServico.observacoes(),
+                ordemServico.dadosFormulario()
         ));
         atualizarFinanceiroPago(atualizada, pago);
         return atualizada;
@@ -353,7 +360,7 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
         return repository.save(new OrdemServico(
                 ordem.id(), ordem.numeroOs(), ordem.clienteId(), ordem.contratoId(), ordem.titulo(), ordem.descricao(), ordem.tipoServico(),
                 ordem.status(), ordem.dataAgendada(), ordem.dataInicio(), ordem.dataFim(), ordem.responsavelInternoId(), ordem.executadoPorId(),
-                ordem.foiFeito(), ordem.pago(), ordem.valorServico(), ordem.assinaturaCliente(), produtos, ordem.anexos(), ordem.observacoes()
+                ordem.foiFeito(), ordem.pago(), ordem.valorServico(), ordem.assinaturaCliente(), produtos, ordem.anexos(), ordem.observacoes(), ordem.dadosFormulario()
         ));
     }
 
@@ -375,7 +382,18 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
         return repository.save(new OrdemServico(
                 ordem.id(), ordem.numeroOs(), ordem.clienteId(), ordem.contratoId(), ordem.titulo(), ordem.descricao(), ordem.tipoServico(),
                 ordem.status(), ordem.dataAgendada(), ordem.dataInicio(), ordem.dataFim(), ordem.responsavelInternoId(), ordem.executadoPorId(),
-                ordem.foiFeito(), ordem.pago(), ordem.valorServico(), assinatura, ordem.produtos(), anexos, ordem.observacoes()
+                ordem.foiFeito(), ordem.pago(), ordem.valorServico(), assinatura, ordem.produtos(), anexos, ordem.observacoes(), ordem.dadosFormulario()
+        ));
+    }
+
+    @Override
+    public OrdemServico atualizarDadosFormulario(String id, DadosFormularioServico dados) {
+        OrdemServico ordem = find(id);
+        return repository.save(new OrdemServico(
+                ordem.id(), ordem.numeroOs(), ordem.clienteId(), ordem.contratoId(), ordem.titulo(), ordem.descricao(), ordem.tipoServico(),
+                ordem.status(), ordem.dataAgendada(), ordem.dataInicio(), ordem.dataFim(), ordem.responsavelInternoId(), ordem.executadoPorId(),
+                ordem.foiFeito(), ordem.pago(), ordem.valorServico(), ordem.assinaturaCliente(), ordem.produtos(), ordem.anexos(), ordem.observacoes(),
+                dados == null ? DadosFormularioServico.vazio() : dados
         ));
     }
 

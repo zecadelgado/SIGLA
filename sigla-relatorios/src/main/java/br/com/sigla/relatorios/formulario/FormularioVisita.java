@@ -1,191 +1,116 @@
 package br.com.sigla.relatorios.formulario;
 
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import br.com.sigla.dominio.servicos.DadosFormularioServico;
+import br.com.sigla.dominio.servicos.OpcoesFormularioServico;
+import br.com.sigla.dominio.servicos.OpcoesFormularioServico.Opcao;
 
-import java.awt.Color;
+import java.util.List;
 
 /**
- * Desenha o Relatorio de Visita no formato do formulario LIDER (retrato):
- * cabecalho da empresa, bloco do cliente, secoes Tipo de Visita, Desratizacao,
- * Desinsetizacao, Componente Ativo (checkboxes) e tres blocos de assinatura.
+ * Preenche o Relatorio de Visita CARIMBANDO os valores por cima do modelo LIDER
+ * pre-impresso (relatorio-visita-modelo.pdf), mantendo o layout identico.
+ * Coordenadas a partir do topo da pagina; X dos checkboxes centralizado na caixa.
  */
 public final class FormularioVisita {
 
-    private static final float MARGEM = 22f;
+    private static final float CHECK = 7f;
 
     private FormularioVisita() {
     }
 
     public static byte[] gerar(Dados dados, DadosEmpresa empresa) {
-        DesenhoFormulario d = new DesenhoFormulario(PDRectangle.A4);
-        float dir = d.largura() - MARGEM;
+        DesenhoFormulario d = new DesenhoFormulario(ModeloFormulario.carregar(ModeloFormulario.RELATORIO_VISITA));
+        DadosFormularioServico.Visita v = dados.visita();
 
-        cabecalho(d, empresa, dados, dir);
-        tituloEHorarios(d, dados, dir);
-        blocoCliente(d, dados, dir);
-        tipoVisita(d, dir);
-        desratizacao(d, dir);
-        desinsetizacao(d, dir);
-        componenteAtivo(d, dir);
-        assinaturas(d, dados, dir);
-        rodape(d, empresa, dir);
+        // Topo: data, horario marcado, funcionario(s), horarios.
+        d.textoAjustado(185f, 10f, 60f, 7f, dados.data());
+        d.textoAjustado(246f, 10f, 15f, 7f, dados.horarioMarcado());
+        d.textoAjustado(190f, 27f, 62f, 7f, dados.funcionarios());
+        d.texto(192f, 44f, 7f, false, dados.horaInicio());
+        d.texto(243f, 44f, 7f, false, dados.horaTermino());
+
+        // Bloco do cliente.
+        d.textoAjustado(38f, 51f, 108f, 8f, dados.cliente());
+        d.textoAjustado(175f, 51f, 78f, 8f, dados.cnpj());
+        d.textoAjustado(48f, 60f, 95f, 8f, dados.endereco());
+        d.textoAjustado(172f, 60f, 80f, 8f, dados.fone());
+        d.textoAjustado(53f, 69f, 60f, 8f, dados.municipio());
+        d.texto(150f, 69f, 8f, false, dados.estado());
+        d.textoAjustado(214f, 69f, 40f, 8f, dados.responsavel());
+
+        // Tipo de visita.
+        marcar(d, OpcoesFormularioServico.VISITA_TIPO, v.tipoVisita(),
+                new float[]{24.5f, 69.6f, 122.2f, 168.6f, 210.2f},
+                cys(101f, 5));
+
+        // Desratizacao.
+        secao(d, v.desratizacao(), 128f, 138f, 124f,
+                OpcoesFormularioServico.VISITA_DESRAT_TECNICA,
+                new float[]{55f, 110f, 172f, 55f, 110f, 172f},
+                new float[]{144f, 144f, 144f, 155f, 155f, 155f},
+                OpcoesFormularioServico.VISITA_DESRAT_PRAGA,
+                new float[]{58f, 150f, 235f},
+                cys(166f, 3));
+
+        // Desinsetizacao.
+        secao(d, v.desinsetizacao(), 187f, 197f, 184f,
+                OpcoesFormularioServico.VISITA_DESINSET_TECNICA,
+                new float[]{55f, 110f, 172f, 55f, 110f, 172f},
+                new float[]{205f, 205f, 205f, 216f, 216f, 216f},
+                OpcoesFormularioServico.VISITA_DESINSET_PRAGA,
+                new float[]{55f, 105f, 147f, 185f, 219f, 249f, 55f, 105f, 168f},
+                new float[]{227f, 227f, 227f, 227f, 227f, 227f, 238f, 238f, 238f});
+
+        // Componente ativo (4 colunas).
+        float[] linhas = {250f, 258f, 266f, 274f, 282f, 290f, 298f};
+        coluna(d, OpcoesFormularioServico.VISITA_COMPONENTE_COL1, v.componenteAtivo(), 14f, linhas);
+        coluna(d, OpcoesFormularioServico.VISITA_COMPONENTE_COL2, v.componenteAtivo(), 79f, linhas);
+        coluna(d, OpcoesFormularioServico.VISITA_COMPONENTE_COL3, v.componenteAtivo(), 141f, linhas);
+        coluna(d, OpcoesFormularioServico.VISITA_COMPONENTE_COL4, v.componenteAtivo(), 203f, linhas);
+
+        // Assinaturas (nomes).
+        d.textoAjustado(33f, 326f, 130f, 7f, dados.nomeCliente());
+        d.textoAjustado(123f, 326f, 75f, 7f, v.fiscalizacaoNome());
+        d.textoAjustado(205f, 326f, 55f, 7f, dados.nomeLider());
 
         return d.finalizar();
     }
 
-    private static void cabecalho(DesenhoFormulario d, DadosEmpresa empresa, Dados dados, float dir) {
-        d.preencher(MARGEM, 20f, 60f, 42f, new Color(0x1b, 0x2a, 0x4a));
-        d.texto(MARGEM + 9, 36f, 9f, true, Color.WHITE, "LIDER");
-        d.texto(90f, 20f, 22f, true, empresa.nome());
-        d.texto(90f, 44f, 8f, true, empresa.subtitulo());
-        d.texto(250f, 22f, 7.5f, true, empresa.razaoSocial());
-        d.texto(250f, 32f, 7f, false, "CNPJ: " + empresa.cnpj());
-        d.texto(250f, 41f, 7f, false, empresa.telefones());
-        d.texto(250f, 50f, 7f, false, empresa.endereco());
-        // Campos topo-direita.
-        campoCaixa(d, 410f, 18f, dir - 410f, "Data:", dados.data());
-        campoCaixa(d, 410f, 36f, dir - 410f, "Funcionario(s):", dados.funcionarios());
+    private static void secao(DesenhoFormulario d, DadosFormularioServico.Secao secao,
+                              float extCy, float intCy, float locaisTopo,
+                              List<Opcao> tecnica, float[] tecnicaX, float[] tecnicaY,
+                              List<Opcao> praga, float[] pragaX, float[] pragaY) {
+        if (secao.externamente()) {
+            d.marcarCaixa(25f, extCy, CHECK);
+        }
+        if (secao.internamente()) {
+            d.marcarCaixa(25f, intCy, CHECK);
+        }
+        d.textoAjustado(60f, locaisTopo, 195f, 7.5f, secao.locais());
+        marcar(d, tecnica, secao.tecnica(), tecnicaX, tecnicaY);
+        marcar(d, praga, secao.praga(), pragaX, pragaY);
     }
 
-    private static void tituloEHorarios(DesenhoFormulario d, Dados dados, float dir) {
-        float topo = 66f;
-        d.barraSecao(MARGEM, topo, 300f, 16f, "RELATORIO DE VISITA");
-        campoCaixa(d, 340f, topo + 1, 110f, "Hora Inicio:", dados.horaInicio());
-        campoCaixa(d, 460f, topo + 1, dir - 460f, "Hora Termino:", dados.horaTermino());
-    }
-
-    private static void blocoCliente(DesenhoFormulario d, Dados dados, float dir) {
-        float topo = 90f;
-        d.campoLinha(MARGEM, topo, 360f, "Cliente", dados.cliente(), 9f);
-        d.campoLinha(400f, topo, dir - 400f, "CNPJ", dados.cnpj(), 9f);
-        d.campoLinha(MARGEM, topo + 18, 360f, "Endereco", dados.endereco(), 9f);
-        d.campoLinha(400f, topo + 18, dir - 400f, "Fone", dados.fone(), 9f);
-        d.campoLinha(MARGEM, topo + 36, 200f, "Municipio", dados.municipio(), 9f);
-        d.campoLinha(240f, topo + 36, 120f, "Estado", dados.estado(), 9f);
-        d.campoLinha(380f, topo + 36, dir - 380f, "Responsavel", dados.responsavel(), 9f);
-    }
-
-    private static void tipoVisita(DesenhoFormulario d, float dir) {
-        float topo = 150f;
-        d.barraSecao(MARGEM, topo, dir - MARGEM, 15f, "TIPO DE VISITA E OBJETIVO");
-        float y = topo + 22;
-        String[] itens = {"Periodica", "Extraordinaria", "Prevencao", "Correcao", "Erradicacao"};
-        float x = MARGEM + 10;
-        float passo = (dir - MARGEM) / itens.length;
-        for (String item : itens) {
-            d.checkbox(x, y, item, 8.5f);
-            x += passo;
+    private static void coluna(DesenhoFormulario d, List<Opcao> opcoes, List<String> marcados, float centroX, float[] linhas) {
+        for (int i = 0; i < opcoes.size() && i < linhas.length; i++) {
+            if (marcados.contains(opcoes.get(i).chave())) {
+                d.marcarCaixa(centroX, linhas[i], CHECK);
+            }
         }
     }
 
-    private static void desratizacao(DesenhoFormulario d, float dir) {
-        float topo = 188f;
-        d.barraSecao(MARGEM, topo, dir - MARGEM, 15f, "DESRATIZACAO");
-        float y = topo + 22;
-        d.checkbox(MARGEM + 6, y, "Externamente", 8.5f);
-        d.checkbox(MARGEM + 6, y + 16, "Internamente", 8.5f);
-        d.campoLinha(150f, y + 6, dir - 150f, "Locais", "", 9f);
-
-        float yt = y + 36;
-        d.texto(MARGEM + 6, yt, 8.5f, true, "Tecnica de Tratamento:");
-        d.checkbox(170f, yt, "Granulacao", 8.5f);
-        d.checkbox(310f, yt, "Armadilhas/Iscas Adesivas", 8.5f);
-        d.checkbox(460f, yt, "Po de contato", 8.5f);
-        d.checkbox(170f, yt + 16, "Polvilhamento", 8.5f);
-        d.checkbox(310f, yt + 16, "Iscagem", 8.5f);
-        d.checkbox(460f, yt + 16, "Bloco", 8.5f);
-
-        float yp = yt + 34;
-        d.texto(MARGEM + 6, yp, 8.5f, true, "Praga Alvo:");
-        d.checkbox(170f, yp, "Camundongo (Mus musculus)", 8.5f);
-        d.checkbox(330f, yp, "Rato (Rattus rattus)", 8.5f);
-        d.checkbox(455f, yp, "Ratazana (R. norvegicus)", 8.5f);
-        d.retangulo(MARGEM, topo, dir - MARGEM, 104f);
-    }
-
-    private static void desinsetizacao(DesenhoFormulario d, float dir) {
-        float topo = 298f;
-        d.barraSecao(MARGEM, topo, dir - MARGEM, 15f, "DESINSETIZACAO");
-        float y = topo + 22;
-        d.checkbox(MARGEM + 6, y, "Externamente", 8.5f);
-        d.checkbox(MARGEM + 6, y + 16, "Internamente", 8.5f);
-        d.campoLinha(150f, y + 6, dir - 150f, "Locais", "", 9f);
-
-        float yt = y + 36;
-        d.texto(MARGEM + 6, yt, 8.5f, true, "Tecnica de Tratamento:");
-        d.checkbox(170f, yt, "Pulverizacao", 8.5f);
-        d.checkbox(310f, yt, "Armadilhas/Iscas Adesivas", 8.5f);
-        d.checkbox(460f, yt, "Termonebulizacao", 8.5f);
-        d.checkbox(170f, yt + 16, "Polvilhamento", 8.5f);
-        d.checkbox(310f, yt + 16, "Iscagem", 8.5f);
-        d.checkbox(460f, yt + 16, "Bloco", 8.5f);
-
-        float yp = yt + 34;
-        d.texto(MARGEM + 6, yp, 8.5f, true, "Praga Alvo:");
-        String[] linha1 = {"Barata", "Formiga", "Mosca", "Aranha", "Mosquito"};
-        float x = 110f;
-        for (String item : linha1) {
-            d.checkbox(x, yp, item, 8.5f);
-            x += 90f;
-        }
-        d.checkbox(110f, yp + 16, "Descupinizacao", 8.5f);
-        d.checkbox(250f, yp + 16, "Limpeza Caixa de agua", 8.5f);
-        d.checkbox(420f, yp + 16, "Limpeza Reservatorio", 8.5f);
-        d.retangulo(MARGEM, topo, dir - MARGEM, 122f);
-    }
-
-    private static void componenteAtivo(DesenhoFormulario d, float dir) {
-        float topo = 428f;
-        d.barraSecao(MARGEM, topo, dir - MARGEM, 15f, "COMPONENTE ATIVO");
-        float y = topo + 22;
-        String[] col1 = {"Coumatetralil", "Cumaclor", "Brodifacoum", "Bromadiolona", "Diferacoum", "Nao Toxico (Adesivo)"};
-        String[] col2 = {"Sulfuramida", "Acido Ortoborico", "Azametifos", "Tereflto", "Imidacloprid", "Propoxur"};
-        String[] col3 = {"Deltametrina", "Cipermetrina", "Lambda-cialotrina", "Hidrametilnona", "Diclorvos", "Diazinon"};
-        String[] col4 = {"Nao Aplicado", "Fipronil"};
-        desenharColuna(d, MARGEM + 8, y, col1);
-        desenharColuna(d, 165f, y, col2);
-        desenharColuna(d, 320f, y, col3);
-        desenharColuna(d, 470f, y, col4);
-        d.retangulo(MARGEM, topo, dir - MARGEM, 22 + 6 * 17 + 6);
-    }
-
-    private static void desenharColuna(DesenhoFormulario d, float x, float y, String[] itens) {
-        float yy = y;
-        for (String item : itens) {
-            d.checkbox(x, yy, item, 8.5f);
-            yy += 17f;
+    private static void marcar(DesenhoFormulario d, List<Opcao> opcoes, List<String> marcados, float[] cxs, float[] cys) {
+        for (int i = 0; i < opcoes.size() && i < cxs.length; i++) {
+            if (marcados.contains(opcoes.get(i).chave())) {
+                d.marcarCaixa(cxs[i], cys[i], CHECK);
+            }
         }
     }
 
-    private static void assinaturas(DesenhoFormulario d, Dados dados, float dir) {
-        float topo = 600f;
-        float larguraBloco = (dir - MARGEM - 40f) / 3f;
-        bloco(d, MARGEM, topo, larguraBloco, "Cliente", dados.nomeCliente());
-        bloco(d, MARGEM + larguraBloco + 20f, topo, larguraBloco, "Fiscalizacao", "");
-        bloco(d, MARGEM + 2 * (larguraBloco + 20f), topo, larguraBloco, "Lider Desinsetizacao", dados.nomeLider());
-    }
-
-    private static void bloco(DesenhoFormulario d, float x, float topo, float larguraBloco, String titulo, String nome) {
-        d.texto(x, topo, 9f, true, titulo);
-        d.retangulo(x, topo + 14, larguraBloco, 50f);
-        d.linha(x, topo + 78, x + larguraBloco, topo + 78);
-        d.textoCentralizado(x + larguraBloco / 2, topo + 80, 8f, false, "Assinatura");
-        d.texto(x, topo + 96, 8.5f, true, "Nome");
-        d.texto(x + 32, topo + 96, 8.5f, false, nome == null ? "" : nome);
-        d.linha(x + 30, topo + 107, x + larguraBloco, topo + 107);
-    }
-
-    private static void rodape(DesenhoFormulario d, DadosEmpresa empresa, float dir) {
-        float topo = 730f;
-        d.textoCentralizado((MARGEM + dir) / 2, topo, 8.5f, true, "EMERGENCIA LIDER DESINSETIZADORA");
-        d.textoCentralizado((MARGEM + dir) / 2, topo + 12, 8f, false, empresa.telefones());
-    }
-
-    private static void campoCaixa(DesenhoFormulario d, float x, float topo, float larguraCaixa, String rotulo, String valor) {
-        d.texto(x, topo, 8f, true, rotulo);
-        float xv = x + d.larguraDoTexto(rotulo + " ", 8f, true);
-        d.retangulo(xv, topo - 2, x + larguraCaixa - xv, 13f);
-        d.texto(xv + 3, topo, 8f, false, valor == null ? "" : valor);
+    private static float[] cys(float valor, int n) {
+        float[] r = new float[n];
+        java.util.Arrays.fill(r, valor);
+        return r;
     }
 
     public record Dados(
@@ -193,6 +118,7 @@ public final class FormularioVisita {
             String funcionarios,
             String horaInicio,
             String horaTermino,
+            String horarioMarcado,
             String cliente,
             String cnpj,
             String endereco,
@@ -201,7 +127,11 @@ public final class FormularioVisita {
             String estado,
             String responsavel,
             String nomeCliente,
-            String nomeLider
+            String nomeLider,
+            DadosFormularioServico.Visita visita
     ) {
+        public Dados {
+            visita = visita == null ? DadosFormularioServico.Visita.vazio() : visita;
+        }
     }
 }
