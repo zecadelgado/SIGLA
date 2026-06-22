@@ -24,9 +24,9 @@ sigla:
     attachment-root: var/attachments
   notificacoes:
     webhook:
-      url: ${SIGLA_NOTIFICACOES_WEBHOOK_URL:}
-      token: ${SIGLA_NOTIFICACOES_WEBHOOK_TOKEN:}
+      url: ${SIGLA_NOTIFICACOES_WEBHOOK_URL:https://webhookn8n.lero.pro/webhook/sigla-notificacoes}
+      token: ${SIGLA_NOTIFICACOES_WEBHOOK_TOKEN:fc81ee3d-4ef4-48d1-aece-d6b8b5f0c163}
     whatsapp:
-      enabled: ${SIGLA_NOTIFICACOES_WHATSAPP_ENABLED:false}
+      enabled: ${SIGLA_NOTIFICACOES_WHATSAPP_ENABLED:true}
     modo-teste: ${SIGLA_NOTIFICACOES_MODO_TESTE:false}
     hora-envio-padrao: ${SIGLA_NOTIFICACOES_HORA_ENVIO:8}

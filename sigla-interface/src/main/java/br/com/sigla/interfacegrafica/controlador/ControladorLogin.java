@@ -6,11 +6,13 @@ import br.com.sigla.interfacegrafica.async.ExecutorTarefasUi;
 import br.com.sigla.interfacegrafica.async.SobreposicaoCarregamento;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import br.com.sigla.interfacegrafica.util.ValidadorEntrada;
+import javafx.animation.PauseTransition;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.util.Duration;
 import org.springframework.stereotype.Component;
 
 import java.util.logging.Level;
@@ -20,12 +22,15 @@ import java.util.logging.Logger;
 public class ControladorLogin {
 
     private static final Logger LOGGER = Logger.getLogger(ControladorLogin.class.getName());
+    private static final Duration ATRASO_REVELACAO_CARREGAMENTO = Duration.seconds(3);
 
     private final SessaoLocalAplicacao sessaoLocalAplicacao;
     private final FluxoAplicacao fluxoAplicacao;
     private final ExecutorTarefasUi executorTarefasUi;
 
     private SobreposicaoCarregamento overlayCarregamento;
+    private PauseTransition agendamentoRevelacaoCarregamento;
+    private boolean loginEmAndamento;
 
     @FXML
     private AnchorPane txtLoginInsira;
@@ -55,14 +60,15 @@ public class ControladorLogin {
         instalarOverlay();
     }
 
-    // Veu de "Entrando..." sobre a tela de login. A autenticacao bate no banco remoto e
-    // pode passar de 1 segundo; sem isso a tela congelava sem nenhum retorno ao usuario.
+    // Veu de "Entrando..." sobre a tela de login. A autenticacao bate no banco remoto;
+    // o indicador so aparece se a espera passar de 3 segundos.
     private void instalarOverlay() {
         if (txtLoginInsira == null) {
             return;
         }
         overlayCarregamento = new SobreposicaoCarregamento("Entrando...");
         overlayCarregamento.setVisible(false);
+        overlayCarregamento.setMouseTransparent(true);
         AnchorPane.setTopAnchor(overlayCarregamento, 0.0);
         AnchorPane.setRightAnchor(overlayCarregamento, 0.0);
         AnchorPane.setBottomAnchor(overlayCarregamento, 0.0);
@@ -72,6 +78,9 @@ public class ControladorLogin {
 
     @FXML
     private void onLogin() {
+        if (loginEmAndamento) {
+            return;
+        }
         String username = usernameField == null ? "" : usernameField.getText();
         String password = passwordField == null ? "" : passwordField.getText();
 
@@ -111,6 +120,7 @@ public class ControladorLogin {
         try {
             setErrorVisible(false);
             fluxoAplicacao.showShell();
+            mostrarCarregando(false);
             // Sucesso: a cena troca para o shell e este overlay e descartado junto.
         } catch (RuntimeException exception) {
             LOGGER.log(Level.SEVERE, "Falha ao abrir a tela inicial apos login.", exception);
@@ -121,12 +131,14 @@ public class ControladorLogin {
     }
 
     private void mostrarCarregando(boolean carregando) {
+        loginEmAndamento = carregando;
         if (overlayCarregamento != null) {
-            overlayCarregamento.setVisible(carregando);
             if (carregando) {
-                overlayCarregamento.toFront();
-                overlayCarregamento.iniciarAnimacao();
+                agendarRevelacaoCarregamento();
             } else {
+                cancelarAgendamentoRevelacaoCarregamento();
+                overlayCarregamento.setVisible(false);
+                overlayCarregamento.setMouseTransparent(true);
                 overlayCarregamento.pararAnimacao();
             }
         }
@@ -138,14 +150,47 @@ public class ControladorLogin {
         }
     }
 
+    private void agendarRevelacaoCarregamento() {
+        cancelarAgendamentoRevelacaoCarregamento();
+        overlayCarregamento.setVisible(false);
+        overlayCarregamento.setMouseTransparent(true);
+        overlayCarregamento.pararAnimacao();
+
+        agendamentoRevelacaoCarregamento = new PauseTransition(ATRASO_REVELACAO_CARREGAMENTO);
+        agendamentoRevelacaoCarregamento.setOnFinished(evento -> {
+            agendamentoRevelacaoCarregamento = null;
+            if (!loginEmAndamento || overlayCarregamento == null) {
+                return;
+            }
+            overlayCarregamento.toFront();
+            overlayCarregamento.setVisible(true);
+            overlayCarregamento.setMouseTransparent(false);
+            overlayCarregamento.iniciarAnimacao();
+        });
+        agendamentoRevelacaoCarregamento.playFromStart();
+    }
+
+    private void cancelarAgendamentoRevelacaoCarregamento() {
+        if (agendamentoRevelacaoCarregamento != null) {
+            agendamentoRevelacaoCarregamento.stop();
+            agendamentoRevelacaoCarregamento = null;
+        }
+    }
+
     @FXML
     private void onOpenCadastroUsuario() {
+        if (loginEmAndamento) {
+            return;
+        }
         setErrorVisible(false);
         fluxoAplicacao.showView(VisaoAplicacao.ACCOUNT_REGISTRATION);
     }
 
     @FXML
     private void onEsqueciSenha() {
+        if (loginEmAndamento) {
+            return;
+        }
         mostrarErro("Solicite a redefinição de senha a um administrador.");
     }
 

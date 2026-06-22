@@ -27,8 +27,7 @@ import org.springframework.stereotype.Component;
 public class IndicadorCarregamento {
 
     // Atraso antes de mostrar o veu: carregamentos rapidos terminam antes e nada e exibido.
-    // Suba para ~1000ms se quiser exibir somente quando passar de 1 segundo.
-    private static final Duration ATRASO_REVELACAO = Duration.millis(500);
+    private static final Duration ATRASO_REVELACAO = Duration.seconds(3);
     private static final Duration TEMPO_MINIMO_VISIVEL = Duration.millis(350);
     private static final Duration FADE_IN = Duration.millis(150);
     private static final Duration FADE_OUT = Duration.millis(200);
