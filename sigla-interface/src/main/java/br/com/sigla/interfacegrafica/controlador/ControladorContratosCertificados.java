@@ -169,6 +169,7 @@ public class ControladorContratosCertificados {
         }
         if ("Contrato".equals(row.tipo())) {
             Dialog<LocalDate> dialog = new Dialog<>();
+            br.com.sigla.interfacegrafica.util.DialogoUi.estilizar(dialog);
             dialog.setTitle("Renovar contrato");
             dialog.getDialogPane().getButtonTypes().setAll(ButtonType.OK, ButtonType.CANCEL);
             DatePicker picker = new DatePicker();
@@ -331,6 +332,7 @@ public class ControladorContratosCertificados {
 
     private void abrirDialogoContrato(Contrato existente) {
         Dialog<Boolean> dialog = new Dialog<>();
+        br.com.sigla.interfacegrafica.util.DialogoUi.estilizar(dialog);
         dialog.setTitle(existente == null ? "Novo contrato" : "Editar contrato");
         dialog.getDialogPane().getButtonTypes().setAll(ButtonType.OK, ButtonType.CANCEL);
 
@@ -437,6 +439,7 @@ public class ControladorContratosCertificados {
 
     private void abrirDialogoCertificado(Certificado existente) {
         Dialog<Boolean> dialog = new Dialog<>();
+        br.com.sigla.interfacegrafica.util.DialogoUi.estilizar(dialog);
         dialog.setTitle(existente == null ? "Novo certificado" : "Editar certificado");
         dialog.getDialogPane().getButtonTypes().setAll(ButtonType.OK, ButtonType.CANCEL);
 

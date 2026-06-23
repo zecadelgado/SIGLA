@@ -104,24 +104,44 @@ public record Notificacao(
     }
 
     public enum NotificacaoType {
-        CONTRACT_EXPIRING,
-        CERTIFICATE_EXPIRING,
-        INSTALLMENT_OVERDUE,
-        VISIT_UPCOMING,
-        VISIT_MISSED,
-        SERVICE_ORDER_UPCOMING,
-        CONTACT_FOLLOWUP,
-        EMPLOYEE_TASK,
-        MANUAL
+        CONTRACT_EXPIRING("Vencimento de contrato"),
+        CERTIFICATE_EXPIRING("Vencimento de certificado"),
+        INSTALLMENT_OVERDUE("Parcela em atraso"),
+        VISIT_UPCOMING("Visita agendada"),
+        VISIT_MISSED("Visita não realizada"),
+        SERVICE_ORDER_UPCOMING("Ordem de serviço próxima"),
+        CONTACT_FOLLOWUP("Acompanhamento de contato"),
+        EMPLOYEE_TASK("Tarefa do funcionário"),
+        MANUAL("Manual");
+
+        private final String rotulo;
+
+        NotificacaoType(String rotulo) {
+            this.rotulo = rotulo;
+        }
+
+        public String rotulo() {
+            return rotulo;
+        }
     }
 
     public enum NotificacaoStatus {
-        OPEN,
-        RESOLVED,
-        PENDING,
-        SENT,
-        FAILED,
-        CANCELLED
+        OPEN("Aberta"),
+        RESOLVED("Resolvida"),
+        PENDING("Pendente"),
+        SENT("Enviada"),
+        FAILED("Falhou"),
+        CANCELLED("Cancelada");
+
+        private final String rotulo;
+
+        NotificacaoStatus(String rotulo) {
+            this.rotulo = rotulo;
+        }
+
+        public String rotulo() {
+            return rotulo;
+        }
     }
 
     public Builder toBuilder() {

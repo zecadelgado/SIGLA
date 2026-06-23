@@ -4,6 +4,7 @@ import br.com.sigla.aplicacao.agenda.porta.saida.RepositorioAgenda;
 import br.com.sigla.aplicacao.certificados.porta.saida.RepositorioCertificado;
 import br.com.sigla.aplicacao.clientes.porta.saida.RepositorioCliente;
 import br.com.sigla.aplicacao.contratos.porta.saida.RepositorioContrato;
+import br.com.sigla.aplicacao.financeiro.porta.saida.RepositorioLancamentoFinanceiro;
 import br.com.sigla.aplicacao.funcionarios.porta.saida.RepositorioFuncionario;
 import br.com.sigla.aplicacao.notificacoes.porta.entrada.CasoDeUsoGeracaoNotificacao;
 import br.com.sigla.aplicacao.notificacoes.porta.saida.RepositorioNotificacao;
@@ -12,6 +13,7 @@ import br.com.sigla.dominio.agenda.VisitaAgendada;
 import br.com.sigla.dominio.certificados.Certificado;
 import br.com.sigla.dominio.clientes.Cliente;
 import br.com.sigla.dominio.contratos.Contrato;
+import br.com.sigla.dominio.financeiro.LancamentoFinanceiro;
 import br.com.sigla.dominio.funcionarios.Funcionario;
 import br.com.sigla.dominio.notificacoes.Destinatario;
 import br.com.sigla.dominio.notificacoes.DestinatarioNotificacao;
@@ -35,6 +37,9 @@ import java.util.stream.Collectors;
 @Service
 public class CasoDeUsoGerarNotificacoes implements CasoDeUsoGeracaoNotificacao {
 
+    /** Janela (dias) para alertar uma visita perdida; evita flood de visitas antigas na 1a execucao. */
+    private static final int JANELA_VISITA_PERDIDA_DIAS = 7;
+
     private final RepositorioNotificacao notificacaoRepo;
     private final RepositorioNotificacaoConfiguracao configRepo;
     private final RepositorioCliente clienteRepo;
@@ -42,6 +47,7 @@ public class CasoDeUsoGerarNotificacoes implements CasoDeUsoGeracaoNotificacao {
     private final RepositorioContrato contratoRepo;
     private final RepositorioCertificado certificadoRepo;
     private final RepositorioAgenda agendaRepo;
+    private final RepositorioLancamentoFinanceiro lancamentoRepo;
 
     public CasoDeUsoGerarNotificacoes(
             RepositorioNotificacao notificacaoRepo,
@@ -50,7 +56,8 @@ public class CasoDeUsoGerarNotificacoes implements CasoDeUsoGeracaoNotificacao {
             RepositorioFuncionario funcionarioRepo,
             RepositorioContrato contratoRepo,
             RepositorioCertificado certificadoRepo,
-            RepositorioAgenda agendaRepo
+            RepositorioAgenda agendaRepo,
+            RepositorioLancamentoFinanceiro lancamentoRepo
     ) {
         this.notificacaoRepo = notificacaoRepo;
         this.configRepo = configRepo;
@@ -59,6 +66,7 @@ public class CasoDeUsoGerarNotificacoes implements CasoDeUsoGeracaoNotificacao {
         this.contratoRepo = contratoRepo;
         this.certificadoRepo = certificadoRepo;
         this.agendaRepo = agendaRepo;
+        this.lancamentoRepo = lancamentoRepo;
     }
 
     @Override
@@ -68,8 +76,10 @@ public class CasoDeUsoGerarNotificacoes implements CasoDeUsoGeracaoNotificacao {
         Map<String, Funcionario> funcionarios = funcionarioRepo.findAll().stream()
                 .collect(Collectors.toMap(Funcionario::id, Function.identity(), (a, b) -> a));
         processarVisitas(hoje, clientes, funcionarios);
+        processarVisitasPerdidas(hoje, clientes, funcionarios);
         processarContratos(hoje, clientes);
         processarCertificados(hoje, clientes);
+        processarParcelas(hoje, clientes);
     }
 
     private void processarVisitas(LocalDate hoje, Map<String, Cliente> clientes, Map<String, Funcionario> funcionarios) {
@@ -95,6 +105,36 @@ public class CasoDeUsoGerarNotificacoes implements CasoDeUsoGeracaoNotificacao {
             }
             Contexto contexto = new Contexto(cliente, funcionario, ResolvedorVariaveis.visita(visita, cliente, funcionario));
             reconciliarEGerar(visita.id(), Notificacao.NotificacaoType.VISIT_UPCOMING, planos, hoje, contexto);
+        }
+    }
+
+    /** Alerta de visita nao realizada: visita agendada cuja data ja passou (ou marcada como perdida). */
+    private void processarVisitasPerdidas(LocalDate hoje, Map<String, Cliente> clientes, Map<String, Funcionario> funcionarios) {
+        List<NotificacaoConfiguracao> configs = configRepo.findAtivasPorEvento(Notificacao.NotificacaoType.VISIT_MISSED);
+        if (configs.isEmpty()) {
+            return;
+        }
+        for (VisitaAgendada visita : agendaRepo.findAll()) {
+            boolean perdida = visita.status() == VisitaAgendada.VisitStatus.MISSED
+                    || (visita.status() == VisitaAgendada.VisitStatus.SCHEDULED && visita.scheduledDate().isBefore(hoje));
+            List<Plano> planos = new ArrayList<>();
+            boolean dentroDaJanela = perdida
+                    && visita.reminderActive()
+                    && !visita.scheduledDate().isBefore(hoje.minusDays(JANELA_VISITA_PERDIDA_DIAS));
+            if (dentroDaJanela) {
+                LocalDate triggerDate = visita.scheduledDate().plusDays(1);
+                for (NotificacaoConfiguracao config : configs) {
+                    for (Destinatario lado : lados(config.destinatario())) {
+                        planos.add(new Plano(config, lado, triggerDate));
+                    }
+                }
+            }
+            Cliente cliente = clientes.get(visita.customerId());
+            Funcionario funcionario = visita.responsibleId() == null || visita.responsibleId().isBlank()
+                    ? null
+                    : funcionarios.get(visita.responsibleId());
+            Contexto contexto = new Contexto(cliente, funcionario, ResolvedorVariaveis.visita(visita, cliente, funcionario));
+            reconciliarEGerar(visita.id(), Notificacao.NotificacaoType.VISIT_MISSED, planos, hoje, contexto);
         }
     }
 
@@ -148,6 +188,45 @@ public class CasoDeUsoGerarNotificacoes implements CasoDeUsoGeracaoNotificacao {
             Contexto contexto = new Contexto(cliente, null, ResolvedorVariaveis.certificado(certificado, cliente));
             reconciliarEGerar(certificado.id(), Notificacao.NotificacaoType.CERTIFICATE_EXPIRING, planos, hoje, contexto);
         }
+    }
+
+    /** Alerta de parcela/conta a receber em atraso. Cada parcela vencida gera seu proprio aviso. */
+    private void processarParcelas(LocalDate hoje, Map<String, Cliente> clientes) {
+        List<NotificacaoConfiguracao> configs = configRepo.findAtivasPorEvento(Notificacao.NotificacaoType.INSTALLMENT_OVERDUE);
+        if (configs.isEmpty()) {
+            return;
+        }
+        for (LancamentoFinanceiro lancamento : lancamentoRepo.findAll()) {
+            if (lancamento.tipo() != LancamentoFinanceiro.Tipo.ENTRY
+                    || lancamento.status() == LancamentoFinanceiro.Status.CANCELLED) {
+                continue;
+            }
+            Cliente cliente = clientes.get(lancamento.clienteId());
+            if (!lancamento.parcelas().isEmpty()) {
+                for (LancamentoFinanceiro.ParcelaFinanceira parcela : lancamento.parcelas()) {
+                    if (parcela.vencida(hoje)) {
+                        gerarAlertaParcela(parcela.id(), lancamento, parcela, cliente, configs, hoje);
+                    }
+                }
+            } else if (lancamento.vencido(hoje)) {
+                gerarAlertaParcela(lancamento.id(), lancamento, null, cliente, configs, hoje);
+            }
+        }
+    }
+
+    private void gerarAlertaParcela(String entityId, LancamentoFinanceiro lancamento,
+                                    LancamentoFinanceiro.ParcelaFinanceira parcela, Cliente cliente,
+                                    List<NotificacaoConfiguracao> configs, LocalDate hoje) {
+        LocalDate vencimento = parcela != null ? parcela.dataVencimento() : lancamento.dataVencimento();
+        LocalDate triggerDate = vencimento.plusDays(1);
+        List<Plano> planos = new ArrayList<>();
+        for (NotificacaoConfiguracao config : configs) {
+            for (Destinatario lado : lados(config.destinatario())) {
+                planos.add(new Plano(config, lado, triggerDate));
+            }
+        }
+        Contexto contexto = new Contexto(cliente, null, ResolvedorVariaveis.parcela(lancamento, parcela, cliente));
+        reconciliarEGerar(entityId, Notificacao.NotificacaoType.INSTALLMENT_OVERDUE, planos, hoje, contexto);
     }
 
     /**

@@ -14,6 +14,7 @@ import br.com.sigla.interfacegrafica.dialogo.DialogoDadosVisita;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorData;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorMoeda;
 import br.com.sigla.interfacegrafica.consulta.ContextoDetalheOrdemServico;
+import br.com.sigla.interfacegrafica.consulta.ContextoEdicaoOrdemServico;
 import br.com.sigla.interfacegrafica.consulta.ServicoConsultaOrdemServico;
 import br.com.sigla.interfacegrafica.consulta.ServicoConsultaReferencias;
 import br.com.sigla.interfacegrafica.formatador.FormatadorMascaraMoeda;
@@ -29,7 +30,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -43,7 +43,6 @@ import org.springframework.stereotype.Component;
 import java.awt.Desktop;
 import java.io.File;
 import java.nio.file.Path;
-import java.time.LocalDate;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
@@ -56,6 +55,7 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
     private final ServicoConsultaReferencias servicoConsultaReferencias;
     private final GerenciadorNavegacao gerenciadorNavegacao;
     private final ContextoDetalheOrdemServico contextoDetalheOrdemServico;
+    private final ContextoEdicaoOrdemServico contextoEdicaoOrdemServico;
     private final ApresentadorMoeda apresentadorMoeda;
     private final ApresentadorData apresentadorData;
     private final FormatadorMascaraMoeda formatadorMoeda;
@@ -106,6 +106,7 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
             ServicoConsultaReferencias servicoConsultaReferencias,
             GerenciadorNavegacao gerenciadorNavegacao,
             ContextoDetalheOrdemServico contextoDetalheOrdemServico,
+            ContextoEdicaoOrdemServico contextoEdicaoOrdemServico,
             ApresentadorMoeda apresentadorMoeda,
             ApresentadorData apresentadorData,
             FormatadorMascaraMoeda formatadorMoeda,
@@ -121,6 +122,7 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
         this.servicoConsultaReferencias = servicoConsultaReferencias;
         this.gerenciadorNavegacao = gerenciadorNavegacao;
         this.contextoDetalheOrdemServico = contextoDetalheOrdemServico;
+        this.contextoEdicaoOrdemServico = contextoEdicaoOrdemServico;
         this.apresentadorMoeda = apresentadorMoeda;
         this.apresentadorData = apresentadorData;
         this.formatadorMoeda = formatadorMoeda;
@@ -154,6 +156,7 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
 
     @FXML
     private void onNovaOrdem() {
+        contextoEdicaoOrdemServico.limpar();
         gerenciadorNavegacao.navigateTo(VisaoAplicacao.NEW_SERVICE_ORDER);
     }
 
@@ -163,11 +166,10 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
         if (selected == null) {
             return;
         }
-        Optional<CasoDeUsoOrdemServico.UpdateOrdemServicoCommand> command = abrirDialogoEdicao(selected);
-        command.ifPresent(value -> {
-            executar(() -> casoDeUsoOrdemServico.update(value));
-            refresh();
-        });
+        // Reusa a tela de criacao em modo edicao: assim a edicao oferece exatamente
+        // os mesmos campos da criacao (inclusive os que alimentam o PDF).
+        contextoEdicaoOrdemServico.editar(selected.id());
+        gerenciadorNavegacao.navigateTo(VisaoAplicacao.NEW_SERVICE_ORDER);
     }
 
     @FXML
@@ -248,6 +250,7 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
             return;
         }
         Dialog<Void> dialog = new Dialog<>();
+        br.com.sigla.interfacegrafica.util.DialogoUi.estilizar(dialog);
         dialog.setTitle("Anexos da OS");
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
         javafx.scene.control.ListView<OrdemServico.Anexo> lista = new javafx.scene.control.ListView<>();
@@ -337,7 +340,7 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
                     semTraco(selected.notes()),
                     os
             ));
-            new Alert(Alert.AlertType.INFORMATION, "OS gerada em:\n" + arquivo, ButtonType.OK).showAndWait();
+            br.com.sigla.interfacegrafica.util.DialogoUi.informacao("OS gerada em:\n" + arquivo);
         } catch (Exception exception) {
             mostrar(br.com.sigla.interfacegrafica.util.MensagensErro.descrever("Não foi possível gerar a OS:", exception));
         }
@@ -382,7 +385,7 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
                     semTraco(selected.responsible()),
                     visita
             ));
-            new Alert(Alert.AlertType.INFORMATION, "Relatório de visita gerado em:\n" + arquivo, ButtonType.OK).showAndWait();
+            br.com.sigla.interfacegrafica.util.DialogoUi.informacao("Relatório de visita gerado em:\n" + arquivo);
         } catch (Exception exception) {
             mostrar(br.com.sigla.interfacegrafica.util.MensagensErro.descrever("Não foi possível gerar o relatório de visita:", exception));
         }
@@ -498,6 +501,7 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
 
     private Optional<CasoDeUsoOrdemServico.AdicionarProdutoOrdemCommand> abrirDialogoProduto(String ordemId) {
         Dialog<CasoDeUsoOrdemServico.AdicionarProdutoOrdemCommand> dialog = new Dialog<>();
+        br.com.sigla.interfacegrafica.util.DialogoUi.estilizar(dialog);
         dialog.setTitle("Produto da OS");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         ComboBox<OpcaoId> produto = new ComboBox<>();
@@ -531,67 +535,9 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
         return dialog.showAndWait();
     }
 
-    private Optional<CasoDeUsoOrdemServico.UpdateOrdemServicoCommand> abrirDialogoEdicao(ServicoConsultaOrdemServico.OrdemServicoView selected) {
-        Dialog<CasoDeUsoOrdemServico.UpdateOrdemServicoCommand> dialog = new Dialog<>();
-        dialog.setTitle("Editar OS");
-        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-        ComboBox<OpcaoId> cliente = new ComboBox<>();
-        UtilComboBox.preencher(cliente, servicoConsultaReferencias.clientes(), false);
-        UtilComboBox.selecionarPorId(cliente, selected.customerId());
-        cliente.setMaxWidth(Double.MAX_VALUE);
-        TextField titulo = new TextField(selected.title());
-        TextArea descricao = new TextArea(selected.description());
-        descricao.setPrefRowCount(2);
-        TextField tipo = new TextField(selected.serviceType());
-        ComboBox<OpcaoId> responsavel = new ComboBox<>();
-        UtilComboBox.preencher(responsavel, servicoConsultaReferencias.funcionarios(), true);
-        UtilComboBox.selecionarPorId(responsavel, selected.responsibleId());
-        responsavel.setMaxWidth(Double.MAX_VALUE);
-        DatePicker dataPicker = new DatePicker(selected.emissionDate() == null ? LocalDate.now() : selected.emissionDate());
-        TextField valor = new TextField();
-        formatadorMoeda.aplicar(valor);
-        formatadorMoeda.definir(valor, selected.amount().subtract(selected.productTotal()));
-        TextArea observacoes = new TextArea(selected.notes().equals("-") ? "" : selected.notes());
-        observacoes.setPrefRowCount(3);
-        GridPane grid = grid();
-        grid.addRow(0, new Label("Cliente"), cliente);
-        grid.addRow(1, new Label("Título"), titulo);
-        grid.addRow(2, new Label("Descrição"), descricao);
-        grid.addRow(3, new Label("Tipo"), tipo);
-        grid.addRow(4, new Label("Responsável"), responsavel);
-        grid.addRow(5, new Label("Data agendada"), dataPicker);
-        grid.addRow(6, new Label("Valor do serviço"), valor);
-        grid.addRow(7, new Label("Observações"), observacoes);
-        dialog.getDialogPane().setContent(grid);
-        dialog.setResultConverter(button -> {
-            if (button != ButtonType.OK) {
-                return null;
-            }
-            // Cliente/responsavel vem de ComboBox (label = nome, valor = id), evitando gravar UUID/texto invalido.
-            // Cliente nao selecionado mantem o cliente atual da OS; responsavel vazio fica em branco.
-            String clienteId = UtilComboBox.idSelecionado(cliente);
-            if (clienteId.isBlank()) {
-                clienteId = selected.customerId();
-            }
-            String responsavelId = UtilComboBox.idSelecionado(responsavel);
-            return new CasoDeUsoOrdemServico.UpdateOrdemServicoCommand(
-                    selected.id(),
-                    clienteId,
-                        selected.contractId(),
-                        titulo.getText(),
-                        descricao.getText(),
-                    tipo.getText(),
-                    (dataPicker.getValue() == null ? LocalDate.now() : dataPicker.getValue()).atStartOfDay(),
-                    responsavelId,
-                    formatadorMoeda.valor(valor),
-                    observacoes.getText()
-            );
-        });
-        return dialog.showAndWait();
-    }
-
     private Optional<CasoDeUsoOrdemServico.AnexarOrdemServicoCommand> abrirDialogoAnexo(String ordemId) {
         Dialog<CasoDeUsoOrdemServico.AnexarOrdemServicoCommand> dialog = new Dialog<>();
+        br.com.sigla.interfacegrafica.util.DialogoUi.estilizar(dialog);
         dialog.setTitle("Anexo da OS");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         ComboBox<OrdemServico.TipoAnexo> tipo = new ComboBox<>();

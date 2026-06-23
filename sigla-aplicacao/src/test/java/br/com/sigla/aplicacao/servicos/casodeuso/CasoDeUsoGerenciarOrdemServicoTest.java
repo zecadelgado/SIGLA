@@ -4,12 +4,14 @@ import br.com.sigla.aplicacao.agenda.porta.saida.RepositorioAgenda;
 import br.com.sigla.aplicacao.estoque.casodeuso.CasoDeUsoGerenciarEstoque;
 import br.com.sigla.aplicacao.estoque.porta.entrada.CasoDeUsoEstoque;
 import br.com.sigla.aplicacao.estoque.porta.saida.RepositorioEstoque;
+import br.com.sigla.aplicacao.financeiro.porta.entrada.CasoDeUsoFinanceiro;
 import br.com.sigla.aplicacao.servicos.porta.entrada.CasoDeUsoOrdemServico;
 import br.com.sigla.aplicacao.servicos.porta.saida.RepositorioOrdemServico;
 import br.com.sigla.dominio.agenda.VisitaAgendada;
 import br.com.sigla.dominio.estoque.ItemEstoque;
 import br.com.sigla.dominio.servicos.OrdemServico;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -87,6 +89,41 @@ class CasoDeUsoGerenciarOrdemServicoTest {
 
         casoOs.cancel(new CasoDeUsoOrdemServico.CancelarOrdemServicoCommand("os-1", "Cliente cancelou."));
         assertEquals(VisitaAgendada.VisitStatus.CANCELLED, agenda.findById("os-os-1").orElseThrow().status());
+    }
+
+    @Test
+    void iniciarOsComValorNaoGeraFinanceiro() {
+        FakeEstoque estoque = new FakeEstoque();
+        CasoDeUsoGerenciarEstoque casoEstoque = new CasoDeUsoGerenciarEstoque(estoque);
+        CasoDeUsoFinanceiro financeiro = Mockito.mock(CasoDeUsoFinanceiro.class);
+        CasoDeUsoGerenciarOrdemServico casoOs = new CasoDeUsoGerenciarOrdemServico(
+                new FakeOs(), estoque, casoEstoque, financeiro, null, new FakeAgenda());
+        casoOs.create(new CasoDeUsoOrdemServico.CreateOrdemServicoCommand(
+                "os-1", "cliente-1", "", "Servico", "Descricao", "Limpeza", OrdemServico.OrdemServicoStatus.AGENDADA,
+                LocalDateTime.now(), null, null, "", "", BigDecimal.valueOf(100), ""));
+
+        // Iniciar uma OS com valor nao pode gerar financeiro (status EM_ANDAMENTO, nao CONCLUIDA).
+        OrdemServico iniciada = casoOs.start("os-1");
+
+        assertEquals(OrdemServico.OrdemServicoStatus.EM_ANDAMENTO, iniciada.status());
+        Mockito.verify(financeiro, Mockito.never()).gerarContaReceberOrdemServico(Mockito.any());
+    }
+
+    @Test
+    void concluirOsComValorGeraFinanceiro() {
+        FakeEstoque estoque = new FakeEstoque();
+        CasoDeUsoGerenciarEstoque casoEstoque = new CasoDeUsoGerenciarEstoque(estoque);
+        CasoDeUsoFinanceiro financeiro = Mockito.mock(CasoDeUsoFinanceiro.class);
+        CasoDeUsoGerenciarOrdemServico casoOs = new CasoDeUsoGerenciarOrdemServico(
+                new FakeOs(), estoque, casoEstoque, financeiro, null, new FakeAgenda());
+        casoOs.create(new CasoDeUsoOrdemServico.CreateOrdemServicoCommand(
+                "os-1", "cliente-1", "", "Servico", "Descricao", "Limpeza", OrdemServico.OrdemServicoStatus.AGENDADA,
+                LocalDateTime.now(), null, null, "", "", BigDecimal.valueOf(100), ""));
+        casoOs.start("os-1");
+
+        casoOs.conclude(new CasoDeUsoOrdemServico.ConcluirOrdemServicoCommand("os-1", "func-1", null, true));
+
+        Mockito.verify(financeiro).gerarContaReceberOrdemServico(Mockito.any());
     }
 
     static final class FakeOs implements RepositorioOrdemServico {

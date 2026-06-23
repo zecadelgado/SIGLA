@@ -133,6 +133,32 @@ class CasoDeUsoGerenciarFinanceiroTest {
         assertEquals(LancamentoFinanceiro.Status.PENDING, lancamento.status());
     }
 
+    @Test
+    void geraMensalidadeDeContratoSemDuplicarPorCompetencia() {
+        FakeLancamentos repository = new FakeLancamentos();
+        CasoDeUsoGerenciarFinanceiro financeiro = financeiro(repository);
+        CasoDeUsoFinanceiro.GerarMensalidadeContratoCommand comando = new CasoDeUsoFinanceiro.GerarMensalidadeContratoCommand(
+                "ctr-1", "cliente-1", BigDecimal.valueOf(200), java.time.YearMonth.of(2026, 6),
+                LocalDate.of(2026, 6, 10), "Mensalidade contrato - 06/2026");
+
+        Optional<LancamentoFinanceiro> primeira = financeiro.gerarMensalidadeContrato(comando);
+        Optional<LancamentoFinanceiro> segunda = financeiro.gerarMensalidadeContrato(comando);
+
+        assertTrue(primeira.isPresent());
+        assertTrue(segunda.isEmpty(), "rodar de novo na mesma competencia nao deve duplicar");
+        assertEquals(1, repository.findAll().size());
+        LancamentoFinanceiro lancamento = repository.findAll().get(0);
+        assertEquals(LancamentoFinanceiro.Tipo.ENTRY, lancamento.tipo());
+        assertEquals(0, BigDecimal.valueOf(200).compareTo(lancamento.valorTotal()));
+        assertEquals(LocalDate.of(2026, 6, 10), lancamento.dataVencimento());
+
+        // competencia diferente gera um novo lancamento
+        financeiro.gerarMensalidadeContrato(new CasoDeUsoFinanceiro.GerarMensalidadeContratoCommand(
+                "ctr-1", "cliente-1", BigDecimal.valueOf(200), java.time.YearMonth.of(2026, 7),
+                LocalDate.of(2026, 7, 10), "Mensalidade contrato - 07/2026"));
+        assertEquals(2, repository.findAll().size());
+    }
+
     private CasoDeUsoGerenciarFinanceiro financeiro(FakeLancamentos lancamentos) {
         return new CasoDeUsoGerenciarFinanceiro(new FakeEntradas(), new FakeDespesas(), new FakePlanos(), lancamentos);
     }

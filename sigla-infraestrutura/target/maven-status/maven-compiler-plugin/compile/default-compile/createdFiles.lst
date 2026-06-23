@@ -29,6 +29,7 @@ br\com\sigla\infraestrutura\persistencia\PersistenciaIds.class
 br\com\sigla\infraestrutura\persistencia\entidade\OrdemServicoEntidade.class
 br\com\sigla\infraestrutura\persistencia\repositorio\SpringDataRepositorioAgenda.class
 br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioEstoque.class
+br\com\sigla\infraestrutura\configuracao\PropriedadesSupabaseAuth.class
 br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioUsuario.class
 br\com\sigla\infraestrutura\persistencia\MetadataMapCodec.class
 br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioFuncionario$1.class
@@ -65,6 +66,7 @@ br\com\sigla\infraestrutura\persistencia\repositorio\InMemoryAdaptadorRepositori
 br\com\sigla\infraestrutura\persistencia\repositorio\SpringDataRepositorioFinanceiroFormaPagamento.class
 br\com\sigla\infraestrutura\persistencia\repositorio\SpringDataRepositorioCliente.class
 br\com\sigla\infraestrutura\persistencia\entidade\FinanceiroCategoriaEntidade.class
+br\com\sigla\infraestrutura\seguranca\AdaptadorAutenticacaoSupabase$RespostaSupabase.class
 br\com\sigla\infraestrutura\persistencia\repositorio\SpringDataRepositorioAuditoriaEvento.class
 br\com\sigla\infraestrutura\persistencia\repositorio\InMemoryAdaptadorRepositorioAgenda.class
 br\com\sigla\infraestrutura\persistencia\entidade\ItemEstoqueEntidade.class
@@ -77,6 +79,7 @@ br\com\sigla\infraestrutura\configuracao\PropriedadesNotificacoesSigla.class
 br\com\sigla\infraestrutura\persistencia\repositorio\InMemoryAdaptadorRepositorioContrato.class
 br\com\sigla\infraestrutura\persistencia\entidade\FinanceiroParcelaEntidade.class
 br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioPotencialCliente.class
+br\com\sigla\infraestrutura\seguranca\AdaptadorAutenticacaoSupabase.class
 br\com\sigla\infraestrutura\persistencia\repositorio\InMemoryAdaptadorRepositorioLancamentoFinanceiro.class
 br\com\sigla\infraestrutura\persistencia\entidade\OrdemServicoEntidade$ProdutoEntidade.class
 br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioContrato.class

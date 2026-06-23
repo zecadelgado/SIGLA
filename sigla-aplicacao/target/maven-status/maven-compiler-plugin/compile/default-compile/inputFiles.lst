@@ -10,7 +10,9 @@ D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\clientes\casodeuso
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\clientes\porta\entrada\CasoDeUsoCliente.java
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\clientes\porta\saida\RepositorioCliente.java
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\contratos\casodeuso\CasoDeUsoGerenciarContrato.java
+D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\contratos\casodeuso\CasoDeUsoGerenciarFaturamentoContrato.java
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\contratos\porta\entrada\CasoDeUsoContrato.java
+D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\contratos\porta\entrada\CasoDeUsoFaturamentoContrato.java
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\contratos\porta\saida\RepositorioContrato.java
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\estoque\casodeuso\CasoDeUsoGerenciarEstoque.java
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\estoque\porta\entrada\CasoDeUsoEstoque.java
@@ -44,4 +46,5 @@ D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\servicos\porta\sai
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\usuarios\casodeuso\CasoDeUsoGerenciarUsuario.java
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\usuarios\porta\entrada\CasoDeUsoUsuario.java
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\usuarios\porta\saida\RepositorioUsuario.java
+D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\usuarios\porta\saida\ServicoAutenticacaoUsuario.java
 D:\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\usuarios\porta\saida\ServicoSenhaUsuario.java

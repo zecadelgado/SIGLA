@@ -204,6 +204,7 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
             return;
         }
         Dialog<LancamentoFinanceiro.ParcelaFinanceira> dialog = new Dialog<>();
+        br.com.sigla.interfacegrafica.util.DialogoUi.estilizar(dialog);
         dialog.setTitle("Baixar parcela");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         ComboBox<LancamentoFinanceiro.ParcelaFinanceira> combo = new ComboBox<>();
@@ -286,7 +287,7 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
                     TradutorInterface.texto(selected.status()),
                     selected.notes()
             ));
-            new Alert(Alert.AlertType.INFORMATION, "Recibo gerado em:\n" + arquivo, ButtonType.OK).showAndWait();
+            br.com.sigla.interfacegrafica.util.DialogoUi.informacao("Recibo gerado em:\n" + arquivo);
         } catch (Exception exception) {
             mostrar(br.com.sigla.interfacegrafica.util.MensagensErro.descrever("Não foi possível gerar o recibo:", exception));
         }
@@ -371,6 +372,7 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
 
     private Optional<CasoDeUsoFinanceiro.SalvarLancamentoFinanceiroCommand> abrirDialogoEdicao(CasoDeUsoFinanceiro.TransacaoFinanceiraView selected) {
         Dialog<CasoDeUsoFinanceiro.SalvarLancamentoFinanceiroCommand> dialog = new Dialog<>();
+        br.com.sigla.interfacegrafica.util.DialogoUi.estilizar(dialog);
         dialog.setTitle("Editar lançamento");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         ComboBox<CategoriaFinanceira> categoria = comboCategoria(selected.type(), selected.categoryId());
@@ -400,6 +402,7 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
 
     private Optional<CasoDeUsoFinanceiro.FiltroFinanceiro> abrirDialogoFiltro() {
         Dialog<CasoDeUsoFinanceiro.FiltroFinanceiro> dialog = new Dialog<>();
+        br.com.sigla.interfacegrafica.util.DialogoUi.estilizar(dialog);
         dialog.setTitle("Filtros financeiros");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         DatePicker inicio = new DatePicker();

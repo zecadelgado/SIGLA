@@ -9,7 +9,8 @@ public record Usuario(
         String email,
         String senhaHash,
         TipoUsuario tipo,
-        boolean ativo
+        boolean ativo,
+        String authUserId
 ) {
     public Usuario {
         id = normalizeOptional(id);
@@ -18,6 +19,7 @@ public record Usuario(
         email = normalizeOptional(email);
         senhaHash = requireText(senhaHash, "senhaHash");
         tipo = Objects.requireNonNullElse(tipo, TipoUsuario.OPERADOR);
+        authUserId = normalizeOptional(authUserId);
     }
 
     public enum TipoUsuario {

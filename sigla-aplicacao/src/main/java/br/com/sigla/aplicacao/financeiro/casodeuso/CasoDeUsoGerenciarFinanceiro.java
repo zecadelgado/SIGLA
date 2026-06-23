@@ -290,6 +290,44 @@ public class CasoDeUsoGerenciarFinanceiro implements CasoDeUsoFinanceiro {
     }
 
     @Override
+    public Optional<LancamentoFinanceiro> gerarMensalidadeContrato(GerarMensalidadeContratoCommand command) {
+        if (command == null || command.valorMensal() == null || command.valorMensal().signum() <= 0
+                || command.competencia() == null || command.vencimento() == null) {
+            return Optional.empty();
+        }
+        // Id deterministico por contrato+competencia garante idempotencia sem coluna nova:
+        // a rotina diaria pode rodar varias vezes que nao duplica a mensalidade.
+        String id = UUID.nameUUIDFromBytes(
+                ("contrato-mensalidade:" + command.contratoId() + ":" + command.competencia())
+                        .getBytes(java.nio.charset.StandardCharsets.UTF_8)).toString();
+        if (lancamentoRepository.findById(id).isPresent()) {
+            return Optional.empty();
+        }
+        LancamentoFinanceiro lancamento = saveLancamento(new SalvarLancamentoFinanceiroCommand(
+                id,
+                TransactionType.ENTRY,
+                resolveCategoriaId(TransactionType.ENTRY, "SERVICOS"),
+                resolveFormaPagamentoId("PIX"),
+                command.descricao() == null || command.descricao().isBlank()
+                        ? "Mensalidade de contrato " + command.competencia()
+                        : command.descricao(),
+                command.clienteId(),
+                "",
+                command.valorMensal(),
+                command.vencimento(),
+                command.vencimento(),
+                null,
+                false,
+                1,
+                "",
+                "[CONTRATO " + command.contratoId() + " COMPETENCIA " + command.competencia() + "]",
+                TransactionStatus.PENDING));
+        auditar(lancamento.id(), "FINANCEIRO_GERADO_CONTRATO",
+                command.contratoId() + " " + command.competencia(), lancamento.criadoPor());
+        return Optional.of(lancamento);
+    }
+
+    @Override
     public List<EntradaFinanceira> listEntries() {
         return listLancamentos(null).stream()
                 .filter(lancamento -> lancamento.tipo() == LancamentoFinanceiro.Tipo.ENTRY)

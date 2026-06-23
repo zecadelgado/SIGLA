@@ -27,6 +27,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.util.StringConverter;
 import org.springframework.stereotype.Component;
 
 import java.time.format.DateTimeFormatter;
@@ -186,7 +187,7 @@ public class ControladorConfiguracaoNotificacoes {
         if (configuracoesTable == null) {
             return;
         }
-        coluna(configuracoesTable, "Evento", 200, c -> c.eventType().name());
+        coluna(configuracoesTable, "Evento", 200, c -> c.eventType().rotulo());
         coluna(configuracoesTable, "Nome", 220, NotificacaoConfiguracao::nome);
         coluna(configuracoesTable, "Destinatário", 130, c -> c.destinatario().name());
         coluna(configuracoesTable, "Envio", 110, c -> c.automatico() ? "Automático" : "Manual");
@@ -198,9 +199,9 @@ public class ControladorConfiguracaoNotificacoes {
         if (notificacoesTable == null) {
             return;
         }
-        coluna(notificacoesTable, "Evento", 170, n -> n.type().name());
+        coluna(notificacoesTable, "Evento", 170, n -> n.type().rotulo());
         coluna(notificacoesTable, "Destinatário", 240, this::descreverDestinatario);
-        coluna(notificacoesTable, "Status", 110, n -> n.status().name());
+        coluna(notificacoesTable, "Status", 110, n -> n.status().rotulo());
         coluna(notificacoesTable, "Quando", 150, n -> DATA_HORA.format(n.momentoDisparo()));
         coluna(notificacoesTable, "Mensagem", 380, n -> resumir(n.message()));
     }
@@ -238,11 +239,17 @@ public class ControladorConfiguracaoNotificacoes {
 
     private Optional<ComandoSalvarConfiguracao> abrirDialogoConfiguracao(NotificacaoConfiguracao existente) {
         Dialog<ComandoSalvarConfiguracao> dialog = new Dialog<>();
+        DialogoUi.estilizar(dialog);
         dialog.setTitle(existente == null ? "Nova configuração de notificação" : "Editar configuração");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
         ComboBox<Notificacao.NotificacaoType> evento = new ComboBox<>();
         evento.getItems().setAll(Notificacao.NotificacaoType.values());
+        StringConverter<Notificacao.NotificacaoType> conversorEvento = new StringConverter<>() {
+            @Override public String toString(Notificacao.NotificacaoType t) { return t == null ? "" : t.rotulo(); }
+            @Override public Notificacao.NotificacaoType fromString(String s) { return null; }
+        };
+        evento.setConverter(conversorEvento);
         TextField nome = new TextField();
         TextField titulo = new TextField();
         TextArea template = new TextArea();
@@ -325,6 +332,7 @@ public class ControladorConfiguracaoNotificacoes {
                 : configuracoesTable.getSelectionModel().getSelectedItem();
 
         Dialog<ComandoTesteEnvio> dialog = new Dialog<>();
+        DialogoUi.estilizar(dialog);
         dialog.setTitle("Enviar teste");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         TextField telefone = new TextField();
@@ -364,9 +372,7 @@ public class ControladorConfiguracaoNotificacoes {
     }
 
     private boolean confirmar(String mensagem) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, mensagem, ButtonType.OK, ButtonType.CANCEL);
-        alert.setHeaderText(null);
-        return alert.showAndWait().filter(botao -> botao == ButtonType.OK).isPresent();
+        return DialogoUi.confirmar("Confirmação", mensagem);
     }
 
     private void executar(Runnable runnable) {

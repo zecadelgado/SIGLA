@@ -28,6 +28,9 @@ public class UsuarioEntidade {
     @Column(name = "senha", nullable = false)
     private String senha;
 
+    @Column(name = "auth_user_id")
+    private UUID authUserId;
+
     @Column(name = "tipo")
     private String tipo;
 
@@ -78,6 +81,14 @@ public class UsuarioEntidade {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public UUID getAuthUserId() {
+        return authUserId;
+    }
+
+    public void setAuthUserId(UUID authUserId) {
+        this.authUserId = authUserId;
     }
 
     public String getTipo() {

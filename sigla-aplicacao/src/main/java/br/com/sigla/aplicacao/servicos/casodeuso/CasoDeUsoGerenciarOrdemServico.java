@@ -95,6 +95,11 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
         if (atual.concluida()) {
             throw new IllegalArgumentException("OS concluida nao pode ser editada livremente.");
         }
+        // Campos nulos no comando significam "preservar o valor atual": mantem a
+        // compatibilidade com a forma reduzida e evita zerar dados nao editados.
+        OrdemServico.OrdemServicoStatus status = command.status() == null ? atual.status() : command.status();
+        String executadoPor = command.executadoPorId() == null ? atual.executadoPorId() : command.executadoPorId();
+        DadosFormularioServico dadosFormulario = command.dadosFormulario() == null ? atual.dadosFormulario() : command.dadosFormulario();
         OrdemServico atualizada = repository.save(new OrdemServico(
                 atual.id(),
                 atual.numeroOs(),
@@ -103,12 +108,12 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
                 command.titulo(),
                 command.descricao(),
                 command.tipoServico(),
-                atual.status(),
+                status,
                 command.dataAgendada(),
                 atual.dataInicio(),
                 atual.dataFim(),
                 command.responsavelInternoId(),
-                atual.executadoPorId(),
+                executadoPor,
                 atual.foiFeito(),
                 atual.pago(),
                 command.valorServico(),
@@ -116,7 +121,7 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
                 atual.produtos(),
                 atual.anexos(),
                 command.observacoes(),
-                atual.dadosFormulario()
+                dadosFormulario
         ));
         sincronizarAgenda(atualizada);
         return atualizada;
@@ -128,7 +133,7 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
         if (ordemServico.status() == OrdemServico.OrdemServicoStatus.CANCELADA || ordemServico.status() == OrdemServico.OrdemServicoStatus.CONCLUIDA) {
             throw new IllegalArgumentException("OS cancelada ou concluida nao pode ser iniciada.");
         }
-        OrdemServico concluida = repository.save(new OrdemServico(
+        OrdemServico iniciada = repository.save(new OrdemServico(
                 ordemServico.id(),
                 ordemServico.numeroOs(),
                 ordemServico.clienteId(),
@@ -151,9 +156,10 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
                 ordemServico.observacoes(),
                 ordemServico.dadosFormulario()
         ));
-        gerarFinanceiroSePossivel(concluida);
-        sincronizarAgenda(concluida);
-        return concluida;
+        // Iniciar a OS nao gera financeiro: a conta a receber so e criada na conclusao,
+        // quando a OS atinge status CONCLUIDA (ver conclude/gerarFinanceiroSePossivel).
+        sincronizarAgenda(iniciada);
+        return iniciada;
     }
 
     @Override

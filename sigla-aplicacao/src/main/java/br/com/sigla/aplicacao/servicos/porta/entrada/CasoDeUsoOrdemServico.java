@@ -102,11 +102,33 @@ public interface CasoDeUsoOrdemServico {
             String titulo,
             String descricao,
             String tipoServico,
+            OrdemServico.OrdemServicoStatus status,
             LocalDateTime dataAgendada,
             String responsavelInternoId,
+            String executadoPorId,
             BigDecimal valorServico,
-            String observacoes
+            String observacoes,
+            DadosFormularioServico dadosFormulario
     ) {
+        /**
+         * Forma reduzida (compatibilidade): edita apenas os campos basicos e
+         * PRESERVA status, executado por e dados do formulario (campos nulos =
+         * manter o valor atual da OS).
+         */
+        public UpdateOrdemServicoCommand(
+                String id,
+                String clienteId,
+                String contratoId,
+                String titulo,
+                String descricao,
+                String tipoServico,
+                LocalDateTime dataAgendada,
+                String responsavelInternoId,
+                BigDecimal valorServico,
+                String observacoes
+        ) {
+            this(id, clienteId, contratoId, titulo, descricao, tipoServico, null, dataAgendada, responsavelInternoId, null, valorServico, observacoes, null);
+        }
     }
 
     record ConcluirOrdemServicoCommand(

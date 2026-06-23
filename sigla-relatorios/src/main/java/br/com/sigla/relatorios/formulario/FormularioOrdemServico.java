@@ -23,8 +23,8 @@ public final class FormularioOrdemServico {
 
     // X dos checkboxes por coluna (topo de cada linha).
     private static final float[] COL1 = {130f, 144.3f, 158.6f, 172.9f, 187.2f};       // aplicacao geral (5)
-    private static final float[] COL3 = {132f, 144f, 158f, 172f};                      // manutencao (4)
-    private static final float[] COL4 = {125f, 134.4f, 143.8f, 153.2f, 162.6f, 172f, 181.4f, 190.8f}; // produto (8)
+    private static final float[] COL3 = {130f, 144.3f, 158.6f, 172.9f};                // manutencao (4) — mesmo ritmo da COL1
+    private static final float[] COL4 = {127f, 135.7f, 144.4f, 153.1f, 161.9f, 170.6f, 179.3f, 188f}; // produto (8) — passo ~8.7
 
     private FormularioOrdemServico() {
     }
@@ -48,12 +48,12 @@ public final class FormularioOrdemServico {
             d.textoCentralizado(122f, L1, 8f, true, "X");
         }
         if (os.tarde()) {
-            d.textoCentralizado(190f, L1, 8f, true, "X");
+            d.textoCentralizado(186f, L1, 8f, true, "X");
         }
 
-        // Tabela: colunas com checkboxes.
-        marcarColuna(d, 14f, COL1, OpcoesFormularioServico.OS_APLICACAO_GERAL, os.aplicacaoGeral());
-        marcarColuna(d, 173.5f, COL3, OpcoesFormularioServico.OS_MANUTENCAO, os.manutencao());
+        // Tabela: colunas com checkboxes (centro do X dentro do "( )" de cada linha).
+        marcarColuna(d, 17f, COL1, OpcoesFormularioServico.OS_APLICACAO_GERAL, os.aplicacaoGeral());
+        marcarColuna(d, 180f, COL3, OpcoesFormularioServico.OS_MANUTENCAO, os.manutencao());
 
         Map<String, String> qtdePorProduto = new LinkedHashMap<>();
         for (DadosFormularioServico.Produto produto : os.produtos()) {
@@ -62,7 +62,7 @@ public final class FormularioOrdemServico {
         for (int i = 0; i < OpcoesFormularioServico.OS_PRODUTO.size(); i++) {
             String chave = OpcoesFormularioServico.OS_PRODUTO.get(i).chave();
             if (qtdePorProduto.containsKey(chave)) {
-                d.textoCentralizado(252.5f, COL4[i], 8f, true, "X");
+                d.textoCentralizado(256f, COL4[i], 8f, true, "X");
                 String qtde = qtdePorProduto.get(chave);
                 if (qtde != null && !qtde.isBlank()) {
                     d.textoCentralizado(318f, COL4[i], 8f, false, qtde);
@@ -70,15 +70,15 @@ public final class FormularioOrdemServico {
             }
         }
 
-        // Coluna PRODUTO UTILIZADO (texto nas lacunas).
+        // Coluna PRODUTO UTILIZADO (texto nas lacunas "Quantidade __" e "diluido em __").
         d.texto(145f, 126.5f, 7.5f, false, os.produto1Qtd());
-        d.texto(112f, 138.5f, 7.5f, false, os.produto1Calda());
-        d.texto(145f, 170.5f, 7.5f, false, os.produto2Qtd());
-        d.texto(112f, 182.5f, 7.5f, false, os.produto2Calda());
+        d.texto(118f, 135.5f, 7.5f, false, os.produto1Calda());
+        d.texto(145f, 171.5f, 7.5f, false, os.produto2Qtd());
+        d.texto(118f, 180.5f, 7.5f, false, os.produto2Calda());
 
         // Rodape.
-        d.texto(46f, 203f, 8f, false, os.etapa());
-        d.texto(188f, 203f, 8f, false, os.etapaDe());
+        d.texto(46f, 201.5f, 8f, false, os.etapa());
+        d.texto(140f, 201.5f, 8f, false, os.etapaDe());
         d.textoAjustado(40f, 216f, 290f, 8f, dados.observacoes());
 
         return d.finalizar();

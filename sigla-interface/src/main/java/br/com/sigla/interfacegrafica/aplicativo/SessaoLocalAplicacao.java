@@ -21,6 +21,15 @@ public class SessaoLocalAplicacao {
         return authenticated;
     }
 
+    public void solicitarRecuperacaoSenha(String email) {
+        casoDeUsoUsuario.solicitarRecuperacaoSenha(new CasoDeUsoUsuario.SolicitarRecuperacaoSenhaCommand(email));
+    }
+
+    public void redefinirSenhaComCodigo(String email, String codigo, String novaSenha) {
+        casoDeUsoUsuario.redefinirSenhaComCodigo(
+                new CasoDeUsoUsuario.RedefinirSenhaComCodigoCommand(email, codigo, novaSenha));
+    }
+
     public void logout() {
         authenticated = false;
         usuarioAtual = null;

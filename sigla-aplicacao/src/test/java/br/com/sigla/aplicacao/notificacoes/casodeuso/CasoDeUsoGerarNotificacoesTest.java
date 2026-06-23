@@ -4,6 +4,7 @@ import br.com.sigla.aplicacao.agenda.porta.saida.RepositorioAgenda;
 import br.com.sigla.aplicacao.certificados.porta.saida.RepositorioCertificado;
 import br.com.sigla.aplicacao.clientes.porta.saida.RepositorioCliente;
 import br.com.sigla.aplicacao.contratos.porta.saida.RepositorioContrato;
+import br.com.sigla.aplicacao.financeiro.porta.saida.RepositorioLancamentoFinanceiro;
 import br.com.sigla.aplicacao.funcionarios.porta.saida.RepositorioFuncionario;
 import br.com.sigla.aplicacao.notificacoes.porta.saida.RepositorioNotificacao;
 import br.com.sigla.aplicacao.notificacoes.porta.saida.RepositorioNotificacaoConfiguracao;
@@ -11,6 +12,9 @@ import br.com.sigla.dominio.agenda.VisitaAgendada;
 import br.com.sigla.dominio.certificados.Certificado;
 import br.com.sigla.dominio.clientes.Cliente;
 import br.com.sigla.dominio.contratos.Contrato;
+import br.com.sigla.dominio.financeiro.CategoriaFinanceira;
+import br.com.sigla.dominio.financeiro.FormaPagamentoFinanceira;
+import br.com.sigla.dominio.financeiro.LancamentoFinanceiro;
 import br.com.sigla.dominio.funcionarios.Funcionario;
 import br.com.sigla.dominio.notificacoes.CanalNotificacao;
 import br.com.sigla.dominio.notificacoes.Destinatario;
@@ -41,9 +45,10 @@ class CasoDeUsoGerarNotificacoesTest {
     private final FakeContrato contratos = new FakeContrato();
     private final FakeCertificado certificados = new FakeCertificado();
     private final FakeAgenda agenda = new FakeAgenda();
+    private final FakeLancamento lancamentos = new FakeLancamento();
 
     private CasoDeUsoGerarNotificacoes casoDeUso() {
-        return new CasoDeUsoGerarNotificacoes(notif, config, clientes, funcionarios, contratos, certificados, agenda);
+        return new CasoDeUsoGerarNotificacoes(notif, config, clientes, funcionarios, contratos, certificados, agenda, lancamentos);
     }
 
     @Test
@@ -158,6 +163,55 @@ class CasoDeUsoGerarNotificacoesTest {
         assertEquals(0, notif.findAll().size());
     }
 
+    @Test
+    void geraAlertaDeVisitaPerdida() {
+        clientes.add(cliente("cli-1", "11999990000"));
+        config.salvar(configEvento(Notificacao.NotificacaoType.VISIT_MISSED, Destinatario.CLIENTE,
+                "Visita nao realizada", "Ola {{cliente_nome}}, a visita de {{data_visita}} nao foi realizada."));
+        // visita agendada para 20/06 que continua SCHEDULED em 21/06 -> perdida
+        agenda.salvar(visita("v1", LocalDate.of(2026, 6, 20), VisitaAgendada.VisitStatus.SCHEDULED, true, 2, "fun-1"));
+
+        casoDeUso().gerar(LocalDate.of(2026, 6, 21));
+
+        List<Notificacao> apos = pendentes();
+        assertEquals(1, apos.size());
+        assertEquals(Notificacao.NotificacaoType.VISIT_MISSED, apos.getFirst().type());
+        assertEquals(LocalDate.of(2026, 6, 21), apos.getFirst().triggerDate());
+
+        // nao duplica em nova execucao
+        casoDeUso().gerar(LocalDate.of(2026, 6, 21));
+        assertEquals(1, pendentes().size());
+    }
+
+    @Test
+    void geraAlertaDeParcelaEmAtraso() {
+        clientes.add(cliente("cli-1", "11999990000"));
+        config.salvar(configEvento(Notificacao.NotificacaoType.INSTALLMENT_OVERDUE, Destinatario.CLIENTE,
+                "Parcela em atraso", "Ola {{cliente_nome}}, a parcela de {{parcela_valor}} venceu em {{parcela_vencimento}}."));
+        lancamentos.add(lancamentoVencido("lanc-1", "cli-1", LocalDate.of(2026, 6, 10), BigDecimal.valueOf(150)));
+
+        casoDeUso().gerar(LocalDate.of(2026, 6, 21));
+
+        List<Notificacao> apos = pendentes();
+        assertEquals(1, apos.size());
+        assertEquals(Notificacao.NotificacaoType.INSTALLMENT_OVERDUE, apos.getFirst().type());
+        assertTrue(apos.getFirst().message().contains("R$ 150,00"));
+        assertTrue(apos.getFirst().message().contains("10/06/2026"));
+
+        casoDeUso().gerar(LocalDate.of(2026, 6, 21));
+        assertEquals(1, pendentes().size());
+    }
+
+    @Test
+    void semConfiguracaoNaoGeraParcela() {
+        clientes.add(cliente("cli-1", "11999990000"));
+        lancamentos.add(lancamentoVencido("lanc-1", "cli-1", LocalDate.of(2026, 6, 10), BigDecimal.valueOf(150)));
+
+        casoDeUso().gerar(LocalDate.of(2026, 6, 21));
+
+        assertEquals(0, notif.findAll().size());
+    }
+
     // ---- helpers ----
 
     private List<Notificacao> pendentes() {
@@ -201,6 +255,22 @@ class CasoDeUsoGerarNotificacoesTest {
                 "Lembrete de visita", "Ola {{cliente_nome}}, visita em {{data_visita}}.",
                 destinatario, OrigemNotificacao.SISTEMA, CanalNotificacao.WHATSAPP_N8N,
                 fonte, "", true, dias, true, "admin", LocalDateTime.now(), LocalDateTime.now());
+    }
+
+    private NotificacaoConfiguracao configEvento(Notificacao.NotificacaoType tipo, Destinatario destinatario,
+                                                 String titulo, String template) {
+        return new NotificacaoConfiguracao(
+                "cfg-" + tipo.name(), tipo, titulo,
+                titulo, template,
+                destinatario, OrigemNotificacao.SISTEMA, CanalNotificacao.WHATSAPP_N8N,
+                FonteTelefone.CLIENTE, "", true, null, true, "admin", LocalDateTime.now(), LocalDateTime.now());
+    }
+
+    private LancamentoFinanceiro lancamentoVencido(String id, String clienteId, LocalDate vencimento, BigDecimal valor) {
+        return new LancamentoFinanceiro(
+                id, LancamentoFinanceiro.Tipo.ENTRY, "cat-1", "Servicos", "fp-1", "PIX",
+                "Conta a receber", clienteId, "", valor, vencimento.minusDays(5), vencimento, null,
+                LancamentoFinanceiro.Status.PENDING, false, 1, "", "admin", List.of());
     }
 
     // ---- fakes ----
@@ -430,6 +500,47 @@ class CasoDeUsoGerarNotificacoesTest {
             return storage.values().stream()
                     .filter(v -> responsibleId.equals(v.responsibleId()))
                     .toList();
+        }
+    }
+
+    private static final class FakeLancamento implements RepositorioLancamentoFinanceiro {
+        private final Map<String, LancamentoFinanceiro> storage = new ConcurrentHashMap<>();
+
+        void add(LancamentoFinanceiro lancamento) {
+            save(lancamento);
+        }
+
+        @Override
+        public LancamentoFinanceiro save(LancamentoFinanceiro lancamento) {
+            storage.put(lancamento.id(), lancamento);
+            return lancamento;
+        }
+
+        @Override
+        public Optional<LancamentoFinanceiro> findById(String id) {
+            return Optional.ofNullable(storage.get(id));
+        }
+
+        @Override
+        public Optional<LancamentoFinanceiro> findByOrdemServicoId(String ordemServicoId) {
+            return storage.values().stream()
+                    .filter(l -> ordemServicoId.equals(l.ordemServicoId()))
+                    .findFirst();
+        }
+
+        @Override
+        public List<LancamentoFinanceiro> findAll() {
+            return new ArrayList<>(storage.values());
+        }
+
+        @Override
+        public List<CategoriaFinanceira> findCategoriasAtivas() {
+            return List.of();
+        }
+
+        @Override
+        public List<FormaPagamentoFinanceira> findFormasPagamentoAtivas() {
+            return List.of();
         }
     }
 }

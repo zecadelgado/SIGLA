@@ -43,30 +43,31 @@ public final class FormularioVisita {
                 new float[]{24.5f, 69.6f, 122.2f, 168.6f, 210.2f},
                 cys(101f, 5));
 
-        // Desratizacao.
-        secao(d, v.desratizacao(), 128f, 138f, 124f,
+        // Desratizacao. As pragas tem DUAS linhas no modelo: a de cima com os nomes
+        // (Camundongo/Rato/Ratazana) e a de baixo em branco para escrever — marcamos a NOMEADA.
+        secao(d, v.desratizacao(), 124f, 131f, 124f,
                 OpcoesFormularioServico.VISITA_DESRAT_TECNICA,
-                new float[]{55f, 110f, 172f, 55f, 110f, 172f},
-                new float[]{144f, 144f, 144f, 155f, 155f, 155f},
+                new float[]{55f, 106f, 174f, 55f, 106f, 174f},
+                new float[]{140.5f, 140.5f, 140.5f, 147.5f, 147.5f, 147.5f},
                 OpcoesFormularioServico.VISITA_DESRAT_PRAGA,
-                new float[]{58f, 150f, 235f},
-                cys(166f, 3));
+                new float[]{55f, 124f, 193f},
+                cys(158f, 3));
 
         // Desinsetizacao.
-        secao(d, v.desinsetizacao(), 187f, 197f, 184f,
+        secao(d, v.desinsetizacao(), 185f, 191f, 184f,
                 OpcoesFormularioServico.VISITA_DESINSET_TECNICA,
-                new float[]{55f, 110f, 172f, 55f, 110f, 172f},
-                new float[]{205f, 205f, 205f, 216f, 216f, 216f},
+                new float[]{55f, 106f, 174f, 55f, 106f, 174f},
+                new float[]{199.5f, 199.5f, 199.5f, 206.5f, 206.5f, 206.5f},
                 OpcoesFormularioServico.VISITA_DESINSET_PRAGA,
-                new float[]{55f, 105f, 147f, 185f, 219f, 249f, 55f, 105f, 168f},
-                new float[]{227f, 227f, 227f, 227f, 227f, 227f, 238f, 238f, 238f});
+                new float[]{55f, 93f, 125f, 156f, 188f, 219f, 55f, 93f, 156f},
+                new float[]{216f, 216f, 216f, 216f, 216f, 216f, 223f, 223f, 223f});
 
-        // Componente ativo (4 colunas).
-        float[] linhas = {250f, 258f, 266f, 274f, 282f, 290f, 298f};
-        coluna(d, OpcoesFormularioServico.VISITA_COMPONENTE_COL1, v.componenteAtivo(), 14f, linhas);
-        coluna(d, OpcoesFormularioServico.VISITA_COMPONENTE_COL2, v.componenteAtivo(), 79f, linhas);
-        coluna(d, OpcoesFormularioServico.VISITA_COMPONENTE_COL3, v.componenteAtivo(), 141f, linhas);
-        coluna(d, OpcoesFormularioServico.VISITA_COMPONENTE_COL4, v.componenteAtivo(), 203f, linhas);
+        // Componente ativo (4 colunas, 7 linhas — passo ~5.8; 1a linha em ~242).
+        float[] linhas = {242f, 248f, 254f, 260f, 265f, 271f, 277f};
+        coluna(d, OpcoesFormularioServico.VISITA_COMPONENTE_COL1, v.componenteAtivo(), 16f, linhas);
+        coluna(d, OpcoesFormularioServico.VISITA_COMPONENTE_COL2, v.componenteAtivo(), 77f, linhas);
+        coluna(d, OpcoesFormularioServico.VISITA_COMPONENTE_COL3, v.componenteAtivo(), 137f, linhas);
+        coluna(d, OpcoesFormularioServico.VISITA_COMPONENTE_COL4, v.componenteAtivo(), 196f, linhas);
 
         // Assinaturas (nomes).
         d.textoAjustado(33f, 326f, 130f, 7f, dados.nomeCliente());
@@ -81,10 +82,10 @@ public final class FormularioVisita {
                               List<Opcao> tecnica, float[] tecnicaX, float[] tecnicaY,
                               List<Opcao> praga, float[] pragaX, float[] pragaY) {
         if (secao.externamente()) {
-            d.marcarCaixa(25f, extCy, CHECK);
+            d.marcarCaixa(15f, extCy, CHECK);
         }
         if (secao.internamente()) {
-            d.marcarCaixa(25f, intCy, CHECK);
+            d.marcarCaixa(15f, intCy, CHECK);
         }
         d.textoAjustado(60f, locaisTopo, 195f, 7.5f, secao.locais());
         marcar(d, tecnica, secao.tecnica(), tecnicaX, tecnicaY);

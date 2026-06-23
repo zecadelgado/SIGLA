@@ -14,6 +14,7 @@ import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -159,9 +160,12 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
 
     private Optional<CasoDeUsoEstoque.RecordInventoryMovementCommand> abrirDialogoSaida(ProdutoRow row) {
         Dialog<CasoDeUsoEstoque.RecordInventoryMovementCommand> dialog = new Dialog<>();
+        br.com.sigla.interfacegrafica.util.DialogoUi.estilizar(dialog);
         dialog.setTitle("Saída de Estoque");
         dialog.setHeaderText("Dar baixa/descartar itens de: " + row.nome());
-        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        ButtonType confirmar = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancelar = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().addAll(confirmar, cancelar);
         TextField quantidade = new TextField();
         quantidade.setPromptText("Quantidade (disponível: " + row.quantidade() + " " + row.unidade() + ")");
         TextField motivo = new TextField();
@@ -173,7 +177,7 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
         grid.addRow(1, new Label("Motivo"), motivo);
         dialog.getDialogPane().setContent(grid);
         dialog.setResultConverter(button -> {
-            if (button != ButtonType.OK) {
+            if (button != confirmar) {
                 return null;
             }
             int qtd = Integer.parseInt(quantidade.getText().trim());
@@ -260,7 +264,7 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
                     row.unidade(),
                     apresentadorMoeda.format(row.venda())
             ));
-            new Alert(Alert.AlertType.INFORMATION, "Etiqueta gerada em:\n" + arquivo, ButtonType.OK).showAndWait();
+            br.com.sigla.interfacegrafica.util.DialogoUi.informacao("Etiqueta gerada em:\n" + arquivo);
         } catch (Exception exception) {
             mostrar(br.com.sigla.interfacegrafica.util.MensagensErro.descrever("Não foi possível gerar a etiqueta:", exception));
         }
@@ -417,6 +421,7 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
 
     private Optional<CasoDeUsoEstoque.RegisterItemEstoqueCommand> abrirDialogoProduto(ItemEstoque item) {
         Dialog<CasoDeUsoEstoque.RegisterItemEstoqueCommand> dialog = new Dialog<>();
+        br.com.sigla.interfacegrafica.util.DialogoUi.estilizar(dialog);
         dialog.setTitle("Editar Produto");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         TextField nome = new TextField(item.name());
