@@ -14,6 +14,10 @@ import java.util.List;
 public final class FormularioVisita {
 
     private static final float CHECK = 7f;
+    private static final float TEXTO_TOPO = 4.8f;
+    private static final float TEXTO_CAMPO = 5.2f;
+    private static final float TEXTO_ASSINATURA = 4.7f;
+    private static final float TEXTO_MINIMO = 3.2f;
 
     private FormularioVisita() {
     }
@@ -23,20 +27,20 @@ public final class FormularioVisita {
         DadosFormularioServico.Visita v = dados.visita();
 
         // Topo: data, horario marcado, funcionario(s), horarios.
-        d.textoAjustado(185f, 10f, 60f, 7f, dados.data());
-        d.textoAjustado(246f, 10f, 15f, 7f, dados.horarioMarcado());
-        d.textoAjustado(190f, 27f, 62f, 7f, dados.funcionarios());
-        d.texto(192f, 44f, 7f, false, dados.horaInicio());
-        d.texto(243f, 44f, 7f, false, dados.horaTermino());
+        d.textoAjustado(161f, 9.7f, 34f, TEXTO_TOPO, TEXTO_MINIMO, dados.data());
+        d.textoAjustado(240f, 9.7f, 13f, TEXTO_TOPO, TEXTO_MINIMO, dados.horarioMarcado());
+        d.textoAjustado(186f, 30f, 68f, TEXTO_TOPO, TEXTO_MINIMO, dados.funcionarios());
+        d.textoAjustado(181f, 45.1f, 16f, TEXTO_TOPO, TEXTO_MINIMO, dados.horaInicio());
+        d.textoAjustado(234f, 45.1f, 18f, TEXTO_TOPO, TEXTO_MINIMO, dados.horaTermino());
 
         // Bloco do cliente.
-        d.textoAjustado(38f, 51f, 108f, 8f, dados.cliente());
-        d.textoAjustado(175f, 51f, 78f, 8f, dados.cnpj());
-        d.textoAjustado(48f, 60f, 95f, 8f, dados.endereco());
-        d.textoAjustado(172f, 60f, 80f, 8f, dados.fone());
-        d.textoAjustado(53f, 69f, 60f, 8f, dados.municipio());
-        d.texto(150f, 69f, 8f, false, dados.estado());
-        d.textoAjustado(214f, 69f, 40f, 8f, dados.responsavel());
+        d.textoAjustado(38f, 54.8f, 108f, TEXTO_CAMPO, TEXTO_MINIMO, dados.cliente());
+        d.textoAjustado(171f, 54.8f, 80f, TEXTO_CAMPO, TEXTO_MINIMO, dados.cnpj());
+        d.textoAjustado(48f, 63.8f, 130f, TEXTO_CAMPO, TEXTO_MINIMO, dados.endereco());
+        d.textoAjustado(195f, 63.8f, 57f, TEXTO_CAMPO, TEXTO_MINIMO, dados.fone());
+        d.textoAjustado(37f, 72.8f, 98f, TEXTO_CAMPO, TEXTO_MINIMO, dados.municipio());
+        d.textoAjustado(151f, 72.8f, 17f, TEXTO_CAMPO, TEXTO_MINIMO, dados.estado());
+        d.textoAjustado(201f, 72.8f, 50f, TEXTO_CAMPO, TEXTO_MINIMO, dados.responsavel());
 
         // Tipo de visita.
         marcar(d, OpcoesFormularioServico.VISITA_TIPO, v.tipoVisita(),
@@ -70,9 +74,9 @@ public final class FormularioVisita {
         coluna(d, OpcoesFormularioServico.VISITA_COMPONENTE_COL4, v.componenteAtivo(), 196f, linhas);
 
         // Assinaturas (nomes).
-        d.textoAjustado(33f, 326f, 130f, 7f, dados.nomeCliente());
-        d.textoAjustado(123f, 326f, 75f, 7f, v.fiscalizacaoNome());
-        d.textoAjustado(205f, 326f, 55f, 7f, dados.nomeLider());
+        d.textoAjustado(24f, 315.2f, 55f, TEXTO_ASSINATURA, TEXTO_MINIMO, dados.nomeCliente());
+        d.textoAjustado(109f, 315.2f, 56f, TEXTO_ASSINATURA, TEXTO_MINIMO, v.fiscalizacaoNome());
+        d.textoAjustado(195f, 315.2f, 56f, TEXTO_ASSINATURA, TEXTO_MINIMO, dados.nomeLider());
 
         return d.finalizar();
     }
@@ -87,7 +91,7 @@ public final class FormularioVisita {
         if (secao.internamente()) {
             d.marcarCaixa(15f, intCy, CHECK);
         }
-        d.textoAjustado(60f, locaisTopo, 195f, 7.5f, secao.locais());
+        d.textoAjustado(64f, locaisTopo - 3f, 191f, TEXTO_CAMPO, TEXTO_MINIMO, secao.locais());
         marcar(d, tecnica, secao.tecnica(), tecnicaX, tecnicaY);
         marcar(d, praga, secao.praga(), pragaX, pragaY);
     }

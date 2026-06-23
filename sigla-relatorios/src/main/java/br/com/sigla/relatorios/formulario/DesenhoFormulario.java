@@ -73,14 +73,20 @@ final class DesenhoFormulario implements AutoCloseable {
 
     /** Texto que diminui a fonte ate caber em larguraMax (campos estreitos do modelo). */
     void textoAjustado(float x, float topo, float larguraMax, float tamanho, String valor) {
+        textoAjustado(x, topo, larguraMax, tamanho, 5f, valor);
+    }
+
+    /** Texto ajustado com fonte minima configuravel para formularios em escala reduzida. */
+    void textoAjustado(float x, float topo, float larguraMax, float tamanho, float tamanhoMinimo, String valor) {
         if (valor == null || valor.isEmpty()) {
             return;
         }
         float t = tamanho;
-        while (t > 5f && larguraDoTexto(valor, t, false) > larguraMax) {
-            t -= 0.5f;
+        float minimo = Math.max(1f, tamanhoMinimo);
+        while (t > minimo && larguraDoTexto(valor, t, false) > larguraMax) {
+            t = Math.max(minimo, t - 0.25f);
         }
-        texto(x, topo, t, false, valor);
+        texto(x, topo, t, false, limitarTexto(valor, t, larguraMax));
     }
 
     float largura() {
@@ -195,6 +201,34 @@ final class DesenhoFormulario implements AutoCloseable {
             seguro.append(caractere >= 0x20 && caractere <= 0xFF ? caractere : '?');
         }
         return seguro.toString();
+    }
+
+    private String limitarTexto(String valor, float tamanho, float larguraMax) {
+        if (larguraDoTexto(valor, tamanho, false) <= larguraMax) {
+            return valor;
+        }
+        String sufixo = "...";
+        if (larguraDoTexto(sufixo, tamanho, false) > larguraMax) {
+            return "";
+        }
+        int fim = valor.length();
+        while (fim > 0) {
+            String prefixo = semEspacoFinal(valor.substring(0, fim));
+            String candidato = prefixo + sufixo;
+            if (!prefixo.isEmpty() && larguraDoTexto(candidato, tamanho, false) <= larguraMax) {
+                return candidato;
+            }
+            fim--;
+        }
+        return "";
+    }
+
+    private String semEspacoFinal(String valor) {
+        int fim = valor.length();
+        while (fim > 0 && Character.isWhitespace(valor.charAt(fim - 1))) {
+            fim--;
+        }
+        return valor.substring(0, fim);
     }
 
     byte[] finalizar() {
