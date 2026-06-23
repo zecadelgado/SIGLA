@@ -2,3 +2,6 @@ target/
 *.log
 *.tmp
 .DS_Store
+target/
+outputs/
+*.exe

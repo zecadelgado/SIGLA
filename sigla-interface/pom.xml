@@ -1,93 +1,93 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+        <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>br.com.sigla</groupId>
-        <artifactId>sigla-parent</artifactId>
-        <version>0.1.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
-
-    <artifactId>sigla-interface</artifactId>
-    <name>SIGLA - Desktop</name>
-    <packaging>jar</packaging>
-
-    <properties>
-        <javafx.platform>win</javafx.platform>
-    </properties>
-
-    <dependencies>
-        <dependency>
+        <parent>
             <groupId>br.com.sigla</groupId>
-            <artifactId>sigla-dominio</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>br.com.sigla</groupId>
-            <artifactId>sigla-aplicacao</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>br.com.sigla</groupId>
-            <artifactId>sigla-infraestrutura</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>br.com.sigla</groupId>
-            <artifactId>sigla-relatorios</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+            <artifactId>sigla-parent</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <relativePath>../pom.xml</relativePath>
+        </parent>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-cache</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.github.ben-manes.caffeine</groupId>
-            <artifactId>caffeine</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-crypto</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-flyway</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-database-postgresql</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-controls</artifactId>
-            <version>${javafx.version}</version>
-            <classifier>${javafx.platform}</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-fxml</artifactId>
-            <version>${javafx.version}</version>
-            <classifier>${javafx.platform}</classifier>
-        </dependency>
+        <artifactId>sigla-interface</artifactId>
+        <name>SIGLA - Desktop</name>
+        <packaging>jar</packaging>
 
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+        <properties>
+            <javafx.platform>win</javafx.platform>
+        </properties>
+
+        <dependencies>
+            <dependency>
+                <groupId>br.com.sigla</groupId>
+                <artifactId>sigla-dominio</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>br.com.sigla</groupId>
+                <artifactId>sigla-aplicacao</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>br.com.sigla</groupId>
+                <artifactId>sigla-infraestrutura</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>br.com.sigla</groupId>
+                <artifactId>sigla-relatorios</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-cache</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>com.github.ben-manes.caffeine</groupId>
+                <artifactId>caffeine</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-crypto</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-core</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-flyway</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-database-postgresql</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-controls</artifactId>
+                <version>${javafx.version}</version>
+                <classifier>${javafx.platform}</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-fxml</artifactId>
+                <version>${javafx.version}</version>
+                <classifier>${javafx.platform}</classifier>
+            </dependency>
+
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
 
     <build>
         <plugins>
@@ -96,15 +96,16 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <mainClass>br.com.sigla.interfacegrafica.inicializacao.LancadorSigla</mainClass>
-                    <additionalClasspathElements>
-                        <additionalClasspathElement>${project.basedir}/../sigla-dominio/target/classes</additionalClasspathElement>
-                        <additionalClasspathElement>${project.basedir}/../sigla-aplicacao/target/classes</additionalClasspathElement>
-                        <additionalClasspathElement>${project.basedir}/../sigla-infraestrutura/target/classes</additionalClasspathElement>
-                        <additionalClasspathElement>${project.basedir}/../sigla-relatorios/target/classes</additionalClasspathElement>
-                    </additionalClasspathElements>
-                    <jvmArguments>--enable-native-access=ALL-UNNAMED -Dspring.flyway.locations=filesystem:${project.basedir}/../sigla-infraestrutura/src/main/resources/db/migration</jvmArguments>
                 </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
+
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
@@ -116,29 +117,29 @@
         </plugins>
     </build>
 
-    <profiles>
-        <profile>
-            <id>linux</id>
-            <activation>
-                <os>
-                    <family>unix</family>
-                </os>
-            </activation>
-            <properties>
-                <javafx.platform>linux</javafx.platform>
-            </properties>
-        </profile>
-        <profile>
-            <id>mac</id>
-            <activation>
-                <os>
-                    <family>mac</family>
-                </os>
-            </activation>
-            <properties>
-                <javafx.platform>mac</javafx.platform>
-            </properties>
-        </profile>
-    </profiles>
-</project>
+        <profiles>
+            <profile>
+                <id>linux</id>
+                <activation>
+                    <os>
+                        <family>unix</family>
+                    </os>
+                </activation>
+                <properties>
+                    <javafx.platform>linux</javafx.platform>
+                </properties>
+            </profile>
+            <profile>
+                <id>mac</id>
+                <activation>
+                    <os>
+                        <family>mac</family>
+                    </os>
+                </activation>
+                <properties>
+                    <javafx.platform>mac</javafx.platform>
+                </properties>
+            </profile>
+        </profiles>
+    </project>
 
