@@ -2,6 +2,7 @@ D:\SIGLA\sigla-interface\src\test\java\br\com\sigla\interfacegrafica\aplicativo\
 D:\SIGLA\sigla-interface\src\test\java\br\com\sigla\interfacegrafica\consulta\ServicoConsultaOrdemServicoTest.java
 D:\SIGLA\sigla-interface\src\test\java\br\com\sigla\interfacegrafica\controlador\ControladorDashboardTest.java
 D:\SIGLA\sigla-interface\src\test\java\br\com\sigla\interfacegrafica\controlador\ControladorEstruturaAplicacaoTest.java
+D:\SIGLA\sigla-interface\src\test\java\br\com\sigla\interfacegrafica\controlador\ControladorNovaOrdemServicoTest.java
 D:\SIGLA\sigla-interface\src\test\java\br\com\sigla\interfacegrafica\formatador\FormatadorMascaraCpfTest.java
 D:\SIGLA\sigla-interface\src\test\java\br\com\sigla\interfacegrafica\formatador\FormatadorMascaraMoedaTest.java
 D:\SIGLA\sigla-interface\src\test\java\br\com\sigla\interfacegrafica\fxml\TelaFxmlResourcesTest.java

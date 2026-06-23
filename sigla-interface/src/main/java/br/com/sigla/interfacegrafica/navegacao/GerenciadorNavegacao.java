@@ -8,6 +8,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import br.com.sigla.interfacegrafica.util.DialogoUi;
+import br.com.sigla.interfacegrafica.util.MensagensErro;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +20,8 @@ import java.util.ResourceBundle;
 
 @Component
 public class GerenciadorNavegacao {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(GerenciadorNavegacao.class);
 
     private final ConfigurableApplicationContext context;
     private final br.com.sigla.interfacegrafica.aplicativo.FluxoAplicacao fluxoAplicacao;
@@ -53,12 +59,9 @@ public class GerenciadorNavegacao {
             currentView = view;
         } catch (RuntimeException erro) {
             // Falha ao carregar/inicializar a tela (ex.: erro de banco) nao pode quebrar a
-            // navegacao em silencio: mostra a causa em vez de deixar a tela morta.
-            new javafx.scene.control.Alert(
-                    javafx.scene.control.Alert.AlertType.ERROR,
-                    br.com.sigla.interfacegrafica.util.MensagensErro.descrever("Nao foi possivel abrir a tela:", erro),
-                    javafx.scene.control.ButtonType.OK
-            ).showAndWait();
+            // navegacao em silencio: registra o stack trace e mostra a causa ao usuario.
+            LOGGER.error("Falha ao abrir a tela {}", view, erro);
+            DialogoUi.erro(MensagensErro.descrever("Não foi possível abrir a tela:", erro));
         }
     }
 

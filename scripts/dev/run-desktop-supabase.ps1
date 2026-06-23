@@ -18,5 +18,16 @@ function Invoke-Checked {
 }
 
 Invoke-Checked .\mvnw.cmd -pl sigla-interface -am -DskipTests install
+$requiredEnv = @(
+    "SIGLA_DATASOURCE_USERNAME",
+    "SIGLA_DATASOURCE_PASSWORD"
+)
+
+foreach ($name in $requiredEnv) {
+    if ([string]::IsNullOrWhiteSpace([Environment]::GetEnvironmentVariable($name))) {
+        throw "Variavel de ambiente obrigatoria ausente: $name"
+    }
+}
+
 $env:SPRING_PROFILES_ACTIVE = "supabase"
 Invoke-Checked .\mvnw.cmd -pl sigla-interface spring-boot:run

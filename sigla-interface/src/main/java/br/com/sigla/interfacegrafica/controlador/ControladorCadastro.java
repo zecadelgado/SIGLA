@@ -450,6 +450,7 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
 
     private Optional<CasoDeUsoCliente.RegisterClienteCommand> abrirDialogoCliente(Cliente cliente) {
         Dialog<CasoDeUsoCliente.RegisterClienteCommand> dialog = new Dialog<>();
+        br.com.sigla.interfacegrafica.util.DialogoUi.estilizar(dialog);
         dialog.setTitle("Editar Cliente");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
@@ -492,6 +493,7 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
 
     private Optional<CasoDeUsoFuncionario.RegisterFuncionarioCommand> abrirDialogoFuncionario(Funcionario funcionario) {
         Dialog<CasoDeUsoFuncionario.RegisterFuncionarioCommand> dialog = new Dialog<>();
+        br.com.sigla.interfacegrafica.util.DialogoUi.estilizar(dialog);
         dialog.setTitle("Editar Funcionario");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
@@ -538,6 +540,7 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
 
     private Optional<CasoDeUsoCliente.ContactCommand> abrirDialogoResponsavel(ResponsavelRow existente) {
         Dialog<CasoDeUsoCliente.ContactCommand> dialog = new Dialog<>();
+        br.com.sigla.interfacegrafica.util.DialogoUi.estilizar(dialog);
         dialog.setTitle(existente == null ? "Novo Responsável" : "Editar Responsável");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         TextField nome = field(existente == null ? "" : existente.nome());

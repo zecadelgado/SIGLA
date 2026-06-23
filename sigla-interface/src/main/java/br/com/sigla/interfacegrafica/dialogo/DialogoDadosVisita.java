@@ -34,6 +34,7 @@ public final class DialogoDadosVisita {
         DadosFormularioServico.Visita base = atual == null ? DadosFormularioServico.Visita.vazio() : atual;
 
         Dialog<DadosFormularioServico.Visita> dialog = new Dialog<>();
+        br.com.sigla.interfacegrafica.util.DialogoUi.estilizar(dialog);
         dialog.setTitle("Dados do Relatório de Visita");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 

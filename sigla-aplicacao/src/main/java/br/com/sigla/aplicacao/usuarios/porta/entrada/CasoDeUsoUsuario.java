@@ -13,6 +13,10 @@ public interface CasoDeUsoUsuario {
 
     void trocarSenha(TrocarSenhaCommand command);
 
+    void solicitarRecuperacaoSenha(SolicitarRecuperacaoSenhaCommand command);
+
+    void redefinirSenhaComCodigo(RedefinirSenhaComCodigoCommand command);
+
     List<Usuario> listAll();
 
     record AutenticarUsuarioCommand(String usuario, String senha) {
@@ -32,6 +36,16 @@ public interface CasoDeUsoUsuario {
     record TrocarSenhaCommand(
             String usuarioId,
             String senhaAtual,
+            String novaSenha
+    ) {
+    }
+
+    record SolicitarRecuperacaoSenhaCommand(String email) {
+    }
+
+    record RedefinirSenhaComCodigoCommand(
+            String email,
+            String codigo,
             String novaSenha
     ) {
     }

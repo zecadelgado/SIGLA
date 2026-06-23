@@ -9,4 +9,6 @@ import java.util.UUID;
 public interface SpringDataRepositorioUsuario extends JpaRepository<UsuarioEntidade, UUID> {
 
     Optional<UsuarioEntidade> findByUsuarioIgnoreCase(String usuario);
+
+    Optional<UsuarioEntidade> findByEmailIgnoreCase(String email);
 }

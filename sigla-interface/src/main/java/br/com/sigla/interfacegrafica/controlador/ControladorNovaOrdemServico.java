@@ -4,6 +4,7 @@ import br.com.sigla.aplicacao.servicos.porta.entrada.CasoDeUsoOrdemServico;
 import br.com.sigla.dominio.servicos.DadosFormularioServico;
 import br.com.sigla.dominio.servicos.OpcoesFormularioServico;
 import br.com.sigla.dominio.servicos.OrdemServico;
+import br.com.sigla.interfacegrafica.consulta.ContextoEdicaoOrdemServico;
 import br.com.sigla.interfacegrafica.consulta.ServicoConsultaReferencias;
 import br.com.sigla.interfacegrafica.formatador.FormatadorMascaraMoeda;
 import br.com.sigla.interfacegrafica.modelo.OpcaoId;
@@ -16,6 +17,7 @@ import br.com.sigla.interfacegrafica.util.UtilJanela;
 import br.com.sigla.interfacegrafica.util.ValidadorEntrada;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
@@ -30,10 +32,17 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.parseEnum;
 
+/**
+ * Tela unica de Ordem de Servico, usada tanto para CRIAR quanto para EDITAR. O
+ * modo e definido por {@link ContextoEdicaoOrdemServico}: assim a edicao oferece
+ * exatamente os mesmos campos da criacao (cabecalho, datas, status e os campos
+ * que alimentam o PDF), evitando divergencias entre as duas telas.
+ */
 @Component
 public class ControladorNovaOrdemServico {
 
@@ -41,7 +50,12 @@ public class ControladorNovaOrdemServico {
     private final ServicoConsultaReferencias servicoConsultaReferencias;
     private final GerenciadorNavegacao gerenciadorNavegacao;
     private final FormatadorMascaraMoeda formatadorMoeda;
+    private final ContextoEdicaoOrdemServico contextoEdicao;
 
+    @FXML
+    private Label tituloTela;
+    @FXML
+    private Button confirmarButton;
     @FXML
     private ComboBox<OpcaoId> clienteCombo;
     @FXML
@@ -90,20 +104,28 @@ public class ControladorNovaOrdemServico {
     private GrupoCheckboxes manutencaoGrupo;
     private GrupoProdutosQtde produtosGrupo;
 
+    // Estado do modo edicao.
+    private boolean modoEdicao;
+    private OrdemServico ordemEmEdicao;
+
     public ControladorNovaOrdemServico(
             CasoDeUsoOrdemServico casoDeUsoOrdemServico,
             ServicoConsultaReferencias servicoConsultaReferencias,
             GerenciadorNavegacao gerenciadorNavegacao,
-            FormatadorMascaraMoeda formatadorMoeda
+            FormatadorMascaraMoeda formatadorMoeda,
+            ContextoEdicaoOrdemServico contextoEdicao
     ) {
         this.casoDeUsoOrdemServico = casoDeUsoOrdemServico;
         this.servicoConsultaReferencias = servicoConsultaReferencias;
         this.gerenciadorNavegacao = gerenciadorNavegacao;
         this.formatadorMoeda = formatadorMoeda;
+        this.contextoEdicao = contextoEdicao;
     }
 
     @FXML
     public void initialize() {
+        modoEdicao = false;
+        ordemEmEdicao = null;
         UtilComboBox.preencher(clienteCombo, servicoConsultaReferencias.clientes(), false);
         UtilComboBox.preencher(contratoCombo, servicoConsultaReferencias.contratos(), true);
         UtilComboBox.preencher(responsavelInternoCombo, servicoConsultaReferencias.funcionarios(), true);
@@ -111,7 +133,7 @@ public class ControladorNovaOrdemServico {
         UtilComboBox.preencher(executadoPorCombo, servicoConsultaReferencias.funcionarios(), true);
         if (clienteCombo != null) {
             clienteCombo.valueProperty().addListener((observable, oldValue, newValue) ->
-                    UtilComboBox.preencher(contratoCombo, servicoConsultaReferencias.contratosDoCliente(UtilComboBox.idSelecionado(clienteCombo)), true)
+                    atualizarContratosDoCliente(UtilComboBox.idSelecionado(clienteCombo))
             );
         }
         LocalDate hoje = LocalDate.now();
@@ -130,6 +152,78 @@ public class ControladorNovaOrdemServico {
         formatadorMoeda.aplicar(valorServicoField);
         construirCamposPdf();
         setFeedback("");
+        aplicarModoEdicao();
+    }
+
+    private void atualizarContratosDoCliente(String clienteId) {
+        String contratoSelecionadoId = UtilComboBox.idSelecionado(contratoCombo);
+        List<OpcaoId> contratos = servicoConsultaReferencias.contratosDoCliente(clienteId);
+        if (contratos.isEmpty()) {
+            contratos = servicoConsultaReferencias.contratos();
+        }
+        UtilComboBox.preencher(contratoCombo, contratos, true);
+        UtilComboBox.selecionarPorId(contratoCombo, contratoSelecionadoId);
+    }
+
+    /**
+     * Le o contexto (consumindo-o uma unica vez) e, se houver uma OS para editar,
+     * pre-popula todos os campos da tela com os dados atuais da OS.
+     */
+    private void aplicarModoEdicao() {
+        String id = contextoEdicao == null ? null : contextoEdicao.ordemServicoId();
+        if (contextoEdicao != null) {
+            contextoEdicao.limpar();
+        }
+        if (id == null || id.isBlank()) {
+            return;
+        }
+        OrdemServico ordem = buscarOrdem(id);
+        if (ordem == null) {
+            return;
+        }
+        modoEdicao = true;
+        ordemEmEdicao = ordem;
+
+        // Cliente primeiro: ao selecionar, o contratoCombo e repreenchido com os
+        // contratos do cliente; so entao selecionamos o contrato da OS.
+        UtilComboBox.selecionarPorId(clienteCombo, ordem.clienteId());
+        UtilComboBox.selecionarPorId(contratoCombo, ordem.contratoId());
+        if (tituloField != null) {
+            tituloField.setText(ordem.titulo());
+        }
+        if (tipoServicoField != null) {
+            tipoServicoField.setText(ordem.tipoServico());
+        }
+        if (descricaoField != null) {
+            descricaoField.setText(ordem.descricao());
+        }
+        if (statusField != null) {
+            statusField.setText(ordem.status().name());
+        }
+        UtilComboBox.selecionarPorId(responsavelInternoCombo, ordem.responsavelInternoId());
+        UtilComboBox.selecionarPorId(executadoPorCombo, ordem.executadoPorId());
+        formatadorMoeda.definir(valorServicoField, ordem.valorServico());
+        if (observacoesField != null) {
+            observacoesField.setText(ordem.observacoes());
+        }
+        LocalDate agendada = ordem.dataAgendada() == null ? LocalDate.now() : ordem.dataAgendada().toLocalDate();
+        if (dataAgendadaPicker != null) {
+            dataAgendadaPicker.setValue(agendada);
+        }
+        if (dataInicioPicker != null) {
+            dataInicioPicker.setValue(ordem.dataInicio() == null ? agendada : ordem.dataInicio().toLocalDate());
+        }
+        if (dataFimPicker != null) {
+            dataFimPicker.setValue(ordem.dataFim() == null ? agendada : ordem.dataFim().toLocalDate());
+        }
+        prefillCamposPdf(ordem.dadosFormulario().os());
+
+        if (tituloTela != null) {
+            tituloTela.setText("Editar Ordem de Serviço");
+        }
+        if (confirmarButton != null) {
+            confirmarButton.setText("Salvar");
+        }
     }
 
     private void construirCamposPdf() {
@@ -174,6 +268,25 @@ public class ControladorNovaOrdemServico {
                 diluicao2);
     }
 
+    private void prefillCamposPdf(DadosFormularioServico.Os os) {
+        if (formularioPdfBox == null || aplicacaoGeralGrupo == null || os == null) {
+            return;
+        }
+        manhaCheck.setSelected(os.manha());
+        tardeCheck.setSelected(os.tarde());
+        horaInicioField.setText(os.horaInicio());
+        horaTerminoField.setText(os.horaTermino());
+        etapaField.setText(os.etapa());
+        etapaDeField.setText(os.etapaDe());
+        produto1QtdField.setText(os.produto1Qtd());
+        produto1CaldaField.setText(os.produto1Calda());
+        produto2QtdField.setText(os.produto2Qtd());
+        produto2CaldaField.setText(os.produto2Calda());
+        aplicacaoGeralGrupo.marcar(os.aplicacaoGeral());
+        manutencaoGrupo.marcar(os.manutencao());
+        produtosGrupo.marcar(os.produtos());
+    }
+
     @FXML
     private void onConfirmar() {
         try {
@@ -190,23 +303,41 @@ public class ControladorNovaOrdemServico {
             LocalDateTime inicio = dataInicio.atTime(8, 0);
             LocalDateTime fim = dataFim.atTime(18, 0);
 
-            casoDeUsoOrdemServico.create(new CasoDeUsoOrdemServico.CreateOrdemServicoCommand(
-                    UUID.randomUUID().toString(),
-                    cliente.id(),
-                    contrato == null ? "" : contrato.id(),
-                    titulo,
-                    descricaoField == null ? "" : descricaoField.getText(),
-                    tipoServico,
-                    parseEnum(OrdemServico.OrdemServicoStatus.class, statusField == null ? "" : statusField.getText(), OrdemServico.OrdemServicoStatus.AGENDADA),
-                    dataAgendada.atStartOfDay(),
-                    inicio,
-                    fim,
-                    chooseResponsible(),
-                    UtilComboBox.idSelecionado(executadoPorCombo),
-                    formatadorMoeda.valor(valorServicoField),
-                    observacoesField == null ? "" : observacoesField.getText(),
-                    montarDadosFormulario()
-            ));
+            if (modoEdicao && ordemEmEdicao != null) {
+                casoDeUsoOrdemServico.update(new CasoDeUsoOrdemServico.UpdateOrdemServicoCommand(
+                        ordemEmEdicao.id(),
+                        cliente.id(),
+                        contrato == null ? "" : contrato.id(),
+                        titulo,
+                        descricaoField == null ? "" : descricaoField.getText(),
+                        tipoServico,
+                        parseEnum(OrdemServico.OrdemServicoStatus.class, statusField == null ? "" : statusField.getText(), ordemEmEdicao.status()),
+                        dataAgendada.atStartOfDay(),
+                        chooseResponsible(),
+                        UtilComboBox.idSelecionado(executadoPorCombo),
+                        formatadorMoeda.valor(valorServicoField),
+                        observacoesField == null ? "" : observacoesField.getText(),
+                        montarDadosFormulario()
+                ));
+            } else {
+                casoDeUsoOrdemServico.create(new CasoDeUsoOrdemServico.CreateOrdemServicoCommand(
+                        UUID.randomUUID().toString(),
+                        cliente.id(),
+                        contrato == null ? "" : contrato.id(),
+                        titulo,
+                        descricaoField == null ? "" : descricaoField.getText(),
+                        tipoServico,
+                        parseEnum(OrdemServico.OrdemServicoStatus.class, statusField == null ? "" : statusField.getText(), OrdemServico.OrdemServicoStatus.AGENDADA),
+                        dataAgendada.atStartOfDay(),
+                        inicio,
+                        fim,
+                        chooseResponsible(),
+                        UtilComboBox.idSelecionado(executadoPorCombo),
+                        formatadorMoeda.valor(valorServicoField),
+                        observacoesField == null ? "" : observacoesField.getText(),
+                        montarDadosFormulario()
+                ));
+            }
             gerenciadorNavegacao.navigateTo(VisaoAplicacao.SERVICE_ORDER);
             UtilJanela.fecharJanela(clienteCombo);
         } catch (Exception exception) {
@@ -216,7 +347,7 @@ public class ControladorNovaOrdemServico {
 
     private DadosFormularioServico montarDadosFormulario() {
         if (formularioPdfBox == null || aplicacaoGeralGrupo == null) {
-            return DadosFormularioServico.vazio();
+            return modoEdicao && ordemEmEdicao != null ? ordemEmEdicao.dadosFormulario() : DadosFormularioServico.vazio();
         }
         DadosFormularioServico.Os os = new DadosFormularioServico.Os(
                 manhaCheck.isSelected(),
@@ -232,12 +363,23 @@ public class ControladorNovaOrdemServico {
                 produto1CaldaField.getText(),
                 produto2QtdField.getText(),
                 produto2CaldaField.getText());
-        return new DadosFormularioServico(os, DadosFormularioServico.Visita.vazio());
+        // Preserva a parte de Visita do formulario, que e editada em outra tela.
+        DadosFormularioServico.Visita visita = modoEdicao && ordemEmEdicao != null
+                ? ordemEmEdicao.dadosFormulario().visita()
+                : DadosFormularioServico.Visita.vazio();
+        return new DadosFormularioServico(os, visita);
     }
 
     @FXML
     private void onCancelar() {
         UtilJanela.fecharJanela(clienteCombo);
+    }
+
+    private OrdemServico buscarOrdem(String id) {
+        return casoDeUsoOrdemServico.listAll().stream()
+                .filter(ordem -> ordem.id().equals(id))
+                .findFirst()
+                .orElse(null);
     }
 
     private String texto(TextField campo) {

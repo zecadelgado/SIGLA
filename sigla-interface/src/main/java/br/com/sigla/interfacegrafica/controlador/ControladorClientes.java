@@ -332,6 +332,7 @@ public class ControladorClientes extends ControladorComMenuPrincipal {
 
     private Optional<CasoDeUsoPotencialCliente.RegisterPotencialClienteCommand> abrirDialogoIndicacao(PotencialCliente lead) {
         Dialog<CasoDeUsoPotencialCliente.RegisterPotencialClienteCommand> dialog = new Dialog<>();
+        br.com.sigla.interfacegrafica.util.DialogoUi.estilizar(dialog);
         dialog.setTitle("Editar Indicação");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         TextField nome = field(lead.name());
@@ -363,6 +364,7 @@ public class ControladorClientes extends ControladorComMenuPrincipal {
 
     private Optional<CasoDeUsoPotencialCliente.AlterarStatusIndicacaoCommand> abrirDialogoStatus(PotencialCliente lead) {
         Dialog<CasoDeUsoPotencialCliente.AlterarStatusIndicacaoCommand> dialog = new Dialog<>();
+        br.com.sigla.interfacegrafica.util.DialogoUi.estilizar(dialog);
         dialog.setTitle("Alterar Status");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         ComboBox<PotencialCliente.PotencialClienteStatus> status = new ComboBox<>();
@@ -383,6 +385,7 @@ public class ControladorClientes extends ControladorComMenuPrincipal {
 
     private Optional<CasoDeUsoCliente.RegisterClienteCommand> abrirDialogoConversao(PotencialCliente lead) {
         Dialog<CasoDeUsoCliente.RegisterClienteCommand> dialog = new Dialog<>();
+        br.com.sigla.interfacegrafica.util.DialogoUi.estilizar(dialog);
         dialog.setTitle("Converter Indicação em Cliente");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         ComboBox<Cliente.TipoCliente> tipo = new ComboBox<>();

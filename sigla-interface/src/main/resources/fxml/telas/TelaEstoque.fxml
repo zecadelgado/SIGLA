@@ -99,9 +99,9 @@
                   </VBox>
                   <VBox prefHeight="790.0" prefWidth="1286.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <HBox prefHeight="100.0" prefWidth="200.0">
+                        <HBox minHeight="104.0" prefHeight="104.0" prefWidth="200.0">
                            <children>
-<VBox prefHeight="100.0" prefWidth="458.0">
+<VBox prefHeight="100.0" prefWidth="350.0">
                                  <children>
                                     <Label prefHeight="52.0" prefWidth="358.0" text="Estoque" textFill="#00417e">
                                        <font>
@@ -124,58 +124,58 @@
                                     </Label>
                                  </children>
                               </VBox>
-                              <Region prefHeight="106.0" prefWidth="335.0" />
-                              <Button mnemonicParsing="false" onAction="#onMovimentar" prefHeight="46.0" prefWidth="170.0" style="-fx-background-color: #178c1b; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Movimentar" textFill="WHITE">
+                              <Region prefHeight="106.0" prefWidth="20.0" />
+                              <Button minWidth="132.0" mnemonicParsing="false" onAction="#onMovimentar" prefHeight="42.0" prefWidth="132.0" style="-fx-background-color: #178c1b; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 14,0,0,4);" text="Movimentar" textFill="WHITE">
                                  <font>
-                                    <Font name="Ebrima Bold" size="17.0" />
+                                    <Font name="Ebrima Bold" size="14.0" />
                                  </font>
                                  <HBox.margin>
                                     <Insets top="40.0" />
                                  </HBox.margin>
                               </Button>
-                              <Button mnemonicParsing="false" onAction="#onSaida" prefHeight="46.0" prefWidth="150.0" style="-fx-background-color: #891111; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Saída" textFill="WHITE">
+                              <Button minWidth="90.0" mnemonicParsing="false" onAction="#onSaida" prefHeight="42.0" prefWidth="90.0" style="-fx-background-color: #891111; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 14,0,0,4);" text="Saida" textFill="WHITE">
                                  <font>
-                                    <Font name="Ebrima Bold" size="17.0" />
+                                    <Font name="Ebrima Bold" size="14.0" />
                                  </font>
                                  <HBox.margin>
                                     <Insets left="20.0" top="40.0" />
                                  </HBox.margin>
                               </Button>
-                              <Button mnemonicParsing="false" onAction="#onNovoProduto" prefHeight="46.0" prefWidth="170.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="+ Novo Produto" textFill="WHITE">
+                              <Button minWidth="138.0" mnemonicParsing="false" onAction="#onNovoProduto" prefHeight="42.0" prefWidth="138.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 14,0,0,4);" text="+ Novo produto" textFill="WHITE">
                                  <font>
-                                    <Font name="Ebrima Bold" size="17.0" />
+                                    <Font name="Ebrima Bold" size="14.0" />
                                  </font>
                                  <HBox.margin>
                                     <Insets left="20.0" top="40.0" />
                                  </HBox.margin>
                               </Button>
-                              <Button mnemonicParsing="false" onAction="#onInativarProduto" prefHeight="46.0" prefWidth="150.0" style="-fx-background-color: white; -fx-background-radius: 5;" text="Inativar" textFill="#0B2A6F">
+                              <Button minWidth="98.0" mnemonicParsing="false" onAction="#onInativarProduto" prefHeight="42.0" prefWidth="98.0" style="-fx-background-color: white; -fx-background-radius: 5;" text="Inativar" textFill="#0B2A6F">
                                  <font>
-                                    <Font name="Ebrima Bold" size="15.0" />
+                                    <Font name="Ebrima Bold" size="13.0" />
                                  </font>
                                  <HBox.margin>
                                     <Insets left="15.0" top="40.0" />
                                  </HBox.margin>
                               </Button>
-                              <Button mnemonicParsing="false" onAction="#onReativarProduto" prefHeight="46.0" prefWidth="150.0" style="-fx-background-color: white; -fx-background-radius: 5;" text="Reativar" textFill="#0B2A6F">
+                              <Button minWidth="98.0" mnemonicParsing="false" onAction="#onReativarProduto" prefHeight="42.0" prefWidth="98.0" style="-fx-background-color: white; -fx-background-radius: 5;" text="Reativar" textFill="#0B2A6F">
                                  <font>
-                                    <Font name="Ebrima Bold" size="15.0" />
+                                    <Font name="Ebrima Bold" size="13.0" />
                                  </font>
                                  <HBox.margin>
                                     <Insets left="10.0" top="40.0" />
                                  </HBox.margin>
                               </Button>
-                              <Button mnemonicParsing="false" onAction="#onImprimirEtiqueta" prefHeight="46.0" prefWidth="150.0" style="-fx-background-color: white; -fx-background-radius: 5;" text="Imprimir etiqueta" textFill="#0B2A6F">
+                              <Button minWidth="102.0" mnemonicParsing="false" onAction="#onImprimirEtiqueta" prefHeight="42.0" prefWidth="102.0" style="-fx-background-color: white; -fx-background-radius: 5;" text="Etiqueta" textFill="#0B2A6F">
                                  <font>
-                                    <Font name="Ebrima Bold" size="15.0" />
+                                    <Font name="Ebrima Bold" size="13.0" />
                                  </font>
                                  <HBox.margin>
                                     <Insets left="10.0" top="40.0" />
                                  </HBox.margin>
                               </Button>
-                              <Button mnemonicParsing="false" onAction="#onFiltrarBaixoEstoque" prefHeight="46.0" prefWidth="150.0" style="-fx-background-color: #fee2e2; -fx-background-radius: 5;" text="Estoque baixo" textFill="#891111">
+                              <Button minWidth="126.0" mnemonicParsing="false" onAction="#onFiltrarBaixoEstoque" prefHeight="42.0" prefWidth="126.0" style="-fx-background-color: #fee2e2; -fx-background-radius: 5;" text="Estoque baixo" textFill="#891111">
                                  <font>
-                                    <Font name="Ebrima Bold" size="15.0" />
+                                    <Font name="Ebrima Bold" size="13.0" />
                                  </font>
                                  <HBox.margin>
                                     <Insets left="10.0" top="40.0" />

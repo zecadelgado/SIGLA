@@ -76,6 +76,14 @@ class TelaFxmlResourcesTest {
     @Test
     void shouldExposeFunctionalControllerFieldsInRestoredScreens() throws IOException {
         Map<VisaoAplicacao, List<String>> requiredFields = Map.of(
+                VisaoAplicacao.LOGIN, List.of(
+                        "usernameField", "passwordField", "errorLabel", "loginButton", "cadastroButton",
+                        "esqueciSenhaLink"
+                ),
+                VisaoAplicacao.ACCOUNT_REGISTRATION, List.of(
+                        "nomeField", "usuarioField", "emailField", "senhaField", "confirmacaoSenhaField",
+                        "feedbackLabel", "cadastrarButton", "voltarLoginButton"
+                ),
                 VisaoAplicacao.DASHBOARD, List.of(
                         "osAbertasLabel", "servicosAtrasadosLabel", "contasVencidasLabel", "estoqueBaixoLabel",
                         "indicacoesPendentesLabel", "receitasPeriodoLabel", "despesasPeriodoLabel", "saldoAtualLabel",

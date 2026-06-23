@@ -129,6 +129,7 @@ public class ControladorUsuarios {
 
     private Optional<CasoDeUsoUsuario.RegistrarUsuarioCommand> abrirDialogoNovo() {
         Dialog<CasoDeUsoUsuario.RegistrarUsuarioCommand> dialog = new Dialog<>();
+        br.com.sigla.interfacegrafica.util.DialogoUi.estilizar(dialog);
         dialog.setTitle("Novo usuário");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         TextField nome = new TextField();
@@ -161,6 +162,7 @@ public class ControladorUsuarios {
 
     private Optional<CasoDeUsoUsuario.TrocarSenhaCommand> abrirDialogoSenha(UsuarioRow row) {
         Dialog<CasoDeUsoUsuario.TrocarSenhaCommand> dialog = new Dialog<>();
+        br.com.sigla.interfacegrafica.util.DialogoUi.estilizar(dialog);
         dialog.setTitle("Trocar senha de " + row.usuario());
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         PasswordField atual = new PasswordField();

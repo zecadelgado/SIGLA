@@ -2,6 +2,7 @@ D:\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\armazena
 D:\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\configuracao\ConfiguracaoInfraestrutura.java
 D:\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\configuracao\PropriedadesArmazenamentoSigla.java
 D:\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\configuracao\PropriedadesNotificacoesSigla.java
+D:\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\configuracao\PropriedadesSupabaseAuth.java
 D:\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\configuracao\VerificadorModoPersistencia.java
 D:\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\integracao\AdaptadorEnvioWhatsappN8n.java
 D:\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\persistencia\entidade\AuditoriaEventoEntidade.java
@@ -39,5 +40,6 @@ D:\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\persiste
 D:\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioUsuario.java
 D:\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\persistencia\repositorio\SpringDataRepositorioUsuario.java
 D:\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\relogio\ProvedorRelogioSistema.java
+D:\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\seguranca\AdaptadorAutenticacaoSupabase.java
 D:\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\seguranca\ServicoSenhaUsuarioBCrypt.java
 D:\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\transacao\ExecutorTransacao.java

@@ -1,7 +1,11 @@
 package br.com.sigla.interfacegrafica.async;
 
+import br.com.sigla.interfacegrafica.util.DialogoUi;
+import br.com.sigla.interfacegrafica.util.MensagensErro;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -27,6 +31,8 @@ import java.util.function.Supplier;
  */
 @Component
 public class ExecutorTarefasUi {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExecutorTarefasUi.class);
 
     private final ExecutorService executor;
 
@@ -79,14 +85,11 @@ public class ExecutorTarefasUi {
                 aoFalhar.accept(erro);
                 return;
             }
-            // Sem tratamento especifico: nao falha em silencio. Registra e mostra a causa ao usuario.
-            String descricao = br.com.sigla.interfacegrafica.util.MensagensErro.descrever(erro);
-            System.err.println("Falha em tarefa de UI: " + descricao);
-            new javafx.scene.control.Alert(
-                    javafx.scene.control.Alert.AlertType.ERROR,
-                    descricao,
-                    javafx.scene.control.ButtonType.OK
-            ).showAndWait();
+            // Sem tratamento especifico: nao falha em silencio. Registra o stack trace
+            // completo no log e mostra a causa, ja traduzida, ao usuario.
+            String descricao = MensagensErro.descrever(erro);
+            LOGGER.error("Falha em tarefa de UI: {}", descricao, erro);
+            DialogoUi.erro(descricao);
         });
         executor.execute(task);
     }

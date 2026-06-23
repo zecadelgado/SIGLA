@@ -4,8 +4,11 @@ import br.com.sigla.dominio.agenda.VisitaAgendada;
 import br.com.sigla.dominio.certificados.Certificado;
 import br.com.sigla.dominio.clientes.Cliente;
 import br.com.sigla.dominio.contratos.Contrato;
+import br.com.sigla.dominio.financeiro.LancamentoFinanceiro;
 import br.com.sigla.dominio.funcionarios.Funcionario;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -38,12 +41,32 @@ final class ResolvedorVariaveis {
         return variaveis;
     }
 
+    static Map<String, String> parcela(LancamentoFinanceiro lancamento, LancamentoFinanceiro.ParcelaFinanceira parcela, Cliente cliente) {
+        Map<String, String> variaveis = base(cliente, null);
+        java.time.LocalDate vencimento = parcela != null ? parcela.dataVencimento() : lancamento.dataVencimento();
+        BigDecimal valor = parcela != null ? parcela.valorParcela() : lancamento.valorTotal();
+        variaveis.put("descricao_lancamento", lancamento.descricao());
+        variaveis.put("parcela_vencimento", vencimento.format(DATA));
+        variaveis.put("parcela_valor", moeda(valor));
+        if (parcela != null) {
+            variaveis.put("parcela_numero", String.valueOf(parcela.numeroParcela()));
+            variaveis.put("parcela_total", String.valueOf(lancamento.quantidadeParcelas()));
+        }
+        variaveis.put("observacoes", lancamento.observacoes());
+        return variaveis;
+    }
+
     static Map<String, String> certificado(Certificado certificado, Cliente cliente) {
         Map<String, String> variaveis = base(cliente, null);
         variaveis.put("certificado_vencimento", certificado.validUntil().format(DATA));
         variaveis.put("tipo_servico", certificado.description());
         variaveis.put("observacoes", certificado.notes());
         return variaveis;
+    }
+
+    private static String moeda(BigDecimal valor) {
+        BigDecimal seguro = (valor == null ? BigDecimal.ZERO : valor).setScale(2, RoundingMode.HALF_UP);
+        return "R$ " + seguro.toPlainString().replace('.', ',');
     }
 
     private static Map<String, String> base(Cliente cliente, Funcionario funcionario) {

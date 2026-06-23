@@ -37,6 +37,14 @@ public class AdaptadorRepositorioUsuario implements RepositorioUsuario {
     }
 
     @Override
+    public Optional<Usuario> findByEmail(String email) {
+        if (email == null || email.isBlank()) {
+            return Optional.empty();
+        }
+        return repository.findByEmailIgnoreCase(email.trim()).map(this::toDomain);
+    }
+
+    @Override
     public List<Usuario> findAll() {
         return repository.findAll().stream().map(this::toDomain).toList();
     }
@@ -49,7 +57,8 @@ public class AdaptadorRepositorioUsuario implements RepositorioUsuario {
                 entity.getEmail(),
                 entity.getSenha(),
                 parseTipo(entity.getTipo()),
-                entity.isAtivo()
+                entity.isAtivo(),
+                PersistenciaIds.toString(entity.getAuthUserId())
         );
     }
 
@@ -60,6 +69,7 @@ public class AdaptadorRepositorioUsuario implements RepositorioUsuario {
         entity.setUsuario(usuario.usuario());
         entity.setEmail(usuario.email().isBlank() ? null : usuario.email());
         entity.setSenha(usuario.senhaHash());
+        entity.setAuthUserId(PersistenciaIds.toUuidIfValid(usuario.authUserId()));
         entity.setTipo(usuario.tipo().name());
         entity.setAtivo(usuario.ativo());
         return entity;

@@ -52,6 +52,14 @@ class SessaoLocalAplicacaoTest {
         }
 
         @Override
+        public void solicitarRecuperacaoSenha(SolicitarRecuperacaoSenhaCommand command) {
+        }
+
+        @Override
+        public void redefinirSenhaComCodigo(RedefinirSenhaComCodigoCommand command) {
+        }
+
+        @Override
         public List<Usuario> listAll() {
             return List.of();
         }

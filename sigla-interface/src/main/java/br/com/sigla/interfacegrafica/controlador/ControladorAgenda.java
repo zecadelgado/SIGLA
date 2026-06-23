@@ -122,6 +122,7 @@ public class ControladorAgenda {
             return;
         }
         Dialog<CasoDeUsoAgenda.RescheduleVisitCommand> dialog = new Dialog<>();
+        br.com.sigla.interfacegrafica.util.DialogoUi.estilizar(dialog);
         dialog.setTitle("Reagendar evento");
         dialog.getDialogPane().getButtonTypes().setAll(ButtonType.OK, ButtonType.CANCEL);
         DatePicker dataPicker = new DatePicker(row.dataBase());
@@ -210,6 +211,7 @@ public class ControladorAgenda {
 
     private void abrirDialogo(VisitaAgendada atual) {
         Dialog<CasoDeUsoAgenda.ScheduleVisitCommand> dialog = new Dialog<>();
+        br.com.sigla.interfacegrafica.util.DialogoUi.estilizar(dialog);
         dialog.setTitle(atual == null ? "Novo evento" : "Editar evento");
         dialog.getDialogPane().getButtonTypes().setAll(ButtonType.OK, ButtonType.CANCEL);
 

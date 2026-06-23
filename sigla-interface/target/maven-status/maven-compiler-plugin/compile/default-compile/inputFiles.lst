@@ -8,6 +8,7 @@ D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\async\Execu
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\async\IndicadorCarregamento.java
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\async\SobreposicaoCarregamento.java
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\consulta\ContextoDetalheOrdemServico.java
+D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\consulta\ContextoEdicaoOrdemServico.java
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\consulta\ServicoConsultaOrdemServico.java
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\consulta\ServicoConsultaReferencias.java
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\controlador\ControladorAgenda.java
@@ -51,6 +52,7 @@ D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\util\GrupoC
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\util\GrupoProdutosQtde.java
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\util\MensagensErro.java
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\util\ResolvedorEntradaTexto.java
+D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\util\ToastNotificacao.java
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\util\TradutorInterface.java
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\util\UtilComboBox.java
 D:\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\util\UtilJanela.java

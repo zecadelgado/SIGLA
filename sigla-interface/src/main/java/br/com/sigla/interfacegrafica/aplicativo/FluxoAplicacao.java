@@ -1,6 +1,7 @@
 package br.com.sigla.interfacegrafica.aplicativo;
 
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
@@ -23,8 +24,6 @@ import java.util.ResourceBundle;
 @Component
 public class FluxoAplicacao {
 
-    private static final double MAIN_WIDTH_RATIO = 0.96;
-    private static final double MAIN_HEIGHT_RATIO = 0.94;
     private static final double FLOATING_MAX_WIDTH_RATIO = 0.62;
     private static final double FLOATING_MAX_HEIGHT_RATIO = 0.84;
 
@@ -53,6 +52,13 @@ public class FluxoAplicacao {
 
     public void showShell() {
         showView(VisaoAplicacao.SHELL);
+    }
+
+    public void ajustarJanelaInicial() {
+        if (stage == null || stage.getScene() == null) {
+            return;
+        }
+        Platform.runLater(() -> centralizarLogin(stage));
     }
 
     public void showView(VisaoAplicacao view) {
@@ -140,21 +146,41 @@ public class FluxoAplicacao {
         stage.setTitle(view.requiresAuthentication() ? "S.I.G.L.A" : "S.I.G.L.A - " + view.tituloJanela());
 
         if (!view.requiresAuthentication()) {
+            stage.setFullScreen(false);
+            stage.setMaximized(false);
             setStageMinimum(stage, screenBounds, 420, 260);
-            // A tela de login tem tamanho fixo (655x450 de conteudo). Dimensionar pelo
-            // conteudo da cena (sizeToScene) garante que a area util receba o tamanho
-            // cheio: o SO acrescenta a barra de titulo/bordas POR FORA. Antes o stage
-            // recebia 655x450 no total e, descontada a moldura, o login aparecia menor.
-            stage.sizeToScene();
+            centralizarLogin(stage);
         } else {
             setStageMinimum(stage, screenBounds, 960, 640);
-            double width = clamp(screenBounds.getWidth() * MAIN_WIDTH_RATIO, Math.min(960, screenBounds.getWidth()), screenBounds.getWidth());
-            double height = clamp(screenBounds.getHeight() * MAIN_HEIGHT_RATIO, Math.min(640, screenBounds.getHeight()), screenBounds.getHeight());
-            stage.setWidth(width);
-            stage.setHeight(height);
+            maximizarComBordas(stage, screenBounds);
+            return;
         }
+    }
 
-        centerStage(stage, screenBounds);
+    private void centralizarLogin(Stage targetStage) {
+        targetStage.sizeToScene();
+        centerStage(targetStage, resolveBoundsForCentering(targetStage));
+        if (targetStage.isShowing()) {
+            Platform.runLater(() -> {
+                targetStage.sizeToScene();
+                centerStage(targetStage, resolveBoundsForCentering(targetStage));
+            });
+        }
+    }
+
+    private void maximizarComBordas(Stage targetStage, Rectangle2D screenBounds) {
+        targetStage.setFullScreen(false);
+        targetStage.setMaximized(false);
+        targetStage.setX(screenBounds.getMinX());
+        targetStage.setY(screenBounds.getMinY());
+        targetStage.setWidth(screenBounds.getWidth());
+        targetStage.setHeight(screenBounds.getHeight());
+
+        if (targetStage.isShowing()) {
+            Platform.runLater(() -> targetStage.setMaximized(true));
+        } else {
+            targetStage.setMaximized(true);
+        }
     }
 
     private void resizeFloatingStage(Stage floatingStage, Parent root) {
@@ -206,6 +232,16 @@ public class FluxoAplicacao {
             if (!matchingScreens.isEmpty()) {
                 return matchingScreens.getFirst().getVisualBounds();
             }
+        }
+        return Screen.getPrimary().getVisualBounds();
+    }
+
+    private Rectangle2D resolveBoundsForCentering(Stage referenceStage) {
+        if (referenceStage != null && referenceStage.getOwner() instanceof Stage ownerStage) {
+            return resolveBounds(ownerStage);
+        }
+        if (referenceStage != null && referenceStage.isShowing()) {
+            return resolveBounds(referenceStage);
         }
         return Screen.getPrimary().getVisualBounds();
     }

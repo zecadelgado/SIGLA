@@ -13,5 +13,7 @@ public interface RepositorioUsuario {
 
     Optional<Usuario> findByUsuario(String usuario);
 
+    Optional<Usuario> findByEmail(String email);
+
     List<Usuario> findAll();
 }

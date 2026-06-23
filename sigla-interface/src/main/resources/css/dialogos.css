@@ -1,0 +1,166 @@
+/*
+ * Diálogos e notificações do SIGLA.
+ * Aplica a identidade visual do app (paleta azul, Segoe UI, cartões arredondados,
+ * sombras) aos Alert/Dialog do JavaFX, que por padrão têm aparência genérica.
+ * Carregado nos DialogPane por DialogoUi; o toast usa as classes .toast*.
+ */
+
+/* ---------- Base do diálogo ---------- */
+.dialogo-sigla.dialog-pane {
+    -fx-font-family: "Segoe UI";
+    -fx-min-width: 420;
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #d6dee8;
+    -fx-border-width: 1;
+    -fx-padding: 0;
+    -fx-effect: dropshadow(gaussian, rgba(11, 42, 111, 0.22), 28, 0, 0, 10);
+}
+
+/* Cabeçalho custom (faixa colorida com ícone + título), injetado via setHeader */
+.dialogo-cabecalho {
+    -fx-padding: 20 26 20 26;
+    -fx-spacing: 16;
+    -fx-alignment: CENTER_LEFT;
+    -fx-background-radius: 10 10 0 0;
+}
+
+.dialogo-icone {
+    -fx-min-width: 40;
+    -fx-min-height: 40;
+    -fx-max-width: 40;
+    -fx-max-height: 40;
+    -fx-background-radius: 20;
+    -fx-alignment: CENTER;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+}
+
+.dialogo-titulo {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+}
+
+.dialogo-subtitulo {
+    -fx-font-size: 13px;
+    -fx-text-fill: rgba(255, 255, 255, 0.88);
+}
+
+/* Corpo / mensagem */
+.dialogo-sigla .label.content,
+.dialogo-sigla .content.label {
+    -fx-font-size: 14.5px;
+    -fx-text-fill: #33414f;
+    -fx-wrap-text: true;
+    -fx-line-spacing: 3;
+    -fx-padding: 26 28 24 28;
+}
+
+.dialogo-sigla.dialog-pane > .content {
+    -fx-padding: 0;
+}
+
+/* ---------- Acentos por tipo ---------- */
+.dialogo-sigla.erro .dialogo-cabecalho { -fx-background-color: #d64545; }
+.dialogo-sigla.erro .dialogo-icone     { -fx-background-color: rgba(255,255,255,0.22); }
+
+.dialogo-sigla.aviso .dialogo-cabecalho { -fx-background-color: #e8a317; }
+.dialogo-sigla.aviso .dialogo-icone     { -fx-background-color: rgba(255,255,255,0.25); }
+
+.dialogo-sigla.info .dialogo-cabecalho { -fx-background-color: #2a59c7; }
+.dialogo-sigla.info .dialogo-icone     { -fx-background-color: rgba(255,255,255,0.22); }
+
+.dialogo-sigla.sucesso .dialogo-cabecalho { -fx-background-color: #2e9e5b; }
+.dialogo-sigla.sucesso .dialogo-icone     { -fx-background-color: rgba(255,255,255,0.25); }
+
+.dialogo-sigla.confirmar .dialogo-cabecalho { -fx-background-color: #2a59c7; }
+.dialogo-sigla.confirmar .dialogo-icone     { -fx-background-color: rgba(255,255,255,0.22); }
+
+/* ---------- Barra de botões ---------- */
+.dialogo-sigla .button-bar {
+    -fx-padding: 0 22 18 22;
+}
+
+.dialogo-sigla .button-bar .button {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-min-width: 112;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-padding: 9 22 9 22;
+    -fx-cursor: hand;
+    -fx-background-color: #eef2f8;
+    -fx-text-fill: #3a4961;
+    -fx-border-color: #d3dbe7;
+    -fx-border-width: 1;
+}
+
+.dialogo-sigla .button-bar .button:hover {
+    -fx-background-color: #e2e8f2;
+}
+
+/* Botão primário (OK / Sim): sempre o botão default do DialogPane */
+.dialogo-sigla .button-bar .button:default {
+    -fx-background-color: #2a59c7;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: transparent;
+    -fx-effect: dropshadow(gaussian, rgba(42, 89, 199, 0.40), 10, 0, 0, 2);
+}
+
+.dialogo-sigla .button-bar .button:default:hover {
+    -fx-background-color: #1f47a8;
+}
+
+/* Em diálogo de erro, o botão default herda o tom de alerta */
+.dialogo-sigla.erro .button-bar .button:default {
+    -fx-background-color: #d64545;
+    -fx-effect: dropshadow(gaussian, rgba(214, 69, 69, 0.40), 10, 0, 0, 2);
+}
+.dialogo-sigla.erro .button-bar .button:default:hover { -fx-background-color: #b83a3a; }
+
+.dialogo-sigla.sucesso .button-bar .button:default {
+    -fx-background-color: #2e9e5b;
+    -fx-effect: dropshadow(gaussian, rgba(46, 158, 91, 0.40), 10, 0, 0, 2);
+}
+.dialogo-sigla.sucesso .button-bar .button:default:hover { -fx-background-color: #258049; }
+
+/* ---------- Toast (notificação não-bloqueante) ---------- */
+.toast {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: #dbe4f0;
+    -fx-border-width: 1;
+    -fx-padding: 14 20 14 16;
+    -fx-spacing: 14;
+    -fx-alignment: CENTER_LEFT;
+    -fx-effect: dropshadow(gaussian, rgba(11, 42, 111, 0.28), 26, 0, 0, 10);
+}
+
+.toast-icone {
+    -fx-min-width: 30;
+    -fx-min-height: 30;
+    -fx-max-width: 30;
+    -fx-max-height: 30;
+    -fx-background-radius: 15;
+    -fx-alignment: CENTER;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+}
+
+.toast-texto {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1f2d3d;
+}
+
+.toast.sucesso { -fx-border-color: #bfe6cd; }
+.toast.sucesso .toast-icone { -fx-background-color: #2e9e5b; }
+
+.toast.info { -fx-border-color: #c5d6f5; }
+.toast.info .toast-icone { -fx-background-color: #2a59c7; }

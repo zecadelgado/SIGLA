@@ -29,7 +29,9 @@ public class AplicacaoDesktopSigla extends Application {
         FluxoAplicacao fluxoAplicacao = context.getBean(FluxoAplicacao.class);
         fluxoAplicacao.attachStage(stage);
         fluxoAplicacao.showLogin();
+        stage.setOnShown(event -> fluxoAplicacao.ajustarJanelaInicial());
         stage.show();
+        fluxoAplicacao.ajustarJanelaInicial();
     }
 
     @Override

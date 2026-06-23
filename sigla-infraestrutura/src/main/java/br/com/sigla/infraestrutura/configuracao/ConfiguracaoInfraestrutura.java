@@ -4,7 +4,10 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@EnableConfigurationProperties({PropriedadesArmazenamentoSigla.class, PropriedadesNotificacoesSigla.class})
+@EnableConfigurationProperties({
+        PropriedadesArmazenamentoSigla.class,
+        PropriedadesNotificacoesSigla.class,
+        PropriedadesSupabaseAuth.class
+})
 public class ConfiguracaoInfraestrutura {
 }
-

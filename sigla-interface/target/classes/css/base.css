@@ -93,17 +93,33 @@
 }
 
 .shell-menu-toggle {
-    -fx-background-color: #eef3fa;
-    -fx-text-fill: #0b2a6f;
-    -fx-font-size: 15px;
+    -fx-background-color: transparent;
+    -fx-text-fill: #0d2f7a;
+    -fx-font-size: 20px;
     -fx-font-weight: bold;
     -fx-background-radius: 8;
-    -fx-padding: 6 16 6 16;
+    -fx-border-radius: 8;
+    -fx-min-width: 38;
+    -fx-min-height: 38;
+    -fx-pref-width: 38;
+    -fx-pref-height: 38;
+    -fx-max-height: 38;
+    -fx-alignment: CENTER;
+    -fx-padding: 0;
     -fx-cursor: hand;
 }
 
 .shell-menu-toggle:hover {
-    -fx-background-color: #dde7f4;
+    -fx-background-color: rgba(13, 47, 122, 0.08);
+    -fx-text-fill: #0a2360;
+}
+
+.shell-menu-toggle:focused {
+    -fx-background-color: rgba(13, 47, 122, 0.10);
+}
+
+.shell-menu-toggle:pressed {
+    -fx-background-color: rgba(13, 47, 122, 0.16);
 }
 
 .screen-root {

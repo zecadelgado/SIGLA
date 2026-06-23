@@ -9,6 +9,7 @@ br\com\sigla\interfacegrafica\controlador\ControladorAgenda$Option.class
 br\com\sigla\interfacegrafica\util\ValidadorEntrada.class
 br\com\sigla\interfacegrafica\controlador\ControladorCadastro.class
 br\com\sigla\interfacegrafica\navegacao\VisaoAplicacao.class
+br\com\sigla\interfacegrafica\consulta\ContextoEdicaoOrdemServico.class
 br\com\sigla\interfacegrafica\controlador\ControladorEstruturaAplicacao.class
 br\com\sigla\interfacegrafica\async\ExecutorTarefasUi.class
 br\com\sigla\interfacegrafica\controlador\ControladorServicos$ItemCalendario.class
@@ -45,6 +46,7 @@ br\com\sigla\interfacegrafica\inicializacao\InicializadorDadosDesenvolvimento.cl
 br\com\sigla\interfacegrafica\formatador\FormatadorMascaraMoeda.class
 br\com\sigla\interfacegrafica\util\ResolvedorEntradaTexto.class
 br\com\sigla\interfacegrafica\controlador\ControladorNovaOrdemServico.class
+br\com\sigla\interfacegrafica\util\ToastNotificacao.class
 br\com\sigla\interfacegrafica\navegacao\GerenciadorNavegacao.class
 br\com\sigla\interfacegrafica\controlador\ControladorAgenda$AgendaRow.class
 br\com\sigla\interfacegrafica\controlador\ControladorAgenda.class
@@ -72,6 +74,8 @@ br\com\sigla\interfacegrafica\controlador\ControladorContratosCertificados.class
 br\com\sigla\interfacegrafica\controlador\ControladorLogin.class
 br\com\sigla\interfacegrafica\controlador\ControladorDashboard$1.class
 br\com\sigla\interfacegrafica\controlador\ControladorFinanceiro$3.class
+br\com\sigla\interfacegrafica\controlador\ControladorConfiguracaoNotificacoes$1.class
+br\com\sigla\interfacegrafica\util\DialogoUi$Tipo.class
 br\com\sigla\interfacegrafica\consulta\ServicoConsultaReferencias.class
 br\com\sigla\interfacegrafica\controlador\ControladorUsuarios$UsuarioRow.class
 br\com\sigla\interfacegrafica\controlador\ControladorAgenda$ClienteOption.class

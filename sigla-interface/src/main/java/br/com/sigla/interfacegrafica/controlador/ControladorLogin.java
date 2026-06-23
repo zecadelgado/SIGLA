@@ -5,23 +5,33 @@ import br.com.sigla.interfacegrafica.aplicativo.SessaoLocalAplicacao;
 import br.com.sigla.interfacegrafica.async.ExecutorTarefasUi;
 import br.com.sigla.interfacegrafica.async.SobreposicaoCarregamento;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
+import br.com.sigla.interfacegrafica.util.DialogoUi;
+import br.com.sigla.interfacegrafica.util.MensagensErro;
 import br.com.sigla.interfacegrafica.util.ValidadorEntrada;
 import javafx.animation.PauseTransition;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.util.Duration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @Component
 public class ControladorLogin {
 
-    private static final Logger LOGGER = Logger.getLogger(ControladorLogin.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(ControladorLogin.class);
     private static final Duration ATRASO_REVELACAO_CARREGAMENTO = Duration.seconds(3);
 
     private final SessaoLocalAplicacao sessaoLocalAplicacao;
@@ -44,6 +54,15 @@ public class ControladorLogin {
     @FXML
     private Label errorLabel;
 
+    @FXML
+    private Button loginButton;
+
+    @FXML
+    private Button cadastroButton;
+
+    @FXML
+    private Hyperlink esqueciSenhaLink;
+
     public ControladorLogin(
             SessaoLocalAplicacao sessaoLocalAplicacao,
             FluxoAplicacao fluxoAplicacao,
@@ -56,12 +75,10 @@ public class ControladorLogin {
 
     @FXML
     public void initialize() {
-        setErrorVisible(false);
+        setFeedbackVisible(false);
         instalarOverlay();
     }
 
-    // Veu de "Entrando..." sobre a tela de login. A autenticacao bate no banco remoto;
-    // o indicador so aparece se a espera passar de 3 segundos.
     private void instalarOverlay() {
         if (txtLoginInsira == null) {
             return;
@@ -81,22 +98,20 @@ public class ControladorLogin {
         if (loginEmAndamento) {
             return;
         }
-        String username = usernameField == null ? "" : usernameField.getText();
+        String username = textValue(usernameField);
         String password = passwordField == null ? "" : passwordField.getText();
 
         ValidadorEntrada validador = ValidadorEntrada.nova();
-        validador.texto(username, "o usuário ou e-mail");
+        validador.texto(username, "o usuario ou e-mail");
         validador.texto(password, "a senha");
         try {
             validador.validar();
         } catch (IllegalArgumentException erro) {
-            mostrarErro(br.com.sigla.interfacegrafica.util.MensagensErro.descrever(erro));
+            mostrarFeedback(MensagensErro.descrever(erro), true);
             return;
         }
 
-        // Autentica fora da thread de UI: a consulta ao banco remoto pode demorar e nao
-        // pode congelar a tela. O veu de carregamento da o retorno visual enquanto isso.
-        setErrorVisible(false);
+        setFeedbackVisible(false);
         mostrarCarregando(true);
         executorTarefasUi.executar(
                 () -> sessaoLocalAplicacao.login(username, password),
@@ -105,28 +120,27 @@ public class ControladorLogin {
                         abrirTelaInicial();
                     } else {
                         mostrarCarregando(false);
-                        mostrarErro("Usuário ou senha inválidos.");
+                        mostrarFeedback("E-mail ou senha invalidos.", true);
                     }
                 },
                 erro -> {
+                    LOGGER.error("Falha tecnica ao autenticar usuario.", erro);
                     mostrarCarregando(false);
-                    mostrarErro(br.com.sigla.interfacegrafica.util.MensagensErro.descrever(
-                            "Nao foi possivel validar o login (verifique a conexao com o banco):", erro));
+                    mostrarFeedback("Nao foi possivel concluir a acao agora. Verifique sua conexao e tente novamente.", true);
                 }
         );
     }
 
     private void abrirTelaInicial() {
         try {
-            setErrorVisible(false);
+            setFeedbackVisible(false);
             fluxoAplicacao.showShell();
             mostrarCarregando(false);
-            // Sucesso: a cena troca para o shell e este overlay e descartado junto.
         } catch (RuntimeException exception) {
-            LOGGER.log(Level.SEVERE, "Falha ao abrir a tela inicial apos login.", exception);
+            LOGGER.error("Falha ao abrir a tela inicial apos login.", exception);
             sessaoLocalAplicacao.logout();
             mostrarCarregando(false);
-            mostrarErro("Login validado, mas não foi possível abrir a tela inicial. Veja o console.");
+            mostrarFeedback("Login validado, mas nao foi possivel abrir a tela inicial.", true);
         }
     }
 
@@ -142,12 +156,11 @@ public class ControladorLogin {
                 overlayCarregamento.pararAnimacao();
             }
         }
-        if (usernameField != null) {
-            usernameField.setDisable(carregando);
-        }
-        if (passwordField != null) {
-            passwordField.setDisable(carregando);
-        }
+        setDisabled(usernameField, carregando);
+        setDisabled(passwordField, carregando);
+        setDisabled(loginButton, carregando);
+        setDisabled(cadastroButton, carregando);
+        setDisabled(esqueciSenhaLink, carregando);
     }
 
     private void agendarRevelacaoCarregamento() {
@@ -182,7 +195,7 @@ public class ControladorLogin {
         if (loginEmAndamento) {
             return;
         }
-        setErrorVisible(false);
+        setFeedbackVisible(false);
         fluxoAplicacao.showView(VisaoAplicacao.ACCOUNT_REGISTRATION);
     }
 
@@ -191,21 +204,189 @@ public class ControladorLogin {
         if (loginEmAndamento) {
             return;
         }
-        mostrarErro("Solicite a redefinição de senha a um administrador.");
+        abrirDialogoRecuperacaoSenha();
     }
 
-    private void mostrarErro(String mensagem) {
+    private void abrirDialogoRecuperacaoSenha() {
+        Dialog<Void> dialog = new Dialog<>();
+        DialogoUi.estilizar(dialog);
+        dialog.setTitle("Recuperar senha");
+
+        ButtonType enviarCodigo = new ButtonType("Enviar codigo", ButtonBar.ButtonData.OTHER);
+        ButtonType redefinirSenha = new ButtonType("Redefinir senha", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().setAll(enviarCodigo, redefinirSenha, ButtonType.CANCEL);
+
+        TextField email = new TextField(textValue(usernameField));
+        TextField codigo = new TextField();
+        PasswordField novaSenha = new PasswordField();
+        PasswordField confirmacaoSenha = new PasswordField();
+        Label feedback = new Label();
+        feedback.setWrapText(true);
+        feedback.setManaged(false);
+        feedback.setVisible(false);
+
+        email.setPromptText("E-mail");
+        codigo.setPromptText("Codigo recebido");
+        novaSenha.setPromptText("Nova senha");
+        confirmacaoSenha.setPromptText("Confirmar nova senha");
+        setCamposRedefinicaoHabilitados(false, codigo, novaSenha, confirmacaoSenha);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(12, 0, 0, 0));
+        grid.addRow(0, new Label("E-mail"), email);
+        grid.addRow(1, new Label("Codigo"), codigo);
+        grid.addRow(2, new Label("Nova senha"), novaSenha);
+        grid.addRow(3, new Label("Confirmar senha"), confirmacaoSenha);
+        grid.add(feedback, 0, 4, 2, 1);
+        dialog.getDialogPane().setContent(grid);
+
+        Node enviarButton = dialog.getDialogPane().lookupButton(enviarCodigo);
+        Node redefinirButton = dialog.getDialogPane().lookupButton(redefinirSenha);
+        redefinirButton.setDisable(true);
+
+        enviarButton.addEventFilter(ActionEvent.ACTION, evento -> {
+            evento.consume();
+            String emailInformado = textValue(email);
+            try {
+                validarEmail(emailInformado);
+            } catch (IllegalArgumentException exception) {
+                setDialogFeedback(feedback, MensagensErro.descrever(exception), true);
+                return;
+            }
+
+            setDialogLoading(true, email, codigo, novaSenha, confirmacaoSenha, enviarButton, redefinirButton);
+            executorTarefasUi.executar(
+                    () -> {
+                        sessaoLocalAplicacao.solicitarRecuperacaoSenha(emailInformado);
+                        return null;
+                    },
+                    ignored -> {
+                        setDialogLoading(false, email, codigo, novaSenha, confirmacaoSenha, enviarButton, redefinirButton);
+                        setCamposRedefinicaoHabilitados(true, codigo, novaSenha, confirmacaoSenha);
+                        redefinirButton.setDisable(false);
+                        setDialogFeedback(feedback,
+                                "Se o e-mail estiver cadastrado, enviaremos um codigo de recuperacao.", false);
+                    },
+                    erro -> {
+                        LOGGER.error("Falha ao solicitar recuperacao de senha.", erro);
+                        setDialogLoading(false, email, codigo, novaSenha, confirmacaoSenha, enviarButton, redefinirButton);
+                        setDialogFeedback(feedback, MensagensErro.descrever(erro), true);
+                    }
+            );
+        });
+
+        redefinirButton.addEventFilter(ActionEvent.ACTION, evento -> {
+            evento.consume();
+            String emailInformado = textValue(email);
+            String codigoInformado = textValue(codigo);
+            String senhaInformada = novaSenha.getText() == null ? "" : novaSenha.getText();
+            String confirmacaoInformada = confirmacaoSenha.getText() == null ? "" : confirmacaoSenha.getText();
+            try {
+                validarRedefinicao(emailInformado, codigoInformado, senhaInformada, confirmacaoInformada);
+            } catch (IllegalArgumentException exception) {
+                setDialogFeedback(feedback, MensagensErro.descrever(exception), true);
+                return;
+            }
+
+            setDialogLoading(true, email, codigo, novaSenha, confirmacaoSenha, enviarButton, redefinirButton);
+            executorTarefasUi.executar(
+                    () -> {
+                        sessaoLocalAplicacao.redefinirSenhaComCodigo(emailInformado, codigoInformado, senhaInformada);
+                        return null;
+                    },
+                    ignored -> {
+                        dialog.close();
+                        mostrarFeedback("Senha redefinida com sucesso. Entre com sua nova senha.", false);
+                    },
+                    erro -> {
+                        LOGGER.error("Falha ao redefinir senha com codigo.", erro);
+                        setDialogLoading(false, email, codigo, novaSenha, confirmacaoSenha, enviarButton, redefinirButton);
+                        setDialogFeedback(feedback, MensagensErro.descrever(erro), true);
+                    }
+            );
+        });
+
+        dialog.showAndWait();
+    }
+
+    private void validarRedefinicao(String email, String codigo, String novaSenha, String confirmacaoSenha) {
+        ValidadorEntrada validador = ValidadorEntrada.nova();
+        validador.texto(email, "o e-mail");
+        validador.texto(codigo, "o codigo de recuperacao");
+        validador.texto(novaSenha, "a nova senha");
+        validador.texto(confirmacaoSenha, "a confirmacao da senha");
+        validador.exigir(email.isBlank() || email.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"),
+                "Informe um e-mail valido.");
+        validador.exigir(novaSenha.length() >= 6, "A senha deve ter pelo menos 6 caracteres.");
+        validador.exigir(novaSenha.equals(confirmacaoSenha), "A confirmacao da senha deve ser igual a senha.");
+        validador.validar();
+    }
+
+    private void validarEmail(String email) {
+        ValidadorEntrada validador = ValidadorEntrada.nova();
+        validador.texto(email, "o e-mail");
+        validador.exigir(email.isBlank() || email.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"),
+                "Informe um e-mail valido.");
+        validador.validar();
+    }
+
+    private void setDialogLoading(
+            boolean carregando,
+            TextField email,
+            TextField codigo,
+            PasswordField novaSenha,
+            PasswordField confirmacaoSenha,
+            Node enviarButton,
+            Node redefinirButton
+    ) {
+        email.setDisable(carregando);
+        enviarButton.setDisable(carregando);
+        if (!codigo.isDisabled() || carregando) {
+            codigo.setDisable(carregando);
+            novaSenha.setDisable(carregando);
+            confirmacaoSenha.setDisable(carregando);
+            redefinirButton.setDisable(carregando);
+        }
+    }
+
+    private void setCamposRedefinicaoHabilitados(boolean habilitados, Node... nodes) {
+        for (Node node : nodes) {
+            node.setDisable(!habilitados);
+        }
+    }
+
+    private void setDialogFeedback(Label feedback, String mensagem, boolean erro) {
+        feedback.setText(mensagem == null ? "" : mensagem);
+        feedback.setStyle("-fx-text-fill: " + (erro ? "#b3261e" : "#0b5d2a") + "; -fx-font-weight: bold;");
+        feedback.setVisible(mensagem != null && !mensagem.isBlank());
+        feedback.setManaged(mensagem != null && !mensagem.isBlank());
+    }
+
+    private void mostrarFeedback(String mensagem, boolean erro) {
         if (errorLabel != null) {
             errorLabel.setText(mensagem == null ? "" : mensagem);
+            errorLabel.setStyle("-fx-text-fill: " + (erro ? "#ffcccc" : "#bff2ce") + "; -fx-font-weight: bold;");
         }
-        setErrorVisible(true);
+        setFeedbackVisible(true);
     }
 
-    private void setErrorVisible(boolean visible) {
+    private void setFeedbackVisible(boolean visible) {
         if (errorLabel == null) {
             return;
         }
         errorLabel.setVisible(visible);
         errorLabel.setManaged(visible);
+    }
+
+    private String textValue(TextField field) {
+        return field == null || field.getText() == null ? "" : field.getText().trim();
+    }
+
+    private void setDisabled(Node node, boolean disabled) {
+        if (node != null) {
+            node.setDisable(disabled);
+        }
     }
 }

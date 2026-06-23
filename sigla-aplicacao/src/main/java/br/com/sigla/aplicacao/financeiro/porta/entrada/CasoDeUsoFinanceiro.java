@@ -39,6 +39,12 @@ public interface CasoDeUsoFinanceiro {
 
     LancamentoFinanceiro gerarContaReceberOrdemServico(OrdemServico ordemServico);
 
+    /**
+     * Gera (idempotente) a conta a receber da mensalidade de um contrato para uma competencia.
+     * Retorna vazio quando ja existe lancamento para o mesmo contrato+competencia ou valor invalido.
+     */
+    Optional<LancamentoFinanceiro> gerarMensalidadeContrato(GerarMensalidadeContratoCommand command);
+
     List<EntradaFinanceira> listEntries();
 
     List<DespesaFinanceira> listExpenses();
@@ -197,6 +203,16 @@ public interface CasoDeUsoFinanceiro {
             String createdBy,
             String notes,
             TransactionStatus status
+    ) {
+    }
+
+    record GerarMensalidadeContratoCommand(
+            String contratoId,
+            String clienteId,
+            BigDecimal valorMensal,
+            java.time.YearMonth competencia,
+            LocalDate vencimento,
+            String descricao
     ) {
     }
 
