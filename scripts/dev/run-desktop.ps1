@@ -21,5 +21,15 @@ if (-not $env:SPRING_PROFILES_ACTIVE) {
     $env:SPRING_PROFILES_ACTIVE = "supabase"
 }
 
+$requiredEnv = @(
+    "SIGLA_DATASOURCE_PASSWORD"
+)
+
+foreach ($name in $requiredEnv) {
+    if ([string]::IsNullOrWhiteSpace([Environment]::GetEnvironmentVariable($name))) {
+        throw "Variavel de ambiente obrigatoria ausente: $name"
+    }
+}
+
 Invoke-Checked .\mvnw.cmd -pl sigla-interface -am -DskipTests install
 Invoke-Checked .\mvnw.cmd -pl sigla-interface spring-boot:run

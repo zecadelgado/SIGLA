@@ -24,8 +24,25 @@ Sistema Integrado de Gestao Logistica e Administrativa para operacao de detetiza
 
 ## Build rapido
 
-O perfil padrao usa o banco Supabase versionado no repositorio, incluindo URL, usuario, senha e chaves JWT/API.
-Nao e necessario Docker para rodar a aplicacao.
+O perfil padrao usa o banco Supabase. A URL e o usuario padrao ja ficam
+configurados; a senha do banco deve ser configurada no Windows antes de rodar.
+
+No Windows PowerShell:
+
+```powershell
+.\scripts\dev\configurar-ambiente-supabase.ps1
+```
+
+Cole a senha quando o terminal pedir. O script salva estas variaveis no usuario
+do Windows:
+
+```text
+SIGLA_DATASOURCE_URL
+SIGLA_DATASOURCE_USERNAME
+SIGLA_DATASOURCE_PASSWORD
+```
+
+Nao e necessario Docker para rodar a aplicacao com Supabase.
 
 ```bash
 ./mvnw clean test
