@@ -1,5 +1,6 @@
 br\com\sigla\interfacegrafica\controlador\ControladorNovaOrdemServicoTest.class
 br\com\sigla\interfacegrafica\navegacao\GerenciadorNavegacaoTest$SpyFluxoAplicacao.class
+br\com\sigla\interfacegrafica\util\MensagensErroTest.class
 br\com\sigla\interfacegrafica\controlador\ControladorDashboardTest$ExecutorSincrono.class
 br\com\sigla\interfacegrafica\controlador\ControladorDashboardTest$SpyGerenciadorNavegacao.class
 br\com\sigla\interfacegrafica\navegacao\VisaoAplicacaoTest.class

@@ -18,6 +18,7 @@ public class CasoDeUsoGerenciarUsuario implements CasoDeUsoUsuario {
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
     private static final int TAMANHO_MINIMO_SENHA = 6;
+    private static final String EMAIL_DUPLICADO = "Ja existe uma conta com este e-mail.";
 
     private final RepositorioUsuario repositorioUsuario;
     private final ServicoSenhaUsuario servicoSenhaUsuario;
@@ -48,6 +49,16 @@ public class CasoDeUsoGerenciarUsuario implements CasoDeUsoUsuario {
         }
 
         Usuario usuario = perfil.get();
+        if (usuario.authUserId().isBlank()) {
+            if (servicoSenhaUsuario.matches(senha, usuario.senhaHash())) {
+                return Optional.of(new UsuarioAutenticado(
+                        usuario.id(),
+                        usuario.nome(),
+                        usuario.usuario(),
+                        usuario.tipo()));
+            }
+        }
+
         Optional<ServicoAutenticacaoUsuario.UsuarioAuth> autenticado =
                 servicoAutenticacaoUsuario.autenticar(usuario.email(), senha);
         if (autenticado.isEmpty()) {
@@ -82,8 +93,7 @@ public class CasoDeUsoGerenciarUsuario implements CasoDeUsoUsuario {
             throw new IllegalArgumentException("Ja existe uma conta com este e-mail.");
         }
 
-        ServicoAutenticacaoUsuario.UsuarioAuth auth = servicoAutenticacaoUsuario.cadastrar(
-                new ServicoAutenticacaoUsuario.CadastrarUsuarioAuthCommand(email, senha, nome, usuario, tipo));
+        ServicoAutenticacaoUsuario.UsuarioAuth auth = cadastrarOuVincularAuthExistente(email, senha, nome, usuario, tipo);
 
         repositorioUsuario.save(new Usuario(
                 id,
@@ -174,6 +184,25 @@ public class CasoDeUsoGerenciarUsuario implements CasoDeUsoUsuario {
         );
         repositorioUsuario.save(atualizado);
         return atualizado;
+    }
+
+    private ServicoAutenticacaoUsuario.UsuarioAuth cadastrarOuVincularAuthExistente(
+            String email,
+            String senha,
+            String nome,
+            String usuario,
+            Usuario.TipoUsuario tipo
+    ) {
+        try {
+            return servicoAutenticacaoUsuario.cadastrar(
+                    new ServicoAutenticacaoUsuario.CadastrarUsuarioAuthCommand(email, senha, nome, usuario, tipo));
+        } catch (IllegalArgumentException exception) {
+            if (!EMAIL_DUPLICADO.equals(exception.getMessage())) {
+                throw exception;
+            }
+            return servicoAutenticacaoUsuario.autenticar(email, senha)
+                    .orElseThrow(() -> exception);
+        }
     }
 
     private String gerarSenhaLocalInutilizavel() {

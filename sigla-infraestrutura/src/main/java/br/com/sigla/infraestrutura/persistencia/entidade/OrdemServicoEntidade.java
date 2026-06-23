@@ -1,14 +1,17 @@
 package br.com.sigla.infraestrutura.persistencia.entidade;
 
+import br.com.sigla.dominio.servicos.DadosFormularioServico;
+import br.com.sigla.dominio.servicos.OrdemServico;
+import br.com.sigla.infraestrutura.persistencia.conversor.OrdemServicoStatusConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import br.com.sigla.dominio.servicos.DadosFormularioServico;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -45,7 +48,8 @@ public class OrdemServicoEntidade {
     private String tipoServico;
 
     @Column(name = "status", nullable = false)
-    private String status;
+    @Convert(converter = OrdemServicoStatusConverter.class)
+    private OrdemServico.OrdemServicoStatus status;
 
     @Column(name = "data_agendada")
     private LocalDateTime dataAgendada;
@@ -141,11 +145,11 @@ public class OrdemServicoEntidade {
         this.tipoServico = tipoServico;
     }
 
-    public String getStatus() {
+    public OrdemServico.OrdemServicoStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(OrdemServico.OrdemServicoStatus status) {
         this.status = status;
     }
 

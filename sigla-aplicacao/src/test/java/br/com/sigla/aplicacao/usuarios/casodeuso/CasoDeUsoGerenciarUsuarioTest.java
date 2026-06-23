@@ -52,6 +52,36 @@ class CasoDeUsoGerenciarUsuarioTest {
     }
 
     @Test
+    void cadastroRecriaPerfilLocalQuandoAuthJaExisteEPublicUsuariosEstaVazio() {
+        Fixture fixture = new Fixture();
+        fixture.auth.emailsJaExistentes.add("ana@sigla.local");
+        fixture.auth.senhas.put("ana@sigla.local", "segredo1");
+        fixture.auth.authIds.put("ana@sigla.local", "auth-existente");
+
+        fixture.casoDeUso.registrar(new CasoDeUsoUsuario.RegistrarUsuarioCommand(
+                "u-1", "Ana Silva", "ana", "ANA@SIGLA.LOCAL", "segredo1", Usuario.TipoUsuario.OPERADOR, true));
+
+        Usuario salvo = fixture.repositorio.findByEmail("ana@sigla.local").orElseThrow();
+        assertEquals("auth-existente", salvo.authUserId());
+        assertEquals("ana", salvo.usuario());
+        assertEquals(List.of("ana@sigla.local"), fixture.auth.logins);
+    }
+
+    @Test
+    void cadastroBloqueiaAuthExistenteQuandoSenhaNaoConfere() {
+        Fixture fixture = new Fixture();
+        fixture.auth.emailsJaExistentes.add("ana@sigla.local");
+        fixture.auth.senhas.put("ana@sigla.local", "outra-senha");
+
+        IllegalArgumentException erro = assertThrows(IllegalArgumentException.class, () -> fixture.casoDeUso.registrar(
+                new CasoDeUsoUsuario.RegistrarUsuarioCommand("u-1", "Ana Silva", "ana", "ANA@SIGLA.LOCAL",
+                        "segredo1", Usuario.TipoUsuario.OPERADOR, true)));
+
+        assertEquals("Ja existe uma conta com este e-mail.", erro.getMessage());
+        assertTrue(fixture.repositorio.findAll().isEmpty());
+    }
+
+    @Test
     void autenticaPorUsuarioOuEmailNoSupabaseEVinculaPerfil() {
         Fixture fixture = new Fixture();
         fixture.repositorio.save(usuario("u-1", "Ana Silva", "ana", "ana@sigla.local", true, ""));
@@ -66,6 +96,22 @@ class CasoDeUsoGerenciarUsuarioTest {
         assertTrue(porUsuario.isPresent());
         assertTrue(porEmail.isPresent());
         assertEquals("auth-ana", fixture.repositorio.findByUsuario("ana").orElseThrow().authUserId());
+    }
+
+    @Test
+    void autenticaUsuarioLocalSemAuthUserIdComSenhaHash() {
+        Fixture fixture = new Fixture();
+        fixture.repositorio.save(new Usuario(
+                "u-1", "Luciano", "Master", "pimbasevero@gmail.com",
+                fixture.senha.hash("123456"), Usuario.TipoUsuario.ADMIN, true, ""));
+
+        Optional<CasoDeUsoUsuario.UsuarioAutenticado> autenticado = fixture.casoDeUso.autenticar(
+                new CasoDeUsoUsuario.AutenticarUsuarioCommand("Master", "123456"));
+
+        assertTrue(autenticado.isPresent());
+        assertEquals("Luciano", autenticado.get().nome());
+        assertEquals(Usuario.TipoUsuario.ADMIN, autenticado.get().tipo());
+        assertTrue(fixture.auth.logins.isEmpty());
     }
 
     @Test
@@ -189,6 +235,8 @@ class CasoDeUsoGerenciarUsuarioTest {
     private static final class FakeServicoAutenticacao implements ServicoAutenticacaoUsuario {
         private final List<CadastrarUsuarioAuthCommand> cadastros = new ArrayList<>();
         private final List<String> recuperacoes = new ArrayList<>();
+        private final List<String> emailsJaExistentes = new ArrayList<>();
+        private final List<String> logins = new ArrayList<>();
         private final Map<String, String> senhas = new LinkedHashMap<>();
         private final Map<String, String> authIds = new LinkedHashMap<>();
         private final Map<String, SessaoRecuperacaoSenha> sessoes = new LinkedHashMap<>();
@@ -201,8 +249,11 @@ class CasoDeUsoGerenciarUsuarioTest {
             if (falharCadastro) {
                 throw new IllegalStateException("Falha simulada da API.");
             }
-            cadastros.add(command);
             String email = command.email().toLowerCase();
+            if (emailsJaExistentes.contains(email)) {
+                throw new IllegalArgumentException("Ja existe uma conta com este e-mail.");
+            }
+            cadastros.add(command);
             senhas.put(email, command.senha());
             String id = "auth-" + cadastros.size();
             authIds.put(email, id);
@@ -212,6 +263,7 @@ class CasoDeUsoGerenciarUsuarioTest {
         @Override
         public Optional<UsuarioAuth> autenticar(String email, String senha) {
             String normalizado = email.toLowerCase();
+            logins.add(normalizado);
             if (!senha.equals(senhas.get(normalizado))) {
                 return Optional.empty();
             }

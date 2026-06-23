@@ -5,6 +5,7 @@ D:\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\configur
 D:\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\configuracao\PropriedadesSupabaseAuth.java
 D:\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\configuracao\VerificadorModoPersistencia.java
 D:\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\integracao\AdaptadorEnvioWhatsappN8n.java
+D:\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\persistencia\conversor\OrdemServicoStatusConverter.java
 D:\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\persistencia\entidade\AuditoriaEventoEntidade.java
 D:\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\persistencia\entidade\CertificadoEntidade.java
 D:\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\persistencia\entidade\ClienteEntidade.java

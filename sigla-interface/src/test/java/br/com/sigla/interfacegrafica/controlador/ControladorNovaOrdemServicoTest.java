@@ -1,6 +1,7 @@
 package br.com.sigla.interfacegrafica.controlador;
 
 import br.com.sigla.aplicacao.servicos.porta.entrada.CasoDeUsoOrdemServico;
+import br.com.sigla.dominio.servicos.OrdemServico;
 import br.com.sigla.interfacegrafica.consulta.ContextoEdicaoOrdemServico;
 import br.com.sigla.interfacegrafica.consulta.ServicoConsultaReferencias;
 import br.com.sigla.interfacegrafica.formatador.FormatadorMascaraMoeda;
@@ -67,6 +68,20 @@ class ControladorNovaOrdemServicoTest {
 
             assertEquals("", UtilComboBox.idSelecionado(contratoCombo));
             assertEquals(List.of("", "CTR-1", "CTR-2"), contratoCombo.getItems().stream().map(OpcaoId::id).toList());
+        });
+    }
+
+    @Test
+    void inicializaStatusComoEnumSelecionavel() throws Exception {
+        runFx(() -> {
+            ComboBox<OrdemServico.OrdemServicoStatus> statusCombo = new ComboBox<>();
+            ControladorNovaOrdemServico controlador = controlador(new ReferenciasFake());
+            setField(controlador, "statusCombo", statusCombo);
+
+            controlador.initialize();
+
+            assertEquals(List.of(OrdemServico.OrdemServicoStatus.values()), statusCombo.getItems());
+            assertEquals(OrdemServico.OrdemServicoStatus.AGENDADA, statusCombo.getValue());
         });
     }
 

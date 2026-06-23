@@ -83,6 +83,17 @@ class AdaptadorAutenticacaoSupabaseTest {
     }
 
     @Test
+    void cadastrarMapeiaUsuarioOfuscadoComoEmailDuplicado() {
+        respostas.add(new RespostaHttp(200,
+                "{\"user\":{\"id\":\"fake-id\",\"email\":\"ana@sigla.local\",\"identities\":[]}}"));
+
+        IllegalArgumentException erro = assertThrows(IllegalArgumentException.class, () -> adaptador.cadastrar(
+                new CadastrarUsuarioAuthCommand("ana@sigla.local", "segredo1", "Ana", "ana", Usuario.TipoUsuario.OPERADOR)));
+
+        assertEquals("Ja existe uma conta com este e-mail.", erro.getMessage());
+    }
+
+    @Test
     void autenticarMapeiaSucessoE401ComoCredencialInvalida() {
         respostas.add(new RespostaHttp(200, "{\"user\":{\"id\":\"auth-1\",\"email\":\"ana@sigla.local\"}}"));
         Optional<UsuarioAuth> autenticado = adaptador.autenticar("ana@sigla.local", "segredo1");

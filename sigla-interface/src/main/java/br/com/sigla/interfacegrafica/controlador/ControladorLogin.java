@@ -32,7 +32,7 @@ import org.springframework.stereotype.Component;
 public class ControladorLogin {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ControladorLogin.class);
-    private static final Duration ATRASO_REVELACAO_CARREGAMENTO = Duration.seconds(3);
+    private static final Duration ATRASO_REVELACAO_CARREGAMENTO = Duration.millis(1500);
 
     private final SessaoLocalAplicacao sessaoLocalAplicacao;
     private final FluxoAplicacao fluxoAplicacao;

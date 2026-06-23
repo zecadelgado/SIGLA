@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.math.BigDecimal;
@@ -53,7 +54,7 @@ public class AdaptadorRepositorioOrdemServico implements RepositorioOrdemServico
                 entity.getTitulo(),
                 entity.getDescricao(),
                 entity.getTipoServico(),
-                parseStatus(entity.getStatus()),
+                Objects.requireNonNullElse(entity.getStatus(), OrdemServico.OrdemServicoStatus.AGENDADA),
                 entity.getDataAgendada(),
                 entity.getDataInicio(),
                 entity.getDataFim(),
@@ -98,7 +99,7 @@ public class AdaptadorRepositorioOrdemServico implements RepositorioOrdemServico
         entity.setTitulo(ordemServico.titulo());
         entity.setDescricao(ordemServico.descricao());
         entity.setTipoServico(ordemServico.tipoServico());
-        entity.setStatus(ordemServico.status().name());
+        entity.setStatus(ordemServico.status());
         entity.setDataAgendada(ordemServico.dataAgendada());
         entity.setDataInicio(ordemServico.dataInicio());
         entity.setDataFim(ordemServico.dataFim());
@@ -138,17 +139,6 @@ public class AdaptadorRepositorioOrdemServico implements RepositorioOrdemServico
         return entity;
     }
 
-    private OrdemServico.OrdemServicoStatus parseStatus(String value) {
-        if (value == null || value.isBlank()) {
-            return OrdemServico.OrdemServicoStatus.AGENDADA;
-        }
-        return switch (value.trim().toUpperCase()) {
-            case "AGENDADO", "AGENDADA" -> OrdemServico.OrdemServicoStatus.AGENDADA;
-            case "CONCLUIDO", "CONCLUIDA" -> OrdemServico.OrdemServicoStatus.CONCLUIDA;
-            case "CANCELADO", "CANCELADA" -> OrdemServico.OrdemServicoStatus.CANCELADA;
-            default -> OrdemServico.OrdemServicoStatus.valueOf(value.trim().toUpperCase());
-        };
-    }
 }
 
 @Repository

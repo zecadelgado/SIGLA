@@ -30,8 +30,8 @@ public final class FormularioVisita {
         d.textoAjustado(161f, 9.7f, 34f, TEXTO_TOPO, TEXTO_MINIMO, dados.data());
         d.textoAjustado(240f, 9.7f, 13f, TEXTO_TOPO, TEXTO_MINIMO, dados.horarioMarcado());
         d.textoAjustado(186f, 30f, 68f, TEXTO_TOPO, TEXTO_MINIMO, dados.funcionarios());
-        d.textoAjustado(181f, 45.1f, 16f, TEXTO_TOPO, TEXTO_MINIMO, dados.horaInicio());
-        d.textoAjustado(234f, 45.1f, 18f, TEXTO_TOPO, TEXTO_MINIMO, dados.horaTermino());
+        d.textoAjustado(181f, 43.8f, 16f, TEXTO_TOPO, TEXTO_MINIMO, dados.horaInicio());
+        d.textoAjustado(234f, 43.8f, 18f, TEXTO_TOPO, TEXTO_MINIMO, dados.horaTermino());
 
         // Bloco do cliente.
         d.textoAjustado(38f, 54.8f, 108f, TEXTO_CAMPO, TEXTO_MINIMO, dados.cliente());
@@ -74,9 +74,9 @@ public final class FormularioVisita {
         coluna(d, OpcoesFormularioServico.VISITA_COMPONENTE_COL4, v.componenteAtivo(), 196f, linhas);
 
         // Assinaturas (nomes).
-        d.textoAjustado(24f, 315.2f, 55f, TEXTO_ASSINATURA, TEXTO_MINIMO, dados.nomeCliente());
-        d.textoAjustado(109f, 315.2f, 56f, TEXTO_ASSINATURA, TEXTO_MINIMO, v.fiscalizacaoNome());
-        d.textoAjustado(195f, 315.2f, 56f, TEXTO_ASSINATURA, TEXTO_MINIMO, dados.nomeLider());
+        d.textoAjustado(24f, 313f, 55f, TEXTO_ASSINATURA, TEXTO_MINIMO, dados.nomeCliente());
+        d.textoAjustado(109f, 313f, 56f, TEXTO_ASSINATURA, TEXTO_MINIMO, v.fiscalizacaoNome());
+        d.textoAjustado(195f, 313f, 56f, TEXTO_ASSINATURA, TEXTO_MINIMO, dados.nomeLider());
 
         return d.finalizar();
     }

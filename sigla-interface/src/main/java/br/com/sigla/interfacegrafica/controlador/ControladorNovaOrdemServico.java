@@ -12,6 +12,7 @@ import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
 import br.com.sigla.interfacegrafica.util.GrupoCheckboxes;
 import br.com.sigla.interfacegrafica.util.GrupoProdutosQtde;
+import br.com.sigla.interfacegrafica.util.TradutorInterface;
 import br.com.sigla.interfacegrafica.util.UtilComboBox;
 import br.com.sigla.interfacegrafica.util.UtilJanela;
 import br.com.sigla.interfacegrafica.util.ValidadorEntrada;
@@ -34,8 +35,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-
-import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.parseEnum;
 
 /**
  * Tela unica de Ordem de Servico, usada tanto para CRIAR quanto para EDITAR. O
@@ -67,7 +66,7 @@ public class ControladorNovaOrdemServico {
     @FXML
     private TextField tipoServicoField;
     @FXML
-    private TextField statusField;
+    private ComboBox<OrdemServico.OrdemServicoStatus> statusCombo;
     @FXML
     private ComboBox<OpcaoId> responsavelInternoCombo;
     @FXML
@@ -146,8 +145,10 @@ public class ControladorNovaOrdemServico {
         if (dataFimPicker != null && dataFimPicker.getValue() == null) {
             dataFimPicker.setValue(hoje);
         }
-        if (statusField != null && statusField.getText().isBlank()) {
-            statusField.setText(OrdemServico.OrdemServicoStatus.AGENDADA.name());
+        if (statusCombo != null) {
+            TradutorInterface.aplicar(statusCombo);
+            statusCombo.getItems().setAll(OrdemServico.OrdemServicoStatus.values());
+            statusCombo.getSelectionModel().select(OrdemServico.OrdemServicoStatus.AGENDADA);
         }
         formatadorMoeda.aplicar(valorServicoField);
         construirCamposPdf();
@@ -197,8 +198,8 @@ public class ControladorNovaOrdemServico {
         if (descricaoField != null) {
             descricaoField.setText(ordem.descricao());
         }
-        if (statusField != null) {
-            statusField.setText(ordem.status().name());
+        if (statusCombo != null) {
+            statusCombo.getSelectionModel().select(ordem.status());
         }
         UtilComboBox.selecionarPorId(responsavelInternoCombo, ordem.responsavelInternoId());
         UtilComboBox.selecionarPorId(executadoPorCombo, ordem.executadoPorId());
@@ -311,7 +312,7 @@ public class ControladorNovaOrdemServico {
                         titulo,
                         descricaoField == null ? "" : descricaoField.getText(),
                         tipoServico,
-                        parseEnum(OrdemServico.OrdemServicoStatus.class, statusField == null ? "" : statusField.getText(), ordemEmEdicao.status()),
+                        statusSelecionado(ordemEmEdicao.status()),
                         dataAgendada.atStartOfDay(),
                         chooseResponsible(),
                         UtilComboBox.idSelecionado(executadoPorCombo),
@@ -327,7 +328,7 @@ public class ControladorNovaOrdemServico {
                         titulo,
                         descricaoField == null ? "" : descricaoField.getText(),
                         tipoServico,
-                        parseEnum(OrdemServico.OrdemServicoStatus.class, statusField == null ? "" : statusField.getText(), OrdemServico.OrdemServicoStatus.AGENDADA),
+                        statusSelecionado(OrdemServico.OrdemServicoStatus.AGENDADA),
                         dataAgendada.atStartOfDay(),
                         inicio,
                         fim,
@@ -414,6 +415,11 @@ public class ControladorNovaOrdemServico {
             return secundario;
         }
         return UtilComboBox.idSelecionado(executadoPorCombo);
+    }
+
+    private OrdemServico.OrdemServicoStatus statusSelecionado(OrdemServico.OrdemServicoStatus padrao) {
+        OrdemServico.OrdemServicoStatus selecionado = statusCombo == null ? null : statusCombo.getValue();
+        return selecionado == null ? padrao : selecionado;
     }
 
     private void setFeedback(String message) {

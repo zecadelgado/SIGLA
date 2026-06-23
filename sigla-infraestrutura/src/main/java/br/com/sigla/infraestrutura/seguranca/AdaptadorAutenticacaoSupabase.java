@@ -61,6 +61,9 @@ public class AdaptadorAutenticacaoSupabase implements ServicoAutenticacaoUsuario
 
         RespostaSupabase resposta = enviar("cadastro", "POST", "/signup", null, body);
         if (resposta.status() >= 200 && resposta.status() < 300) {
+            if (usuarioOfuscadoPorDuplicidade(resposta.json())) {
+                throw new IllegalArgumentException("Ja existe uma conta com este e-mail.");
+            }
             return usuarioAuth(resposta.json());
         }
         String mensagem = mensagemErro(resposta);
@@ -208,6 +211,15 @@ public class AdaptadorAutenticacaoSupabase implements ServicoAutenticacaoUsuario
             throw new IllegalStateException(MENSAGEM_FALHA_GENERICA);
         }
         return new UsuarioAuth(id, email);
+    }
+
+    private boolean usuarioOfuscadoPorDuplicidade(JsonNode json) {
+        JsonNode user = json.path("user");
+        if (user.isMissingNode() || user.isNull()) {
+            user = json;
+        }
+        JsonNode identities = user.path("identities");
+        return identities.isArray() && identities.isEmpty();
     }
 
     private RuntimeException traduzirFalhaGeral(int status, String mensagem) {

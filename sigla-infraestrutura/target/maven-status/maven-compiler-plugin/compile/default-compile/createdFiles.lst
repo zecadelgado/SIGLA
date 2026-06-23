@@ -1,5 +1,6 @@
 br\com\sigla\infraestrutura\persistencia\entidade\UsuarioEntidade.class
 br\com\sigla\infraestrutura\integracao\AdaptadorEnvioWhatsappN8n$Transporte.class
+br\com\sigla\infraestrutura\persistencia\conversor\OrdemServicoStatusConverter.class
 br\com\sigla\infraestrutura\integracao\AdaptadorEnvioWhatsappN8n$Transporte$Resposta.class
 br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioLancamentoFinanceiro.class
 br\com\sigla\infraestrutura\persistencia\repositorio\SpringDataRepositorioEstoque.class
