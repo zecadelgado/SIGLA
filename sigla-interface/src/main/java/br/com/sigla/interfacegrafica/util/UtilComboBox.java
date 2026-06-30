@@ -48,7 +48,14 @@ public final class UtilComboBox {
     }
 
     public static OpcaoId selecionado(ComboBox<OpcaoId> comboBox) {
-        return comboBox == null ? null : comboBox.getValue();
+        OpcaoId selecionado = comboBox == null ? null : comboBox.getValue();
+        // O sentinela de "vazio" (id em branco) representa nenhuma seleção: devolve null
+        // para que a validação de campos obrigatórios o trate como ausente em vez de
+        // repassar um id em branco ao backend (que dispara "The given id must not be null").
+        if (selecionado == null || selecionado.id() == null || selecionado.id().isBlank()) {
+            return null;
+        }
+        return selecionado;
     }
 
     public static void selecionarPorId(ComboBox<OpcaoId> comboBox, String id) {

@@ -225,6 +225,43 @@ public class ControladorNovaOrdemServico {
         if (confirmarButton != null) {
             confirmarButton.setText("Salvar");
         }
+        definirTituloJanela("Editar Ordem de Serviço");
+    }
+
+    /**
+     * Ajusta o título da janela flutuante. No momento do {@code initialize} a cena/janela
+     * ainda não existem, então registra um listener que aplica o título assim que a janela
+     * estiver disponível (evitando o título "Nova Ordem de Serviço" durante a edição).
+     */
+    private void definirTituloJanela(String titulo) {
+        if (tituloTela == null) {
+            return;
+        }
+        Runnable aplicar = () -> {
+            var scene = tituloTela.getScene();
+            if (scene != null && scene.getWindow() instanceof javafx.stage.Stage stage) {
+                stage.setTitle("S.I.G.L.A - " + titulo);
+            }
+        };
+        var scene = tituloTela.getScene();
+        if (scene != null && scene.getWindow() != null) {
+            aplicar.run();
+            return;
+        }
+        tituloTela.sceneProperty().addListener((obsScene, anterior, nova) -> {
+            if (nova == null) {
+                return;
+            }
+            if (nova.getWindow() != null) {
+                aplicar.run();
+            } else {
+                nova.windowProperty().addListener((obsJanela, semJanela, comJanela) -> {
+                    if (comJanela != null) {
+                        aplicar.run();
+                    }
+                });
+            }
+        });
     }
 
     private void construirCamposPdf() {

@@ -467,6 +467,11 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
         if (ordensTable != null) {
             String termo = searchField == null || searchField.getText() == null ? "" : searchField.getText().toLowerCase(Locale.ROOT);
             String filtroStatus = statusCombo == null || statusCombo.getValue() == null ? "Todos" : statusCombo.getValue();
+            // Preserva a OS selecionada pelo id: setAll() limpa a seleção, mas a linha
+            // permanece visível, dando a impressão de que continua selecionada. Sem isso,
+            // ações como "Adicionar produto" reclamavam "Selecione uma OS." após um refresh.
+            var anterior = ordensTable.getSelectionModel().getSelectedItem();
+            String idSelecionado = anterior == null ? null : anterior.id();
             ordensTable.getItems().setAll(dados.ordens().stream()
                     .filter(order -> termo.isBlank()
                             || order.id().toLowerCase(Locale.ROOT).contains(termo)
@@ -476,6 +481,12 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
                             || order.title().toLowerCase(Locale.ROOT).contains(termo))
                     .filter(order -> "Todos".equals(filtroStatus) || order.status().equals(filtroStatus))
                     .toList());
+            if (idSelecionado != null) {
+                ordensTable.getItems().stream()
+                        .filter(order -> idSelecionado.equals(order.id()))
+                        .findFirst()
+                        .ifPresent(order -> ordensTable.getSelectionModel().select(order));
+            }
         }
     }
 

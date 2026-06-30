@@ -86,13 +86,23 @@ public class ControladorDetalhesServicosDia {
                 ? servicoConsultaOrdemServico.listAll()
                 : servicoConsultaOrdemServico.listByDate(data);
         String ordemServicoId = contextoDetalheOrdemServico.ordemServicoId();
+        // Quando vem de "Detalhar" na tela de OS, há uma OS específica: a tela mostra
+        // apenas ela. Quando vem do calendário de Serviços (sem id), mostra o dia inteiro.
+        boolean osEspecifica = ordemServicoId != null && !ordemServicoId.isBlank();
         ordens = ordens.stream()
+                .filter(ordem -> !osEspecifica || ordem.id().equals(ordemServicoId))
                 .filter(ordem -> !"CANCELADA".equals(ordem.status()) || ordem.id().equals(ordemServicoId))
                 .sorted(Comparator.comparing(ServicoConsultaOrdemServico.OrdemServicoView::numero))
                 .toList();
 
         if (tituloLabel != null) {
-            tituloLabel.setText(data == null ? "Detalhes dos Servicos" : "Servicos de " + apresentadorData.format(data));
+            if (osEspecifica) {
+                tituloLabel.setText(ordens.isEmpty()
+                        ? "Detalhes da Ordem de Serviço"
+                        : "Ordem de Serviço " + ordens.get(0).numero());
+            } else {
+                tituloLabel.setText(data == null ? "Detalhes dos Serviços" : "Serviços de " + apresentadorData.format(data));
+            }
         }
         if (resumoLabel != null) {
             BigDecimal total = ordens.stream()
