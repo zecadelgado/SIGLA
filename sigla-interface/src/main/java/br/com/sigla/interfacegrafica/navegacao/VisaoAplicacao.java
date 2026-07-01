@@ -19,7 +19,7 @@ public enum VisaoAplicacao {
     AGENDA("/fxml/telas/TelaAgenda.fxml", true, "Agenda", ModoExibicao.PRINCIPAL),
     SERVICE_ORDER("/fxml/telas/TelaOrdemdeServi\u00e7o.fxml", true, "Ordem de Serviço", ModoExibicao.PRINCIPAL),
     NEW_SERVICE_ORDER("/fxml/telas/TelaNovaOrdemdeServi\u00e7o.fxml", true, "Nova Ordem de Serviço", ModoExibicao.SOBREPOSTA),
-    SERVICE_DAY_DETAILS("/fxml/telas/TelaDetalhesServicosDia.fxml", true, "Detalhes dos Servicos", ModoExibicao.SOBREPOSTA),
+    SERVICE_DAY_DETAILS("/fxml/telas/TelaDetalhesServicosDia.fxml", true, "Detalhes dos Serviços", ModoExibicao.SOBREPOSTA),
     CONTRACTS_CERTIFICATES("/fxml/telas/TelaContratosCertificados.fxml", true, "Contratos e Certificados", ModoExibicao.PRINCIPAL),
     USERS("/fxml/telas/TelaUsuarios.fxml", true, "Usuários", ModoExibicao.PRINCIPAL),
     NOTIFICATIONS("/fxml/telas/TelaConfiguracaoNotificacoes.fxml", true, "Notificações", ModoExibicao.PRINCIPAL),

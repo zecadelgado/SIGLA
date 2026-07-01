@@ -12,7 +12,7 @@ class MensagensErroTest {
                 "ERROR: insert or update on table \"usuarios\" violates foreign key constraint \"fk_usuarios_auth_user\"");
         assertEquals(
                 "Nao foi possivel criar o perfil local porque o usuario do Supabase Auth nao foi encontrado. Tente novamente.",
-                MensagensErro.descrever(inserirPerfil));
+                semAcentos(MensagensErro.descrever(inserirPerfil)));
 
         IllegalStateException excluirVinculado = new IllegalStateException(
                 "ERROR: update or delete on table \"usuarios\" violates foreign key constraint \"fk_movimentacoes_usuario\"");

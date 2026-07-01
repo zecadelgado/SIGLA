@@ -494,7 +494,7 @@ public class ControladorCadastro extends ControladorComMenuPrincipal {
     private Optional<CasoDeUsoFuncionario.RegisterFuncionarioCommand> abrirDialogoFuncionario(Funcionario funcionario) {
         Dialog<CasoDeUsoFuncionario.RegisterFuncionarioCommand> dialog = new Dialog<>();
         br.com.sigla.interfacegrafica.util.DialogoUi.estilizar(dialog);
-        dialog.setTitle("Editar Funcionario");
+        dialog.setTitle("Editar Funcionário");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
         TextField nome = field(funcionario.name());

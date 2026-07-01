@@ -105,14 +105,14 @@ public final class MensagensErro {
         if (m.contains("foreign key")) {
             if (m.contains("insert or update")) {
                 if (m.contains("usuarios") && m.contains("auth_user")) {
-                    return "Nao foi possivel criar o perfil local porque o usuario do Supabase Auth nao foi encontrado. Tente novamente.";
+                    return "Não foi possível criar o perfil local porque o usuário do Supabase Auth não foi encontrado. Tente novamente.";
                 }
-                return "Nao foi possivel salvar: algum vinculo selecionado nao existe mais no banco.";
+                return "Não foi possível salvar: algum vínculo selecionado não existe mais no banco.";
             }
             return "Operação bloqueada: este registro está vinculado a outros. Use inativação em vez de exclusão.";
         }
         if (m.contains("violat") && m.contains("constraint")) {
-            return "Nao foi possivel salvar: os dados informados violam uma regra do banco.";
+            return "Não foi possível salvar: os dados informados violam uma regra do banco.";
         }
         if (m.contains("not-null") || m.contains("null value")) {
             return "Preencha todos os campos obrigatórios antes de salvar.";

@@ -25,12 +25,12 @@
          </font>
       </Label>
       <TextField fx:id="nomeField" layoutX="139.0" layoutY="134.0" prefHeight="30.0" prefWidth="400.0" promptText="Nome completo" style="-fx-border-color: #116694;" />
-      <Label layoutX="68.0" layoutY="183.0" prefHeight="22.0" prefWidth="70.0" text="Usuario:" textFill="#0c2a70">
+      <Label layoutX="68.0" layoutY="183.0" prefHeight="22.0" prefWidth="70.0" text="Usuário:" textFill="#0c2a70">
          <font>
             <Font name="Nirmala UI Bold" size="15.0" />
          </font>
       </Label>
-      <TextField fx:id="usuarioField" layoutX="139.0" layoutY="181.0" prefHeight="30.0" prefWidth="400.0" promptText="Usuario" style="-fx-border-color: #116694;" />
+      <TextField fx:id="usuarioField" layoutX="139.0" layoutY="181.0" prefHeight="30.0" prefWidth="400.0" promptText="Usuário" style="-fx-border-color: #116694;" />
       <Label layoutX="82.0" layoutY="230.0" prefHeight="22.0" prefWidth="56.0" text="E-mail:" textFill="#0c2a70">
          <font>
             <Font name="Nirmala UI Bold" size="15.0" />

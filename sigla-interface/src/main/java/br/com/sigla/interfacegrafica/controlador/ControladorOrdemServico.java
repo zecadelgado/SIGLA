@@ -246,7 +246,7 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
                 .findFirst()
                 .orElse(null);
         if (ordem == null || ordem.anexos().isEmpty()) {
-            mostrar("Esta OS nao possui anexos.");
+            mostrar("Esta OS não possui anexos.");
             return;
         }
         Dialog<Void> dialog = new Dialog<>();
@@ -292,17 +292,17 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
         }
         File arquivo = new File(caminho);
         if (!arquivo.exists()) {
-            mostrar("Arquivo nao encontrado em: " + caminho);
+            mostrar("Arquivo não encontrado em: " + caminho);
             return;
         }
         try {
             if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
                 Desktop.getDesktop().open(arquivo);
             } else {
-                mostrar("Nao foi possivel abrir automaticamente. Arquivo em: " + caminho);
+                mostrar("Não foi possível abrir automaticamente. Arquivo em: " + caminho);
             }
         } catch (Exception excecao) {
-            mostrar(br.com.sigla.interfacegrafica.util.MensagensErro.descrever("Nao foi possivel abrir o anexo:", excecao));
+            mostrar(br.com.sigla.interfacegrafica.util.MensagensErro.descrever("Não foi possível abrir o anexo:", excecao));
         }
     }
 
@@ -526,24 +526,44 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
         grid.addRow(1, new Label("Quantidade"), quantidade);
         grid.addRow(2, new Label("Valor unitário"), valor);
         dialog.getDialogPane().setContent(grid);
+        // Valida ao clicar em OK e ANTES de o diálogo fechar: havendo erro, consome o evento
+        // (mantém o diálogo aberto) e exibe a mensagem amigável. Assim nunca chega um produto
+        // em branco ao backend nem se depende da propagação de exceção do resultConverter,
+        // que algumas versões do JavaFX engolem silenciosamente.
+        final Button botaoOk = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
+        botaoOk.addEventFilter(javafx.event.ActionEvent.ACTION, evento -> {
+            try {
+                validarProduto(produto, quantidade);
+            } catch (IllegalArgumentException erro) {
+                evento.consume();
+                mostrar(erro.getMessage());
+            }
+        });
         dialog.setResultConverter(button -> {
             if (button != ButtonType.OK) {
                 return null;
             }
-            ValidadorEntrada validador = ValidadorEntrada.nova();
-            var opcao = UtilComboBox.selecionado(produto);
-            validador.selecao(opcao, "um produto válido");
-            int qtd = validador.inteiroPositivo(quantidade.getText(), "a quantidade");
-            validador.validar();
+            OpcaoId opcao = UtilComboBox.selecionado(produto);
+            if (opcao == null) {
+                return null; // proteção extra: o filtro já bloqueia, mas evita NPE
+            }
             return new CasoDeUsoOrdemServico.AdicionarProdutoOrdemCommand(
                     ordemId,
                     UUID.randomUUID().toString(),
                     opcao.id(),
-                    qtd,
+                    Integer.parseInt(quantidade.getText().trim()),
                     formatadorMoeda.valor(valor)
             );
         });
         return dialog.showAndWait();
+    }
+
+    /** Valida os campos obrigatórios do produto, lançando mensagem amigável agregada. */
+    private void validarProduto(ComboBox<OpcaoId> produto, TextField quantidade) {
+        ValidadorEntrada validador = ValidadorEntrada.nova();
+        validador.selecao(UtilComboBox.selecionado(produto), "um produto");
+        validador.inteiroPositivo(quantidade.getText(), "a quantidade");
+        validador.validar();
     }
 
     private Optional<CasoDeUsoOrdemServico.AnexarOrdemServicoCommand> abrirDialogoAnexo(String ordemId) {

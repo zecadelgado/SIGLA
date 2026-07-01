@@ -120,13 +120,13 @@ public class ControladorLogin {
                         abrirTelaInicial();
                     } else {
                         mostrarCarregando(false);
-                        mostrarFeedback("E-mail ou senha invalidos.", true);
+                        mostrarFeedback("E-mail ou senha inválidos.", true);
                     }
                 },
                 erro -> {
                     LOGGER.error("Falha tecnica ao autenticar usuario.", erro);
                     mostrarCarregando(false);
-                    mostrarFeedback("Nao foi possivel concluir a acao agora. Verifique sua conexao e tente novamente.", true);
+                    mostrarFeedback("Não foi possível concluir a ação agora. Verifique sua conexão e tente novamente.", true);
                 }
         );
     }
@@ -212,7 +212,7 @@ public class ControladorLogin {
         DialogoUi.estilizar(dialog);
         dialog.setTitle("Recuperar senha");
 
-        ButtonType enviarCodigo = new ButtonType("Enviar codigo", ButtonBar.ButtonData.OTHER);
+        ButtonType enviarCodigo = new ButtonType("Enviar código", ButtonBar.ButtonData.OTHER);
         ButtonType redefinirSenha = new ButtonType("Redefinir senha", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().setAll(enviarCodigo, redefinirSenha, ButtonType.CANCEL);
 
@@ -226,7 +226,7 @@ public class ControladorLogin {
         feedback.setVisible(false);
 
         email.setPromptText("E-mail");
-        codigo.setPromptText("Codigo recebido");
+        codigo.setPromptText("Código recebido");
         novaSenha.setPromptText("Nova senha");
         confirmacaoSenha.setPromptText("Confirmar nova senha");
         setCamposRedefinicaoHabilitados(false, codigo, novaSenha, confirmacaoSenha);
@@ -236,7 +236,7 @@ public class ControladorLogin {
         grid.setVgap(10);
         grid.setPadding(new Insets(12, 0, 0, 0));
         grid.addRow(0, new Label("E-mail"), email);
-        grid.addRow(1, new Label("Codigo"), codigo);
+        grid.addRow(1, new Label("Código"), codigo);
         grid.addRow(2, new Label("Nova senha"), novaSenha);
         grid.addRow(3, new Label("Confirmar senha"), confirmacaoSenha);
         grid.add(feedback, 0, 4, 2, 1);
@@ -314,13 +314,13 @@ public class ControladorLogin {
     private void validarRedefinicao(String email, String codigo, String novaSenha, String confirmacaoSenha) {
         ValidadorEntrada validador = ValidadorEntrada.nova();
         validador.texto(email, "o e-mail");
-        validador.texto(codigo, "o codigo de recuperacao");
+        validador.texto(codigo, "o código de recuperação");
         validador.texto(novaSenha, "a nova senha");
-        validador.texto(confirmacaoSenha, "a confirmacao da senha");
+        validador.texto(confirmacaoSenha, "a confirmação da senha");
         validador.exigir(email.isBlank() || email.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"),
-                "Informe um e-mail valido.");
+                "Informe um e-mail válido.");
         validador.exigir(novaSenha.length() >= 6, "A senha deve ter pelo menos 6 caracteres.");
-        validador.exigir(novaSenha.equals(confirmacaoSenha), "A confirmacao da senha deve ser igual a senha.");
+        validador.exigir(novaSenha.equals(confirmacaoSenha), "A confirmação da senha deve ser igual à senha.");
         validador.validar();
     }
 
@@ -328,7 +328,7 @@ public class ControladorLogin {
         ValidadorEntrada validador = ValidadorEntrada.nova();
         validador.texto(email, "o e-mail");
         validador.exigir(email.isBlank() || email.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"),
-                "Informe um e-mail valido.");
+                "Informe um e-mail válido.");
         validador.validar();
     }
 

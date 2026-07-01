@@ -25,7 +25,7 @@
             <Font name="Nirmala UI Bold" size="15.0" />
          </font>
       </Label>
-      <TextField fx:id="usernameField" layoutX="160.0" layoutY="172.0" prefHeight="30.0" prefWidth="400.0" promptText="Usuario ou e-mail" style="-fx-border-color: #116694;" />
+      <TextField fx:id="usernameField" layoutX="160.0" layoutY="172.0" prefHeight="30.0" prefWidth="400.0" promptText="Usuário ou e-mail" style="-fx-border-color: #116694;" />
       <Label fx:id="txtLoginSenha" layoutX="112.0" layoutY="237.0" prefHeight="22.0" prefWidth="48.0" text="Senha:" textFill="#bedefa">
          <font>
             <Font name="Nirmala UI Bold" size="15.0" />
