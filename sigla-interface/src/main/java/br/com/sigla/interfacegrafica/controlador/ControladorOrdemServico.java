@@ -99,6 +99,8 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
     private TableColumn<ServicoConsultaOrdemServico.OrdemServicoView, String> pagoColumn;
     @FXML
     private TableColumn<ServicoConsultaOrdemServico.OrdemServicoView, String> statusColumn;
+    @FXML
+    private javafx.scene.layout.HBox acoesOrdemBox;
 
     public ControladorOrdemServico(
             ServicoConsultaOrdemServico servicoConsultaOrdemServico,
@@ -150,6 +152,12 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
                     onDetalharOrdem();
                 }
             });
+        }
+        if (acoesOrdemBox != null && ordensTable != null) {
+            // Botões de ação só ficam habilitados quando há uma OS selecionada, tornando o
+            // estado da seleção inequívoco (evita "Selecione uma OS." após um clique que
+            // aparentava ter selecionado a linha).
+            acoesOrdemBox.disableProperty().bind(ordensTable.getSelectionModel().selectedItemProperty().isNull());
         }
         refresh();
     }

@@ -2,12 +2,14 @@ package br.com.sigla.interfacegrafica.controlador;
 
 import br.com.sigla.aplicacao.clientes.porta.entrada.CasoDeUsoCliente;
 import br.com.sigla.aplicacao.estoque.porta.entrada.CasoDeUsoEstoque;
+import br.com.sigla.aplicacao.usuarios.porta.entrada.CasoDeUsoUsuario;
 import br.com.sigla.relatorios.etiqueta.ServicoRelatorioEtiqueta;
 import br.com.sigla.dominio.estoque.ItemEstoque;
 import br.com.sigla.interfacegrafica.aplicativo.SessaoLocalAplicacao;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorData;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorMoeda;
 import br.com.sigla.interfacegrafica.async.ExecutorTarefasUi;
+import br.com.sigla.interfacegrafica.consulta.ServicoConsultaOrdemServico;
 import br.com.sigla.interfacegrafica.formatador.FormatadorMascaraMoeda;
 import br.com.sigla.interfacegrafica.navegacao.GerenciadorNavegacao;
 import br.com.sigla.interfacegrafica.navegacao.VisaoAplicacao;
@@ -48,8 +50,12 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
     private final ServicoRelatorioEtiqueta servicoRelatorioEtiqueta;
     private final ExecutorTarefasUi executorTarefasUi;
     private final SessaoLocalAplicacao sessaoLocalAplicacao;
+    private final CasoDeUsoUsuario casoDeUsoUsuario;
+    private final ServicoConsultaOrdemServico servicoConsultaOrdemServico;
 
     private Map<String, String> clienteNomes = Map.of();
+    private Map<String, String> usuarioNomes = Map.of();
+    private Map<String, String> ordemNumeros = Map.of();
     private int geracaoRefresh;
 
     @FXML
@@ -111,7 +117,9 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
             FormatadorMascaraMoeda formatadorMoeda,
             ServicoRelatorioEtiqueta servicoRelatorioEtiqueta,
             ExecutorTarefasUi executorTarefasUi,
-            SessaoLocalAplicacao sessaoLocalAplicacao
+            SessaoLocalAplicacao sessaoLocalAplicacao,
+            CasoDeUsoUsuario casoDeUsoUsuario,
+            ServicoConsultaOrdemServico servicoConsultaOrdemServico
     ) {
         super(gerenciadorNavegacao);
         this.casoDeUsoCliente = casoDeUsoCliente;
@@ -123,6 +131,8 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
         this.servicoRelatorioEtiqueta = servicoRelatorioEtiqueta;
         this.executorTarefasUi = executorTarefasUi;
         this.sessaoLocalAplicacao = sessaoLocalAplicacao;
+        this.casoDeUsoUsuario = casoDeUsoUsuario;
+        this.servicoConsultaOrdemServico = servicoConsultaOrdemServico;
     }
 
     @FXML
@@ -287,18 +297,36 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
         List<CasoDeUsoEstoque.InventoryMovementView> movimentos = casoDeUsoEstoque.listMovements();
         Map<String, String> nomes = casoDeUsoCliente.listAll().stream()
                 .collect(Collectors.toMap(cliente -> cliente.id(), cliente -> cliente.name(), (a, b) -> a));
-        return new EstoqueSnapshot(items, movimentos, nomes);
+        Map<String, String> usuarios = carregarMapaSeguro(() -> casoDeUsoUsuario.listAll().stream()
+                .collect(Collectors.toMap(usuario -> usuario.id(), usuario -> usuario.nome(), (a, b) -> a)));
+        Map<String, String> ordens = carregarMapaSeguro(() -> servicoConsultaOrdemServico.listAll().stream()
+                .collect(Collectors.toMap(ordem -> ordem.id(), ordem -> ordem.numero(), (a, b) -> a)));
+        return new EstoqueSnapshot(items, movimentos, nomes, usuarios, ordens);
+    }
+
+    private Map<String, String> carregarMapaSeguro(java.util.function.Supplier<Map<String, String>> fonte) {
+        try {
+            return fonte.get();
+        } catch (Exception excecao) {
+            // Resolução de nomes é apenas cosmética: se a listagem falhar (ex.: acesso
+            // restrito), mostra o id cru em vez de quebrar a atualização da tela de estoque.
+            return Map.of();
+        }
     }
 
     private record EstoqueSnapshot(
             List<ItemEstoque> items,
             List<CasoDeUsoEstoque.InventoryMovementView> movimentos,
-            Map<String, String> clienteNomes
+            Map<String, String> clienteNomes,
+            Map<String, String> usuarioNomes,
+            Map<String, String> ordemNumeros
     ) {
     }
 
     private void aplicar(EstoqueSnapshot dados) {
         clienteNomes = dados.clienteNomes();
+        usuarioNomes = dados.usuarioNomes();
+        ordemNumeros = dados.ordemNumeros();
         List<ItemEstoque> items = dados.items();
         if (totalProdutosLabel != null) {
             totalProdutosLabel.setText(String.valueOf(items.size()));
@@ -364,9 +392,9 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
         configureMovimentoColumn(movimentoQuantidadeColumn, 2, row -> String.valueOf(row.amount()));
         configureMovimentoColumn(movimentoValorColumn, 3, row -> apresentadorMoeda.format(row.unitPrice()));
         configureMovimentoColumn(movimentoValorTotalColumn, 4, row -> apresentadorMoeda.format(row.totalPrice()));
-        configureMovimentoColumn(movimentoUsuarioColumn, 5, row -> row.createdBy());
+        configureMovimentoColumn(movimentoUsuarioColumn, 5, row -> resolveUsuario(row.createdBy()));
         configureMovimentoColumn(movimentoClienteColumn, 6, row -> resolveCliente(row.customerId()));
-        configureMovimentoColumn(movimentoOrdemColumn, 7, row -> blankAsDash(row.orderReference()));
+        configureMovimentoColumn(movimentoOrdemColumn, 7, row -> resolveOrdem(row.orderReference()));
         configureMovimentoColumn(movimentoDestinoColumn, 8, row -> blankAsDash(row.destinationDescription()));
         configureMovimentoColumn(movimentoObservacoesColumn, 9, row -> buildObservacao(row));
     }
@@ -406,6 +434,20 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
             return "-";
         }
         return clienteNomes.getOrDefault(customerId, customerId);
+    }
+
+    private String resolveUsuario(String usuarioId) {
+        if (usuarioId == null || usuarioId.isBlank()) {
+            return "-";
+        }
+        return usuarioNomes.getOrDefault(usuarioId, usuarioId);
+    }
+
+    private String resolveOrdem(String ordemId) {
+        if (ordemId == null || ordemId.isBlank()) {
+            return "-";
+        }
+        return ordemNumeros.getOrDefault(ordemId, ordemId);
     }
 
     private String buildObservacao(CasoDeUsoEstoque.InventoryMovementView movement) {

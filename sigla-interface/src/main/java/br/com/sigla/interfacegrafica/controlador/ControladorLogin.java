@@ -245,6 +245,10 @@ public class ControladorLogin {
         Node enviarButton = dialog.getDialogPane().lookupButton(enviarCodigo);
         Node redefinirButton = dialog.getDialogPane().lookupButton(redefinirSenha);
         redefinirButton.setDisable(true);
+        // Impede que a ButtonBar encolha os botões abaixo do texto (evita "Enviar códi..." /
+        // "Redefinir s..."): a largura mínima passa a ser a largura preferida do rótulo.
+        ((javafx.scene.layout.Region) enviarButton).setMinWidth(javafx.scene.layout.Region.USE_PREF_SIZE);
+        ((javafx.scene.layout.Region) redefinirButton).setMinWidth(javafx.scene.layout.Region.USE_PREF_SIZE);
 
         enviarButton.addEventFilter(ActionEvent.ACTION, evento -> {
             evento.consume();

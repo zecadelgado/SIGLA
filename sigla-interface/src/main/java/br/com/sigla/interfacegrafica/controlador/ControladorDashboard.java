@@ -217,14 +217,24 @@ public class ControladorDashboard {
         if (estoqueChart == null) {
             return;
         }
-        XYChart.Series<String, Number> serie = new XYChart.Series<>();
-        itens.stream()
+        List<ItemEstoque> top = itens.stream()
                 .filter(ItemEstoque::ativo)
                 .sorted(Comparator.comparingInt(ItemEstoque::quantity).reversed())
                 .limit(5)
-                .forEach(item -> serie.getData().add(new XYChart.Data<>(rotuloItem(item.name()), item.quantity())));
+                .toList();
+        XYChart.Series<String, Number> serie = new XYChart.Series<>();
+        top.forEach(item -> serie.getData().add(new XYChart.Data<>(rotuloItem(item.name()), item.quantity())));
         estoqueChart.getData().setAll(serie);
         ajustarEixoNumerico(estoqueChart, serie);
+        // Os rótulos do eixo são abreviados para caber; o nome completo aparece em tooltip
+        // ao passar o mouse sobre a barra, evitando a impressão de texto "cortado".
+        for (int i = 0; i < top.size(); i++) {
+            javafx.scene.Node barra = serie.getData().get(i).getNode();
+            if (barra != null) {
+                javafx.scene.control.Tooltip.install(barra,
+                        new javafx.scene.control.Tooltip(top.get(i).name() + ": " + top.get(i).quantity()));
+            }
+        }
     }
 
     private void carregarGraficoServicos(List<OrdemServico> ordens) {
@@ -254,7 +264,7 @@ public class ControladorDashboard {
             return "-";
         }
         String trimmed = nome.trim();
-        return trimmed.length() <= 12 ? trimmed : trimmed.substring(0, 12);
+        return trimmed.length() <= 16 ? trimmed : trimmed.substring(0, 15) + "…";
     }
 
     private String rotuloStatus(OrdemServico.OrdemServicoStatus status) {

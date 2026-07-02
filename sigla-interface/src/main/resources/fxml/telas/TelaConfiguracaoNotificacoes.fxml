@@ -69,7 +69,7 @@
             <Font name="Ebrima Bold" size="16.0" />
          </font>
       </Label>
-      <TextArea fx:id="variaveisArea" editable="false" prefHeight="130.0" wrapText="true" />
+      <TextArea fx:id="variaveisArea" editable="false" minHeight="160.0" prefHeight="190.0" wrapText="true" />
       <Separator />
       <Label text="Notificações agendadas" textFill="#303030">
          <font>
