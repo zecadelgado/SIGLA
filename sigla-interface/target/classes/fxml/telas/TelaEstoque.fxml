@@ -133,7 +133,7 @@
                                     <Insets top="40.0" />
                                  </HBox.margin>
                               </Button>
-                              <Button minWidth="90.0" mnemonicParsing="false" onAction="#onSaida" prefHeight="42.0" prefWidth="90.0" style="-fx-background-color: #891111; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 14,0,0,4);" text="Saida" textFill="WHITE">
+                              <Button minWidth="90.0" mnemonicParsing="false" onAction="#onSaida" prefHeight="42.0" prefWidth="90.0" style="-fx-background-color: #891111; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 14,0,0,4);" text="Saída" textFill="WHITE">
                                  <font>
                                     <Font name="Ebrima Bold" size="14.0" />
                                  </font>

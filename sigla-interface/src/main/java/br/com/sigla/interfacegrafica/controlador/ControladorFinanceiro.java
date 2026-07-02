@@ -235,6 +235,10 @@ public class ControladorFinanceiro extends ControladorComMenuPrincipal {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Estornar pagamento");
         dialog.setHeaderText("Informe o motivo do estorno");
+        // Desabilita o OK enquanto o motivo estiver em branco, em vez de só avisar após submeter.
+        javafx.scene.Node botaoOk = dialog.getDialogPane().lookupButton(ButtonType.OK);
+        botaoOk.setDisable(true);
+        dialog.getEditor().textProperty().addListener((obs, anterior, novo) -> botaoOk.setDisable(novo == null || novo.isBlank()));
         dialog.showAndWait().ifPresent(motivo -> {
             if (motivo.isBlank()) {
                 mostrar("Informe o motivo do estorno.");

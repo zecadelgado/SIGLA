@@ -55,10 +55,10 @@
             <DatePicker fx:id="dataFimPicker" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
 
             <Label text="Status" GridPane.columnIndex="0" GridPane.rowIndex="8" />
-            <TextField fx:id="statusField" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="0" GridPane.rowIndex="9" />
+            <ComboBox fx:id="statusCombo" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="0" GridPane.rowIndex="9" />
 
             <Label text="Prioridade" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-            <TextField fx:id="prioridadeField" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+            <ComboBox fx:id="prioridadeCombo" maxWidth="Infinity" prefHeight="32.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
          </children>
       </GridPane>
 

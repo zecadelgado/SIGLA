@@ -264,22 +264,22 @@
                                                 <Font name="Ebrima Bold" size="14.0" />
                                              </font>
                                           </Button>
-                                          <Button mnemonicParsing="false" onAction="#onInativarResponsavel" prefHeight="30.0" prefWidth="90.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Inativar" textFill="WHITE">
+                                          <Button mnemonicParsing="false" onAction="#onInativarResponsavel" prefHeight="30.0" prefWidth="110.0" style="-fx-background-color: #0B2A6F; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Inativar" textFill="WHITE">
                                              <font>
                                                 <Font name="Ebrima Bold" size="14.0" />
                                              </font>
                                           </Button>
-                                          <Button mnemonicParsing="false" onAction="#onReativarResponsavel" prefHeight="30.0" prefWidth="90.0" style="-fx-background-color: white; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Reativar" textFill="#0B2A6F">
+                                          <Button mnemonicParsing="false" onAction="#onReativarResponsavel" prefHeight="30.0" prefWidth="110.0" style="-fx-background-color: white; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Reativar" textFill="#0B2A6F">
                                              <font>
                                                 <Font name="Ebrima Bold" size="14.0" />
                                              </font>
                                           </Button>
-                                          <Button mnemonicParsing="false" onAction="#onExcluirResponsavel" prefHeight="30.0" prefWidth="90.0" style="-fx-background-color: white; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Excluir" textFill="#0B2A6F">
+                                          <Button mnemonicParsing="false" onAction="#onExcluirResponsavel" prefHeight="30.0" prefWidth="110.0" style="-fx-background-color: white; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Excluir" textFill="#0B2A6F">
                                              <font>
                                                 <Font name="Ebrima Bold" size="14.0" />
                                              </font>
                                           </Button>
-                                          <Button mnemonicParsing="false" onAction="#onMarcarResponsavelPrincipal" prefHeight="30.0" prefWidth="90.0" style="-fx-background-color: white; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Principal" textFill="#0B2A6F">
+                                          <Button mnemonicParsing="false" onAction="#onMarcarResponsavelPrincipal" prefHeight="30.0" prefWidth="110.0" style="-fx-background-color: white; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20,0,0,5);" text="Principal" textFill="#0B2A6F">
                                              <font>
                                                 <Font name="Ebrima Bold" size="14.0" />
                                              </font>

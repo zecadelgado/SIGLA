@@ -20,7 +20,6 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.util.UUID;
 
-import static br.com.sigla.interfacegrafica.util.ResolvedorEntradaTexto.parseEnum;
 @Component
 public class ControladorNovoServico {
 
@@ -45,9 +44,9 @@ public class ControladorNovoServico {
     @FXML
     private CheckBox diaInteiroCheck;
     @FXML
-    private TextField statusField;
+    private ComboBox<VisitaAgendada.VisitStatus> statusCombo;
     @FXML
-    private TextField prioridadeField;
+    private ComboBox<VisitaAgendada.VisitPriority> prioridadeCombo;
     @FXML
     private ComboBox<OpcaoId> responsavelCombo;
     @FXML
@@ -83,11 +82,15 @@ public class ControladorNovoServico {
         if (dataFimPicker != null && dataFimPicker.getValue() == null) {
             dataFimPicker.setValue(hoje);
         }
-        if (statusField != null && statusField.getText().isBlank()) {
-            statusField.setText(VisitaAgendada.VisitStatus.SCHEDULED.name());
+        if (statusCombo != null) {
+            statusCombo.getItems().setAll(VisitaAgendada.VisitStatus.values());
+            br.com.sigla.interfacegrafica.util.TradutorInterface.aplicar(statusCombo);
+            statusCombo.getSelectionModel().select(VisitaAgendada.VisitStatus.SCHEDULED);
         }
-        if (prioridadeField != null && prioridadeField.getText().isBlank()) {
-            prioridadeField.setText(VisitaAgendada.VisitPriority.NORMAL.name());
+        if (prioridadeCombo != null) {
+            prioridadeCombo.getItems().setAll(VisitaAgendada.VisitPriority.values());
+            br.com.sigla.interfacegrafica.util.TradutorInterface.aplicar(prioridadeCombo);
+            prioridadeCombo.getSelectionModel().select(VisitaAgendada.VisitPriority.NORMAL);
         }
         setFeedback("");
     }
@@ -121,8 +124,8 @@ public class ControladorNovoServico {
                     dataInicio.atStartOfDay(),
                     dataFim.atTime(23, 59),
                     diaInteiroCheck != null && diaInteiroCheck.isSelected(),
-                    parseEnum(VisitaAgendada.VisitStatus.class, statusField == null ? "" : statusField.getText(), VisitaAgendada.VisitStatus.SCHEDULED),
-                    parseEnum(VisitaAgendada.VisitPriority.class, prioridadeField == null ? "" : prioridadeField.getText(), VisitaAgendada.VisitPriority.NORMAL),
+                    statusCombo == null || statusCombo.getValue() == null ? VisitaAgendada.VisitStatus.SCHEDULED : statusCombo.getValue(),
+                    prioridadeCombo == null || prioridadeCombo.getValue() == null ? VisitaAgendada.VisitPriority.NORMAL : prioridadeCombo.getValue(),
                     UtilComboBox.idSelecionado(responsavelCombo),
                     false,
                     0,

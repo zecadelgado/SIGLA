@@ -140,7 +140,7 @@
                      <font>
                         <Font name="Ebrima Bold" size="14.0" />
                      </font></Button>
-                        <Button onAction="#onAtualizar" prefHeight="28.0" prefWidth="90.0" style="-fx-background-color: #00417e; -fx-background-radius: 5;" text="Atualizar" textFill="WHITE">
+                        <Button onAction="#onAtualizar" prefHeight="28.0" prefWidth="110.0" style="-fx-background-color: #00417e; -fx-background-radius: 5;" text="Atualizar" textFill="WHITE">
                      <font>
                         <Font name="Ebrima Bold" size="14.0" />
                      </font></Button>
@@ -148,7 +148,7 @@
                      <font>
                         <Font name="Ebrima Bold" size="14.0" />
                      </font></Button>
-                        <Button onAction="#onRenovarItem" prefHeight="28.0" prefWidth="90.0" style="-fx-background-color: white; -fx-background-radius: 5;" text="Renovar" textFill="#00417e">
+                        <Button onAction="#onRenovarItem" prefHeight="28.0" prefWidth="110.0" style="-fx-background-color: white; -fx-background-radius: 5;" text="Renovar" textFill="#00417e">
                      <font>
                         <Font name="Ebrima Bold" size="14.0" />
                      </font></Button>
