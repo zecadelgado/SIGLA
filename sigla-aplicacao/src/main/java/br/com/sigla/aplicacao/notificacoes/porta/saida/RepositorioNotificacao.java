@@ -3,6 +3,7 @@ package br.com.sigla.aplicacao.notificacoes.porta.saida;
 import br.com.sigla.dominio.notificacoes.Destinatario;
 import br.com.sigla.dominio.notificacoes.Notificacao;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +24,14 @@ public interface RepositorioNotificacao {
 
     List<Notificacao> findByRelatedEntityId(String relatedEntityId);
 
+    /** Notificacoes em FALHA que ainda podem ser reprocessadas (tentativas abaixo do teto). */
+    default List<Notificacao> findFalhasReprocessaveis(int maxTentativas) {
+        return findAll().stream()
+                .filter(notificacao -> notificacao.status() == Notificacao.NotificacaoStatus.FAILED)
+                .filter(notificacao -> notificacao.attempts() < maxTentativas)
+                .toList();
+    }
+
     /** Dedup considerando tipo + entidade relacionada + destinatario, sobre status ativos. */
     default boolean existsAtivoParaDestinatario(
             Notificacao.NotificacaoType type,
@@ -39,6 +48,26 @@ public interface RepositorioNotificacao {
                 && ativos.contains(notificacao.status())
                 && notificacao.destinatario() != null
                 && notificacao.destinatario().tipo() == destinatario);
+    }
+
+    /** Dedup considerando tipo + entidade + destinatario + data-gatilho (para lembretes escalonados). */
+    default boolean existsAtivoParaDestinatarioNoDia(
+            Notificacao.NotificacaoType type,
+            String relatedEntityId,
+            Destinatario destinatario,
+            LocalDate triggerDate
+    ) {
+        Set<Notificacao.NotificacaoStatus> ativos = Set.of(
+                Notificacao.NotificacaoStatus.PENDING,
+                Notificacao.NotificacaoStatus.SENT,
+                Notificacao.NotificacaoStatus.OPEN
+        );
+        return findAll().stream().anyMatch(notificacao -> notificacao.type() == type
+                && notificacao.relatedEntityId().equals(relatedEntityId)
+                && ativos.contains(notificacao.status())
+                && notificacao.destinatario() != null
+                && notificacao.destinatario().tipo() == destinatario
+                && triggerDate.equals(notificacao.triggerDate()));
     }
 
     default boolean existsByTypeAndRelatedEntityIdAndStatusIn(

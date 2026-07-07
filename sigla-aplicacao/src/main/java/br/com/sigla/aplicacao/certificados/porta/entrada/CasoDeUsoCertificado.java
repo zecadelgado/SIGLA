@@ -5,6 +5,7 @@ import br.com.sigla.dominio.certificados.Certificado;
 import java.time.LocalDate;
 import java.util.List;
 
+
 public interface CasoDeUsoCertificado {
 
     void issue(IssueCertificadoCommand command);
@@ -30,8 +31,23 @@ public interface CasoDeUsoCertificado {
             int intervalMonths,
             boolean alertActive,
             int renewalAlertDays,
-            String notes
+            String notes,
+            List<Integer> diasLembrete
     ) {
+        public UpdateCertificadoCommand(
+                String id,
+                String customerId,
+                String description,
+                LocalDate issuedOn,
+                LocalDate validUntil,
+                int intervalMonths,
+                boolean alertActive,
+                int renewalAlertDays,
+                String notes
+        ) {
+            this(id, customerId, description, issuedOn, validUntil, intervalMonths, alertActive,
+                    renewalAlertDays, notes, null);
+        }
     }
 
     record RenovarCertificadoCommand(
@@ -53,8 +69,27 @@ public interface CasoDeUsoCertificado {
             boolean alertActive,
             Certificado.CertificadoStatus status,
             int renewalAlertDays,
-            String notes
+            String notes,
+            List<Integer> diasLembrete
     ) {
+        public IssueCertificadoCommand(
+                String id,
+                String customerId,
+                String serviceProvidedId,
+                String orderId,
+                String description,
+                LocalDate issuedOn,
+                LocalDate validUntil,
+                int intervalMonths,
+                boolean alertActive,
+                Certificado.CertificadoStatus status,
+                int renewalAlertDays,
+                String notes
+        ) {
+            this(id, customerId, serviceProvidedId, orderId, description, issuedOn, validUntil,
+                    intervalMonths, alertActive, status, renewalAlertDays, notes, null);
+        }
+
         public IssueCertificadoCommand(
                 String id,
                 String serviceProvidedId,

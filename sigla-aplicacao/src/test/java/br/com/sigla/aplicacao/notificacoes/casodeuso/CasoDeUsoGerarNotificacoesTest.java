@@ -48,7 +48,7 @@ class CasoDeUsoGerarNotificacoesTest {
     private final FakeLancamento lancamentos = new FakeLancamento();
 
     private CasoDeUsoGerarNotificacoes casoDeUso() {
-        return new CasoDeUsoGerarNotificacoes(notif, config, clientes, funcionarios, contratos, certificados, agenda, lancamentos);
+        return new CasoDeUsoGerarNotificacoes(notif, config, clientes, funcionarios, contratos, certificados, agenda, lancamentos, 8, 0);
     }
 
     @Test
@@ -140,6 +140,39 @@ class CasoDeUsoGerarNotificacoesTest {
         assertEquals(1, apos.size());
         assertEquals(Notificacao.NotificacaoType.CONTRACT_EXPIRING, apos.getFirst().type());
         assertTrue(apos.getFirst().message().contains("15/07/2026"));
+    }
+
+    @Test
+    void contratoGeraLembretesEscalonados() {
+        clientes.add(cliente("cli-1", "11999990000"));
+        contratos.add(contrato(LocalDate.of(2026, 6, 30), 30).comDiasLembrete(List.of(30, 15, 7, 1)));
+        config.salvar(configEvento(Notificacao.NotificacaoType.CONTRACT_EXPIRING, Destinatario.CLIENTE,
+                "Vencimento", "Contrato vence em {{contrato_vencimento}}"));
+
+        // gatilhos: 31/05, 15/06, 23/06, 29/06 -> todos <= 30/06
+        casoDeUso().gerar(LocalDate.of(2026, 6, 30));
+        assertEquals(4, pendentes().size());
+        assertEquals(4, pendentes().stream().map(Notificacao::triggerDate).distinct().count());
+
+        // idempotente: nao duplica
+        casoDeUso().gerar(LocalDate.of(2026, 6, 30));
+        assertEquals(4, pendentes().size());
+    }
+
+    @Test
+    void configManualNaoGera() {
+        clientes.add(cliente("cli-1", "11999990000"));
+        agenda.salvar(visita("v1", LocalDate.of(2026, 6, 20), VisitaAgendada.VisitStatus.SCHEDULED, true, 2, "fun-1"));
+        // automatico = false -> nao deve gerar
+        config.salvar(new NotificacaoConfiguracao(
+                "cfg-manual", Notificacao.NotificacaoType.VISIT_UPCOMING, "Lembrete", "Lembrete",
+                "Ola {{cliente_nome}}", Destinatario.CLIENTE, OrigemNotificacao.SISTEMA,
+                CanalNotificacao.WHATSAPP_N8N, FonteTelefone.CLIENTE, "", false, 2, true, "admin",
+                LocalDateTime.now(), LocalDateTime.now()));
+
+        casoDeUso().gerar(LocalDate.of(2026, 6, 18));
+
+        assertEquals(0, notif.findAll().size());
     }
 
     @Test

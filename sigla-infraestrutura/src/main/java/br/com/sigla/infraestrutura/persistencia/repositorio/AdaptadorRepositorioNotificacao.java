@@ -1,6 +1,7 @@
 package br.com.sigla.infraestrutura.persistencia.repositorio;
 
 import br.com.sigla.aplicacao.notificacoes.porta.saida.RepositorioNotificacao;
+import br.com.sigla.dominio.notificacoes.Destinatario;
 import br.com.sigla.dominio.notificacoes.DestinatarioNotificacao;
 import br.com.sigla.dominio.notificacoes.Notificacao;
 import br.com.sigla.dominio.notificacoes.RemetenteNotificacao;
@@ -17,10 +18,16 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
 public class AdaptadorRepositorioNotificacao implements RepositorioNotificacao {
+
+    private static final Set<Notificacao.NotificacaoStatus> STATUS_ATIVOS = Set.of(
+            Notificacao.NotificacaoStatus.PENDING,
+            Notificacao.NotificacaoStatus.SENT,
+            Notificacao.NotificacaoStatus.OPEN);
 
     private final SpringDataRepositorioNotificacao repository;
 
@@ -57,6 +64,30 @@ public class AdaptadorRepositorioNotificacao implements RepositorioNotificacao {
     @Override
     public List<Notificacao> findByRelatedEntityId(String relatedEntityId) {
         return repository.findByRelatedEntityId(relatedEntityId).stream().map(this::toDomain).toList();
+    }
+
+    @Override
+    public List<Notificacao> findFalhasReprocessaveis(int maxTentativas) {
+        return repository.findByStatusAndAttemptsLessThan(Notificacao.NotificacaoStatus.FAILED, maxTentativas)
+                .stream().map(this::toDomain).toList();
+    }
+
+    @Override
+    public boolean existsAtivoParaDestinatario(
+            Notificacao.NotificacaoType type,
+            String relatedEntityId,
+            Destinatario destinatario) {
+        return repository.countAtivoParaDestinatario(type, relatedEntityId, destinatario, STATUS_ATIVOS) > 0;
+    }
+
+    @Override
+    public boolean existsAtivoParaDestinatarioNoDia(
+            Notificacao.NotificacaoType type,
+            String relatedEntityId,
+            Destinatario destinatario,
+            LocalDate triggerDate) {
+        return repository.countAtivoParaDestinatarioNoDia(
+                type, relatedEntityId, destinatario, triggerDate, STATUS_ATIVOS) > 0;
     }
 
     private NotificacaoEntidade toEntity(Notificacao notification) {
@@ -182,10 +213,31 @@ interface SpringDataRepositorioNotificacao extends JpaRepository<NotificacaoEnti
 
     List<NotificacaoEntidade> findByRelatedEntityId(String relatedEntityId);
 
+    List<NotificacaoEntidade> findByStatusAndAttemptsLessThan(
+            Notificacao.NotificacaoStatus status, int attempts);
+
     @Query("select n from NotificacaoEntidade n where n.status = :status "
             + "and (n.scheduledFor <= :momento or (n.scheduledFor is null and n.triggerDate <= :data))")
     List<NotificacaoEntidade> findDuePending(
             @Param("status") Notificacao.NotificacaoStatus status,
             @Param("momento") LocalDateTime momento,
             @Param("data") LocalDate data);
+
+    @Query("select count(n) from NotificacaoEntidade n where n.type = :type "
+            + "and n.relatedEntityId = :entity and n.recipientType = :dest and n.status in :statuses")
+    long countAtivoParaDestinatario(
+            @Param("type") Notificacao.NotificacaoType type,
+            @Param("entity") String entity,
+            @Param("dest") Destinatario dest,
+            @Param("statuses") Set<Notificacao.NotificacaoStatus> statuses);
+
+    @Query("select count(n) from NotificacaoEntidade n where n.type = :type "
+            + "and n.relatedEntityId = :entity and n.recipientType = :dest "
+            + "and n.triggerDate = :data and n.status in :statuses")
+    long countAtivoParaDestinatarioNoDia(
+            @Param("type") Notificacao.NotificacaoType type,
+            @Param("entity") String entity,
+            @Param("dest") Destinatario dest,
+            @Param("data") LocalDate data,
+            @Param("statuses") Set<Notificacao.NotificacaoStatus> statuses);
 }

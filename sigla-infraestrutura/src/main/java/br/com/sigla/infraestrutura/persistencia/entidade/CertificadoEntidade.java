@@ -40,6 +40,9 @@ public class CertificadoEntidade {
     @Column(name = "dias_alerta")
     private int renewalAlertDays;
 
+    @Column(name = "alerta_dias_conjunto")
+    private String alertaDiasConjunto;
+
     @Column(name = "status")
     private String status;
 
@@ -116,6 +119,14 @@ public class CertificadoEntidade {
 
     public void setRenewalAlertDays(int renewalAlertDays) {
         this.renewalAlertDays = renewalAlertDays;
+    }
+
+    public String getAlertaDiasConjunto() {
+        return alertaDiasConjunto;
+    }
+
+    public void setAlertaDiasConjunto(String alertaDiasConjunto) {
+        this.alertaDiasConjunto = alertaDiasConjunto;
     }
 
     public String getStatus() {

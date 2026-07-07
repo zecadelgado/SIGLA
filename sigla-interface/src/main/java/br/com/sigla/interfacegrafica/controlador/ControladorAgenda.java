@@ -8,6 +8,7 @@ import br.com.sigla.dominio.clientes.Cliente;
 import br.com.sigla.dominio.funcionarios.Funcionario;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorData;
 import br.com.sigla.interfacegrafica.async.ExecutorTarefasUi;
+import br.com.sigla.interfacegrafica.componente.SeletorDiasLembrete;
 import br.com.sigla.interfacegrafica.util.TradutorInterface;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.fxml.FXML;
@@ -253,9 +254,8 @@ public class ControladorAgenda {
         TextField fimField = new TextField(atual == null || atual.endAt() == null ? "09:00" : atual.endAt().toLocalTime().toString());
         CheckBox diaInteiroCheck = new CheckBox("Dia inteiro");
         diaInteiroCheck.setSelected(atual != null && atual.allDay());
-        CheckBox lembreteCheck = new CheckBox("Lembrete ativo");
-        lembreteCheck.setSelected(atual != null && atual.reminderActive());
-        TextField diasLembreteField = new TextField(atual == null ? "1" : String.valueOf(atual.reminderDaysBefore()));
+        SeletorDiasLembrete seletorDias = new SeletorDiasLembrete();
+        seletorDias.setDias(atual == null ? java.util.List.of(1) : atual.diasLembreteEfetivos());
 
         dialog.getDialogPane().setContent(grid(
                 "Cliente", clienteCombo,
@@ -270,8 +270,7 @@ public class ControladorAgenda {
                 "Início", inicioField,
                 "Fim", fimField,
                 "Dia inteiro", diaInteiroCheck,
-                "Lembrete", lembreteCheck,
-                "Dias lembrete", diasLembreteField
+                "Lembretes (dias antes)", seletorDias
         ));
         dialog.setResultConverter(button -> {
             if (button != ButtonType.OK) {
@@ -299,9 +298,10 @@ public class ControladorAgenda {
                     statusCombo.getValue(),
                     prioridadeCombo.getValue(),
                     responsavel == null ? "" : responsavel.id(),
-                    lembreteCheck.isSelected(),
-                    parseInt(diasLembreteField.getText(), 1),
-                    descricaoArea.getText()
+                    !seletorDias.getDias().isEmpty(),
+                    seletorDias.getDias().isEmpty() ? 1 : seletorDias.getDias().get(0),
+                    descricaoArea.getText(),
+                    seletorDias.getDias()
             );
         });
         dialog.showAndWait().ifPresent(command -> executar(() -> {

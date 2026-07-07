@@ -18,6 +18,19 @@ public class PropriedadesNotificacoesSigla {
     /** Hora padrao (0-23) usada ao agendar o disparo a partir de uma data. */
     private int horaEnvioPadrao = 8;
 
+    /** Cadencia (dias) para re-lembrar parcelas em atraso ainda em aberto. 0 = apenas um aviso. */
+    private int parcelaReintervaloDias = 0;
+
+    /** Timeout (segundos) para conectar e aguardar a resposta do webhook. Evita travar o lote. */
+    private int timeoutSegundos = 15;
+
+    /**
+     * Numero maximo de tentativas de envio de uma notificacao. Uma notificacao em falha e
+     * reprocessada automaticamente na proxima execucao do agendador ate atingir esse teto;
+     * o intervalo entre execucoes ja provê o espacamento entre tentativas.
+     */
+    private int maxTentativas = 5;
+
     public Webhook getWebhook() {
         return webhook;
     }
@@ -40,6 +53,30 @@ public class PropriedadesNotificacoesSigla {
 
     public void setHoraEnvioPadrao(int horaEnvioPadrao) {
         this.horaEnvioPadrao = horaEnvioPadrao;
+    }
+
+    public int getParcelaReintervaloDias() {
+        return parcelaReintervaloDias;
+    }
+
+    public void setParcelaReintervaloDias(int parcelaReintervaloDias) {
+        this.parcelaReintervaloDias = parcelaReintervaloDias;
+    }
+
+    public int getTimeoutSegundos() {
+        return timeoutSegundos;
+    }
+
+    public void setTimeoutSegundos(int timeoutSegundos) {
+        this.timeoutSegundos = timeoutSegundos;
+    }
+
+    public int getMaxTentativas() {
+        return maxTentativas;
+    }
+
+    public void setMaxTentativas(int maxTentativas) {
+        this.maxTentativas = maxTentativas;
     }
 
     public static class Webhook {

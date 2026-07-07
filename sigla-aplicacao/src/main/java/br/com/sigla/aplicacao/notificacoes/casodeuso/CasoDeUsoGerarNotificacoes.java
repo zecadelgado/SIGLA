@@ -23,11 +23,12 @@ import br.com.sigla.dominio.notificacoes.OrigemNotificacao;
 import br.com.sigla.dominio.notificacoes.RemetenteNotificacao;
 import br.com.sigla.dominio.notificacoes.RenderizadorTemplate;
 import br.com.sigla.dominio.notificacoes.TelefoneWhatsapp;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.EnumMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -48,6 +49,11 @@ public class CasoDeUsoGerarNotificacoes implements CasoDeUsoGeracaoNotificacao {
     private final RepositorioCertificado certificadoRepo;
     private final RepositorioAgenda agendaRepo;
     private final RepositorioLancamentoFinanceiro lancamentoRepo;
+    private final int horaEnvio;
+    private final int parcelaReintervaloDias;
+
+    /** Teto de re-lembretes de uma mesma parcela, para nao floodar em atrasos muito antigos. */
+    private static final int MAX_RELEMBRETES_PARCELA = 24;
 
     public CasoDeUsoGerarNotificacoes(
             RepositorioNotificacao notificacaoRepo,
@@ -57,7 +63,9 @@ public class CasoDeUsoGerarNotificacoes implements CasoDeUsoGeracaoNotificacao {
             RepositorioContrato contratoRepo,
             RepositorioCertificado certificadoRepo,
             RepositorioAgenda agendaRepo,
-            RepositorioLancamentoFinanceiro lancamentoRepo
+            RepositorioLancamentoFinanceiro lancamentoRepo,
+            @Value("${sigla.notificacoes.hora-envio-padrao:8}") int horaEnvio,
+            @Value("${sigla.notificacoes.parcela-reintervalo-dias:0}") int parcelaReintervaloDias
     ) {
         this.notificacaoRepo = notificacaoRepo;
         this.configRepo = configRepo;
@@ -67,6 +75,14 @@ public class CasoDeUsoGerarNotificacoes implements CasoDeUsoGeracaoNotificacao {
         this.certificadoRepo = certificadoRepo;
         this.agendaRepo = agendaRepo;
         this.lancamentoRepo = lancamentoRepo;
+        this.horaEnvio = horaEnvio >= 0 && horaEnvio <= 23 ? horaEnvio : 8;
+        this.parcelaReintervaloDias = Math.max(0, parcelaReintervaloDias);
+    }
+
+    private List<NotificacaoConfiguracao> configsAutomaticas(Notificacao.NotificacaoType type) {
+        return configRepo.findAtivasPorEvento(type).stream()
+                .filter(NotificacaoConfiguracao::automatico)
+                .toList();
     }
 
     @Override
@@ -83,7 +99,7 @@ public class CasoDeUsoGerarNotificacoes implements CasoDeUsoGeracaoNotificacao {
     }
 
     private void processarVisitas(LocalDate hoje, Map<String, Cliente> clientes, Map<String, Funcionario> funcionarios) {
-        List<NotificacaoConfiguracao> configs = configRepo.findAtivasPorEvento(Notificacao.NotificacaoType.VISIT_UPCOMING);
+        List<NotificacaoConfiguracao> configs = configsAutomaticas(Notificacao.NotificacaoType.VISIT_UPCOMING);
         for (VisitaAgendada visita : agendaRepo.findAll()) {
             Cliente cliente = clientes.get(visita.customerId());
             Funcionario funcionario = visita.responsibleId() == null || visita.responsibleId().isBlank()
@@ -91,15 +107,18 @@ public class CasoDeUsoGerarNotificacoes implements CasoDeUsoGeracaoNotificacao {
                     : funcionarios.get(visita.responsibleId());
 
             List<Plano> planos = new ArrayList<>();
-            boolean ativaParaLembrete = visita.status() == VisitaAgendada.VisitStatus.SCHEDULED
-                    && visita.reminderActive()
+            // Eventos de vencimento de contrato/certificado (nao-operacionais) sao cobertos por
+            // CONTRACT_EXPIRING/CERTIFICATE_EXPIRING; nao geram lembrete de visita para nao duplicar.
+            boolean agendavel = visita.isOperational()
+                    && visita.status() == VisitaAgendada.VisitStatus.SCHEDULED
                     && !visita.scheduledDate().isBefore(hoje);
-            if (ativaParaLembrete) {
+            if (agendavel) {
                 for (NotificacaoConfiguracao config : configs) {
-                    int dias = config.diasAntecedencia() != null ? config.diasAntecedencia() : visita.reminderDaysBefore();
-                    LocalDate triggerDate = visita.scheduledDate().minusDays(dias);
-                    for (Destinatario lado : lados(config.destinatario())) {
-                        planos.add(new Plano(config, lado, triggerDate));
+                    for (int dias : diasEfetivos(config, visita.diasLembreteEfetivos())) {
+                        LocalDate triggerDate = visita.scheduledDate().minusDays(dias);
+                        for (Destinatario lado : lados(config.destinatario())) {
+                            planos.add(new Plano(config, lado, triggerDate));
+                        }
                     }
                 }
             }
@@ -110,7 +129,7 @@ public class CasoDeUsoGerarNotificacoes implements CasoDeUsoGeracaoNotificacao {
 
     /** Alerta de visita nao realizada: visita agendada cuja data ja passou (ou marcada como perdida). */
     private void processarVisitasPerdidas(LocalDate hoje, Map<String, Cliente> clientes, Map<String, Funcionario> funcionarios) {
-        List<NotificacaoConfiguracao> configs = configRepo.findAtivasPorEvento(Notificacao.NotificacaoType.VISIT_MISSED);
+        List<NotificacaoConfiguracao> configs = configsAutomaticas(Notificacao.NotificacaoType.VISIT_MISSED);
         if (configs.isEmpty()) {
             return;
         }
@@ -119,6 +138,7 @@ public class CasoDeUsoGerarNotificacoes implements CasoDeUsoGeracaoNotificacao {
                     || (visita.status() == VisitaAgendada.VisitStatus.SCHEDULED && visita.scheduledDate().isBefore(hoje));
             List<Plano> planos = new ArrayList<>();
             boolean dentroDaJanela = perdida
+                    && visita.isOperational()
                     && visita.reminderActive()
                     && !visita.scheduledDate().isBefore(hoje.minusDays(JANELA_VISITA_PERDIDA_DIAS));
             if (dentroDaJanela) {
@@ -139,23 +159,23 @@ public class CasoDeUsoGerarNotificacoes implements CasoDeUsoGeracaoNotificacao {
     }
 
     private void processarContratos(LocalDate hoje, Map<String, Cliente> clientes) {
-        List<NotificacaoConfiguracao> configs = configRepo.findAtivasPorEvento(Notificacao.NotificacaoType.CONTRACT_EXPIRING);
+        List<NotificacaoConfiguracao> configs = configsAutomaticas(Notificacao.NotificacaoType.CONTRACT_EXPIRING);
         if (configs.isEmpty()) {
             return;
         }
         for (Contrato contrato : contratoRepo.findAll()) {
             Cliente cliente = clientes.get(contrato.customerId());
             List<Plano> planos = new ArrayList<>();
-            boolean ativoParaAlerta = contrato.alertActive()
-                    && contrato.status() != Contrato.ContratoStatus.CANCELLED
+            boolean elegivel = contrato.status() != Contrato.ContratoStatus.CANCELLED
                     && contrato.status() != Contrato.ContratoStatus.EXPIRED
                     && !contrato.endDate().isBefore(hoje);
-            if (ativoParaAlerta) {
+            if (elegivel) {
                 for (NotificacaoConfiguracao config : configs) {
-                    int dias = config.diasAntecedencia() != null ? config.diasAntecedencia() : contrato.alertDaysBeforeEnd();
-                    LocalDate triggerDate = contrato.endDate().minusDays(dias);
-                    for (Destinatario lado : lados(config.destinatario())) {
-                        planos.add(new Plano(config, lado, triggerDate));
+                    for (int dias : diasEfetivos(config, contrato.diasLembreteEfetivos())) {
+                        LocalDate triggerDate = contrato.endDate().minusDays(dias);
+                        for (Destinatario lado : lados(config.destinatario())) {
+                            planos.add(new Plano(config, lado, triggerDate));
+                        }
                     }
                 }
             }
@@ -165,23 +185,23 @@ public class CasoDeUsoGerarNotificacoes implements CasoDeUsoGeracaoNotificacao {
     }
 
     private void processarCertificados(LocalDate hoje, Map<String, Cliente> clientes) {
-        List<NotificacaoConfiguracao> configs = configRepo.findAtivasPorEvento(Notificacao.NotificacaoType.CERTIFICATE_EXPIRING);
+        List<NotificacaoConfiguracao> configs = configsAutomaticas(Notificacao.NotificacaoType.CERTIFICATE_EXPIRING);
         if (configs.isEmpty()) {
             return;
         }
         for (Certificado certificado : certificadoRepo.findAll()) {
             Cliente cliente = clientes.get(certificado.customerId());
             List<Plano> planos = new ArrayList<>();
-            boolean ativoParaAlerta = certificado.alertActive()
-                    && certificado.status() != Certificado.CertificadoStatus.REPLACED
+            boolean elegivel = certificado.status() != Certificado.CertificadoStatus.REPLACED
                     && certificado.status() != Certificado.CertificadoStatus.EXPIRED
                     && !certificado.validUntil().isBefore(hoje);
-            if (ativoParaAlerta) {
+            if (elegivel) {
                 for (NotificacaoConfiguracao config : configs) {
-                    int dias = config.diasAntecedencia() != null ? config.diasAntecedencia() : certificado.renewalAlertDays();
-                    LocalDate triggerDate = certificado.validUntil().minusDays(dias);
-                    for (Destinatario lado : lados(config.destinatario())) {
-                        planos.add(new Plano(config, lado, triggerDate));
+                    for (int dias : diasEfetivos(config, certificado.diasLembreteEfetivos())) {
+                        LocalDate triggerDate = certificado.validUntil().minusDays(dias);
+                        for (Destinatario lado : lados(config.destinatario())) {
+                            planos.add(new Plano(config, lado, triggerDate));
+                        }
                     }
                 }
             }
@@ -192,7 +212,7 @@ public class CasoDeUsoGerarNotificacoes implements CasoDeUsoGeracaoNotificacao {
 
     /** Alerta de parcela/conta a receber em atraso. Cada parcela vencida gera seu proprio aviso. */
     private void processarParcelas(LocalDate hoje, Map<String, Cliente> clientes) {
-        List<NotificacaoConfiguracao> configs = configRepo.findAtivasPorEvento(Notificacao.NotificacaoType.INSTALLMENT_OVERDUE);
+        List<NotificacaoConfiguracao> configs = configsAutomaticas(Notificacao.NotificacaoType.INSTALLMENT_OVERDUE);
         if (configs.isEmpty()) {
             return;
         }
@@ -218,11 +238,12 @@ public class CasoDeUsoGerarNotificacoes implements CasoDeUsoGeracaoNotificacao {
                                     LancamentoFinanceiro.ParcelaFinanceira parcela, Cliente cliente,
                                     List<NotificacaoConfiguracao> configs, LocalDate hoje) {
         LocalDate vencimento = parcela != null ? parcela.dataVencimento() : lancamento.dataVencimento();
-        LocalDate triggerDate = vencimento.plusDays(1);
         List<Plano> planos = new ArrayList<>();
-        for (NotificacaoConfiguracao config : configs) {
-            for (Destinatario lado : lados(config.destinatario())) {
-                planos.add(new Plano(config, lado, triggerDate));
+        for (LocalDate triggerDate : gatilhosParcela(vencimento, hoje)) {
+            for (NotificacaoConfiguracao config : configs) {
+                for (Destinatario lado : lados(config.destinatario())) {
+                    planos.add(new Plano(config, lado, triggerDate));
+                }
             }
         }
         Contexto contexto = new Contexto(cliente, null, ResolvedorVariaveis.parcela(lancamento, parcela, cliente));
@@ -230,14 +251,34 @@ public class CasoDeUsoGerarNotificacoes implements CasoDeUsoGeracaoNotificacao {
     }
 
     /**
+     * Datas-gatilho de aviso de parcela vencida: o primeiro em (vencimento + 1) e, se a cadencia de
+     * re-lembrete estiver ligada, um a cada {@code parcelaReintervaloDias} dias ate hoje (limitado).
+     */
+    private List<LocalDate> gatilhosParcela(LocalDate vencimento, LocalDate hoje) {
+        List<LocalDate> gatilhos = new ArrayList<>();
+        LocalDate primeiro = vencimento.plusDays(1);
+        gatilhos.add(primeiro);
+        if (parcelaReintervaloDias > 0) {
+            LocalDate proximo = primeiro.plusDays(parcelaReintervaloDias);
+            while (!proximo.isAfter(hoje) && gatilhos.size() <= MAX_RELEMBRETES_PARCELA) {
+                gatilhos.add(proximo);
+                proximo = proximo.plusDays(parcelaReintervaloDias);
+            }
+        }
+        return gatilhos;
+    }
+
+    /**
      * Cancela notificacoes PENDING que nao correspondem mais ao planejamento (evento cancelado
-     * ou reagendado) e cria as devidas que ainda nao existem, evitando duplicidade.
+     * ou reagendado) e cria as devidas que ainda nao existem, evitando duplicidade. A chave de
+     * comparacao e (destinatario + data-gatilho), permitindo lembretes escalonados (30/15/7/1)
+     * coexistirem para a mesma entidade.
      */
     private void reconciliarEGerar(String entityId, Notificacao.NotificacaoType type, List<Plano> planos,
                                    LocalDate hoje, Contexto contexto) {
-        Map<Destinatario, Plano> esperado = new EnumMap<>(Destinatario.class);
+        Map<ChavePlano, Plano> esperado = new LinkedHashMap<>();
         for (Plano plano : planos) {
-            esperado.put(plano.tipo(), plano);
+            esperado.put(new ChavePlano(plano.tipo(), plano.triggerDate()), plano);
         }
 
         List<Notificacao> pendentes = notificacaoRepo.findByRelatedEntityId(entityId).stream()
@@ -245,8 +286,8 @@ public class CasoDeUsoGerarNotificacoes implements CasoDeUsoGeracaoNotificacao {
                 .toList();
         for (Notificacao pendente : pendentes) {
             Destinatario tipo = pendente.destinatario() == null ? null : pendente.destinatario().tipo();
-            Plano plano = tipo == null ? null : esperado.get(tipo);
-            if (plano == null || !plano.triggerDate().equals(pendente.triggerDate())) {
+            ChavePlano chave = tipo == null ? null : new ChavePlano(tipo, pendente.triggerDate());
+            if (chave == null || !esperado.containsKey(chave)) {
                 notificacaoRepo.save(pendente.cancelar());
             }
         }
@@ -255,7 +296,7 @@ public class CasoDeUsoGerarNotificacoes implements CasoDeUsoGeracaoNotificacao {
             if (hoje.isBefore(plano.triggerDate())) {
                 continue;
             }
-            if (notificacaoRepo.existsAtivoParaDestinatario(type, entityId, plano.tipo())) {
+            if (notificacaoRepo.existsAtivoParaDestinatarioNoDia(type, entityId, plano.tipo(), plano.triggerDate())) {
                 continue;
             }
             Notificacao nova = construir(plano, entityId, type, contexto);
@@ -263,6 +304,17 @@ public class CasoDeUsoGerarNotificacoes implements CasoDeUsoGeracaoNotificacao {
                 notificacaoRepo.save(nova);
             }
         }
+    }
+
+    /**
+     * Antecedencias de lembrete a usar: o conjunto configurado na entidade tem prioridade; se estiver
+     * vazio, cai no override legado da configuracao (um unico valor), quando houver.
+     */
+    private static List<Integer> diasEfetivos(NotificacaoConfiguracao config, List<Integer> diasEntidade) {
+        if (diasEntidade != null && !diasEntidade.isEmpty()) {
+            return diasEntidade;
+        }
+        return config.diasAntecedencia() != null ? List.of(config.diasAntecedencia()) : List.of();
     }
 
     private Notificacao construir(Plano plano, String entityId, Notificacao.NotificacaoType type, Contexto contexto) {
@@ -286,7 +338,8 @@ public class CasoDeUsoGerarNotificacoes implements CasoDeUsoGeracaoNotificacao {
 
         String telefone = resolverTelefone(config, tipo, cliente, funcionario);
         String telefoneNormalizado = TelefoneWhatsapp.normalizar(telefone);
-        if (telefoneNormalizado.isBlank()) {
+        // Descarta destinatario sem telefone valido (evita enviar para numero incompleto/errado).
+        if (!TelefoneWhatsapp.valido(telefoneNormalizado)) {
             return null;
         }
 
@@ -319,7 +372,7 @@ public class CasoDeUsoGerarNotificacoes implements CasoDeUsoGeracaoNotificacao {
                 .destinatario(destinatario)
                 .remetente(remetente)
                 .templateId(config.id())
-                .scheduledFor(plano.triggerDate().atStartOfDay())
+                .scheduledFor(plano.triggerDate().atTime(horaEnvio, 0))
                 .source("SIGLA")
                 .canal(config.canal())
                 .metadata(contexto.variaveis())
@@ -354,6 +407,9 @@ public class CasoDeUsoGerarNotificacoes implements CasoDeUsoGeracaoNotificacao {
     }
 
     private record Plano(NotificacaoConfiguracao config, Destinatario tipo, LocalDate triggerDate) {
+    }
+
+    private record ChavePlano(Destinatario tipo, LocalDate triggerDate) {
     }
 
     private record Contexto(Cliente cliente, Funcionario funcionario, Map<String, String> variaveis) {

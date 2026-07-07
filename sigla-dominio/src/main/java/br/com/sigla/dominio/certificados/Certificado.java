@@ -1,6 +1,9 @@
 package br.com.sigla.dominio.certificados;
 
+import br.com.sigla.dominio.notificacoes.DiasLembrete;
+
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 public record Certificado(
@@ -15,7 +18,8 @@ public record Certificado(
         boolean alertActive,
         CertificadoStatus status,
         int renewalAlertDays,
-        String notes
+        String notes,
+        List<Integer> diasLembrete
 ) {
     public Certificado {
         id = requireText(id, "id");
@@ -35,6 +39,26 @@ public record Certificado(
         }
         renewalAlertDays = renewalAlertDays == 0 ? 15 : renewalAlertDays;
         notes = normalizeOptional(notes);
+        diasLembrete = DiasLembrete.normalizar(diasLembrete);
+    }
+
+    /** Construtor compativel: sem conjunto de dias configurado (usa o fallback legado do int). */
+    public Certificado(
+            String id,
+            String customerId,
+            String serviceProvidedId,
+            String orderId,
+            String description,
+            LocalDate issuedOn,
+            LocalDate validUntil,
+            int intervalMonths,
+            boolean alertActive,
+            CertificadoStatus status,
+            int renewalAlertDays,
+            String notes
+    ) {
+        this(id, customerId, serviceProvidedId, orderId, description, issuedOn, validUntil,
+                intervalMonths, alertActive, status, renewalAlertDays, notes, null);
     }
 
     public Certificado(
@@ -46,6 +70,22 @@ public record Certificado(
             int renewalAlertDays
     ) {
         this(id, serviceProvidedId, "", "", "Certificado de higiene", issuedOn, validUntil, 6, true, status, renewalAlertDays, "");
+    }
+
+    /**
+     * Antecedencias efetivas de lembrete: o conjunto configurado quando existir; caso contrario
+     * (nao configurado) deriva do campo legado {@code renewalAlertDays}.
+     */
+    public List<Integer> diasLembreteEfetivos() {
+        if (diasLembrete != null) {
+            return diasLembrete;
+        }
+        return (alertActive && renewalAlertDays > 0) ? List.of(renewalAlertDays) : List.of();
+    }
+
+    public Certificado comDiasLembrete(List<Integer> novosDias) {
+        return new Certificado(id, customerId, serviceProvidedId, orderId, description, issuedOn,
+                validUntil, intervalMonths, alertActive, status, renewalAlertDays, notes, novosDias);
     }
 
     public boolean isExpiringWithin(LocalDate referenceDate) {
@@ -71,7 +111,7 @@ public record Certificado(
 
     public Certificado comStatus(CertificadoStatus novoStatus) {
         return new Certificado(id, customerId, serviceProvidedId, orderId, description, issuedOn,
-                validUntil, intervalMonths, alertActive, novoStatus, renewalAlertDays, notes);
+                validUntil, intervalMonths, alertActive, novoStatus, renewalAlertDays, notes, diasLembrete);
     }
 
     public enum CertificadoStatus {

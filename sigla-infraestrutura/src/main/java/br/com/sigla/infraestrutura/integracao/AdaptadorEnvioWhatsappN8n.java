@@ -10,6 +10,8 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.net.http.HttpTimeoutException;
+import java.time.Duration;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Objects;
@@ -29,7 +31,7 @@ public class AdaptadorEnvioWhatsappN8n implements PortaEnvioWhatsapp {
 
     @Autowired
     public AdaptadorEnvioWhatsappN8n(PropriedadesNotificacoesSigla propriedades) {
-        this(propriedades, transporteHttpPadrao());
+        this(propriedades, transporteHttpPadrao(timeoutDe(propriedades)));
     }
 
     AdaptadorEnvioWhatsappN8n(PropriedadesNotificacoesSigla propriedades, Transporte transporte) {
@@ -53,6 +55,7 @@ public class AdaptadorEnvioWhatsappN8n implements PortaEnvioWhatsapp {
         HttpRequest request;
         try {
             HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(url.trim()))
+                    .timeout(timeoutDe(propriedades))
                     .header("Content-Type", "application/json");
             String token = propriedades.getWebhook().getToken();
             if (token != null && !token.isBlank()) {
@@ -69,6 +72,8 @@ public class AdaptadorEnvioWhatsappN8n implements PortaEnvioWhatsapp {
                 return ResultadoEnvio.enviado();
             }
             return ResultadoEnvio.falha("Webhook retornou HTTP " + resposta.status() + ".");
+        } catch (HttpTimeoutException exception) {
+            return ResultadoEnvio.falha("Tempo de resposta do webhook esgotado (timeout).");
         } catch (IOException exception) {
             return ResultadoEnvio.falha("Falha de IO ao enviar webhook: " + exception.getMessage());
         } catch (InterruptedException exception) {
@@ -119,15 +124,38 @@ public class AdaptadorEnvioWhatsappN8n implements PortaEnvioWhatsapp {
         return "\"" + escape(nome) + "\":\"" + escape(valor == null ? "" : valor) + "\"";
     }
 
+    /** Escapa uma string para JSON, cobrindo aspas, barras, quebras e todos os caracteres de controle. */
     private String escape(String valor) {
-        return valor.replace("\\", "\\\\")
-                .replace("\"", "\\\"")
-                .replace("\n", "\\n")
-                .replace("\r", "\\r");
+        StringBuilder sb = new StringBuilder(valor.length() + 8);
+        for (int i = 0; i < valor.length(); i++) {
+            char c = valor.charAt(i);
+            switch (c) {
+                case '\\' -> sb.append("\\\\");
+                case '"' -> sb.append("\\\"");
+                case '\n' -> sb.append("\\n");
+                case '\r' -> sb.append("\\r");
+                case '\t' -> sb.append("\\t");
+                case '\b' -> sb.append("\\b");
+                case '\f' -> sb.append("\\f");
+                default -> {
+                    if (c < 0x20) {
+                        sb.append(String.format("\\u%04x", (int) c));
+                    } else {
+                        sb.append(c);
+                    }
+                }
+            }
+        }
+        return sb.toString();
     }
 
-    private static Transporte transporteHttpPadrao() {
-        HttpClient client = HttpClient.newHttpClient();
+    private static Duration timeoutDe(PropriedadesNotificacoesSigla propriedades) {
+        int segundos = propriedades.getTimeoutSegundos() > 0 ? propriedades.getTimeoutSegundos() : 15;
+        return Duration.ofSeconds(segundos);
+    }
+
+    private static Transporte transporteHttpPadrao(Duration connectTimeout) {
+        HttpClient client = HttpClient.newBuilder().connectTimeout(connectTimeout).build();
         return request -> {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             return new Transporte.Resposta(response.statusCode(), response.body());

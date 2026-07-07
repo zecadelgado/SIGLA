@@ -2,6 +2,7 @@ package br.com.sigla.infraestrutura.persistencia.repositorio;
 
 import br.com.sigla.aplicacao.certificados.porta.saida.RepositorioCertificado;
 import br.com.sigla.dominio.certificados.Certificado;
+import br.com.sigla.dominio.notificacoes.DiasLembrete;
 import br.com.sigla.infraestrutura.persistencia.PersistenciaIds;
 import br.com.sigla.infraestrutura.persistencia.entidade.CertificadoEntidade;
 import org.springframework.context.annotation.Profile;
@@ -50,6 +51,7 @@ public class AdaptadorRepositorioCertificado implements RepositorioCertificado {
         entity.setAlertaAtivo(certificate.alertActive());
         entity.setStatus(certificate.status().name());
         entity.setRenewalAlertDays(certificate.renewalAlertDays());
+        entity.setAlertaDiasConjunto(DiasLembrete.formatar(certificate.diasLembrete()));
         entity.setObservacoes(certificate.notes());
         return entity;
     }
@@ -68,7 +70,7 @@ public class AdaptadorRepositorioCertificado implements RepositorioCertificado {
                 parseStatus(entity.getStatus()),
                 entity.getRenewalAlertDays() <= 0 ? 15 : entity.getRenewalAlertDays(),
                 entity.getObservacoes()
-        );
+        ).comDiasLembrete(DiasLembrete.parse(entity.getAlertaDiasConjunto()));
     }
 
     private Certificado.CertificadoStatus parseStatus(String value) {

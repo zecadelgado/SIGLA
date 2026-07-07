@@ -9,6 +9,7 @@ import br.com.sigla.dominio.contratos.Contrato;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorData;
 import br.com.sigla.interfacegrafica.apresentacao.ApresentadorMoeda;
 import br.com.sigla.interfacegrafica.async.ExecutorTarefasUi;
+import br.com.sigla.interfacegrafica.componente.SeletorDiasLembrete;
 import br.com.sigla.interfacegrafica.formatador.FormatadorMascaraMoeda;
 import br.com.sigla.interfacegrafica.util.TradutorInterface;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -355,9 +356,8 @@ public class ControladorContratosCertificados {
         TextField valorMensalField = new TextField();
         formatadorMoeda.aplicar(valorMensalField);
         formatadorMoeda.definir(valorMensalField, BigDecimal.ZERO);
-        TextField diasAlertaField = new TextField("15");
-        CheckBox alertaAtivoCheck = new CheckBox("Alerta ativo");
-        alertaAtivoCheck.setSelected(true);
+        SeletorDiasLembrete seletorDias = new SeletorDiasLembrete();
+        seletorDias.setDias(java.util.List.of(30));
         TextArea observacoesArea = new TextArea();
         observacoesArea.setPrefRowCount(3);
 
@@ -369,8 +369,7 @@ public class ControladorContratosCertificados {
             tipoCombo.getSelectionModel().select(existente.type());
             frequenciaCombo.getSelectionModel().select(existente.serviceFrequency());
             formatadorMoeda.definir(valorMensalField, existente.monthlyValue());
-            diasAlertaField.setText(String.valueOf(existente.alertDaysBeforeEnd()));
-            alertaAtivoCheck.setSelected(existente.alertActive());
+            seletorDias.setDias(existente.diasLembreteEfetivos());
             observacoesArea.setText(existente.notes());
         }
 
@@ -382,8 +381,7 @@ public class ControladorContratosCertificados {
                 "Tipo", tipoCombo,
                 "Frequência", frequenciaCombo,
                 "Valor mensal", valorMensalField,
-                "Dias de alerta", diasAlertaField,
-                "Alerta", alertaAtivoCheck,
+                "Lembretes (dias antes)", seletorDias,
                 "Observações", observacoesArea
         ));
         dialog.setResultConverter(button -> button == ButtonType.OK);
@@ -405,9 +403,10 @@ public class ControladorContratosCertificados {
                             Contrato.ContratoStatus.ACTIVE,
                             Contrato.RenewalRule.MANUAL,
                             formatadorMoeda.valor(valorMensalField),
-                            alertaAtivoCheck.isSelected(),
-                            parseInt(diasAlertaField.getText(), 15),
-                            observacoesArea.getText()
+                            !seletorDias.getDias().isEmpty(),
+                            seletorDias.getDias().isEmpty() ? 15 : seletorDias.getDias().get(0),
+                            observacoesArea.getText(),
+                            seletorDias.getDias()
                     ));
                 } else {
                     casoDeUsoContrato.update(new CasoDeUsoContrato.UpdateContratoCommand(
@@ -420,9 +419,10 @@ public class ControladorContratosCertificados {
                             frequenciaCombo.getValue(),
                             Contrato.RenewalRule.MANUAL,
                             formatadorMoeda.valor(valorMensalField),
-                            alertaAtivoCheck.isSelected(),
-                            parseInt(diasAlertaField.getText(), 15),
-                            observacoesArea.getText()
+                            !seletorDias.getDias().isEmpty(),
+                            seletorDias.getDias().isEmpty() ? 15 : seletorDias.getDias().get(0),
+                            observacoesArea.getText(),
+                            seletorDias.getDias()
                     ));
                 }
                 refresh();
@@ -448,9 +448,8 @@ public class ControladorContratosCertificados {
         DatePicker emissaoPicker = new DatePicker(LocalDate.now());
         DatePicker validadePicker = new DatePicker();
         TextField intervaloField = new TextField("6");
-        TextField diasAlertaField = new TextField("15");
-        CheckBox alertaAtivoCheck = new CheckBox("Alerta ativo");
-        alertaAtivoCheck.setSelected(true);
+        SeletorDiasLembrete seletorDias = new SeletorDiasLembrete();
+        seletorDias.setDias(java.util.List.of(15));
         TextArea observacoesArea = new TextArea();
         observacoesArea.setPrefRowCount(3);
 
@@ -460,8 +459,7 @@ public class ControladorContratosCertificados {
             emissaoPicker.setValue(existente.issuedOn());
             validadePicker.setValue(existente.validUntil());
             intervaloField.setText(String.valueOf(existente.intervalMonths()));
-            diasAlertaField.setText(String.valueOf(existente.renewalAlertDays()));
-            alertaAtivoCheck.setSelected(existente.alertActive());
+            seletorDias.setDias(existente.diasLembreteEfetivos());
             observacoesArea.setText(existente.notes());
         }
 
@@ -471,8 +469,7 @@ public class ControladorContratosCertificados {
                 "Emissão", emissaoPicker,
                 "Validade", validadePicker,
                 "Intervalo em meses", intervaloField,
-                "Dias de alerta", diasAlertaField,
-                "Alerta", alertaAtivoCheck,
+                "Lembretes (dias antes)", seletorDias,
                 "Observações", observacoesArea
         ));
         dialog.setResultConverter(button -> button == ButtonType.OK);
@@ -492,10 +489,11 @@ public class ControladorContratosCertificados {
                             emissaoPicker.getValue(),
                             validadePicker.getValue(),
                             parseInt(intervaloField.getText(), 6),
-                            alertaAtivoCheck.isSelected(),
+                            !seletorDias.getDias().isEmpty(),
                             Certificado.CertificadoStatus.ACTIVE,
-                            parseInt(diasAlertaField.getText(), 15),
-                            observacoesArea.getText()
+                            seletorDias.getDias().isEmpty() ? 15 : seletorDias.getDias().get(0),
+                            observacoesArea.getText(),
+                            seletorDias.getDias()
                     ));
                 } else {
                     casoDeUsoCertificado.update(new CasoDeUsoCertificado.UpdateCertificadoCommand(
@@ -505,9 +503,10 @@ public class ControladorContratosCertificados {
                             emissaoPicker.getValue(),
                             validadePicker.getValue(),
                             parseInt(intervaloField.getText(), 6),
-                            alertaAtivoCheck.isSelected(),
-                            parseInt(diasAlertaField.getText(), 15),
-                            observacoesArea.getText()
+                            !seletorDias.getDias().isEmpty(),
+                            seletorDias.getDias().isEmpty() ? 15 : seletorDias.getDias().get(0),
+                            observacoesArea.getText(),
+                            seletorDias.getDias()
                     ));
                 }
                 refresh();

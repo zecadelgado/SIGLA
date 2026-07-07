@@ -50,6 +50,18 @@ public class SemeadorTemplatesNotificacao implements ApplicationRunner {
                 "Vencimento de certificado", "Certificado proximo do vencimento",
                 "Ola {{cliente_nome}}, seu certificado vence em {{certificado_vencimento}}. Agende a renovacao.",
                 Destinatario.CLIENTE, FonteTelefone.CLIENTE, null);
+
+        criarSeAusente(existentes, Notificacao.NotificacaoType.INSTALLMENT_OVERDUE,
+                "Parcela em atraso", "Pagamento em atraso",
+                "Ola {{cliente_nome}}, consta em aberto a parcela de {{parcela_valor}} vencida em "
+                        + "{{parcela_vencimento}} referente a {{descricao_lancamento}}. Por favor, regularize.",
+                Destinatario.CLIENTE, FonteTelefone.CLIENTE, null);
+
+        criarSeAusente(existentes, Notificacao.NotificacaoType.VISIT_MISSED,
+                "Visita nao realizada", "Visita nao realizada",
+                "Ola {{cliente_nome}}, notamos que a visita de {{tipo_servico}} agendada para {{data_visita}} "
+                        + "nao foi realizada. Vamos reagendar?",
+                Destinatario.CLIENTE, FonteTelefone.CLIENTE, null);
     }
 
     private void criarSeAusente(

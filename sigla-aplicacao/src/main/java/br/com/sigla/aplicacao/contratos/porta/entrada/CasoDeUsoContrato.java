@@ -35,8 +35,26 @@ public interface CasoDeUsoContrato {
             BigDecimal monthlyValue,
             boolean alertActive,
             int alertDaysBeforeEnd,
-            String notes
+            String notes,
+            List<Integer> diasLembrete
     ) {
+        public UpdateContratoCommand(
+                String id,
+                String customerId,
+                String description,
+                LocalDate startDate,
+                LocalDate endDate,
+                Contrato.ContratoType type,
+                Contrato.ServiceFrequency serviceFrequency,
+                Contrato.RenewalRule renewalRule,
+                BigDecimal monthlyValue,
+                boolean alertActive,
+                int alertDaysBeforeEnd,
+                String notes
+        ) {
+            this(id, customerId, description, startDate, endDate, type, serviceFrequency, renewalRule,
+                    monthlyValue, alertActive, alertDaysBeforeEnd, notes, null);
+        }
     }
 
     record EncerrarContratoCommand(String id, String motivo) {
@@ -58,8 +76,28 @@ public interface CasoDeUsoContrato {
             BigDecimal monthlyValue,
             boolean alertActive,
             int alertDaysBeforeEnd,
-            String notes
+            String notes,
+            List<Integer> diasLembrete
     ) {
+        public CreateContratoCommand(
+                String id,
+                String customerId,
+                String description,
+                LocalDate startDate,
+                LocalDate endDate,
+                Contrato.ContratoType type,
+                Contrato.ServiceFrequency serviceFrequency,
+                Contrato.ContratoStatus status,
+                Contrato.RenewalRule renewalRule,
+                BigDecimal monthlyValue,
+                boolean alertActive,
+                int alertDaysBeforeEnd,
+                String notes
+        ) {
+            this(id, customerId, description, startDate, endDate, type, serviceFrequency, status,
+                    renewalRule, monthlyValue, alertActive, alertDaysBeforeEnd, notes, null);
+        }
+
         public CreateContratoCommand(
                 String id,
                 String customerId,

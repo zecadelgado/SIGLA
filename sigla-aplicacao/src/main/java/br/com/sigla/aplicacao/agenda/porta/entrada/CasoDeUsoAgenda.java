@@ -46,8 +46,37 @@ public interface CasoDeUsoAgenda {
             String responsibleId,
             boolean reminderActive,
             int reminderDaysBefore,
-            String notes
+            String notes,
+            List<Integer> diasLembrete
     ) {
+        /** Construtor compativel: sem conjunto de dias configurado. */
+        public ScheduleVisitCommand(
+                String id,
+                String customerId,
+                String orderId,
+                String contractId,
+                String certificateId,
+                VisitaAgendada.VisitType type,
+                VisitaAgendada.Recurrence recurrence,
+                LocalDate scheduledDate,
+                String title,
+                String serviceType,
+                String internalResponsible,
+                LocalDateTime startAt,
+                LocalDateTime endAt,
+                boolean allDay,
+                VisitaAgendada.VisitStatus status,
+                VisitaAgendada.VisitPriority priority,
+                String responsibleId,
+                boolean reminderActive,
+                int reminderDaysBefore,
+                String notes
+        ) {
+            this(id, customerId, orderId, contractId, certificateId, type, recurrence, scheduledDate,
+                    title, serviceType, internalResponsible, startAt, endAt, allDay, status, priority,
+                    responsibleId, reminderActive, reminderDaysBefore, notes, null);
+        }
+
         public ScheduleVisitCommand(
                 String id,
                 String customerId,

@@ -120,7 +120,7 @@ public class CasoDeUsoGerenciarAgenda implements CasoDeUsoAgenda {
                 command.reminderActive(),
                 command.reminderDaysBefore(),
                 command.notes()
-        );
+        ).comDiasLembrete(command.diasLembrete());
     }
 
     private void validate(VisitaAgendada schedule) {
@@ -170,7 +170,7 @@ public class CasoDeUsoGerenciarAgenda implements CasoDeUsoAgenda {
                 current.reminderActive(),
                 current.reminderDaysBefore(),
                 notes
-        );
+        ).comDiasLembrete(current.diasLembrete());
     }
 
     private String append(String current, String addition) {

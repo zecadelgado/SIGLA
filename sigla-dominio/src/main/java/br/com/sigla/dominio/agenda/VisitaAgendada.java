@@ -1,5 +1,7 @@
 package br.com.sigla.dominio.agenda;
 
+import br.com.sigla.dominio.notificacoes.DiasLembrete;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,7 +27,8 @@ public record VisitaAgendada(
         String responsibleId,
         boolean reminderActive,
         int reminderDaysBefore,
-        String notes
+        String notes,
+        List<Integer> diasLembrete
 ) {
     public VisitaAgendada {
         id = requireText(id, "id");
@@ -49,6 +52,52 @@ public record VisitaAgendada(
             throw new IllegalArgumentException("reminderDaysBefore must not be negative");
         }
         notes = normalizeOptional(notes);
+        diasLembrete = DiasLembrete.normalizar(diasLembrete);
+    }
+
+    /** Construtor compativel: sem conjunto de dias configurado (usa o fallback legado do int). */
+    public VisitaAgendada(
+            String id,
+            String customerId,
+            String orderId,
+            String contractId,
+            String certificateId,
+            VisitType type,
+            Recurrence recurrence,
+            LocalDate scheduledDate,
+            String title,
+            String serviceType,
+            String internalResponsible,
+            LocalDateTime startAt,
+            LocalDateTime endAt,
+            boolean allDay,
+            VisitStatus status,
+            VisitPriority priority,
+            String responsibleId,
+            boolean reminderActive,
+            int reminderDaysBefore,
+            String notes
+    ) {
+        this(id, customerId, orderId, contractId, certificateId, type, recurrence, scheduledDate,
+                title, serviceType, internalResponsible, startAt, endAt, allDay, status, priority,
+                responsibleId, reminderActive, reminderDaysBefore, notes, null);
+    }
+
+    /**
+     * Antecedencias efetivas de lembrete: o conjunto configurado quando existir; caso contrario
+     * (nao configurado) deriva do campo legado {@code reminderDaysBefore}.
+     */
+    public List<Integer> diasLembreteEfetivos() {
+        if (diasLembrete != null) {
+            return diasLembrete;
+        }
+        return (reminderActive && reminderDaysBefore > 0) ? List.of(reminderDaysBefore) : List.of();
+    }
+
+    public VisitaAgendada comDiasLembrete(List<Integer> novosDias) {
+        return new VisitaAgendada(id, customerId, orderId, contractId, certificateId, type, recurrence,
+                scheduledDate, title, serviceType, internalResponsible, startAt, endAt, allDay, status,
+                priority, responsibleId, reminderActive, reminderDaysBefore, notes, novosDias);
     }
 
     public VisitaAgendada(
@@ -260,7 +309,8 @@ public record VisitaAgendada(
                 responsibleId,
                 reminderActive,
                 reminderDaysBefore,
-                notes
+                notes,
+                diasLembrete
         );
     }
 

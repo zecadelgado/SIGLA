@@ -2,6 +2,7 @@ package br.com.sigla.infraestrutura.persistencia.repositorio;
 
 import br.com.sigla.aplicacao.contratos.porta.saida.RepositorioContrato;
 import br.com.sigla.dominio.contratos.Contrato;
+import br.com.sigla.dominio.notificacoes.DiasLembrete;
 import br.com.sigla.infraestrutura.persistencia.PersistenciaIds;
 import br.com.sigla.infraestrutura.persistencia.entidade.ContratoEntidade;
 import org.springframework.context.annotation.Profile;
@@ -53,7 +54,7 @@ public class AdaptadorRepositorioContrato implements RepositorioContrato {
                 entity.isAlertaAtivo(),
                 entity.getDiasAlertaFim(),
                 entity.getObservacoes()
-        );
+        ).comDiasLembrete(DiasLembrete.parse(entity.getAlertaDiasConjunto()));
     }
 
     private ContratoEntidade toEntity(Contrato contract) {
@@ -67,6 +68,7 @@ public class AdaptadorRepositorioContrato implements RepositorioContrato {
         entity.setValorMensal(contract.monthlyValue());
         entity.setAlertaAtivo(contract.alertActive());
         entity.setDiasAlertaFim(contract.alertDaysBeforeEnd());
+        entity.setAlertaDiasConjunto(DiasLembrete.formatar(contract.diasLembrete()));
         entity.setStatus(contract.status().name());
         entity.setObservacoes(contract.notes().isBlank() ? contract.renewalRule().name() : contract.notes());
         return entity;

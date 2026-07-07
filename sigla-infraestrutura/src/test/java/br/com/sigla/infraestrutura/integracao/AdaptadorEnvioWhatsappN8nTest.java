@@ -108,6 +108,27 @@ class AdaptadorEnvioWhatsappN8nTest {
     }
 
     @Test
+    void jsonEscapaCaracteresDeControle() {
+        PropriedadesNotificacoesSigla props = new PropriedadesNotificacoesSigla();
+        AdaptadorEnvioWhatsappN8n adapter = new AdaptadorEnvioWhatsappN8n(props,
+                req -> new Transporte.Resposta(200, ""));
+        String tab = String.valueOf((char) 9);
+        String bel = String.valueOf((char) 7);
+        Map<String, String> meta = new LinkedHashMap<>();
+        meta.put("obs", "linha" + tab + "col" + bel + "fim");
+        PayloadNotificacaoWhatsapp p = new PayloadNotificacaoWhatsapp(
+                "e", "VISIT_UPCOMING", "SIGLA", "CLIENTE", "Maria", "5511999998888",
+                "SISTEMA", "SIGLA", "c", "f", "v", "t", "ola" + tab + "mundo",
+                LocalDateTime.of(2026, 6, 18, 8, 0), meta);
+
+        String json = adapter.toJson(p);
+
+        assertTrue(json.contains("\\t"), "tab deve ser escapado");
+        assertTrue(json.contains("\\u0007"), "caractere de controle deve virar \\u00xx");
+        assertFalse(json.contains(bel), "nenhum caractere de controle cru no JSON");
+    }
+
+    @Test
     void jsonContemCamposPrincipais() {
         PropriedadesNotificacoesSigla props = new PropriedadesNotificacoesSigla();
         AdaptadorEnvioWhatsappN8n adapter = new AdaptadorEnvioWhatsappN8n(props,

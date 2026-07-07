@@ -6,6 +6,7 @@ import br.com.sigla.aplicacao.notificacoes.porta.saida.PortaEnvioWhatsapp.Payloa
 import br.com.sigla.aplicacao.notificacoes.porta.saida.PortaEnvioWhatsapp.ResultadoEnvio;
 import br.com.sigla.aplicacao.notificacoes.porta.saida.RepositorioNotificacao;
 import br.com.sigla.dominio.notificacoes.Notificacao;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,16 +18,29 @@ public class CasoDeUsoDispararNotificacoes implements CasoDeUsoEnvioNotificacao 
 
     private final RepositorioNotificacao repositorio;
     private final PortaEnvioWhatsapp envioWhatsapp;
+    private final int maxTentativas;
 
-    public CasoDeUsoDispararNotificacoes(RepositorioNotificacao repositorio, PortaEnvioWhatsapp envioWhatsapp) {
+    public CasoDeUsoDispararNotificacoes(
+            RepositorioNotificacao repositorio,
+            PortaEnvioWhatsapp envioWhatsapp,
+            @Value("${sigla.notificacoes.max-tentativas:5}") int maxTentativas) {
         this.repositorio = repositorio;
         this.envioWhatsapp = envioWhatsapp;
+        this.maxTentativas = maxTentativas > 0 ? maxTentativas : 5;
     }
 
     @Override
     public int dispatchDue(LocalDateTime momento) {
         int enviados = 0;
+        // Snapshot das falhas ANTES de disparar as pendentes: uma pendente que falhar agora so
+        // sera retentada na proxima execucao (evita martelar o webhook na mesma rodada).
+        List<Notificacao> falhasPreexistentes = repositorio.findFalhasReprocessaveis(maxTentativas);
         for (Notificacao notificacao : repositorio.findDuePending(momento)) {
+            if (enviarEAtualizar(notificacao)) {
+                enviados++;
+            }
+        }
+        for (Notificacao notificacao : falhasPreexistentes) {
             if (enviarEAtualizar(notificacao)) {
                 enviados++;
             }

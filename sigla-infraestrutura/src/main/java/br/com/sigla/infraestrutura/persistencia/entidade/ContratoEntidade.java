@@ -41,6 +41,9 @@ public class ContratoEntidade {
     @Column(name = "dias_alerta_fim")
     private int diasAlertaFim = 30;
 
+    @Column(name = "alerta_dias_conjunto")
+    private String alertaDiasConjunto;
+
     @Column(name = "status")
     private String status;
 
@@ -117,6 +120,14 @@ public class ContratoEntidade {
 
     public void setDiasAlertaFim(int diasAlertaFim) {
         this.diasAlertaFim = diasAlertaFim;
+    }
+
+    public String getAlertaDiasConjunto() {
+        return alertaDiasConjunto;
+    }
+
+    public void setAlertaDiasConjunto(String alertaDiasConjunto) {
+        this.alertaDiasConjunto = alertaDiasConjunto;
     }
 
     public String getStatus() {

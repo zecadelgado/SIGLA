@@ -46,7 +46,7 @@ public class CasoDeUsoGerenciarCertificado implements CasoDeUsoCertificado {
                 command.status(),
                 alertDays,
                 command.notes()
-        );
+        ).comDiasLembrete(command.diasLembrete());
         repository.save(certificado);
         sincronizarCalendario(certificado);
     }
@@ -70,7 +70,7 @@ public class CasoDeUsoGerenciarCertificado implements CasoDeUsoCertificado {
                 atual.status(),
                 alertDays,
                 command.notes()
-        );
+        ).comDiasLembrete(command.diasLembrete());
         repository.save(certificado);
         sincronizarCalendario(certificado);
     }
@@ -101,7 +101,7 @@ public class CasoDeUsoGerenciarCertificado implements CasoDeUsoCertificado {
                 Certificado.CertificadoStatus.ACTIVE,
                 atual.renewalAlertDays(),
                 atual.notes()
-        );
+        ).comDiasLembrete(atual.diasLembrete());
         repository.save(novo);
         sincronizarCalendario(novo);
         return novoId;

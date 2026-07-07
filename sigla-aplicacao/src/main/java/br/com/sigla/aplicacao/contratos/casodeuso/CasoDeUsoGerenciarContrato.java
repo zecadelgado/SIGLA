@@ -44,7 +44,7 @@ public class CasoDeUsoGerenciarContrato implements CasoDeUsoContrato {
                 command.alertActive(),
                 command.alertDaysBeforeEnd(),
                 command.notes()
-        );
+        ).comDiasLembrete(command.diasLembrete());
         repository.save(contrato);
         sincronizarCalendario(contrato);
     }
@@ -66,7 +66,7 @@ public class CasoDeUsoGerenciarContrato implements CasoDeUsoContrato {
                 command.alertActive(),
                 command.alertDaysBeforeEnd(),
                 command.notes()
-        );
+        ).comDiasLembrete(command.diasLembrete());
         repository.save(contrato);
         sincronizarCalendario(contrato);
     }

@@ -64,6 +64,9 @@ public class VisitaAgendadaEntidade {
     @Column(name = "dias_antecedencia_lembrete")
     private Integer reminderDaysBefore;
 
+    @Column(name = "lembrete_dias_conjunto")
+    private String lembreteDiasConjunto;
+
     public UUID getId() {
         return id;
     }
@@ -205,6 +208,14 @@ public class VisitaAgendadaEntidade {
 
     public void setReminderDaysBefore(Integer reminderDaysBefore) {
         this.reminderDaysBefore = reminderDaysBefore;
+    }
+
+    public String getLembreteDiasConjunto() {
+        return lembreteDiasConjunto;
+    }
+
+    public void setLembreteDiasConjunto(String lembreteDiasConjunto) {
+        this.lembreteDiasConjunto = lembreteDiasConjunto;
     }
 
     public String getNotes() {

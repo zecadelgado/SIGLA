@@ -27,7 +27,7 @@ class CasoDeUsoDispararNotificacoesTest {
         FakeNotif notif = new FakeNotif();
         notif.save(pendente("n1", AGORA.minusHours(1)));
         CasoDeUsoDispararNotificacoes casoDeUso = new CasoDeUsoDispararNotificacoes(
-                notif, new FakePorta(PortaEnvioWhatsapp.ResultadoEnvio.enviado()));
+                notif, new FakePorta(PortaEnvioWhatsapp.ResultadoEnvio.enviado()), 5);
 
         int enviados = casoDeUso.dispatchDue(AGORA);
 
@@ -42,7 +42,7 @@ class CasoDeUsoDispararNotificacoesTest {
         FakeNotif notif = new FakeNotif();
         notif.save(pendente("n1", AGORA.plusDays(1)));
         CasoDeUsoDispararNotificacoes casoDeUso = new CasoDeUsoDispararNotificacoes(
-                notif, new FakePorta(PortaEnvioWhatsapp.ResultadoEnvio.enviado()));
+                notif, new FakePorta(PortaEnvioWhatsapp.ResultadoEnvio.enviado()), 5);
 
         int enviados = casoDeUso.dispatchDue(AGORA);
 
@@ -55,7 +55,7 @@ class CasoDeUsoDispararNotificacoesTest {
         FakeNotif notif = new FakeNotif();
         notif.save(pendente("n1", AGORA.minusHours(1)));
         CasoDeUsoDispararNotificacoes casoDeUso = new CasoDeUsoDispararNotificacoes(
-                notif, new FakePorta(PortaEnvioWhatsapp.ResultadoEnvio.desabilitado("off")));
+                notif, new FakePorta(PortaEnvioWhatsapp.ResultadoEnvio.desabilitado("off")), 5);
 
         int enviados = casoDeUso.dispatchDue(AGORA);
 
@@ -68,7 +68,7 @@ class CasoDeUsoDispararNotificacoesTest {
         FakeNotif notif = new FakeNotif();
         notif.save(pendente("n1", AGORA.minusHours(1)));
         CasoDeUsoDispararNotificacoes casoDeUso = new CasoDeUsoDispararNotificacoes(
-                notif, new FakePorta(PortaEnvioWhatsapp.ResultadoEnvio.simulado("modo-teste")));
+                notif, new FakePorta(PortaEnvioWhatsapp.ResultadoEnvio.simulado("modo-teste")), 5);
 
         int enviados = casoDeUso.dispatchDue(AGORA);
 
@@ -81,7 +81,7 @@ class CasoDeUsoDispararNotificacoesTest {
         FakeNotif notif = new FakeNotif();
         notif.save(pendente("n1", AGORA.minusHours(1)));
         CasoDeUsoDispararNotificacoes casoDeUso = new CasoDeUsoDispararNotificacoes(
-                notif, new FakePorta(PortaEnvioWhatsapp.ResultadoEnvio.falha("n8n indisponivel")));
+                notif, new FakePorta(PortaEnvioWhatsapp.ResultadoEnvio.falha("n8n indisponivel")), 5);
 
         int enviados = casoDeUso.dispatchDue(AGORA);
 
@@ -97,12 +97,42 @@ class CasoDeUsoDispararNotificacoesTest {
         FakeNotif notif = new FakeNotif();
         notif.save(pendente("n1", AGORA.minusHours(1)).registrarFalha("erro anterior"));
         CasoDeUsoDispararNotificacoes casoDeUso = new CasoDeUsoDispararNotificacoes(
-                notif, new FakePorta(PortaEnvioWhatsapp.ResultadoEnvio.enviado()));
+                notif, new FakePorta(PortaEnvioWhatsapp.ResultadoEnvio.enviado()), 5);
 
         int reprocessados = casoDeUso.reprocessarFalhas();
 
         assertEquals(1, reprocessados);
         assertEquals(Notificacao.NotificacaoStatus.SENT, notif.findById("n1").orElseThrow().status());
+    }
+
+    @Test
+    void dispatchDueReprocessaFalhaPreexistente() {
+        FakeNotif notif = new FakeNotif();
+        notif.save(pendente("n1", AGORA.minusHours(1)).registrarFalha("erro anterior")); // FAILED, attempts=1
+        CasoDeUsoDispararNotificacoes casoDeUso = new CasoDeUsoDispararNotificacoes(
+                notif, new FakePorta(PortaEnvioWhatsapp.ResultadoEnvio.enviado()), 5);
+
+        int enviados = casoDeUso.dispatchDue(AGORA);
+
+        assertEquals(1, enviados);
+        assertEquals(Notificacao.NotificacaoStatus.SENT, notif.findById("n1").orElseThrow().status());
+    }
+
+    @Test
+    void dispatchDueNaoReprocessaAcimaDoTeto() {
+        FakeNotif notif = new FakeNotif();
+        Notificacao falha = pendente("n1", AGORA.minusHours(1));
+        for (int i = 0; i < 5; i++) {
+            falha = falha.registrarFalha("erro"); // attempts chega a 5 (== teto)
+        }
+        notif.save(falha);
+        CasoDeUsoDispararNotificacoes casoDeUso = new CasoDeUsoDispararNotificacoes(
+                notif, new FakePorta(PortaEnvioWhatsapp.ResultadoEnvio.enviado()), 5);
+
+        int enviados = casoDeUso.dispatchDue(AGORA);
+
+        assertEquals(0, enviados);
+        assertEquals(Notificacao.NotificacaoStatus.FAILED, notif.findById("n1").orElseThrow().status());
     }
 
     private Notificacao pendente(String id, LocalDateTime scheduledFor) {

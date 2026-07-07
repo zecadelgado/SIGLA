@@ -2,6 +2,7 @@ package br.com.sigla.infraestrutura.persistencia.repositorio;
 
 import br.com.sigla.aplicacao.agenda.porta.saida.RepositorioAgenda;
 import br.com.sigla.dominio.agenda.VisitaAgendada;
+import br.com.sigla.dominio.notificacoes.DiasLembrete;
 import br.com.sigla.infraestrutura.persistencia.PersistenciaIds;
 import br.com.sigla.infraestrutura.persistencia.entidade.VisitaAgendadaEntidade;
 import org.springframework.context.annotation.Profile;
@@ -73,7 +74,7 @@ public class AdaptadorRepositorioAgenda implements RepositorioAgenda {
                 entity.isReminderActive(),
                 entity.getReminderDaysBefore() == null ? 0 : entity.getReminderDaysBefore(),
                 entity.getNotes()
-        );
+        ).comDiasLembrete(DiasLembrete.parse(entity.getLembreteDiasConjunto()));
     }
 
     private VisitaAgendadaEntidade toEntity(VisitaAgendada schedule) {
@@ -96,6 +97,7 @@ public class AdaptadorRepositorioAgenda implements RepositorioAgenda {
         entity.setResponsibleId(PersistenciaIds.toUuid(schedule.responsibleId()));
         entity.setReminderActive(schedule.reminderActive());
         entity.setReminderDaysBefore(schedule.reminderDaysBefore());
+        entity.setLembreteDiasConjunto(DiasLembrete.formatar(schedule.diasLembrete()));
         entity.setNotes(schedule.notes());
         return entity;
     }
