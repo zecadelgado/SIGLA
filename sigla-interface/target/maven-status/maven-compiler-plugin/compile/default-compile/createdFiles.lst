@@ -74,6 +74,8 @@ br\com\sigla\interfacegrafica\controlador\ControladorContratosCertificados.class
 br\com\sigla\interfacegrafica\controlador\ControladorLogin.class
 br\com\sigla\interfacegrafica\controlador\ControladorDashboard$1.class
 br\com\sigla\interfacegrafica\controlador\ControladorFinanceiro$3.class
+br\com\sigla\interfacegrafica\aplicativo\JanelaPosicionador.class
+br\com\sigla\interfacegrafica\aplicativo\TelaAberturaAplicacao.class
 br\com\sigla\interfacegrafica\controlador\ControladorConfiguracaoNotificacoes$1.class
 br\com\sigla\interfacegrafica\util\DialogoUi$Tipo.class
 br\com\sigla\interfacegrafica\consulta\ServicoConsultaReferencias.class

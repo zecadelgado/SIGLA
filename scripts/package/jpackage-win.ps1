@@ -1,9 +1,13 @@
 $ErrorActionPreference = "Stop"
 
 $repoRoot = Resolve-Path (Join-Path $PSScriptRoot "../..")
-$jarName = "sigla-interface-0.1.0-SNAPSHOT.jar"
+$launcherJarName = "sigla-launcher-0.1.0-SNAPSHOT.jar"
+$launcherMainJar = "sigla-launcher.jar"
+$appJarName = "sigla-interface-0.1.0-SNAPSHOT.jar"
+$appRuntimeJar = "sigla.jar"
 $inputDir = Join-Path $repoRoot "sigla-interface/target/jpackage-input"
-$jarPath = Join-Path $repoRoot "sigla-interface/target/$jarName"
+$launcherJarPath = Join-Path $repoRoot "sigla-launcher/target/$launcherJarName"
+$appJarPath = Join-Path $repoRoot "sigla-interface/target/$appJarName"
 $appImageDir = Join-Path $repoRoot "deploy/jpackage/app-image"
 $installerDir = Join-Path $repoRoot "deploy/jpackage/installers"
 $javaOptions = "--enable-native-access=ALL-UNNAMED"
@@ -34,21 +38,21 @@ function Test-WixAvailable {
 
 Push-Location $repoRoot
 try {
-    ./mvnw.cmd -pl sigla-interface -am clean package
-    ./mvnw.cmd -pl sigla-interface -DskipTests package spring-boot:repackage
+    ./mvnw.cmd clean package -pl sigla-interface,sigla-launcher -am -DskipTests
 
     $jpackage = Resolve-JPackage
 
     Remove-Item -LiteralPath $inputDir -Recurse -Force -ErrorAction SilentlyContinue
     New-Item -ItemType Directory -Force -Path $inputDir, $appImageDir, $installerDir | Out-Null
-    Copy-Item -LiteralPath $jarPath -Destination (Join-Path $inputDir $jarName)
+    Copy-Item -LiteralPath $launcherJarPath -Destination (Join-Path $inputDir $launcherMainJar)
+    Copy-Item -LiteralPath $appJarPath -Destination (Join-Path $inputDir $appRuntimeJar)
 
     Remove-Item -LiteralPath (Join-Path $appImageDir "SIGLA") -Recurse -Force -ErrorAction SilentlyContinue
-    & $jpackage --type app-image --name SIGLA --input $inputDir --main-jar $jarName --java-options $javaOptions --dest $appImageDir
+    & $jpackage --type app-image --name SIGLA --input $inputDir --main-jar $launcherMainJar --java-options $javaOptions --dest $appImageDir
 
     if (Test-WixAvailable) {
         Remove-Item -Path (Join-Path $installerDir "SIGLA*.exe") -Force -ErrorAction SilentlyContinue
-        & $jpackage --type exe --name SIGLA --input $inputDir --main-jar $jarName --java-options $javaOptions --dest $installerDir
+        & $jpackage --type exe --name SIGLA --input $inputDir --main-jar $launcherMainJar --java-options $javaOptions --dest $installerDir
     } else {
         Write-Warning "WiX not found. App image generated, but the Windows .exe installer was skipped."
     }

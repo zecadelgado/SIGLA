@@ -17,6 +17,7 @@
         <module>sigla-infraestrutura</module>
         <module>sigla-relatorios</module>
         <module>sigla-interface</module>
+        <module>sigla-launcher</module>
     </modules>
 
     <properties>

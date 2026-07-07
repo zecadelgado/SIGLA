@@ -1,0 +1,1335 @@
+
+===== Dashboard =====
+[3] ControlType.Button name='Minimizar' rect=1779,0,47,22
+[4] ControlType.Button name='Restaurar' rect=1826,0,46,22
+[5] ControlType.Button name='Fechar' rect=1872,0,48,22
+[6] ControlType.Button name='☰' rect=14,26,38,39
+[7] ControlType.Text name='☰' rect=23,33,20,24
+[8] ControlType.Text name='SIGLA' rect=14,85,93,41
+[9] ControlType.Text name='SIGLA' rect=22,89,85,37
+[10] ControlType.Text name='Gestao Empresarial' rect=14,130,118,23
+[11] ControlType.Text name='Gestao Empresarial' rect=22,130,110,17
+[12] ControlType.Button name='Dashboard' rect=14,176,224,41
+[13] ControlType.Text name='Dashboard' rect=30,187,72,18
+[14] ControlType.Button name='Cadastros' rect=14,220,224,41
+[15] ControlType.Text name='Cadastros' rect=30,231,65,18
+[16] ControlType.Button name='Financeiro' rect=14,264,224,41
+[17] ControlType.Text name='Financeiro' rect=30,275,69,18
+[18] ControlType.Button name='Clientes' rect=14,308,224,41
+[19] ControlType.Text name='Clientes' rect=30,319,52,18
+[20] ControlType.Button name='Servicos' rect=14,352,224,41
+[21] ControlType.Text name='Servicos' rect=30,363,54,18
+[22] ControlType.Button name='Agenda' rect=14,396,224,41
+[23] ControlType.Text name='Agenda' rect=30,407,51,18
+[24] ControlType.Button name='Ordem de Servico' rect=14,440,224,41
+[25] ControlType.Text name='Ordem de Servico' rect=30,451,118,18
+[26] ControlType.Button name='Estoque' rect=14,484,224,41
+[27] ControlType.Text name='Estoque' rect=30,495,53,18
+[28] ControlType.Button name='Contratos / Certificados' rect=14,528,224,41
+[29] ControlType.Text name='Contratos / Certificados' rect=30,539,157,18
+[30] ControlType.Button name='Usuarios' rect=14,572,224,41
+[31] ControlType.Text name='Usuarios' rect=30,583,57,18
+[32] ControlType.Button name='Notificacoes' rect=2,607,249,65
+[33] ControlType.Text name='Notificacoes' rect=34,627,82,18
+[34] ControlType.Button name='Sair' rect=14,976,224,41
+[35] ControlType.Text name='Sair' rect=30,987,25,18
+[37] ControlType.Text name='Notificações (WhatsApp)' rect=281,92,471,52
+[38] ControlType.Text name='Notificações (WhatsApp)' rect=281,92,471,52
+[39] ControlType.Text name='Templates / Configurações' rect=281,162,252,26
+[40] ControlType.Text name='Templates / Configurações' rect=281,162,252,26
+[41] ControlType.Button name='+ Nova configuração' rect=281,206,190,30
+[42] ControlType.Text name='+ Nova configuração' rect=302,211,149,19
+[43] ControlType.Button name='Editar' rect=483,206,120,30
+[44] ControlType.Text name='Editar' rect=522,211,42,19
+[45] ControlType.Button name='Ativar/Desativar' rect=615,206,160,30
+[46] ControlType.Text name='Ativar/Desativar' rect=637,211,116,19
+[47] ControlType.Button name='Excluir' rect=787,206,120,30
+[48] ControlType.Text name='Excluir' rect=823,211,48,19
+[49] ControlType.Button name='Enviar teste' rect=919,206,140,30
+[50] ControlType.Text name='Enviar teste' rect=948,211,83,19
+[51] ControlType.Button name='Atualizar' rect=1071,206,120,30
+[52] ControlType.Text name='Atualizar' rect=1099,211,64,19
+[55] ControlType.Text name='Evento' rect=284,254,318,24
+[56] ControlType.Text name='Evento' rect=424,259,39,15
+[58] ControlType.Text name='Nome' rect=606,254,337,24
+[59] ControlType.Text name='Nome' rect=757,259,35,15
+[61] ControlType.Text name='Destinatário' rect=947,254,249,24
+[62] ControlType.Text name='Destinatário' rect=1037,259,70,15
+[64] ControlType.Text name='Envio' rect=1200,254,230,24
+[65] ControlType.Text name='Envio' rect=1300,259,31,15
+[67] ControlType.Text name='Antecedência' rect=1434,254,230,24
+[68] ControlType.Text name='Antecedência' rect=1511,259,76,15
+[70] ControlType.Text name='Status' rect=1668,254,220,24
+[71] ControlType.Text name='Status' rect=1760,259,36,15
+[73] ControlType.DataItem name='Vencimento de contrato' rect=282,278,322,24
+[74] ControlType.Text name='Vencimento de contrato' rect=285,282,129,15
+[75] ControlType.DataItem name='Vencimento de contrato' rect=604,278,341,24
+[76] ControlType.Text name='Vencimento de contrato' rect=607,282,129,15
+[77] ControlType.DataItem name='CLIENTE' rect=945,278,253,24
+[78] ControlType.Text name='CLIENTE' rect=948,282,44,15
+[79] ControlType.DataItem name='Automático' rect=1198,278,234,24
+[80] ControlType.Text name='Automático' rect=1201,282,62,15
+[81] ControlType.DataItem name='-' rect=1432,278,234,24
+[82] ControlType.Text name='-' rect=1435,282,5,15
+[83] ControlType.DataItem name='Ativo' rect=1666,278,224,24
+[84] ControlType.Text name='Ativo' rect=1669,282,28,15
+[86] ControlType.DataItem name='Vencimento de certificado' rect=282,302,322,24
+[87] ControlType.Text name='Vencimento de certificado' rect=285,306,139,15
+[88] ControlType.DataItem name='Vencimento de certificado' rect=604,302,341,24
+[89] ControlType.Text name='Vencimento de certificado' rect=607,306,139,15
+[90] ControlType.DataItem name='CLIENTE' rect=945,302,253,24
+[91] ControlType.Text name='CLIENTE' rect=948,306,44,15
+[92] ControlType.DataItem name='Automático' rect=1198,302,234,24
+[93] ControlType.Text name='Automático' rect=1201,306,62,15
+[94] ControlType.DataItem name='-' rect=1432,302,234,24
+[95] ControlType.Text name='-' rect=1435,306,5,15
+[96] ControlType.DataItem name='Ativo' rect=1666,302,224,24
+[97] ControlType.Text name='Ativo' rect=1669,306,28,15
+[99] ControlType.DataItem name='Visita agendada' rect=282,326,322,24
+[100] ControlType.Text name='Visita agendada' rect=285,330,85,15
+[101] ControlType.DataItem name='Lembrete de visita' rect=604,326,341,24
+[102] ControlType.Text name='Lembrete de visita' rect=607,330,97,15
+[103] ControlType.DataItem name='CLIENTE' rect=945,326,253,24
+[104] ControlType.Text name='CLIENTE' rect=948,330,44,15
+[105] ControlType.DataItem name='Automático' rect=1198,326,234,24
+[106] ControlType.Text name='Automático' rect=1201,330,62,15
+[107] ControlType.DataItem name='-' rect=1432,326,234,24
+[108] ControlType.Text name='-' rect=1435,330,5,15
+[109] ControlType.DataItem name='Ativo' rect=1666,326,224,24
+[110] ControlType.Text name='Ativo' rect=1669,330,28,15
+[189] ControlType.Text name='Variáveis disponíveis (use no template como {{variavel}})' rect=281,496,427,21
+[190] ControlType.Text name='Variáveis disponíveis (use no template como {{variavel}})' rect=281,496,427,21
+[193] ControlType.Text name='{{cliente_nome}}  ->  Nome do cliente / {{cliente_telefone}}  ->  Telefone do cliente / {{funcionario_nome}}  ->  Nome do funcionario / {{funcionario_telefone}}  ->  Telefone do funcionario / {{data_visita}}  ->  Data da visita / {{hora_visita}}  ->  Hora da visita / {{endereco}}  ->  Endereco completo / {{tipo_servico}}  ->  Tipo de servico / {{contrato_vencimento}}  ->  Data de vencimento do contrato / {{certificado_vencimento}}  ->  Data de validade do certificado / {{observacoes}}  ->  Observacoes' rect=289,539,1581,165
+[195] ControlType.Button name='increment' rect=1877,640,13,10
+[196] ControlType.Button name='decrement' rect=1877,536,13,10
+[198] ControlType.Text name='Notificações agendadas' rect=281,690,224,26
+[199] ControlType.Text name='Notificações agendadas' rect=281,690,224,26
+[200] ControlType.Button name='Reprocessar falhas' rect=281,734,180,30
+[201] ControlType.Text name='Reprocessar falhas' rect=306,739,131,19
+[202] ControlType.Button name='Atualizar lista' rect=473,734,140,30
+[203] ControlType.Text name='Atualizar lista' rect=495,739,97,19
+[206] ControlType.Text name='Evento' rect=284,782,279,24
+[207] ControlType.Text name='Evento' rect=404,787,39,15
+[209] ControlType.Text name='Destinatário' rect=567,782,346,24
+[210] ControlType.Text name='Destinatário' rect=705,787,70,15
+[212] ControlType.Text name='Status' rect=917,782,220,24
+[213] ControlType.Text name='Status' rect=1009,787,36,15
+[215] ControlType.Text name='Quando' rect=1141,782,259,24
+[216] ControlType.Text name='Quando' rect=1248,787,45,15
+[218] ControlType.Text name='Mensagem' rect=1404,782,484,24
+[219] ControlType.Text name='Mensagem' rect=1615,787,62,15
+[220] ControlType.Text name='Não há conteúdo na tabela' rect=1014,899,145,15
+[221] ControlType.Text name='Não há conteúdo na tabela' rect=1014,899,145,15
+
+===== Ordem de Servico =====
+[3] ControlType.Button name='Minimizar' rect=1779,0,47,22
+[4] ControlType.Button name='Restaurar' rect=1826,0,46,22
+[5] ControlType.Button name='Fechar' rect=1872,0,48,22
+[6] ControlType.Button name='☰' rect=14,26,38,39
+[7] ControlType.Text name='☰' rect=23,33,20,24
+[8] ControlType.Text name='SIGLA' rect=14,85,93,41
+[9] ControlType.Text name='SIGLA' rect=22,89,85,37
+[10] ControlType.Text name='Gestao Empresarial' rect=14,130,118,23
+[11] ControlType.Text name='Gestao Empresarial' rect=22,130,110,17
+[12] ControlType.Button name='Dashboard' rect=14,176,224,41
+[13] ControlType.Text name='Dashboard' rect=30,187,72,18
+[14] ControlType.Button name='Cadastros' rect=14,220,224,41
+[15] ControlType.Text name='Cadastros' rect=30,231,65,18
+[16] ControlType.Button name='Financeiro' rect=14,264,224,41
+[17] ControlType.Text name='Financeiro' rect=30,275,69,18
+[18] ControlType.Button name='Clientes' rect=14,308,224,41
+[19] ControlType.Text name='Clientes' rect=30,319,52,18
+[20] ControlType.Button name='Servicos' rect=14,352,224,41
+[21] ControlType.Text name='Servicos' rect=30,363,54,18
+[22] ControlType.Button name='Agenda' rect=14,396,224,41
+[23] ControlType.Text name='Agenda' rect=30,407,51,18
+[24] ControlType.Button name='Ordem de Servico' rect=2,431,249,65
+[25] ControlType.Text name='Ordem de Servico' rect=34,451,118,18
+[26] ControlType.Button name='Estoque' rect=14,484,224,41
+[27] ControlType.Text name='Estoque' rect=30,495,53,18
+[28] ControlType.Button name='Contratos / Certificados' rect=14,528,224,41
+[29] ControlType.Text name='Contratos / Certificados' rect=30,539,157,18
+[30] ControlType.Button name='Usuarios' rect=14,572,224,41
+[31] ControlType.Text name='Usuarios' rect=30,583,57,18
+[32] ControlType.Button name='Notificacoes' rect=14,616,224,41
+[33] ControlType.Text name='Notificacoes' rect=30,627,82,18
+[34] ControlType.Button name='Sair' rect=14,976,224,41
+[35] ControlType.Text name='Sair' rect=30,987,25,18
+[37] ControlType.Text name='Ordem de Serviço' rect=283,103,424,66
+[38] ControlType.Text name='Ordem de Serviço' rect=283,104,419,65
+[39] ControlType.Text name='Gerencie ordens de serviço completas' rect=253,167,270,20
+[40] ControlType.Text name='Gerencie ordens de serviço completas' rect=288,167,234,20
+[41] ControlType.Text name='Abertas' rect=313,233,48,20
+[42] ControlType.Text name='Abertas' rect=313,233,48,20
+[43] ControlType.Text name='0' rect=313,261,14,31
+[44] ControlType.Text name='0' rect=313,261,14,31
+[45] ControlType.Text name='Em andamento' rect=618,233,94,20
+[46] ControlType.Text name='Em andamento' rect=618,233,94,20
+[47] ControlType.Text name='0' rect=618,261,14,31
+[48] ControlType.Text name='0' rect=618,261,14,31
+[49] ControlType.Text name='Concluidas' rect=923,233,68,20
+[50] ControlType.Text name='Concluidas' rect=923,233,68,20
+[51] ControlType.Text name='0' rect=923,261,14,31
+[52] ControlType.Text name='0' rect=923,261,14,31
+[53] ControlType.Text name='Faturamento' rect=1228,233,79,20
+[54] ControlType.Text name='Faturamento' rect=1228,233,79,20
+[55] ControlType.Text name='0' rect=1228,261,14,31
+[56] ControlType.Text name='0' rect=1228,261,14,31
+[57] ControlType.Text name='Buscar' rect=293,356,35,15
+[58] ControlType.Text name='Buscar' rect=293,356,35,15
+[60] ControlType.Text name='Buscar pelo numero, cliente, tipo ou responsavel...' rect=300,380,265,15
+[62] ControlType.Text name='Status' rect=1070,356,33,15
+[63] ControlType.Text name='Status' rect=1070,356,33,15
+[66] ControlType.Text name='Todos' rect=1078,380,33,15
+[67] ControlType.Button name='+ Nova Ordem de Serviço' rect=1255,358,237,42
+[68] ControlType.Text name='+ Nova Ordem de Serviço' rect=1271,368,206,22
+[71] ControlType.Text name='Número' rect=286,440,86,24
+[72] ControlType.Text name='Número' rect=306,445,47,15
+[74] ControlType.Text name='Cliente' rect=376,440,186,24
+[75] ControlType.Text name='Cliente' rect=449,445,40,15
+[77] ControlType.Text name='Título' rect=566,440,176,24
+[78] ControlType.Text name='Título' rect=637,445,34,15
+[80] ControlType.Text name='Tipo' rect=746,440,141,24
+[81] ControlType.Text name='Tipo' rect=804,445,26,15
+[83] ControlType.Text name='Responsável' rect=891,440,151,24
+[84] ControlType.Text name='Responsável' rect=932,445,70,15
+[86] ControlType.Text name='Data agendada' rect=1046,440,131,24
+[87] ControlType.Text name='Data agendada' rect=1069,445,86,15
+[89] ControlType.Text name='Valor total' rect=1181,440,126,24
+[90] ControlType.Text name='Valor total' rect=1214,445,60,15
+[92] ControlType.Text name='Pago' rect=1311,440,76,24
+[93] ControlType.Text name='Pago' rect=1335,445,29,15
+[95] ControlType.Text name='Status' rect=1391,440,111,24
+[96] ControlType.Text name='Status' rect=1429,445,36,15
+[97] ControlType.Text name='Não há conteúdo na tabela' rect=1014,621,145,15
+[98] ControlType.Text name='Não há conteúdo na tabela' rect=1014,621,145,15
+[99] ControlType.Button name='Detalhar' rect=283,809,130,39
+[100] ControlType.Text name='Detalhar' rect=320,819,57,18
+[101] ControlType.Button name='Editar' rect=433,809,118,39
+[102] ControlType.Text name='Editar' rect=473,819,39,18
+[103] ControlType.Button name='Iniciar' rect=571,809,118,39
+[104] ControlType.Text name='Iniciar' rect=610,819,41,18
+[105] ControlType.Button name='Concluir' rect=709,809,118,39
+[106] ControlType.Text name='Concluir' rect=741,819,55,18
+[107] ControlType.Button name='Marcar pago' rect=847,809,128,39
+[108] ControlType.Text name='Marcar pago' rect=869,819,84,18
+[109] ControlType.Button name='Adicionar produto' rect=995,809,149,39
+[110] ControlType.Text name='Adicionar produto' rect=1009,819,122,18
+[111] ControlType.Button name='Anexar' rect=1164,809,119,39
+[112] ControlType.Text name='Anexar' rect=1200,819,47,18
+[113] ControlType.Button name='Anexos' rect=1303,809,119,39
+[114] ControlType.Text name='Anexos' rect=1338,819,49,18
+[115] ControlType.Button name='Cancelar' rect=1442,809,119,39
+[116] ControlType.Text name='Cancelar' rect=1473,819,57,18
+[117] ControlType.Button name='Imprimir OS' rect=1581,809,129,39
+[118] ControlType.Text name='Imprimir OS' rect=1605,819,81,18
+[119] ControlType.Button name='Relatorio de visita' rect=1730,809,159,39
+[120] ControlType.Text name='Relatorio de visita' rect=1750,819,119,18
+[121] ControlType.Text name='Carregando...' rect=1039,582,95,19
+[122] ControlType.Text name='Carregando...' rect=1039,582,95,19
+
+===== Estoque =====
+[3] ControlType.Button name='Minimizar' rect=1779,0,47,22
+[4] ControlType.Button name='Restaurar' rect=1826,0,46,22
+[5] ControlType.Button name='Fechar' rect=1872,0,48,22
+[6] ControlType.Button name='☰' rect=14,26,38,39
+[7] ControlType.Text name='☰' rect=23,33,20,24
+[8] ControlType.Text name='SIGLA' rect=14,85,93,41
+[9] ControlType.Text name='SIGLA' rect=22,89,85,37
+[10] ControlType.Text name='Gestao Empresarial' rect=14,130,118,23
+[11] ControlType.Text name='Gestao Empresarial' rect=22,130,110,17
+[12] ControlType.Button name='Dashboard' rect=14,176,224,41
+[13] ControlType.Text name='Dashboard' rect=30,187,72,18
+[14] ControlType.Button name='Cadastros' rect=14,220,224,41
+[15] ControlType.Text name='Cadastros' rect=30,231,65,18
+[16] ControlType.Button name='Financeiro' rect=14,264,224,41
+[17] ControlType.Text name='Financeiro' rect=30,275,69,18
+[18] ControlType.Button name='Clientes' rect=14,308,224,41
+[19] ControlType.Text name='Clientes' rect=30,319,52,18
+[20] ControlType.Button name='Servicos' rect=14,352,224,41
+[21] ControlType.Text name='Servicos' rect=30,363,54,18
+[22] ControlType.Button name='Agenda' rect=14,396,224,41
+[23] ControlType.Text name='Agenda' rect=30,407,51,18
+[24] ControlType.Button name='Ordem de Servico' rect=14,440,224,41
+[25] ControlType.Text name='Ordem de Servico' rect=30,451,118,18
+[26] ControlType.Button name='Estoque' rect=2,475,249,65
+[27] ControlType.Text name='Estoque' rect=34,495,53,18
+[28] ControlType.Button name='Contratos / Certificados' rect=14,528,224,41
+[29] ControlType.Text name='Contratos / Certificados' rect=30,539,157,18
+[30] ControlType.Button name='Usuarios' rect=14,572,224,41
+[31] ControlType.Text name='Usuarios' rect=30,583,57,18
+[32] ControlType.Button name='Notificacoes' rect=14,616,224,41
+[33] ControlType.Text name='Notificacoes' rect=30,627,82,18
+[34] ControlType.Button name='Sair' rect=14,976,224,41
+[35] ControlType.Text name='Sair' rect=30,987,25,18
+[37] ControlType.Text name='Estoque' rect=283,103,320,65
+[38] ControlType.Text name='Estoque' rect=283,103,187,65
+[39] ControlType.Text name='Controle de produtos e materiais' rect=253,166,270,20
+[40] ControlType.Text name='Controle de produtos e materiais' rect=288,166,204,20
+[41] ControlType.Button name='Movimentar' rect=609,98,160,71
+[42] ControlType.Text name='Movimentar' rect=649,120,81,18
+[43] ControlType.Button name='Saida' rect=761,98,118,71
+[44] ControlType.Text name='Saida' rect=802,120,36,18
+[45] ControlType.Button name='+ Novo produto' rect=871,98,166,71
+[46] ControlType.Text name='+ Novo produto' rect=900,120,108,18
+[47] ControlType.Button name='Inativar' rect=1038,108,98,43
+[48] ControlType.Text name='Inativar' rect=1064,121,47,17
+[49] ControlType.Button name='Reativar' rect=1146,108,98,43
+[50] ControlType.Text name='Reativar' rect=1170,121,51,17
+[51] ControlType.Button name='Etiqueta' rect=1254,108,102,43
+[52] ControlType.Text name='Etiqueta' rect=1280,121,51,17
+[53] ControlType.Button name='Estoque baixo' rect=1366,108,126,43
+[54] ControlType.Text name='Estoque baixo' rect=1386,121,87,17
+[55] ControlType.Text name='Total de Produtos' rect=313,227,110,20
+[56] ControlType.Text name='Total de Produtos' rect=313,227,110,20
+[57] ControlType.Text name='14' rect=313,255,28,31
+[58] ControlType.Text name='14' rect=313,255,28,31
+[59] ControlType.Text name='Valor Total Estoque' rect=715,227,121,20
+[60] ControlType.Text name='Valor Total Estoque' rect=715,227,121,20
+[61] ControlType.Text name='R$ 12.503,00' rect=715,255,146,31
+[62] ControlType.Text name='R$ 12.503,00' rect=715,255,146,31
+[63] ControlType.Text name='Produtos em Baixa' rect=1117,227,116,20
+[64] ControlType.Text name='Produtos em Baixa' rect=1117,227,116,20
+[65] ControlType.Text name='0' rect=1117,255,14,31
+[66] ControlType.Text name='0' rect=1117,255,14,31
+[67] ControlType.Text name='Produtos em Estoque' rect=298,316,358,31
+[68] ControlType.Text name='Produtos em Estoque' rect=298,316,241,31
+[71] ControlType.Text name='Nome' rect=301,348,194,24
+[72] ControlType.Text name='Nome' rect=381,353,35,15
+[74] ControlType.Text name='Descrição' rect=499,348,194,24
+[75] ControlType.Text name='Descrição' rect=569,353,55,15
+[77] ControlType.Text name='Valor Custo' rect=697,348,194,24
+[78] ControlType.Text name='Valor Custo' rect=761,353,66,15
+[80] ControlType.Text name='Valor Venda' rect=895,348,194,24
+[81] ControlType.Text name='Valor Venda' rect=958,353,69,15
+[83] ControlType.Text name='Quantidade Atual' rect=1093,348,194,24
+[84] ControlType.Text name='Quantidade Atual' rect=1140,353,100,15
+[86] ControlType.Text name='Quantidade Mínima' rect=1291,348,194,24
+[87] ControlType.Text name='Quantidade Mínima' rect=1332,353,113,15
+[89] ControlType.Text name='Status' rect=1489,348,194,24
+[90] ControlType.Text name='Status' rect=1568,353,36,15
+[92] ControlType.DataItem name='Bomba costal motorizada 25L' rect=299,372,198,24
+[93] ControlType.Text name='Bomba costal motorizada 25L' rect=302,376,157,15
+[94] ControlType.DataItem name='Equipamento de aplicação motorizado' rect=497,372,198,24
+[95] ControlType.Text name='Equipamento de aplicação motori...' rect=500,376,187,15
+[96] ControlType.DataItem name='R$ 980,00' rect=695,372,198,24
+[97] ControlType.Text name='R$ 980,00' rect=698,376,52,15
+[98] ControlType.DataItem name='R$ 1.050,00' rect=893,372,198,24
+[99] ControlType.Text name='R$ 1.050,00' rect=896,376,61,15
+[100] ControlType.DataItem name='2 UN' rect=1091,372,198,24
+[101] ControlType.Text name='2 UN' rect=1094,376,27,15
+[102] ControlType.DataItem name='1' rect=1289,372,198,24
+[103] ControlType.Text name='1' rect=1292,376,7,15
+[104] ControlType.DataItem name='Ativo' rect=1487,372,198,24
+[105] ControlType.Text name='Ativo' rect=1490,376,28,15
+[107] ControlType.DataItem name='Cupinicida (imidacloprido)' rect=299,396,198,24
+[108] ControlType.Text name='Cupinicida (imidacloprido)' rect=302,400,140,15
+[109] ControlType.DataItem name='Controle e barreira química de cupins' rect=497,396,198,24
+[110] ControlType.Text name='Controle e barreira química de cu...' rect=500,400,185,15
+[111] ControlType.DataItem name='R$ 160,00' rect=695,396,198,24
+[112] ControlType.Text name='R$ 160,00' rect=698,400,52,15
+[113] ControlType.DataItem name='R$ 175,00' rect=893,396,198,24
+[114] ControlType.Text name='R$ 175,00' rect=896,400,52,15
+[115] ControlType.DataItem name='7 L' rect=1091,396,198,24
+[116] ControlType.Text name='7 L' rect=1094,400,16,15
+[117] ControlType.DataItem name='2' rect=1289,396,198,24
+[118] ControlType.Text name='2' rect=1292,400,7,15
+[119] ControlType.DataItem name='Ativo' rect=1487,396,198,24
+[120] ControlType.Text name='Ativo' rect=1490,400,28,15
+[122] ControlType.DataItem name='Detergente desincrustante (limpeza caixa d'água)' rect=299,420,198,24
+[123] ControlType.Text name='Detergente desincrustante (limpez...' rect=302,424,190,15
+[124] ControlType.DataItem name='Higienização de reservatórios' rect=497,420,198,24
+[125] ControlType.Text name='Higienização de reservatórios' rect=500,424,156,15
+[126] ControlType.DataItem name='R$ 32,00' rect=695,420,198,24
+[127] ControlType.Text name='R$ 32,00' rect=698,424,46,15
+[128] ControlType.DataItem name='R$ 35,00' rect=893,420,198,24
+[129] ControlType.Text name='R$ 35,00' rect=896,424,46,15
+[130] ControlType.DataItem name='10 L' rect=1091,420,198,24
+[131] ControlType.Text name='10 L' rect=1094,424,22,15
+[132] ControlType.DataItem name='3' rect=1289,420,198,24
+[133] ControlType.Text name='3' rect=1292,424,7,15
+[134] ControlType.DataItem name='Ativo' rect=1487,420,198,24
+[135] ControlType.Text name='Ativo' rect=1490,424,28,15
+[137] ControlType.DataItem name='Gel inseticida para baratas (seringa 20g)' rect=299,444,198,24
+[138] ControlType.Text name='Gel inseticida para baratas (sering...' rect=302,448,187,15
+[139] ControlType.DataItem name='Iscas em gel para controle de baratas' rect=497,444,198,24
+[140] ControlType.Text name='Iscas em gel para controle de bara...' rect=500,448,190,15
+[141] ControlType.DataItem name='R$ 38,00' rect=695,444,198,24
+[142] ControlType.Text name='R$ 38,00' rect=698,448,46,15
+[143] ControlType.DataItem name='R$ 42,00' rect=893,444,198,24
+[144] ControlType.Text name='R$ 42,00' rect=896,448,46,15
+[145] ControlType.DataItem name='24 UN' rect=1091,444,198,24
+[146] ControlType.Text name='24 UN' rect=1094,448,34,15
+[147] ControlType.DataItem name='6' rect=1289,444,198,24
+[148] ControlType.Text name='6' rect=1292,448,7,15
+[149] ControlType.DataItem name='Ativo' rect=1487,444,198,24
+[150] ControlType.Text name='Ativo' rect=1490,448,28,15
+[152] ControlType.DataItem name='Inseticida líquido concentrado (Cipermetrina)' rect=299,468,198,24
+[153] ControlType.Text name='Inseticida líquido concentrado (Ci...' rect=302,472,185,15
+[154] ControlType.DataItem name='Concentrado para diluição e pulverização' rect=497,468,198,24
+[155] ControlType.Text name='Concentrado para diluição e pulve...' rect=500,472,189,15
+[156] ControlType.DataItem name='R$ 120,00' rect=695,468,198,24
+[157] ControlType.Text name='R$ 120,00' rect=698,472,52,15
+[158] ControlType.DataItem name='R$ 130,00' rect=893,468,198,24
+[159] ControlType.Text name='R$ 130,00' rect=896,472,52,15
+[160] ControlType.DataItem name='18 L' rect=1091,468,198,24
+[161] ControlType.Text name='18 L' rect=1094,472,22,15
+[162] ControlType.DataItem name='5' rect=1289,468,198,24
+[163] ControlType.Text name='5' rect=1292,472,7,15
+[164] ControlType.DataItem name='Ativo' rect=1487,468,198,24
+[165] ControlType.Text name='Ativo' rect=1490,472,28,15
+[167] ControlType.DataItem name='Isca granulada formicida' rect=299,492,198,24
+[168] ControlType.Text name='Isca granulada formicida' rect=302,496,130,15
+[169] ControlType.DataItem name='Controle de formigas' rect=497,492,198,24
+[170] ControlType.Text name='Controle de formigas' rect=500,496,113,15
+[171] ControlType.DataItem name='R$ 36,00' rect=695,492,198,24
+[172] ControlType.Text name='R$ 36,00' rect=698,496,46,15
+[173] ControlType.DataItem name='R$ 40,00' rect=893,492,198,24
+[174] ControlType.Text name='R$ 40,00' rect=896,496,46,15
+[175] ControlType.DataItem name='8 KG' rect=1091,492,198,24
+[176] ControlType.Text name='8 KG' rect=1094,496,25,15
+[177] ControlType.DataItem name='2' rect=1289,492,198,24
+[178] ControlType.Text name='2' rect=1292,496,7,15
+[179] ControlType.DataItem name='Ativo' rect=1487,492,198,24
+[180] ControlType.Text name='Ativo' rect=1490,496,28,15
+[182] ControlType.DataItem name='Larvicida (controle em caixa d'água)' rect=299,516,198,24
+[183] ControlType.Text name='Larvicida (controle em caixa d'água)' rect=302,520,190,15
+[184] ControlType.DataItem name='Biolarvicida para reservatórios' rect=497,516,198,24
+[185] ControlType.Text name='Biolarvicida para reservatórios' rect=500,520,159,15
+[186] ControlType.DataItem name='R$ 95,00' rect=695,516,198,24
+[187] ControlType.Text name='R$ 95,00' rect=698,520,46,15
+[188] ControlType.DataItem name='R$ 105,00' rect=893,516,198,24
+[189] ControlType.Text name='R$ 105,00' rect=896,520,52,15
+[190] ControlType.DataItem name='6 L' rect=1091,516,198,24
+[191] ControlType.Text name='6 L' rect=1094,520,16,15
+[192] ControlType.DataItem name='2' rect=1289,516,198,24
+[193] ControlType.Text name='2' rect=1292,520,7,15
+[194] ControlType.DataItem name='Ativo' rect=1487,516,198,24
+[195] ControlType.Text name='Ativo' rect=1490,520,28,15
+[197] ControlType.DataItem name='Luvas nitrílicas (par)' rect=299,540,198,24
+[198] ControlType.Text name='Luvas nitrílicas (par)' rect=302,544,104,15
+[199] ControlType.DataItem name='EPI - proteção das mãos' rect=497,540,198,24
+[200] ControlType.Text name='EPI - proteção das mãos' rect=500,544,129,15
+[201] ControlType.DataItem name='R$ 9,50' rect=695,540,198,24
+[202] ControlType.Text name='R$ 9,50' rect=698,544,39,15
+[203] ControlType.DataItem name='R$ 10,00' rect=893,540,198,24
+[204] ControlType.Text name='R$ 10,00' rect=896,544,46,15
+[205] ControlType.DataItem name='60 PAR' rect=1091,540,198,24
+[206] ControlType.Text name='60 PAR' rect=1094,544,38,15
+[207] ControlType.DataItem name='15' rect=1289,540,198,24
+[208] ControlType.Text name='15' rect=1292,544,13,15
+[209] ControlType.DataItem name='Ativo' rect=1487,540,198,24
+[210] ControlType.Text name='Ativo' rect=1490,544,28,15
+[212] ControlType.DataItem name='Macacão de proteção descartável' rect=299,564,198,24
+[213] ControlType.Text name='Macacão de proteção descartável' rect=302,568,178,15
+[214] ControlType.DataItem name='EPI - proteção do corpo' rect=497,564,198,24
+[215] ControlType.Text name='EPI - proteção do corpo' rect=500,568,127,15
+[216] ControlType.DataItem name='R$ 28,00' rect=695,564,198,24
+[217] ControlType.Text name='R$ 28,00' rect=698,568,46,15
+[218] ControlType.DataItem name='R$ 30,00' rect=893,564,198,24
+[219] ControlType.Text name='R$ 30,00' rect=896,568,46,15
+[220] ControlType.DataItem name='25 UN' rect=1091,564,198,24
+[221] ControlType.Text name='25 UN' rect=1094,568,34,15
+[222] ControlType.DataItem name='6' rect=1289,564,198,24
+[223] ControlType.Text name='6' rect=1292,568,7,15
+[224] ControlType.DataItem name='Ativo' rect=1487,564,198,24
+[225] ControlType.Text name='Ativo' rect=1490,568,28,15
+[227] ControlType.DataItem name='Máscara respiratória PFF2' rect=299,588,198,24
+[228] ControlType.Text name='Máscara respiratória PFF2' rect=302,592,136,15
+[229] ControlType.DataItem name='EPI - proteção respiratória' rect=497,588,198,24
+[230] ControlType.Text name='EPI - proteção respiratória' rect=500,592,138,15
+[231] ControlType.DataItem name='R$ 7,00' rect=695,588,198,24
+[232] ControlType.Text name='R$ 7,00' rect=698,592,39,15
+[233] ControlType.DataItem name='R$ 8,00' rect=893,588,198,24
+[234] ControlType.Text name='R$ 8,00' rect=896,592,39,15
+[235] ControlType.DataItem name='80 UN' rect=1091,588,198,24
+[236] ControlType.Text name='80 UN' rect=1094,592,34,15
+[237] ControlType.DataItem name='20' rect=1289,588,198,24
+[238] ControlType.Text name='20' rect=1292,592,13,15
+[239] ControlType.DataItem name='Ativo' rect=1487,588,198,24
+[240] ControlType.Text name='Ativo' rect=1490,592,28,15
+[242] ControlType.DataItem name='Óculos de proteção' rect=299,612,198,24
+[243] ControlType.Text name='Óculos de proteção' rect=302,616,104,15
+[244] ControlType.DataItem name='EPI - proteção ocular' rect=497,612,198,24
+[245] ControlType.Text name='EPI - proteção ocular' rect=500,616,111,15
+[246] ControlType.DataItem name='R$ 18,00' rect=695,612,198,24
+[247] ControlType.Text name='R$ 18,00' rect=698,616,46,15
+[248] ControlType.DataItem name='R$ 20,00' rect=893,612,198,24
+[249] ControlType.Text name='R$ 20,00' rect=896,616,46,15
+[250] ControlType.DataItem name='15 UN' rect=1091,612,198,24
+[251] ControlType.Text name='15 UN' rect=1094,616,34,15
+[252] ControlType.DataItem name='4' rect=1289,612,198,24
+[253] ControlType.Text name='4' rect=1292,616,7,15
+[254] ControlType.DataItem name='Ativo' rect=1487,612,198,24
+[255] ControlType.Text name='Ativo' rect=1490,616,28,15
+[257] ControlType.DataItem name='Porta-iscas para roedores' rect=299,636,198,24
+[258] ControlType.Text name='Porta-iscas para roedores' rect=302,640,135,15
+[259] ControlType.DataItem name='Estação de isca lacrável' rect=497,636,198,24
+[260] ControlType.Text name='Estação de isca lacrável' rect=500,640,123,15
+[261] ControlType.DataItem name='R$ 22,00' rect=695,636,198,24
+[262] ControlType.Text name='R$ 22,00' rect=698,640,46,15
+[263] ControlType.DataItem name='R$ 24,00' rect=893,636,198,24
+[264] ControlType.Text name='R$ 24,00' rect=896,640,46,15
+[265] ControlType.DataItem name='30 UN' rect=1091,636,198,24
+[266] ControlType.Text name='30 UN' rect=1094,640,34,15
+[267] ControlType.DataItem name='8' rect=1289,636,198,24
+[268] ControlType.Text name='8' rect=1292,640,7,15
+[269] ControlType.DataItem name='Ativo' rect=1487,636,198,24
+[270] ControlType.Text name='Ativo' rect=1490,640,28,15
+[272] ControlType.Button name='increment' rect=1860,643,14,10
+[273] ControlType.Button name='decrement' rect=1860,371,14,10
+[275] ControlType.Text name='Últimas Movimentações' rect=298,683,1222,31
+[276] ControlType.Text name='Últimas Movimentações' rect=298,683,272,31
+[279] ControlType.Text name='Produto' rect=301,715,166,24
+[280] ControlType.Text name='Produto' rect=361,720,47,15
+[282] ControlType.Text name='Tipo Movimentação' rect=471,715,166,24
+[283] ControlType.Text name='Tipo Movimentação' rect=498,720,113,15
+[285] ControlType.Text name='Quantidade' rect=641,715,166,24
+[286] ControlType.Text name='Quantidade' rect=691,720,66,15
+[288] ControlType.Text name='Valor Unitário' rect=811,715,166,24
+[289] ControlType.Text name='Valor Unitário' rect=854,720,80,15
+[291] ControlType.Text name='Valor Total' rect=981,715,166,24
+[292] ControlType.Text name='Valor Total' rect=1033,720,63,15
+[294] ControlType.Text name='Usuário' rect=1151,715,166,24
+[295] ControlType.Text name='Usuário' rect=1212,720,44,15
+[297] ControlType.Text name='Cliente' rect=1321,715,166,24
+[298] ControlType.Text name='Cliente' rect=1384,720,40,15
+[300] ControlType.Text name='Ordem Serviço' rect=1491,715,166,24
+[301] ControlType.Text name='Ordem Serviço' rect=1532,720,84,15
+[303] ControlType.Text name='Destino Descrição' rect=1661,715,166,24
+[304] ControlType.Text name='Destino Descrição' rect=1694,720,101,15
+[306] ControlType.Text name='Observações' rect=1831,715,166,24
+[307] ControlType.Text name='Observações' rect=1879,720,71,15
+[309] ControlType.DataItem name='Gel inseticida para baratas (seringa 20g)' rect=299,739,170,24
+[310] ControlType.Text name='Gel inseticida para baratas (s...' rect=302,743,159,15
+[311] ControlType.DataItem name='ENTRADA' rect=469,739,170,24
+[312] ControlType.Text name='ENTRADA' rect=472,743,53,15
+[313] ControlType.DataItem name='12' rect=639,739,170,24
+[314] ControlType.Text name='12' rect=642,743,13,15
+[315] ControlType.DataItem name='R$ 38,00' rect=809,739,170,24
+[316] ControlType.Text name='R$ 38,00' rect=812,743,46,15
+[317] ControlType.DataItem name='R$ 456,00' rect=979,739,170,24
+[318] ControlType.Text name='R$ 456,00' rect=982,743,52,15
+[319] ControlType.DataItem name='a5d19704-d558-4034-91d5-a9b570109306' rect=1149,739,170,24
+[320] ControlType.Text name='a5d19704-d558-4034-91d5-...' rect=1152,743,158,15
+[321] ControlType.DataItem name='-' rect=1319,739,170,24
+[322] ControlType.Text name='-' rect=1322,743,5,15
+[323] ControlType.DataItem name='-' rect=1489,739,170,24
+[324] ControlType.Text name='-' rect=1492,743,5,15
+[325] ControlType.DataItem name='Estoque central' rect=1659,739,170,24
+[326] ControlType.Text name='Estoque central' rect=1662,743,82,15
+[327] ControlType.DataItem name='Compra de gel para baratas.' rect=1829,739,170,24
+[328] ControlType.Text name='Compra de gel para baratas.' rect=1832,743,150,15
+[330] ControlType.DataItem name='Gel inseticida para baratas (seringa 20g)' rect=299,763,170,24
+[331] ControlType.Text name='Gel inseticida para baratas (s...' rect=302,767,159,15
+[332] ControlType.DataItem name='SAIDA' rect=469,763,170,24
+[333] ControlType.Text name='SAIDA' rect=472,767,34,15
+[334] ControlType.DataItem name='3' rect=639,763,170,24
+[335] ControlType.Text name='3' rect=642,767,7,15
+[336] ControlType.DataItem name='R$ 38,00' rect=809,763,170,24
+[337] ControlType.Text name='R$ 38,00' rect=812,767,46,15
+[338] ControlType.DataItem name='R$ 114,00' rect=979,763,170,24
+[339] ControlType.Text name='R$ 114,00' rect=982,767,52,15
+[340] ControlType.DataItem name='a5d19704-d558-4034-91d5-a9b570109306' rect=1149,763,170,24
+[341] ControlType.Text name='a5d19704-d558-4034-91d5-...' rect=1152,767,158,15
+[342] ControlType.DataItem name='Colégio Notre Dame Passo Fundo' rect=1319,763,170,24
+[343] ControlType.Text name='Colégio Notre Dame Passo F...' rect=1322,767,160,15
+[344] ControlType.DataItem name='ba4ae5c3-e728-90b4-7cc1-dc868cb13407' rect=1489,763,170,24
+[345] ControlType.Text name='ba4ae5c3-e728-90b4-7cc1-d...' rect=1492,767,161,15
+[346] ControlType.DataItem name='Colégio Notre Dame' rect=1659,763,170,24
+[347] ControlType.Text name='Colégio Notre Dame' rect=1662,767,109,15
+[348] ControlType.DataItem name='Gel para controle de baratas.' rect=1829,763,170,24
+[349] ControlType.Text name='Gel para controle de baratas.' rect=1832,767,153,15
+[351] ControlType.DataItem name='Gel inseticida para baratas (seringa 20g)' rect=299,787,170,24
+[352] ControlType.Text name='Gel inseticida para baratas (s...' rect=302,791,159,15
+[353] ControlType.DataItem name='SAIDA' rect=469,787,170,24
+[354] ControlType.Text name='SAIDA' rect=472,791,34,15
+[355] ControlType.DataItem name='2' rect=639,787,170,24
+[356] ControlType.Text name='2' rect=642,791,7,15
+[357] ControlType.DataItem name='R$ 38,00' rect=809,787,170,24
+[358] ControlType.Text name='R$ 38,00' rect=812,791,46,15
+[359] ControlType.DataItem name='R$ 76,00' rect=979,787,170,24
+[360] ControlType.Text name='R$ 76,00' rect=982,791,46,15
+[361] ControlType.DataItem name='a5d19704-d558-4034-91d5-a9b570109306' rect=1149,787,170,24
+[362] ControlType.Text name='a5d19704-d558-4034-91d5-...' rect=1152,791,158,15
+[363] ControlType.DataItem name='Padaria e Confeitaria Pão da Casa Ltda' rect=1319,787,170,24
+[364] ControlType.Text name='Padaria e Confeitaria Pão da ...' rect=1322,791,161,15
+[365] ControlType.DataItem name='2525f4a3-85a5-4eaf-fee1-c92c05b8beef' rect=1489,787,170,24
+[366] ControlType.Text name='2525f4a3-85a5-4eaf-fee1-c9...' rect=1492,791,159,15
+[367] ControlType.DataItem name='Padaria Pão da Casa' rect=1659,787,170,24
+[368] ControlType.Text name='Padaria Pão da Casa' rect=1662,791,107,15
+[369] ControlType.DataItem name='Gel em pontos críticos.' rect=1829,787,170,24
+[370] ControlType.Text name='Gel em pontos críticos.' rect=1832,791,121,15
+[372] ControlType.DataItem name='Inseticida líquido concentrado (Cipermetrina)' rect=299,811,170,24
+[373] ControlType.Text name='Inseticida líquido concentrad...' rect=302,815,161,15
+[374] ControlType.DataItem name='ENTRADA' rect=469,811,170,24
+[375] ControlType.Text name='ENTRADA' rect=472,815,53,15
+[376] ControlType.DataItem name='10' rect=639,811,170,24
+[377] ControlType.Text name='10' rect=642,815,13,15
+[378] ControlType.DataItem name='R$ 120,00' rect=809,811,170,24
+[379] ControlType.Text name='R$ 120,00' rect=812,815,52,15
+[380] ControlType.DataItem name='R$ 1.200,00' rect=979,811,170,24
+[381] ControlType.Text name='R$ 1.200,00' rect=982,815,61,15
+[382] ControlType.DataItem name='a5d19704-d558-4034-91d5-a9b570109306' rect=1149,811,170,24
+[383] ControlType.Text name='a5d19704-d558-4034-91d5-...' rect=1152,815,158,15
+[384] ControlType.DataItem name='-' rect=1319,811,170,24
+[385] ControlType.Text name='-' rect=1322,815,5,15
+[386] ControlType.DataItem name='-' rect=1489,811,170,24
+[387] ControlType.Text name='-' rect=1492,815,5,15
+[388] ControlType.DataItem name='Estoque central' rect=1659,811,170,24
+[389] ControlType.Text name='Estoque central' rect=1662,815,82,15
+[390] ControlType.DataItem name='Compra de inseticida concentrado.' rect=1829,811,170,24
+[391] ControlType.Text name='Compra de inseticida concen...' rect=1832,815,161,15
+[393] ControlType.DataItem name='Inseticida líquido concentrado (Cipermetrina)' rect=299,835,170,24
+[394] ControlType.Text name='Inseticida líquido concentrad...' rect=302,839,161,15
+[395] ControlType.DataItem name='SAIDA' rect=469,835,170,24
+[396] ControlType.Text name='SAIDA' rect=472,839,34,15
+[397] ControlType.DataItem name='2' rect=639,835,170,24
+[398] ControlType.Text name='2' rect=642,839,7,15
+[399] ControlType.DataItem name='R$ 120,00' rect=809,835,170,24
+[400] ControlType.Text name='R$ 120,00' rect=812,839,52,15
+[401] ControlType.DataItem name='R$ 240,00' rect=979,835,170,24
+[402] ControlType.Text name='R$ 240,00' rect=982,839,52,15
+[403] ControlType.DataItem name='a5d19704-d558-4034-91d5-a9b570109306' rect=1149,835,170,24
+[404] ControlType.Text name='a5d19704-d558-4034-91d5-...' rect=1152,839,158,15
+[405] ControlType.DataItem name='Maitá Palace Hotel' rect=1319,835,170,24
+[406] ControlType.Text name='Maitá Palace Hotel' rect=1322,839,99,15
+[407] ControlType.DataItem name='a1a3880f-53b6-12ac-c379-963249d300ca' rect=1489,835,170,24
+[408] ControlType.Text name='a1a3880f-53b6-12ac-c379-9...' rect=1492,839,158,15
+[409] ControlType.DataItem name='Cliente Maitá Palace' rect=1659,835,170,24
+[410] ControlType.Text name='Cliente Maitá Palace' rect=1662,839,107,15
+[411] ControlType.DataItem name='Retirada para desratização.' rect=1829,835,170,24
+[412] ControlType.Text name='Retirada para desratização.' rect=1832,839,143,15
+[414] ControlType.DataItem name='Inseticida líquido concentrado (Cipermetrina)' rect=299,859,170,24
+[415] ControlType.Text name='Inseticida líquido concentrad...' rect=302,863,161,15
+[416] ControlType.DataItem name='SAIDA' rect=469,859,170,24
+[417] ControlType.Text name='SAIDA' rect=472,863,34,15
+[418] ControlType.DataItem name='2' rect=639,859,170,24
+[419] ControlType.Text name='2' rect=642,863,7,15
+[420] ControlType.DataItem name='R$ 120,00' rect=809,859,170,24
+[421] ControlType.Text name='R$ 120,00' rect=812,863,52,15
+[422] ControlType.DataItem name='R$ 240,00' rect=979,859,170,24
+[423] ControlType.Text name='R$ 240,00' rect=982,863,52,15
+[424] ControlType.DataItem name='a5d19704-d558-4034-91d5-a9b570109306' rect=1149,859,170,24
+[425] ControlType.Text name='a5d19704-d558-4034-91d5-...' rect=1152,863,158,15
+[426] ControlType.DataItem name='Prix Hotel' rect=1319,859,170,24
+[427] ControlType.Text name='Prix Hotel' rect=1322,863,52,15
+[428] ControlType.DataItem name='94f944b8-2141-360f-8a00-d430982595a8' rect=1489,859,170,24
+[429] ControlType.Text name='94f944b8-2141-360f-8a00-d...' rect=1492,863,159,15
+[430] ControlType.DataItem name='Cliente Prix Hotel' rect=1659,859,170,24
+[431] ControlType.Text name='Cliente Prix Hotel' rect=1662,863,92,15
+[432] ControlType.DataItem name='Retirada para controle preventivo.' rect=1829,859,170,24
+[433] ControlType.Text name='Retirada para controle preve...' rect=1832,863,159,15
+[435] ControlType.DataItem name='Raticida bloco parafinado' rect=299,883,170,24
+[436] ControlType.Text name='Raticida bloco parafinado' rect=302,887,136,15
+[437] ControlType.DataItem name='ENTRADA' rect=469,883,170,24
+[438] ControlType.Text name='ENTRADA' rect=472,887,53,15
+[439] ControlType.DataItem name='8' rect=639,883,170,24
+[440] ControlType.Text name='8' rect=642,887,7,15
+[441] ControlType.DataItem name='R$ 45,00' rect=809,883,170,24
+[442] ControlType.Text name='R$ 45,00' rect=812,887,46,15
+[443] ControlType.DataItem name='R$ 360,00' rect=979,883,170,24
+[444] ControlType.Text name='R$ 360,00' rect=982,887,52,15
+[445] ControlType.DataItem name='a5d19704-d558-4034-91d5-a9b570109306' rect=1149,883,170,24
+[446] ControlType.Text name='a5d19704-d558-4034-91d5-...' rect=1152,887,158,15
+[447] ControlType.DataItem name='-' rect=1319,883,170,24
+[448] ControlType.Text name='-' rect=1322,887,5,15
+[449] ControlType.DataItem name='-' rect=1489,883,170,24
+[450] ControlType.Text name='-' rect=1492,887,5,15
+[451] ControlType.DataItem name='Estoque central' rect=1659,883,170,24
+[452] ControlType.Text name='Estoque central' rect=1662,887,82,15
+[453] ControlType.DataItem name='Compra de raticida em blocos.' rect=1829,883,170,24
+[454] ControlType.Text name='Compra de raticida em blocos.' rect=1832,887,162,15
+[456] ControlType.DataItem name='Raticida bloco parafinado' rect=299,907,170,24
+[457] ControlType.Text name='Raticida bloco parafinado' rect=302,911,136,15
+[458] ControlType.DataItem name='SAIDA' rect=469,907,170,24
+[459] ControlType.Text name='SAIDA' rect=472,911,34,15
+[460] ControlType.DataItem name='1' rect=639,907,170,24
+[461] ControlType.Text name='1' rect=642,911,7,15
+[462] ControlType.DataItem name='R$ 45,00' rect=809,907,170,24
+[463] ControlType.Text name='R$ 45,00' rect=812,911,46,15
+[464] ControlType.DataItem name='R$ 45,00' rect=979,907,170,24
+[465] ControlType.Text name='R$ 45,00' rect=982,911,46,15
+[466] ControlType.DataItem name='a5d19704-d558-4034-91d5-a9b570109306' rect=1149,907,170,24
+[467] ControlType.Text name='a5d19704-d558-4034-91d5-...' rect=1152,911,158,15
+[468] ControlType.DataItem name='Restaurante Sabor da Serra Ltda' rect=1319,907,170,24
+[469] ControlType.Text name='Restaurante Sabor da Serra L...' rect=1322,911,161,15
+[470] ControlType.DataItem name='e9fb46bd-5725-e170-53b9-f1a414f5ba13' rect=1489,907,170,24
+[471] ControlType.Text name='e9fb46bd-5725-e170-53b9-f...' rect=1492,911,160,15
+[472] ControlType.DataItem name='Restaurante Sabor da Serra' rect=1659,907,170,24
+[473] ControlType.Text name='Restaurante Sabor da Serra' rect=1662,911,144,15
+[474] ControlType.DataItem name='Iscas para roedores.' rect=1829,907,170,24
+[475] ControlType.Text name='Iscas para roedores.' rect=1832,911,105,15
+[561] ControlType.Button name='increment' rect=1864,1007,10,14
+[562] ControlType.Button name='decrement' rect=298,1007,10,14
+
+===== Clientes =====
+[3] ControlType.Button name='Minimizar' rect=1779,0,47,22
+[4] ControlType.Button name='Restaurar' rect=1826,0,46,22
+[5] ControlType.Button name='Fechar' rect=1872,0,48,22
+[6] ControlType.Button name='☰' rect=14,26,38,39
+[7] ControlType.Text name='☰' rect=23,33,20,24
+[8] ControlType.Text name='SIGLA' rect=14,85,93,41
+[9] ControlType.Text name='SIGLA' rect=22,89,85,37
+[10] ControlType.Text name='Gestao Empresarial' rect=14,130,118,23
+[11] ControlType.Text name='Gestao Empresarial' rect=22,130,110,17
+[12] ControlType.Button name='Dashboard' rect=14,176,224,41
+[13] ControlType.Text name='Dashboard' rect=30,187,72,18
+[14] ControlType.Button name='Cadastros' rect=14,220,224,41
+[15] ControlType.Text name='Cadastros' rect=30,231,65,18
+[16] ControlType.Button name='Financeiro' rect=14,264,224,41
+[17] ControlType.Text name='Financeiro' rect=30,275,69,18
+[18] ControlType.Button name='Clientes' rect=2,299,249,65
+[19] ControlType.Text name='Clientes' rect=34,319,52,18
+[20] ControlType.Button name='Servicos' rect=14,352,224,41
+[21] ControlType.Text name='Servicos' rect=30,363,54,18
+[22] ControlType.Button name='Agenda' rect=14,396,224,41
+[23] ControlType.Text name='Agenda' rect=30,407,51,18
+[24] ControlType.Button name='Ordem de Servico' rect=14,440,224,41
+[25] ControlType.Text name='Ordem de Servico' rect=30,451,118,18
+[26] ControlType.Button name='Estoque' rect=14,484,224,41
+[27] ControlType.Text name='Estoque' rect=30,495,53,18
+[28] ControlType.Button name='Contratos / Certificados' rect=14,528,224,41
+[29] ControlType.Text name='Contratos / Certificados' rect=30,539,157,18
+[30] ControlType.Button name='Usuarios' rect=14,572,224,41
+[31] ControlType.Text name='Usuarios' rect=30,583,57,18
+[32] ControlType.Button name='Notificacoes' rect=14,616,224,41
+[33] ControlType.Text name='Notificacoes' rect=30,627,82,18
+[34] ControlType.Button name='Sair' rect=14,976,224,41
+[35] ControlType.Text name='Sair' rect=30,987,25,18
+[37] ControlType.Text name='Gestão de Clientes' rect=283,98,440,65
+[38] ControlType.Text name='Gestão de Clientes' rect=283,98,433,65
+[39] ControlType.Text name='Fidelização e programa de indicações' rect=253,163,270,20
+[40] ControlType.Text name='Fidelização e programa de indicações' rect=288,163,232,20
+[41] ControlType.Button name='+ Nova Indicação' rect=1249,98,242,87
+[42] ControlType.Text name='+ Nova Indicação' rect=1300,125,140,22
+[43] ControlType.Text name='Total de Clientes' rect=303,213,103,20
+[44] ControlType.Text name='Total de Clientes' rect=303,213,103,20
+[45] ControlType.Text name='0' rect=303,253,14,31
+[46] ControlType.Text name='0' rect=303,253,14,31
+[47] ControlType.Text name='Total de Indicações' rect=603,213,119,20
+[48] ControlType.Text name='Total de Indicações' rect=603,213,119,20
+[49] ControlType.Text name='0' rect=603,253,14,31
+[50] ControlType.Text name='0' rect=603,253,14,31
+[51] ControlType.Text name='Faturamento Total' rect=903,213,114,20
+[52] ControlType.Text name='Faturamento Total' rect=903,213,114,20
+[53] ControlType.Text name='R$ 0,00' rect=903,253,85,31
+[54] ControlType.Text name='R$ 0,00' rect=903,253,85,31
+[55] ControlType.Text name='Indicações Pendentes' rect=1203,213,134,20
+[56] ControlType.Text name='Indicações Pendentes' rect=1203,213,134,20
+[57] ControlType.Text name='0' rect=1203,253,14,31
+[58] ControlType.Text name='0' rect=1203,253,14,31
+[59] ControlType.Text name='Top Clientes por Faturamento' rect=303,312,566,26
+[60] ControlType.Text name='Top Clientes por Faturamento' rect=303,312,281,26
+[63] ControlType.Text name='Nome' rect=306,349,227,24
+[64] ControlType.Text name='Nome' rect=402,354,35,15
+[66] ControlType.Text name='Email' rect=537,349,227,24
+[67] ControlType.Text name='Email' rect=635,354,31,15
+[69] ControlType.Text name='Quantidade de Serviços' rect=768,349,227,24
+[70] ControlType.Text name='Quantidade de Serviços' rect=815,354,133,15
+[72] ControlType.Text name='Valor' rect=999,349,227,24
+[73] ControlType.Text name='Valor' rect=1098,354,30,15
+[75] ControlType.Text name='Indicações' rect=1230,349,227,24
+[76] ControlType.Text name='Indicações' rect=1314,354,59,15
+[77] ControlType.Text name='Não há conteúdo na tabela' rect=1010,522,145,15
+[78] ControlType.Text name='Não há conteúdo na tabela' rect=1010,522,145,15
+[79] ControlType.Text name='Indicações de Clientes' rect=303,729,566,34
+[80] ControlType.Text name='Indicações de Clientes' rect=303,733,207,26
+[82] ControlType.Text name='Buscar indicação' rect=310,775,88,15
+[85] ControlType.Text name='Cliente indicador' rect=510,775,90,15
+[88] ControlType.Text name='Todos' rect=703,767,170,30
+[89] ControlType.Text name='Todos' rect=711,775,33,15
+[92] ControlType.Text name='Início' rect=890,775,29,15
+[96] ControlType.Text name='Fim' rect=1045,775,20,15
+[98] ControlType.Button name='Filtrar' rect=1193,767,80,31
+[99] ControlType.Text name='Filtrar' rect=1218,775,31,15
+[100] ControlType.Button name='Editar' rect=1283,767,75,31
+[101] ControlType.Text name='Editar' rect=1305,775,31,15
+[102] ControlType.Button name='Status' rect=1368,767,80,31
+[103] ControlType.Text name='Status' rect=1392,775,33,15
+[104] ControlType.Button name='Converter' rect=1458,767,95,31
+[105] ControlType.Text name='Converter' rect=1480,775,52,15
+[108] ControlType.Text name='Nome Indicado' rect=306,818,227,24
+[109] ControlType.Text name='Nome Indicado' rect=376,823,87,15
+[111] ControlType.Text name='Telefone' rect=537,818,227,24
+[112] ControlType.Text name='Telefone' rect=626,823,50,15
+[114] ControlType.Text name='Cliente Indicador' rect=768,818,227,24
+[115] ControlType.Text name='Cliente Indicador' rect=833,823,97,15
+[117] ControlType.Text name='Data' rect=999,818,227,24
+[118] ControlType.Text name='Data' rect=1099,823,27,15
+[120] ControlType.Text name='Status' rect=1230,818,227,24
+[121] ControlType.Text name='Status' rect=1326,823,36,15
+[122] ControlType.Text name='Não há conteúdo na tabela' rect=1010,990,145,15
+[123] ControlType.Text name='Não há conteúdo na tabela' rect=1010,990,145,15
+[125] ControlType.Button name='increment' rect=1906,1021,13,10
+[126] ControlType.Button name='decrement' rect=1906,68,13,10
+[128] ControlType.Text name='Carregando...' rect=1039,582,95,19
+[129] ControlType.Text name='Carregando...' rect=1039,582,95,19
+
+===== Financeiro =====
+[3] ControlType.Button name='Minimizar' rect=1779,0,47,22
+[4] ControlType.Button name='Restaurar' rect=1826,0,46,22
+[5] ControlType.Button name='Fechar' rect=1872,0,48,22
+[6] ControlType.Button name='☰' rect=14,26,38,39
+[7] ControlType.Text name='☰' rect=23,33,20,24
+[8] ControlType.Text name='SIGLA' rect=14,85,93,41
+[9] ControlType.Text name='SIGLA' rect=22,89,85,37
+[10] ControlType.Text name='Gestao Empresarial' rect=14,130,118,23
+[11] ControlType.Text name='Gestao Empresarial' rect=22,130,110,17
+[12] ControlType.Button name='Dashboard' rect=14,176,224,41
+[13] ControlType.Text name='Dashboard' rect=30,187,72,18
+[14] ControlType.Button name='Cadastros' rect=14,220,224,41
+[15] ControlType.Text name='Cadastros' rect=30,231,65,18
+[16] ControlType.Button name='Financeiro' rect=2,255,249,65
+[17] ControlType.Text name='Financeiro' rect=34,275,69,18
+[18] ControlType.Button name='Clientes' rect=14,308,224,41
+[19] ControlType.Text name='Clientes' rect=30,319,52,18
+[20] ControlType.Button name='Servicos' rect=14,352,224,41
+[21] ControlType.Text name='Servicos' rect=30,363,54,18
+[22] ControlType.Button name='Agenda' rect=14,396,224,41
+[23] ControlType.Text name='Agenda' rect=30,407,51,18
+[24] ControlType.Button name='Ordem de Servico' rect=14,440,224,41
+[25] ControlType.Text name='Ordem de Servico' rect=30,451,118,18
+[26] ControlType.Button name='Estoque' rect=14,484,224,41
+[27] ControlType.Text name='Estoque' rect=30,495,53,18
+[28] ControlType.Button name='Contratos / Certificados' rect=14,528,224,41
+[29] ControlType.Text name='Contratos / Certificados' rect=30,539,157,18
+[30] ControlType.Button name='Usuarios' rect=14,572,224,41
+[31] ControlType.Text name='Usuarios' rect=30,583,57,18
+[32] ControlType.Button name='Notificacoes' rect=14,616,224,41
+[33] ControlType.Text name='Notificacoes' rect=30,627,82,18
+[34] ControlType.Button name='Sair' rect=14,976,224,41
+[35] ControlType.Text name='Sair' rect=30,987,25,18
+[37] ControlType.Text name='Financeiro' rect=281,86,244,65
+[38] ControlType.Text name='Financeiro' rect=281,86,244,65
+[39] ControlType.Text name='Controle de receitas e despesas' rect=255,146,360,20
+[40] ControlType.Text name='Controle de receitas e despesas' rect=283,146,195,20
+[41] ControlType.Button name='Lançamentos' rect=1643,93,251,87
+[42] ControlType.Text name='Lançamentos' rect=1701,117,136,28
+[43] ControlType.Text name='Receitas (Pago)' rect=291,217,131,23
+[44] ControlType.Text name='Receitas (Pago)' rect=291,217,131,23
+[45] ControlType.Text name='R$ 0,00' rect=291,240,85,46
+[46] ControlType.Text name='R$ 0,00' rect=291,255,85,31
+[47] ControlType.Text name='Despesas (Pago)' rect=601,217,139,23
+[48] ControlType.Text name='Despesas (Pago)' rect=601,217,139,23
+[49] ControlType.Text name='R$ 0,00' rect=601,240,85,46
+[50] ControlType.Text name='R$ 0,00' rect=601,255,85,31
+[51] ControlType.Text name='Saldo Atual' rect=911,217,98,23
+[52] ControlType.Text name='Saldo Atual' rect=911,217,98,23
+[53] ControlType.Text name='R$ 0,00' rect=911,240,85,46
+[54] ControlType.Text name='R$ 0,00' rect=911,255,85,31
+[55] ControlType.Text name='A Receber' rect=1221,217,86,23
+[56] ControlType.Text name='A Receber' rect=1221,217,86,23
+[57] ControlType.Text name='R$ 0,00' rect=1221,240,85,46
+[58] ControlType.Text name='R$ 0,00' rect=1221,255,85,31
+[59] ControlType.Button name='Todos' rect=296,346,135,32
+[60] ControlType.Text name='Todos' rect=342,351,44,21
+[61] ControlType.Button name='Pagos' rect=446,346,135,32
+[62] ControlType.Text name='Pagos' rect=492,351,43,21
+[63] ControlType.Button name='Pendentes' rect=596,346,135,31
+[64] ControlType.Text name='Pendentes' rect=627,352,74,19
+[65] ControlType.Button name='Vencidos' rect=746,346,135,32
+[66] ControlType.Text name='Vencidos' rect=782,351,64,21
+[67] ControlType.Button name='Filtros' rect=896,346,135,32
+[68] ControlType.Text name='Filtros' rect=942,351,44,21
+[69] ControlType.Button name='Imprimir recibo' rect=1046,346,160,32
+[70] ControlType.Text name='Imprimir recibo' rect=1071,351,111,21
+[71] ControlType.Button name='Editar' rect=296,422,135,32
+[72] ControlType.Text name='Editar' rect=343,427,42,21
+[73] ControlType.Button name='Marcar pago' rect=446,422,135,32
+[74] ControlType.Text name='Marcar pago' rect=469,427,90,21
+[75] ControlType.Button name='Baixar parcela' rect=596,422,135,32
+[76] ControlType.Text name='Baixar parcela' rect=614,427,100,21
+[77] ControlType.Button name='Estornar' rect=746,422,135,32
+[78] ControlType.Text name='Estornar' rect=784,427,59,21
+[79] ControlType.Button name='Cancelar' rect=896,422,136,32
+[80] ControlType.Text name='Cancelar' rect=934,427,61,21
+[83] ControlType.Text name='Tipo' rect=284,491,125,24
+[84] ControlType.Text name='Tipo' rect=334,496,26,15
+[86] ControlType.Text name='Categoria' rect=413,491,124,24
+[87] ControlType.Text name='Categoria' rect=448,496,55,15
+[89] ControlType.Text name='Descrição' rect=541,491,125,24
+[90] ControlType.Text name='Descrição' rect=576,496,55,15
+[92] ControlType.Text name='Cliente' rect=670,491,125,24
+[93] ControlType.Text name='Cliente' rect=713,496,40,15
+[95] ControlType.Text name='Ordem de Serviço' rect=799,491,124,24
+[96] ControlType.Text name='Ordem de Serviço' rect=811,496,101,15
+[98] ControlType.Text name='Valor Total' rect=927,491,125,24
+[99] ControlType.Text name='Valor Total' rect=958,496,63,15
+[101] ControlType.Text name='Data Emissão' rect=1056,491,124,24
+[102] ControlType.Text name='Data Emissão' rect=1081,496,75,15
+[104] ControlType.Text name='Data Vencimento' rect=1184,491,125,24
+[105] ControlType.Text name='Data Vencimento' rect=1198,496,98,15
+[107] ControlType.Text name='Data Pagamento' rect=1313,491,125,24
+[108] ControlType.Text name='Data Pagamento' rect=1328,496,95,15
+[110] ControlType.Text name='Forma de Pagamento' rect=1442,491,124,24
+[111] ControlType.Text name='Forma de Pagamento' rect=1444,496,121,15
+[113] ControlType.Text name='Quantidade de Parcelas' rect=1570,491,91,24
+[114] ControlType.Text name='Quantidade d...' rect=1572,496,87,15
+[116] ControlType.Text name='Observações' rect=1665,491,125,24
+[117] ControlType.Text name='Observações' rect=1692,496,71,15
+[119] ControlType.Text name='Status' rect=1794,491,82,24
+[120] ControlType.Text name='Status' rect=1817,496,36,15
+[121] ControlType.Text name='Não há conteúdo na tabela' rect=1008,695,145,15
+[122] ControlType.Text name='Não há conteúdo na tabela' rect=1008,695,145,15
+[123] ControlType.Text name='Carregando...' rect=1039,582,95,19
+[124] ControlType.Text name='Carregando...' rect=1039,582,95,19
+
+===== Agenda =====
+[3] ControlType.Button name='Minimizar' rect=1779,0,47,22
+[4] ControlType.Button name='Restaurar' rect=1826,0,46,22
+[5] ControlType.Button name='Fechar' rect=1872,0,48,22
+[6] ControlType.Button name='☰' rect=14,26,38,39
+[7] ControlType.Text name='☰' rect=23,33,20,24
+[8] ControlType.Text name='SIGLA' rect=14,85,93,41
+[9] ControlType.Text name='SIGLA' rect=22,89,85,37
+[10] ControlType.Text name='Gestao Empresarial' rect=14,130,118,23
+[11] ControlType.Text name='Gestao Empresarial' rect=22,130,110,17
+[12] ControlType.Button name='Dashboard' rect=14,176,224,41
+[13] ControlType.Text name='Dashboard' rect=30,187,72,18
+[14] ControlType.Button name='Cadastros' rect=14,220,224,41
+[15] ControlType.Text name='Cadastros' rect=30,231,65,18
+[16] ControlType.Button name='Financeiro' rect=14,264,224,41
+[17] ControlType.Text name='Financeiro' rect=30,275,69,18
+[18] ControlType.Button name='Clientes' rect=14,308,224,41
+[19] ControlType.Text name='Clientes' rect=30,319,52,18
+[20] ControlType.Button name='Servicos' rect=14,352,224,41
+[21] ControlType.Text name='Servicos' rect=30,363,54,18
+[22] ControlType.Button name='Agenda' rect=2,387,249,65
+[23] ControlType.Text name='Agenda' rect=34,407,51,18
+[24] ControlType.Button name='Ordem de Servico' rect=14,440,224,41
+[25] ControlType.Text name='Ordem de Servico' rect=30,451,118,18
+[26] ControlType.Button name='Estoque' rect=14,484,224,41
+[27] ControlType.Text name='Estoque' rect=30,495,53,18
+[28] ControlType.Button name='Contratos / Certificados' rect=14,528,224,41
+[29] ControlType.Text name='Contratos / Certificados' rect=30,539,157,18
+[30] ControlType.Button name='Usuarios' rect=14,572,224,41
+[31] ControlType.Text name='Usuarios' rect=30,583,57,18
+[32] ControlType.Button name='Notificacoes' rect=14,616,224,41
+[33] ControlType.Text name='Notificacoes' rect=30,627,82,18
+[34] ControlType.Button name='Sair' rect=14,976,224,41
+[35] ControlType.Text name='Sair' rect=30,987,25,18
+[37] ControlType.Text name='Agenda e Calendário' rect=288,88,293,37
+[38] ControlType.Text name='Agenda e Calendário' rect=288,88,293,37
+[39] ControlType.Text name='01/06/2026 a 30/06/2026' rect=288,129,158,18
+[40] ControlType.Text name='01/06/2026 a 30/06/2026' rect=288,129,158,18
+[43] ControlType.Text name='Mês' rect=300,186,23,15
+[46] ControlType.Text name='29/06/2026' rect=451,186,62,15
+[47] ControlType.Button name='Novo evento' rect=616,182,103,29
+[48] ControlType.Text name='Novo evento' rect=625,187,85,18
+[49] ControlType.Button name='Editar' rect=731,182,57,29
+[50] ControlType.Text name='Editar' rect=740,187,39,18
+[51] ControlType.Button name='Reagendar' rect=800,182,89,29
+[52] ControlType.Text name='Reagendar' rect=809,187,71,18
+[53] ControlType.Button name='Concluir' rect=901,182,73,29
+[54] ControlType.Text name='Concluir' rect=910,187,55,18
+[55] ControlType.Button name='Cancelar' rect=986,182,75,29
+[56] ControlType.Text name='Cancelar' rect=995,187,57,18
+[57] ControlType.Button name='Atualizar' rect=1073,182,78,29
+[58] ControlType.Text name='Atualizar' rect=1082,187,60,18
+[62] ControlType.Text name='Data' rect=296,240,141,24
+[63] ControlType.Text name='Data' rect=353,245,27,15
+[65] ControlType.Text name='Título' rect=441,240,216,24
+[66] ControlType.Text name='Título' rect=532,245,34,15
+[68] ControlType.Text name='Cliente' rect=661,240,176,24
+[69] ControlType.Text name='Cliente' rect=729,245,40,15
+[71] ControlType.Text name='Tipo' rect=841,240,126,24
+[72] ControlType.Text name='Tipo' rect=891,245,26,15
+[74] ControlType.Text name='Recorrência' rect=971,240,116,24
+[75] ControlType.Text name='Recorrência' rect=996,245,67,15
+[77] ControlType.Text name='Status' rect=1091,240,96,24
+[78] ControlType.Text name='Status' rect=1121,245,36,15
+[80] ControlType.Text name='Prioridade' rect=1191,240,106,24
+[81] ControlType.Text name='Prioridade' rect=1215,245,59,15
+[83] ControlType.Text name='Responsável' rect=1301,240,146,24
+[84] ControlType.Text name='Responsável' rect=1339,245,70,15
+[86] ControlType.Text name='Lembrete' rect=1451,240,146,24
+[87] ControlType.Text name='Lembrete' rect=1497,245,54,15
+[89] ControlType.Text name='Vínculo' rect=1601,240,121,24
+[90] ControlType.Text name='Vínculo' rect=1640,245,43,15
+[92] ControlType.DataItem name='05/06/2026 07:00' rect=294,264,145,24
+[93] ControlType.Text name='05/06/2026 07:00' rect=297,268,93,15
+[94] ControlType.DataItem name='Dedetização residencial - Maria A.' rect=439,264,220,24
+[95] ControlType.Text name='Dedetização residencial - Maria A.' rect=442,268,180,15
+[96] ControlType.DataItem name='Maria Aparecida Gomes' rect=659,264,180,24
+[97] ControlType.Text name='Maria Aparecida Gomes' rect=662,268,127,15
+[98] ControlType.DataItem name='Dedetização residencial' rect=839,264,130,24
+[99] ControlType.Text name='Dedetização residenc...' rect=842,268,121,15
+[100] ControlType.DataItem name='Nenhuma' rect=969,264,120,24
+[101] ControlType.Text name='Nenhuma' rect=972,268,53,15
+[102] ControlType.DataItem name='Concluído' rect=1089,264,100,24
+[103] ControlType.Text name='Concluído' rect=1092,268,54,15
+[104] ControlType.DataItem name='Normal' rect=1189,264,110,24
+[105] ControlType.Text name='Normal' rect=1192,268,40,15
+[106] ControlType.DataItem name='Cristiano Bavaresco' rect=1299,264,150,24
+[107] ControlType.Text name='Cristiano Bavaresco' rect=1302,268,103,15
+[108] ControlType.DataItem name='1 dia(s)' rect=1449,264,150,24
+[109] ControlType.Text name='1 dia(s)' rect=1452,268,39,15
+[110] ControlType.DataItem name='OS' rect=1599,264,125,24
+[111] ControlType.Text name='OS' rect=1602,268,16,15
+[113] ControlType.DataItem name='07/06/2026 05:00' rect=294,288,145,24
+[114] ControlType.Text name='07/06/2026 05:00' rect=297,292,93,15
+[115] ControlType.DataItem name='Controle escolar - Notre Dame' rect=439,288,220,24
+[116] ControlType.Text name='Controle escolar - Notre Dame' rect=442,292,163,15
+[117] ControlType.DataItem name='Colégio Notre Dame Passo Fundo' rect=659,288,180,24
+[118] ControlType.Text name='Colégio Notre Dame Passo Fu...' rect=662,292,166,15
+[119] ControlType.DataItem name='Dedetização comercial' rect=839,288,130,24
+[120] ControlType.Text name='Dedetização comercial' rect=842,292,120,15
+[121] ControlType.DataItem name='Mensal' rect=969,288,120,24
+[122] ControlType.Text name='Mensal' rect=972,292,38,15
+[123] ControlType.DataItem name='Concluído' rect=1089,288,100,24
+[124] ControlType.Text name='Concluído' rect=1092,292,54,15
+[125] ControlType.DataItem name='Alta' rect=1189,288,110,24
+[126] ControlType.Text name='Alta' rect=1192,292,21,15
+[127] ControlType.DataItem name='Anderson Refatti' rect=1299,288,150,24
+[128] ControlType.Text name='Anderson Refatti' rect=1302,292,89,15
+[129] ControlType.DataItem name='1 dia(s)' rect=1449,288,150,24
+[130] ControlType.Text name='1 dia(s)' rect=1452,292,39,15
+[131] ControlType.DataItem name='OS' rect=1599,288,125,24
+[132] ControlType.Text name='OS' rect=1602,292,16,15
+[134] ControlType.DataItem name='10/06/2026 04:30' rect=294,312,145,24
+[135] ControlType.Text name='10/06/2026 04:30' rect=297,316,93,15
+[136] ControlType.DataItem name='Controle de baratas - Pão da Casa' rect=439,312,220,24
+[137] ControlType.Text name='Controle de baratas - Pão da Casa' rect=442,316,181,15
+[138] ControlType.DataItem name='Padaria e Confeitaria Pão da Casa Ltda' rect=659,312,180,24
+[139] ControlType.Text name='Padaria e Confeitaria Pão da C...' rect=662,316,168,15
+[140] ControlType.DataItem name='Controle de baratas' rect=839,312,130,24
+[141] ControlType.Text name='Controle de baratas' rect=842,316,105,15
+[142] ControlType.DataItem name='Mensal' rect=969,312,120,24
+[143] ControlType.Text name='Mensal' rect=972,316,38,15
+[144] ControlType.DataItem name='Concluído' rect=1089,312,100,24
+[145] ControlType.Text name='Concluído' rect=1092,316,54,15
+[146] ControlType.DataItem name='Normal' rect=1189,312,110,24
+[147] ControlType.Text name='Normal' rect=1192,316,40,15
+[148] ControlType.DataItem name='Cristiano Bavaresco' rect=1299,312,150,24
+[149] ControlType.Text name='Cristiano Bavaresco' rect=1302,316,103,15
+[150] ControlType.DataItem name='1 dia(s)' rect=1449,312,150,24
+[151] ControlType.Text name='1 dia(s)' rect=1452,316,39,15
+[152] ControlType.DataItem name='OS' rect=1599,312,125,24
+[153] ControlType.Text name='OS' rect=1602,316,16,15
+[155] ControlType.DataItem name='12/06/2026 06:00' rect=294,336,145,24
+[156] ControlType.Text name='12/06/2026 06:00' rect=297,340,93,15
+[157] ControlType.DataItem name='Desratização - Maitá Palace' rect=439,336,220,24
+[158] ControlType.Text name='Desratização - Maitá Palace' rect=442,340,146,15
+[159] ControlType.DataItem name='Maitá Palace Hotel' rect=659,336,180,24
+[160] ControlType.Text name='Maitá Palace Hotel' rect=662,340,99,15
+[161] ControlType.DataItem name='Desratização' rect=839,336,130,24
+[162] ControlType.Text name='Desratização' rect=842,340,68,15
+[163] ControlType.DataItem name='Mensal' rect=969,336,120,24
+[164] ControlType.Text name='Mensal' rect=972,340,38,15
+[165] ControlType.DataItem name='Concluído' rect=1089,336,100,24
+[166] ControlType.Text name='Concluído' rect=1092,340,54,15
+[167] ControlType.DataItem name='Normal' rect=1189,336,110,24
+[168] ControlType.Text name='Normal' rect=1192,340,40,15
+[169] ControlType.DataItem name='Anderson Refatti' rect=1299,336,150,24
+[170] ControlType.Text name='Anderson Refatti' rect=1302,340,89,15
+[171] ControlType.DataItem name='1 dia(s)' rect=1449,336,150,24
+[172] ControlType.Text name='1 dia(s)' rect=1452,340,39,15
+[173] ControlType.DataItem name='OS' rect=1599,336,125,24
+[174] ControlType.Text name='OS' rect=1602,340,16,15
+[176] ControlType.DataItem name='12/06/2026 12:00' rect=294,360,145,24
+[177] ControlType.Text name='12/06/2026 12:00' rect=297,364,93,15
+[178] ControlType.DataItem name='Controle quinzenal - Sabor da Serra' rect=439,360,220,24
+[179] ControlType.Text name='Controle quinzenal - Sabor da Serra' rect=442,364,190,15
+[180] ControlType.DataItem name='Restaurante Sabor da Serra Ltda' rect=659,360,180,24
+[181] ControlType.Text name='Restaurante Sabor da Serra Ltda' rect=662,364,170,15
+[182] ControlType.DataItem name='Controle de baratas' rect=839,360,130,24
+[183] ControlType.Text name='Controle de baratas' rect=842,364,105,15
+[184] ControlType.DataItem name='Quinzenal' rect=969,360,120,24
+[185] ControlType.Text name='Quinzenal' rect=972,364,54,15
+[186] ControlType.DataItem name='Concluído' rect=1089,360,100,24
+[187] ControlType.Text name='Concluído' rect=1092,364,54,15
+[188] ControlType.DataItem name='Normal' rect=1189,360,110,24
+[189] ControlType.Text name='Normal' rect=1192,364,40,15
+[190] ControlType.DataItem name='Anderson Refatti' rect=1299,360,150,24
+[191] ControlType.Text name='Anderson Refatti' rect=1302,364,89,15
+[192] ControlType.DataItem name='1 dia(s)' rect=1449,360,150,24
+[193] ControlType.Text name='1 dia(s)' rect=1452,364,39,15
+[194] ControlType.DataItem name='OS' rect=1599,360,125,24
+[195] ControlType.Text name='OS' rect=1602,364,16,15
+[197] ControlType.DataItem name='18/06/2026 05:00' rect=294,384,145,24
+[198] ControlType.Text name='18/06/2026 05:00' rect=297,388,93,15
+[199] ControlType.DataItem name='Revisita técnica - Notre Dame' rect=439,384,220,24
+[200] ControlType.Text name='Revisita técnica - Notre Dame' rect=442,388,158,15
+[201] ControlType.DataItem name='Colégio Notre Dame Passo Fundo' rect=659,384,180,24
+[202] ControlType.Text name='Colégio Notre Dame Passo Fu...' rect=662,388,166,15
+[203] ControlType.DataItem name='Revisita técnica' rect=839,384,130,24
+[204] ControlType.Text name='Revisita técnica' rect=842,388,81,15
+[205] ControlType.DataItem name='Nenhuma' rect=969,384,120,24
+[206] ControlType.Text name='Nenhuma' rect=972,388,53,15
+[207] ControlType.DataItem name='Não realizado' rect=1089,384,100,24
+[208] ControlType.Text name='Não realizado' rect=1092,388,74,15
+[209] ControlType.DataItem name='Alta' rect=1189,384,110,24
+[210] ControlType.Text name='Alta' rect=1192,388,21,15
+[211] ControlType.DataItem name='Cristiano Bavaresco' rect=1299,384,150,24
+[212] ControlType.Text name='Cristiano Bavaresco' rect=1302,388,103,15
+[213] ControlType.DataItem name='1 dia(s)' rect=1449,384,150,24
+[214] ControlType.Text name='1 dia(s)' rect=1452,388,39,15
+[215] ControlType.DataItem name='Contrato' rect=1599,384,125,24
+[216] ControlType.Text name='Contrato' rect=1602,388,47,15
+[218] ControlType.DataItem name='20/06/2026 11:00' rect=294,408,145,24
+[219] ControlType.Text name='20/06/2026 11:00' rect=297,412,93,15
+[220] ControlType.DataItem name='Controle preventivo - Prix Hotel' rect=439,408,220,24
+[221] ControlType.Text name='Controle preventivo - Prix Hotel' rect=442,412,168,15
+[222] ControlType.DataItem name='Prix Hotel' rect=659,408,180,24
+[223] ControlType.Text name='Prix Hotel' rect=662,412,52,15
+[224] ControlType.DataItem name='Dedetização comercial' rect=839,408,130,24
+[225] ControlType.Text name='Dedetização comercial' rect=842,412,120,15
+[226] ControlType.DataItem name='Mensal' rect=969,408,120,24
+[227] ControlType.Text name='Mensal' rect=972,412,38,15
+[228] ControlType.DataItem name='Concluído' rect=1089,408,100,24
+[229] ControlType.Text name='Concluído' rect=1092,412,54,15
+[230] ControlType.DataItem name='Normal' rect=1189,408,110,24
+[231] ControlType.Text name='Normal' rect=1192,412,40,15
+[232] ControlType.DataItem name='Cristiano Bavaresco' rect=1299,408,150,24
+[233] ControlType.Text name='Cristiano Bavaresco' rect=1302,412,103,15
+[234] ControlType.DataItem name='1 dia(s)' rect=1449,408,150,24
+[235] ControlType.Text name='1 dia(s)' rect=1452,412,39,15
+[236] ControlType.DataItem name='OS' rect=1599,408,125,24
+[237] ControlType.Text name='OS' rect=1602,412,16,15
+[239] ControlType.DataItem name='23/06/2026 00:00' rect=294,432,145,24
+[240] ControlType.Text name='23/06/2026 00:00' rect=297,436,93,15
+[241] ControlType.DataItem name='OS referente a colégio notredame' rect=439,432,220,24
+[242] ControlType.Text name='OS referente a colégio notredame' rect=442,436,180,15
+[243] ControlType.DataItem name='Colégio Notre Dame Passo Fundo' rect=659,432,180,24
+[244] ControlType.Text name='Colégio Notre Dame Passo Fu...' rect=662,436,166,15
+[245] ControlType.DataItem name='os' rect=839,432,130,24
+[246] ControlType.Text name='os' rect=842,436,13,15
+[247] ControlType.DataItem name='Nenhuma' rect=969,432,120,24
+[248] ControlType.Text name='Nenhuma' rect=972,436,53,15
+[249] ControlType.DataItem name='VENCIDO' rect=1089,432,100,24
+[250] ControlType.Text name='VENCIDO' rect=1092,436,51,15
+[251] ControlType.DataItem name='Normal' rect=1189,432,110,24
+[252] ControlType.Text name='Normal' rect=1192,436,40,15
+[253] ControlType.DataItem name='Cristiano Bavaresco' rect=1299,432,150,24
+[254] ControlType.Text name='Cristiano Bavaresco' rect=1302,436,103,15
+[255] ControlType.DataItem name='1 dia(s)' rect=1449,432,150,24
+[256] ControlType.Text name='1 dia(s)' rect=1452,436,39,15
+[257] ControlType.DataItem name='OS' rect=1599,432,125,24
+[258] ControlType.Text name='OS' rect=1602,436,16,15
+[260] ControlType.DataItem name='23/06/2026 00:00' rect=294,456,145,24
+[261] ControlType.Text name='23/06/2026 00:00' rect=297,460,93,15
+[262] ControlType.DataItem name='TESTE FLUXO COMPLETO 23-06-2026' rect=439,456,220,24
+[263] ControlType.Text name='TESTE FLUXO COMPLETO 23-06-2026' rect=442,460,200,15
+[264] ControlType.DataItem name='Mercado Bom Vizinho' rect=659,456,180,24
+[265] ControlType.Text name='Mercado Bom Vizinho' rect=662,460,118,15
+[266] ControlType.DataItem name='os' rect=839,456,130,24
+[267] ControlType.Text name='os' rect=842,460,13,15
+[268] ControlType.DataItem name='Nenhuma' rect=969,456,120,24
+[269] ControlType.Text name='Nenhuma' rect=972,460,53,15
+[270] ControlType.DataItem name='Concluído' rect=1089,456,100,24
+[271] ControlType.Text name='Concluído' rect=1092,460,54,15
+[272] ControlType.DataItem name='Normal' rect=1189,456,110,24
+[273] ControlType.Text name='Normal' rect=1192,460,40,15
+[274] ControlType.DataItem name='Bruno Martins' rect=1299,456,150,24
+[275] ControlType.Text name='Bruno Martins' rect=1302,460,75,15
+[276] ControlType.DataItem name='1 dia(s)' rect=1449,456,150,24
+[277] ControlType.Text name='1 dia(s)' rect=1452,460,39,15
+[278] ControlType.DataItem name='OS' rect=1599,456,125,24
+[279] ControlType.Text name='OS' rect=1602,460,16,15
+[281] ControlType.DataItem name='27/06/2026 12:00' rect=294,480,145,24
+[282] ControlType.Text name='27/06/2026 12:00' rect=297,484,93,15
+[283] ControlType.DataItem name='Controle quinzenal - Sabor da Serra' rect=439,480,220,24
+[284] ControlType.Text name='Controle quinzenal - Sabor da Serra' rect=442,484,190,15
+[285] ControlType.DataItem name='Restaurante Sabor da Serra Ltda' rect=659,480,180,24
+[286] ControlType.Text name='Restaurante Sabor da Serra Ltda' rect=662,484,170,15
+[287] ControlType.DataItem name='Controle de baratas' rect=839,480,130,24
+[288] ControlType.Text name='Controle de baratas' rect=842,484,105,15
+[289] ControlType.DataItem name='Quinzenal' rect=969,480,120,24
+[290] ControlType.Text name='Quinzenal' rect=972,484,54,15
+[291] ControlType.DataItem name='Concluído' rect=1089,480,100,24
+[292] ControlType.Text name='Concluído' rect=1092,484,54,15
+[293] ControlType.DataItem name='Normal' rect=1189,480,110,24
+[294] ControlType.Text name='Normal' rect=1192,484,40,15
+[295] ControlType.DataItem name='Anderson Refatti' rect=1299,480,150,24
+[296] ControlType.Text name='Anderson Refatti' rect=1302,484,89,15
+[297] ControlType.DataItem name='1 dia(s)' rect=1449,480,150,24
+[298] ControlType.Text name='1 dia(s)' rect=1452,484,39,15
+[299] ControlType.DataItem name='OS' rect=1599,480,125,24
+[300] ControlType.Text name='OS' rect=1602,484,16,15
+[302] ControlType.DataItem name='27/06/2026 12:00' rect=294,504,145,24
+[303] ControlType.Text name='27/06/2026 12:00' rect=297,508,93,15
+[304] ControlType.DataItem name='Descupinização - Sabor da Serra' rect=439,504,220,24
+[305] ControlType.Text name='Descupinização - Sabor da Serra' rect=442,508,171,15
+[306] ControlType.DataItem name='Restaurante Sabor da Serra Ltda' rect=659,504,180,24
+[307] ControlType.Text name='Restaurante Sabor da Serra Ltda' rect=662,508,170,15
+[308] ControlType.DataItem name='Descupinização' rect=839,504,130,24
+[309] ControlType.Text name='Descupinização' rect=842,508,82,15
+[310] ControlType.DataItem name='Quinzenal' rect=969,504,120,24
+[311] ControlType.Text name='Quinzenal' rect=972,508,54,15
+[312] ControlType.DataItem name='VENCIDO' rect=1089,504,100,24
+[313] ControlType.Text name='VENCIDO' rect=1092,508,51,15
+[314] ControlType.DataItem name='Normal' rect=1189,504,110,24
+[315] ControlType.Text name='Normal' rect=1192,508,40,15
+[316] ControlType.DataItem name='Anderson Refatti' rect=1299,504,150,24
+[317] ControlType.Text name='Anderson Refatti' rect=1302,508,89,15
+[318] ControlType.DataItem name='1 dia(s)' rect=1449,504,150,24
+[319] ControlType.Text name='1 dia(s)' rect=1452,508,39,15
+[320] ControlType.DataItem name='OS' rect=1599,504,125,24
+[321] ControlType.Text name='OS' rect=1602,508,16,15
+[323] ControlType.DataItem name='28/06/2026 06:00' rect=294,528,145,24
+[324] ControlType.Text name='28/06/2026 06:00' rect=297,532,93,15
+[325] ControlType.DataItem name='Visita mensal - Maitá Palace (junho)' rect=439,528,220,24
+[326] ControlType.Text name='Visita mensal - Maitá Palace (junho)' rect=442,532,189,15
+[327] ControlType.DataItem name='Maitá Palace Hotel' rect=659,528,180,24
+[328] ControlType.Text name='Maitá Palace Hotel' rect=662,532,99,15
+[329] ControlType.DataItem name='Manutenção periódica' rect=839,528,130,24
+[330] ControlType.Text name='Manutenção periódica' rect=842,532,119,15
+[331] ControlType.DataItem name='Mensal' rect=969,528,120,24
+[332] ControlType.Text name='Mensal' rect=972,532,38,15
+[333] ControlType.DataItem name='VENCIDO' rect=1089,528,100,24
+[334] ControlType.Text name='VENCIDO' rect=1092,532,51,15
+[335] ControlType.DataItem name='Normal' rect=1189,528,110,24
+[336] ControlType.Text name='Normal' rect=1192,532,40,15
+[337] ControlType.DataItem name='Anderson Refatti' rect=1299,528,150,24
+[338] ControlType.Text name='Anderson Refatti' rect=1302,532,89,15
+[339] ControlType.DataItem name='1 dia(s)' rect=1449,528,150,24
+[340] ControlType.Text name='1 dia(s)' rect=1452,532,39,15
+[341] ControlType.DataItem name='Contrato' rect=1599,528,125,24
+[342] ControlType.Text name='Contrato' rect=1602,532,47,15
+[344] ControlType.DataItem name='30/06/2026 06:00' rect=294,552,145,24
+[345] ControlType.Text name='30/06/2026 06:00' rect=297,556,93,15
+[346] ControlType.DataItem name='Higienização caixa d'água - Prix' rect=439,552,220,24
+[347] ControlType.Text name='Higienização caixa d'água - Prix' rect=442,556,167,15
+[348] ControlType.DataItem name='Prix Hotel' rect=659,552,180,24
+[349] ControlType.Text name='Prix Hotel' rect=662,556,52,15
+[350] ControlType.DataItem name='Higienização de caixa d'água' rect=839,552,130,24
+[351] ControlType.Text name='Higienização de caixa...' rect=842,556,122,15
+[352] ControlType.DataItem name='Nenhuma' rect=969,552,120,24
+[353] ControlType.Text name='Nenhuma' rect=972,556,53,15
+[354] ControlType.DataItem name='Agendado' rect=1089,552,100,24
+[355] ControlType.Text name='Agendado' rect=1092,556,56,15
+[356] ControlType.DataItem name='Alta' rect=1189,552,110,24
+[357] ControlType.Text name='Alta' rect=1192,556,21,15
+[358] ControlType.DataItem name='Anderson Refatti' rect=1299,552,150,24
+[359] ControlType.Text name='Anderson Refatti' rect=1302,556,89,15
+[360] ControlType.DataItem name='1 dia(s)' rect=1449,552,150,24
+[361] ControlType.Text name='1 dia(s)' rect=1452,556,39,15
+[362] ControlType.DataItem name='OS' rect=1599,552,125,24
+[363] ControlType.Text name='OS' rect=1602,556,16,15
+[617] ControlType.Button name='increment' rect=1866,818,13,10
+[618] ControlType.Button name='decrement' rect=1866,239,13,10
+[620] ControlType.Text name='Carregando...' rect=1039,582,95,19
+[621] ControlType.Text name='Carregando...' rect=1039,582,95,19
+
+===== Notificacoes =====
+[3] ControlType.Button name='Minimizar' rect=1779,0,47,22
+[4] ControlType.Button name='Restaurar' rect=1826,0,46,22
+[5] ControlType.Button name='Fechar' rect=1872,0,48,22
+[6] ControlType.Button name='☰' rect=14,26,38,39
+[7] ControlType.Text name='☰' rect=23,33,20,24
+[8] ControlType.Text name='SIGLA' rect=14,85,93,41
+[9] ControlType.Text name='SIGLA' rect=22,89,85,37
+[10] ControlType.Text name='Gestao Empresarial' rect=14,130,118,23
+[11] ControlType.Text name='Gestao Empresarial' rect=22,130,110,17
+[12] ControlType.Button name='Dashboard' rect=14,176,224,41
+[13] ControlType.Text name='Dashboard' rect=30,187,72,18
+[14] ControlType.Button name='Cadastros' rect=14,220,224,41
+[15] ControlType.Text name='Cadastros' rect=30,231,65,18
+[16] ControlType.Button name='Financeiro' rect=14,264,224,41
+[17] ControlType.Text name='Financeiro' rect=30,275,69,18
+[18] ControlType.Button name='Clientes' rect=14,308,224,41
+[19] ControlType.Text name='Clientes' rect=30,319,52,18
+[20] ControlType.Button name='Servicos' rect=14,352,224,41
+[21] ControlType.Text name='Servicos' rect=30,363,54,18
+[22] ControlType.Button name='Agenda' rect=14,396,224,41
+[23] ControlType.Text name='Agenda' rect=30,407,51,18
+[24] ControlType.Button name='Ordem de Servico' rect=14,440,224,41
+[25] ControlType.Text name='Ordem de Servico' rect=30,451,118,18
+[26] ControlType.Button name='Estoque' rect=14,484,224,41
+[27] ControlType.Text name='Estoque' rect=30,495,53,18
+[28] ControlType.Button name='Contratos / Certificados' rect=14,528,224,41
+[29] ControlType.Text name='Contratos / Certificados' rect=30,539,157,18
+[30] ControlType.Button name='Usuarios' rect=14,572,224,41
+[31] ControlType.Text name='Usuarios' rect=30,583,57,18
+[32] ControlType.Button name='Notificacoes' rect=2,607,249,65
+[33] ControlType.Text name='Notificacoes' rect=34,627,82,18
+[34] ControlType.Button name='Sair' rect=14,976,224,41
+[35] ControlType.Text name='Sair' rect=30,987,25,18
+[37] ControlType.Text name='Notificações (WhatsApp)' rect=281,92,471,52
+[38] ControlType.Text name='Notificações (WhatsApp)' rect=281,92,471,52
+[39] ControlType.Text name='Templates / Configurações' rect=281,162,252,26
+[40] ControlType.Text name='Templates / Configurações' rect=281,162,252,26
+[41] ControlType.Button name='+ Nova configuração' rect=281,206,190,30
+[42] ControlType.Text name='+ Nova configuração' rect=302,211,149,19
+[43] ControlType.Button name='Editar' rect=483,206,120,30
+[44] ControlType.Text name='Editar' rect=522,211,42,19
+[45] ControlType.Button name='Ativar/Desativar' rect=615,206,160,30
+[46] ControlType.Text name='Ativar/Desativar' rect=637,211,116,19
+[47] ControlType.Button name='Excluir' rect=787,206,120,30
+[48] ControlType.Text name='Excluir' rect=823,211,48,19
+[49] ControlType.Button name='Enviar teste' rect=919,206,140,30
+[50] ControlType.Text name='Enviar teste' rect=948,211,83,19
+[51] ControlType.Button name='Atualizar' rect=1071,206,120,30
+[52] ControlType.Text name='Atualizar' rect=1099,211,64,19
+[55] ControlType.Text name='Evento' rect=284,254,318,24
+[56] ControlType.Text name='Evento' rect=424,259,39,15
+[58] ControlType.Text name='Nome' rect=606,254,337,24
+[59] ControlType.Text name='Nome' rect=757,259,35,15
+[61] ControlType.Text name='Destinatário' rect=947,254,249,24
+[62] ControlType.Text name='Destinatário' rect=1037,259,70,15
+[64] ControlType.Text name='Envio' rect=1200,254,230,24
+[65] ControlType.Text name='Envio' rect=1300,259,31,15
+[67] ControlType.Text name='Antecedência' rect=1434,254,230,24
+[68] ControlType.Text name='Antecedência' rect=1511,259,76,15
+[70] ControlType.Text name='Status' rect=1668,254,220,24
+[71] ControlType.Text name='Status' rect=1760,259,36,15
+[73] ControlType.DataItem name='Vencimento de contrato' rect=282,278,322,24
+[74] ControlType.Text name='Vencimento de contrato' rect=285,282,129,15
+[75] ControlType.DataItem name='Vencimento de contrato' rect=604,278,341,24
+[76] ControlType.Text name='Vencimento de contrato' rect=607,282,129,15
+[77] ControlType.DataItem name='CLIENTE' rect=945,278,253,24
+[78] ControlType.Text name='CLIENTE' rect=948,282,44,15
+[79] ControlType.DataItem name='Automático' rect=1198,278,234,24
+[80] ControlType.Text name='Automático' rect=1201,282,62,15
+[81] ControlType.DataItem name='-' rect=1432,278,234,24
+[82] ControlType.Text name='-' rect=1435,282,5,15
+[83] ControlType.DataItem name='Ativo' rect=1666,278,224,24
+[84] ControlType.Text name='Ativo' rect=1669,282,28,15
+[86] ControlType.DataItem name='Vencimento de certificado' rect=282,302,322,24
+[87] ControlType.Text name='Vencimento de certificado' rect=285,306,139,15
+[88] ControlType.DataItem name='Vencimento de certificado' rect=604,302,341,24
+[89] ControlType.Text name='Vencimento de certificado' rect=607,306,139,15
+[90] ControlType.DataItem name='CLIENTE' rect=945,302,253,24
+[91] ControlType.Text name='CLIENTE' rect=948,306,44,15
+[92] ControlType.DataItem name='Automático' rect=1198,302,234,24
+[93] ControlType.Text name='Automático' rect=1201,306,62,15
+[94] ControlType.DataItem name='-' rect=1432,302,234,24
+[95] ControlType.Text name='-' rect=1435,306,5,15
+[96] ControlType.DataItem name='Ativo' rect=1666,302,224,24
+[97] ControlType.Text name='Ativo' rect=1669,306,28,15
+[99] ControlType.DataItem name='Visita agendada' rect=282,326,322,24
+[100] ControlType.Text name='Visita agendada' rect=285,330,85,15
+[101] ControlType.DataItem name='Lembrete de visita' rect=604,326,341,24
+[102] ControlType.Text name='Lembrete de visita' rect=607,330,97,15
+[103] ControlType.DataItem name='CLIENTE' rect=945,326,253,24
+[104] ControlType.Text name='CLIENTE' rect=948,330,44,15
+[105] ControlType.DataItem name='Automático' rect=1198,326,234,24
+[106] ControlType.Text name='Automático' rect=1201,330,62,15
+[107] ControlType.DataItem name='-' rect=1432,326,234,24
+[108] ControlType.Text name='-' rect=1435,330,5,15
+[109] ControlType.DataItem name='Ativo' rect=1666,326,224,24
+[110] ControlType.Text name='Ativo' rect=1669,330,28,15
+[189] ControlType.Text name='Variáveis disponíveis (use no template como {{variavel}})' rect=281,496,427,21
+[190] ControlType.Text name='Variáveis disponíveis (use no template como {{variavel}})' rect=281,496,427,21
+[193] ControlType.Text name='{{cliente_nome}}  ->  Nome do cliente / {{cliente_telefone}}  ->  Telefone do cliente / {{funcionario_nome}}  ->  Nome do funcionario / {{funcionario_telefone}}  ->  Telefone do funcionario / {{data_visita}}  ->  Data da visita / {{hora_visita}}  ->  Hora da visita / {{endereco}}  ->  Endereco completo / {{tipo_servico}}  ->  Tipo de servico / {{contrato_vencimento}}  ->  Data de vencimento do contrato / {{certificado_vencimento}}  ->  Data de validade do certificado / {{observacoes}}  ->  Observacoes' rect=289,539,1581,165
+[195] ControlType.Button name='increment' rect=1877,640,13,10
+[196] ControlType.Button name='decrement' rect=1877,536,13,10
+[198] ControlType.Text name='Notificações agendadas' rect=281,690,224,26
+[199] ControlType.Text name='Notificações agendadas' rect=281,690,224,26
+[200] ControlType.Button name='Reprocessar falhas' rect=281,734,180,30
+[201] ControlType.Text name='Reprocessar falhas' rect=306,739,131,19
+[202] ControlType.Button name='Atualizar lista' rect=473,734,140,30
+[203] ControlType.Text name='Atualizar lista' rect=495,739,97,19
+[206] ControlType.Text name='Evento' rect=284,782,279,24
+[207] ControlType.Text name='Evento' rect=404,787,39,15
+[209] ControlType.Text name='Destinatário' rect=567,782,346,24
+[210] ControlType.Text name='Destinatário' rect=705,787,70,15
+[212] ControlType.Text name='Status' rect=917,782,220,24
+[213] ControlType.Text name='Status' rect=1009,787,36,15
+[215] ControlType.Text name='Quando' rect=1141,782,259,24
+[216] ControlType.Text name='Quando' rect=1248,787,45,15
+[218] ControlType.Text name='Mensagem' rect=1404,782,484,24
+[219] ControlType.Text name='Mensagem' rect=1615,787,62,15
+[220] ControlType.Text name='Não há conteúdo na tabela' rect=1014,899,145,15
+[221] ControlType.Text name='Não há conteúdo na tabela' rect=1014,899,145,15

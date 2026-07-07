@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="sigla-infraestrutura" />
+        <module name="sigla-launcher" />
         <module name="sigla-aplicacao" />
         <module name="sigla-dominio" />
         <module name="sigla-relatorios" />

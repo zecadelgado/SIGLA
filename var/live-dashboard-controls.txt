@@ -1,0 +1,132 @@
+﻿ControlType.Button	☰	14,26,38,39
+ControlType.Text	☰	23,33,20,24
+ControlType.Text	SIGLA	14,85,93,41
+ControlType.Text	SIGLA	22,89,85,37
+ControlType.Text	Gestão Empresarial	14,130,118,23
+ControlType.Text	Gestão Empresarial	22,130,110,17
+ControlType.Button	Dashboard	2,167,248,65
+ControlType.Text	Dashboard	34,187,72,18
+ControlType.Button	Cadastros	14,220,224,41
+ControlType.Text	Cadastros	30,231,65,18
+ControlType.Button	Financeiro	14,264,224,41
+ControlType.Text	Financeiro	30,275,69,18
+ControlType.Button	Clientes	14,308,224,41
+ControlType.Text	Clientes	30,319,52,18
+ControlType.Button	Serviços	14,352,224,41
+ControlType.Text	Serviços	30,363,54,18
+ControlType.Button	Agenda	14,396,224,41
+ControlType.Text	Agenda	30,407,51,18
+ControlType.Button	Ordem de Serviço	14,440,224,41
+ControlType.Text	Ordem de Serviço	30,451,118,18
+ControlType.Button	Estoque	14,484,224,41
+ControlType.Text	Estoque	30,495,53,18
+ControlType.Button	Contratos / Certificados	14,528,224,41
+ControlType.Text	Contratos / Certificados	30,539,157,18
+ControlType.Button	Usuários	14,572,224,41
+ControlType.Text	Usuários	30,583,57,18
+ControlType.Button	Notificações	14,616,224,41
+ControlType.Text	Notificações	30,627,82,18
+ControlType.Button	Sair	14,976,224,41
+ControlType.Text	Sair	30,987,25,18
+ControlType.Text	Dashboard	258,87,281,80
+ControlType.Text	Dashboard	283,102,256,65
+ControlType.Text	Visão geral do sistema	261,162,194,20
+ControlType.Text	Visão geral do sistema	286,162,139,20
+ControlType.Text	Relatório Mensal:	258,202,272,44
+ControlType.Text	Relatório Mensal:	283,207,247,39
+ControlType.Text	OS abertas	297,271,58,15
+ControlType.Text	OS abertas	297,271,58,15
+ControlType.Text	4	297,286,12,26
+ControlType.Text	4	297,286,12,26
+ControlType.Text	Serviços atrasados	622,271,98,15
+ControlType.Text	Serviços atrasados	622,271,98,15
+ControlType.Text	3	622,286,12,26
+ControlType.Text	3	622,286,12,26
+ControlType.Text	Contas vencidas	946,271,86,15
+ControlType.Text	Contas vencidas	946,271,86,15
+ControlType.Text	4	946,286,12,26
+ControlType.Text	4	946,286,12,26
+ControlType.Text	Estoque baixo	1270,271,75,15
+ControlType.Text	Estoque baixo	1270,271,75,15
+ControlType.Text	0	1270,286,12,26
+ControlType.Text	0	1270,286,12,26
+ControlType.Text	Indicações pendentes	1594,271,115,15
+ControlType.Text	Indicações pendentes	1594,271,115,15
+ControlType.Text	13	1594,286,24,26
+ControlType.Text	13	1594,286,24,26
+ControlType.Text	Receitas do mês	297,356,86,15
+ControlType.Text	Receitas do mês	297,356,86,15
+ControlType.Text	R$ 0,00	297,371,71,26
+ControlType.Text	R$ 0,00	297,371,71,26
+ControlType.Text	Despesas do mês	622,356,92,15
+ControlType.Text	Despesas do mês	622,356,92,15
+ControlType.Text	R$ 0,00	622,371,71,26
+ControlType.Text	R$ 0,00	622,371,71,26
+ControlType.Text	Saldo atual	946,356,59,15
+ControlType.Text	Saldo atual	946,356,59,15
+ControlType.Text	R$ 0,00	946,371,71,26
+ControlType.Text	R$ 0,00	946,371,71,26
+ControlType.Text	A receber	1270,356,51,15
+ControlType.Text	A receber	1270,356,51,15
+ControlType.Text	R$ 2.820,00	1270,371,110,26
+ControlType.Text	R$ 2.820,00	1270,371,110,26
+ControlType.Text	A pagar	1594,356,42,15
+ControlType.Text	A pagar	1594,356,42,15
+ControlType.Text	R$ 8.490,00	1594,371,110,26
+ControlType.Text	R$ 8.490,00	1594,371,110,26
+ControlType.Text	Serviços	1396,446,108,31
+ControlType.Text	Serviços	1396,446,93,31
+ControlType.Text	 X Axis is Agendada Y Axis is 4	1424,672,208,140
+ControlType.Text	 X Axis is Concluida Y Axis is 7	1642,567,208,245
+ControlType.Text	Agendada	1505,823,46,14
+ControlType.Text	Concluida	1724,823,44,14
+ControlType.Text	0	1398,804,7,16
+ControlType.Text	2	1398,734,7,16
+ControlType.Text	4	1398,664,7,16
+ControlType.Text	6	1398,594,7,16
+ControlType.Text	8	1398,524,7,16
+ControlType.Text	9	1398,489,7,16
+ControlType.Button	Acessar módulo →	1391,846,134,21
+ControlType.Text	Acessar módulo →	1400,846,121,20
+ControlType.Text	Financeiro	308,446,118,31
+ControlType.Text	Financeiro	308,446,117,31
+ControlType.Text	 X Axis is Fev Y Axis is 0	383,822,10,10
+ControlType.Text	 X Axis is Mar Y Axis is 0	452,822,10,10
+ControlType.Text	 X Axis is Abr Y Axis is 0	521,822,10,10
+ControlType.Text	 X Axis is Mai Y Axis is 1.200	590,577,10,10
+ControlType.Text	 X Axis is Jun Y Axis is 1.320	659,552,10,10
+ControlType.Text	 X Axis is Jul Y Axis is 0	728,822,10,10
+ControlType.Text	Fev	380,494,15,14
+ControlType.Text	Mar	448,494,18,14
+ControlType.Text	Abr	518,494,16,14
+ControlType.Text	Mai	587,494,17,14
+ControlType.Text	Jun	657,494,15,14
+ControlType.Text	Jul	728,494,12,14
+ControlType.Text	0	332,819,7,16
+ControlType.Text	304	319,757,20,16
+ControlType.Text	608	319,695,20,16
+ControlType.Text	912	319,633,20,16
+ControlType.Text	1.216	310,571,29,16
+ControlType.Text	1.518	310,509,29,16
+ControlType.Button	Acessar módulo →	303,846,139,21
+ControlType.Text	Acessar módulo →	315,846,121,20
+ControlType.Text	Estoque	852,446,108,31
+ControlType.Text	Estoque	852,446,90,31
+ControlType.Text	 X Axis is Máscara resp Y Axis is 80	886,538,77,274
+ControlType.Text	 X Axis is Luvas nitríl Y Axis is 60	972,607,77,206
+ControlType.Text	 X Axis is Porta-iscas  Y Axis is 30	1058,709,77,103
+ControlType.Text	 X Axis is Macacão de p Y Axis is 25	1145,726,77,86
+ControlType.Text	 X Axis is Gel insetici Y Axis is 24	1231,730,77,83
+ControlType.Text	Máscara resp	895,823,59,14
+ControlType.Text	Luvas nitríl	987,823,48,14
+ControlType.Text	Porta-iscas 	1071,823,51,14
+ControlType.Text	Macacão de p	1152,823,62,14
+ControlType.Text	Gel insetici	1245,823,48,14
+ControlType.Text	0	860,804,7,16
+ControlType.Text	19	853,739,13,16
+ControlType.Text	38	853,674,13,16
+ControlType.Text	57	853,609,13,16
+ControlType.Text	76	853,544,13,16
+ControlType.Text	92	853,489,13,16
+ControlType.Button	Acessar módulo →	847,846,138,21
+ControlType.Text	Acessar módulo →	858,846,121,20

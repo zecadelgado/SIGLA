@@ -142,15 +142,17 @@ public class FluxoAplicacao {
         }
 
         Rectangle2D screenBounds = resolveBounds(stage);
-        stage.setResizable(true);
         stage.setTitle(view.requiresAuthentication() ? "S.I.G.L.A" : "S.I.G.L.A - " + view.tituloJanela());
 
         if (!view.requiresAuthentication()) {
             stage.setFullScreen(false);
             stage.setMaximized(false);
-            setStageMinimum(stage, screenBounds, 420, 260);
+            stage.setMinWidth(0);
+            stage.setMinHeight(0);
+            stage.setResizable(false);
             centralizarLogin(stage);
         } else {
+            stage.setResizable(true);
             setStageMinimum(stage, screenBounds, 960, 640);
             maximizarComBordas(stage, screenBounds);
             return;
@@ -159,11 +161,11 @@ public class FluxoAplicacao {
 
     private void centralizarLogin(Stage targetStage) {
         targetStage.sizeToScene();
-        centerStage(targetStage, resolveBoundsForCentering(targetStage));
+        JanelaPosicionador.centralizarNaTelaAtiva(targetStage);
         if (targetStage.isShowing()) {
             Platform.runLater(() -> {
                 targetStage.sizeToScene();
-                centerStage(targetStage, resolveBoundsForCentering(targetStage));
+                JanelaPosicionador.centralizarNaTelaAtiva(targetStage);
             });
         }
     }
@@ -234,21 +236,6 @@ public class FluxoAplicacao {
             }
         }
         return Screen.getPrimary().getVisualBounds();
-    }
-
-    private Rectangle2D resolveBoundsForCentering(Stage referenceStage) {
-        if (referenceStage != null && referenceStage.getOwner() instanceof Stage ownerStage) {
-            return resolveBounds(ownerStage);
-        }
-        if (referenceStage != null && referenceStage.isShowing()) {
-            return resolveBounds(referenceStage);
-        }
-        return Screen.getPrimary().getVisualBounds();
-    }
-
-    private void centerStage(Stage targetStage, Rectangle2D bounds) {
-        targetStage.setX(bounds.getMinX() + ((bounds.getWidth() - targetStage.getWidth()) / 2));
-        targetStage.setY(bounds.getMinY() + ((bounds.getHeight() - targetStage.getHeight()) / 2));
     }
 
     private double resolvePreferredSize(double preferredSize, double fallbackValue) {
