@@ -252,14 +252,15 @@ async function processarCertificados(sql: postgres.Sql, hoje: Date, configs: Con
 async function processarVisitas(sql: postgres.Sql, hoje: Date, configs: Config[], pessoas: Map<string, Pessoa>): Promise<number> {
   if (configs.length === 0) return 0;
   // Apenas visitas operacionais (nao os eventos sinteticos de vencimento de contrato/certificado).
+  // No schema, o "serviceType" do dominio e persistido na coluna tipo_evento (nao ha tipo_servico).
   const rows = await sql`
     select id::text as id, cliente_id::text as cliente_id, responsavel_id::text as responsavel_id,
            data_inicio, coalesce(status, 'SCHEDULED') as status, coalesce(lembrete_ativo, false) as lembrete_ativo,
-           dias_antecedencia_lembrete, lembrete_dias_conjunto, coalesce(tipo_servico, '') as tipo_servico,
+           dias_antecedencia_lembrete, lembrete_dias_conjunto, coalesce(tipo_evento, '') as tipo_servico,
            coalesce(titulo, '') as titulo
       from agenda_eventos
      where contrato_id is null and certificado_id is null
-       and coalesce(tipo_servico,'') not in ('contrato_vencimento','certificado_vencimento')`;
+       and coalesce(tipo_evento,'') not in ('contrato_vencimento','certificado_vencimento')`;
   let geradas = 0;
   for (const v of rows) {
     const cliente = pessoas.get(v.cliente_id);
