@@ -52,5 +52,15 @@
             <Font name="Nirmala Text Bold" size="18.0" />
          </font>
       </Button>
+      <Hyperlink fx:id="procurarAtualizacaoButton" layoutX="458.0" layoutY="416.0" mnemonicParsing="false" onAction="#onProcurarAtualizacao" prefHeight="20.0" prefWidth="118.0" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-cursor: hand; -fx-padding: 0; -fx-underline: false;" text="Procurar atualização" textFill="#6fa8dc">
+         <font>
+            <Font name="Nirmala UI" size="10.0" />
+         </font>
+      </Hyperlink>
+      <Label fx:id="versaoAtualizacaoLabel" layoutX="578.0" layoutY="417.0" prefHeight="18.0" prefWidth="70.0" text="(V 2.0)" textFill="#6fa8dc">
+         <font>
+            <Font name="Nirmala UI" size="10.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>

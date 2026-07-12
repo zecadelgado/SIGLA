@@ -2,6 +2,11 @@ target/
 *.log
 *.tmp
 .DS_Store
-target/
 outputs/
 *.exe
+*.msi
+*.jar
+deploy/secrets/
+deploy/jpackage/
+deploy/release-assets/
+deploy/runtime-sigla/

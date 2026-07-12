@@ -28,11 +28,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 @Component
 public class ControladorLogin {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ControladorLogin.class);
     private static final Duration ATRASO_REVELACAO_CARREGAMENTO = Duration.millis(1500);
+    private static final URI VERSAO_REMOTA_URI = URI.create(
+            "https://github.com/Richarlison-Avila/sigla-update/releases/latest/download/versao.json"
+    );
+    private static final long BUILD_INICIAL = 1L;
+    private static final String VERSAO_ATUAL = "2.0";
 
     private final SessaoLocalAplicacao sessaoLocalAplicacao;
     private final FluxoAplicacao fluxoAplicacao;
@@ -41,6 +57,10 @@ public class ControladorLogin {
     private SobreposicaoCarregamento overlayCarregamento;
     private PauseTransition agendamentoRevelacaoCarregamento;
     private boolean loginEmAndamento;
+    private final HttpClient httpClient = HttpClient.newBuilder()
+            .connectTimeout(java.time.Duration.ofSeconds(4))
+            .followRedirects(HttpClient.Redirect.NORMAL)
+            .build();
 
     @FXML
     private AnchorPane txtLoginInsira;
@@ -63,6 +83,12 @@ public class ControladorLogin {
     @FXML
     private Hyperlink esqueciSenhaLink;
 
+    @FXML
+    private Label versaoAtualizacaoLabel;
+
+    @FXML
+    private Hyperlink procurarAtualizacaoButton;
+
     public ControladorLogin(
             SessaoLocalAplicacao sessaoLocalAplicacao,
             FluxoAplicacao fluxoAplicacao,
@@ -76,7 +102,147 @@ public class ControladorLogin {
     @FXML
     public void initialize() {
         setFeedbackVisible(false);
+        inicializarVersaoAtualizacao();
         instalarOverlay();
+    }
+
+    private void inicializarVersaoAtualizacao() {
+        if (versaoAtualizacaoLabel == null) {
+            return;
+        }
+
+        versaoAtualizacaoLabel.setText("(V " + VERSAO_ATUAL + ")");
+        versaoAtualizacaoLabel.setOpacity(0.72);
+    }
+
+    private String resolverBuildAtual() {
+        String buildEnv = System.getenv("SIGLA_BUILD_LOCAL");
+        if (buildEnv != null && !buildEnv.isBlank()) {
+            return "build " + buildEnv.trim();
+        }
+
+        String appDir = System.getenv("SIGLA_APP_DIR");
+        Path versaoLocal = appDir == null || appDir.isBlank()
+                ? Path.of("versao-local.txt")
+                : Path.of(appDir, "versao-local.txt");
+
+        try {
+            if (Files.exists(versaoLocal)) {
+                String build = Files.readString(versaoLocal, StandardCharsets.UTF_8).trim();
+                if (!build.isBlank()) {
+                    return "build " + build;
+                }
+            }
+        } catch (Exception exception) {
+            LOGGER.debug("Nao foi possivel ler versao local do SIGLA.", exception);
+        }
+        return "2.0 (build " + BUILD_INICIAL + ")";
+    }
+
+    @FXML
+    private void onProcurarAtualizacao() {
+        if (procurarAtualizacaoButton == null || procurarAtualizacaoButton.isDisabled()) {
+            return;
+        }
+
+        procurarAtualizacaoButton.setDisable(true);
+        executorTarefasUi.executar(
+                () -> {
+                    try {
+                        return buscarAtualizacao();
+                    } catch (Exception exception) {
+                        throw new IllegalStateException("Falha ao consultar atualizações.", exception);
+                    }
+                },
+                versaoRemota -> {
+                    procurarAtualizacaoButton.setDisable(false);
+                    exibirResultadoAtualizacao(versaoRemota);
+                },
+                erro -> {
+                    procurarAtualizacaoButton.setDisable(false);
+                    LOGGER.warn("Não foi possível procurar atualizações do SIGLA.", erro);
+                    DialogoUi.aviso("Não foi possível procurar atualizações agora. Verifique sua conexão e tente novamente.");
+                }
+        );
+    }
+
+    private Optional<VersaoRemota> buscarAtualizacao() throws Exception {
+        HttpRequest request = HttpRequest.newBuilder(VERSAO_REMOTA_URI)
+                .timeout(java.time.Duration.ofSeconds(8))
+                .GET()
+                .build();
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() < 200 || response.statusCode() >= 300) {
+            return Optional.empty();
+        }
+
+        String json = response.body();
+        long build = extrairBuild(json);
+        String versao = extrairTexto(json, "versao").orElse("build " + build);
+        String mensagem = extrairTexto(json, "mensagem")
+                .orElse("Uma nova atualização do SIGLA está disponível.");
+        return Optional.of(new VersaoRemota(build, versao, mensagem));
+    }
+
+    private void exibirResultadoAtualizacao(Optional<VersaoRemota> versaoRemota) {
+        long buildLocal = resolverBuildNumericoAtual();
+        if (versaoRemota.isPresent() && versaoRemota.get().build() > buildLocal) {
+            VersaoRemota remota = versaoRemota.get();
+            boolean desejaAtualizar = DialogoUi.confirmar("Atualização disponível - SIGLA",
+                    remota.mensagem() + "\n\nVersão atual: build " + buildLocal
+                    + "\nVersão disponível: " + remota.versao() + " (build " + remota.build() + ")"
+                    + "\n\nDeseja baixar e instalar agora?");
+            if (desejaAtualizar) {
+                DialogoUi.informacao("Feche e abra o SIGLA novamente para instalar a atualização.");
+            }
+            return;
+        }
+
+        DialogoUi.sucesso("Você já esta atualizado ;)");
+    }
+
+    private long resolverBuildNumericoAtual() {
+        String buildEnv = System.getenv("SIGLA_BUILD_LOCAL");
+        if (buildEnv != null && !buildEnv.isBlank()) {
+            try {
+                return Long.parseLong(buildEnv.trim());
+            } catch (NumberFormatException ignored) {
+                // A versao de fallback abaixo continua disponivel.
+            }
+        }
+
+        String appDir = System.getenv("SIGLA_APP_DIR");
+        Path versaoLocal = appDir == null || appDir.isBlank()
+                ? Path.of("versao-local.txt")
+                : Path.of(appDir, "versao-local.txt");
+        try {
+            if (Files.exists(versaoLocal)) {
+                return Long.parseLong(Files.readString(versaoLocal, StandardCharsets.UTF_8).trim());
+            }
+        } catch (Exception exception) {
+            LOGGER.debug("Não foi possível ler o build local do SIGLA.", exception);
+        }
+        return BUILD_INICIAL;
+    }
+
+    private long extrairBuild(String json) {
+        Matcher matcher = Pattern.compile("\\\"build\\\"\\s*:\\s*(\\d+)").matcher(json);
+        if (!matcher.find()) {
+            throw new IllegalArgumentException("Arquivo de atualização inválido.");
+        }
+        return Long.parseLong(matcher.group(1));
+    }
+
+    private Optional<String> extrairTexto(String json, String campo) {
+        Matcher matcher = Pattern.compile("\\\"" + Pattern.quote(campo)
+                + "\\\"\\s*:\\s*\\\"((?:\\\\.|[^\\\"])*)\\\"").matcher(json);
+        if (!matcher.find()) {
+            return Optional.empty();
+        }
+        return Optional.of(matcher.group(1).replace("\\\\n", "\n").replace("\\\\\"", "\""));
+    }
+
+    private record VersaoRemota(long build, String versao, String mensagem) {
     }
 
     private void instalarOverlay() {
@@ -161,6 +327,7 @@ public class ControladorLogin {
         setDisabled(loginButton, carregando);
         setDisabled(cadastroButton, carregando);
         setDisabled(esqueciSenhaLink, carregando);
+        setDisabled(procurarAtualizacaoButton, carregando);
     }
 
     private void agendarRevelacaoCarregamento() {

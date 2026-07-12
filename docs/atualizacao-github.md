@@ -22,14 +22,38 @@ Para publicar no GitHub Releases, envie esse arquivo com o nome:
 sigla.jar
 ```
 
+## Configurar senha do banco no instalador
+
+Antes de gerar o instalador para outras maquinas, crie este arquivo local:
+
+```text
+deploy/secrets/sigla-runtime.env
+```
+
+Conteudo:
+
+```properties
+SIGLA_DATASOURCE_PASSWORD=SENHA_DO_SUPABASE_AQUI
+```
+
+Esse arquivo e copiado para dentro do instalador como `sigla-runtime.env`. O `sigla-launcher.jar`
+le esse arquivo ao iniciar e repassa a senha ao `sigla.jar` por variavel de ambiente.
+
+Observacoes:
+
+- `deploy/secrets/` fica no `.gitignore`; nao commitar esse arquivo.
+- Quem instalar o SIGLA nao precisa criar variavel de ambiente manualmente.
+- O script de instalador falha se esse arquivo nao existir, para evitar publicar instalador sem acesso ao banco.
+- Para testes locais sem esse arquivo, rode `.\scripts\package\jpackage-win.ps1 -AllowMissingRuntimeEnv`.
+
 ## Montar o versao.json
 
 Crie um arquivo `versao.json` com build numerico crescente e a URL publica do `sigla.jar` na release:
 
 ```json
 {
-  "build": 1,
-  "versao": "0.1.0",
+  "build": 2,
+  "versao": "2.0",
   "mensagem": "Uma nova atualizacao do SIGLA esta disponivel.",
   "url": "https://github.com/Richarlison-Avila/sigla-update/releases/latest/download/sigla.jar"
 }
@@ -105,13 +129,15 @@ Remove-Item "$env:LOCALAPPDATA\SIGLA" -Recurse -Force -ErrorAction SilentlyConti
 
 Se o GitHub estiver fora, sem internet, JSON invalido ou download falhar, o launcher abre a copia local existente.
 
-## Gerar app-image e instalador
+## Gerar app-image e instalador 2.0
 
 O script Windows ja copia `sigla-launcher.jar` e `sigla.jar` para o input do jpackage:
 
 ```powershell
 .\scripts\package\jpackage-win.ps1
 ```
+
+O instalador gerado fica em `outputs\instaladores\SIGLA-Setup-2.0.exe`.
 
 Comandos equivalentes manuais:
 

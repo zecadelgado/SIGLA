@@ -1,8 +1,10 @@
 package br.com.sigla.launcher;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -13,6 +15,7 @@ import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Image;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -28,6 +31,8 @@ import java.security.CodeSource;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
@@ -41,9 +46,11 @@ public final class LancadorAtualizadorSigla {
     private static final String APP_DIR_NAME = "SIGLA";
     private static final String APP_SUBDIR_NAME = "app";
     private static final String SIGLA_JAR = "sigla.jar";
+    private static final String RUNTIME_ENV = "sigla-runtime.env";
+    private static final String LOGO_SIGLA = "sigla-logo.png";
     private static final String VERSAO_LOCAL = "versao-local.txt";
     private static final String ULTIMA_VERIFICACAO = "ultima-verificacao.txt";
-    private static final long BUILD_INICIAL = 0L;
+    private static final long BUILD_INICIAL = 1L;
 
     private final HttpClient httpClient = HttpClient.newBuilder()
             .connectTimeout(java.time.Duration.ofSeconds(4))
@@ -168,6 +175,7 @@ public final class LancadorAtualizadorSigla {
 
             baixarAtualizacao(remota, jarLocal);
             Files.writeString(appDir.resolve(VERSAO_LOCAL), Long.toString(remota.build()), StandardCharsets.UTF_8);
+            informarAtualizacaoInstalada(remota);
         } catch (AtualizacaoRecusadaException exception) {
             throw exception;
         } catch (Exception exception) {
@@ -251,16 +259,29 @@ public final class LancadorAtualizadorSigla {
                     + "\n\nVersao local: build " + buildLocal
                     + "\nVersao disponivel: " + remota.versao() + " (build " + remota.build() + ")"
                     + "\n\nDeseja baixar e instalar agora?";
-            int resultado = JOptionPane.showConfirmDialog(
+            Object[] opcoes = {"Sim", "Nao"};
+            int resultado = JOptionPane.showOptionDialog(
                     null,
                     mensagem,
                     "Atualizacao disponivel - SIGLA",
                     JOptionPane.YES_NO_OPTION,
-                    JOptionPane.INFORMATION_MESSAGE
+                    JOptionPane.INFORMATION_MESSAGE,
+                    null,
+                    opcoes,
+                    opcoes[0]
             );
-            resposta.set(resultado == JOptionPane.YES_OPTION);
+            resposta.set(resultado == 0);
         });
         return resposta.get();
+    }
+
+    private void informarAtualizacaoInstalada(VersaoRemota remota) {
+        executarNaUi(() -> JOptionPane.showMessageDialog(
+                null,
+                "Atualizacao " + remota.versao() + " instalada com sucesso.\n\nO SIGLA sera aberto agora.",
+                "Atualizacao concluida - SIGLA",
+                JOptionPane.INFORMATION_MESSAGE
+        ));
     }
 
     private void baixarAtualizacao(VersaoRemota remota, Path jarLocal) throws IOException, InterruptedException {
@@ -276,7 +297,7 @@ public final class LancadorAtualizadorSigla {
 
         long tamanho = response.headers().firstValueAsLong("Content-Length").orElse(-1);
         Path destinoTemporario = Files.createTempFile(jarLocal.getParent(), "sigla-update-", ".jar");
-        ProgressoDownload progresso = new ProgressoDownload(tamanho);
+        ProgressoDownload progresso = new ProgressoDownload(tamanho, carregarImagemMarca());
         executarNaUi(progresso::abrir);
 
         try (InputStream input = response.body();
@@ -310,14 +331,62 @@ public final class LancadorAtualizadorSigla {
             java = Path.of(System.getProperty("java.home"), "bin", "java");
         }
 
-        new ProcessBuilder(
+        ProcessBuilder processo = new ProcessBuilder(
                 java.toString(),
                 "--enable-native-access=ALL-UNNAMED",
                 "-jar",
                 jarLocal.toString()
-        )
-                .directory(appDir.toFile())
-                .start();
+        );
+        processo.directory(appDir.toFile());
+        carregarAmbienteRuntime().forEach(processo.environment()::put);
+        processo.environment().put("SIGLA_APP_DIR", appDir.toString());
+        processo.environment().put("SIGLA_BUILD_LOCAL", Long.toString(lerBuildLocal(appDir)));
+        processo.start();
+    }
+
+    private Map<String, String> carregarAmbienteRuntime() {
+        Map<String, String> variaveis = new LinkedHashMap<>();
+        Path arquivo = resolverDiretorioInstalacao().resolve(RUNTIME_ENV);
+        if (!Files.exists(arquivo)) {
+            return variaveis;
+        }
+
+        try {
+            for (String linha : Files.readAllLines(arquivo, StandardCharsets.UTF_8)) {
+                String texto = linha.trim();
+                if (!texto.isEmpty() && texto.charAt(0) == '\uFEFF') {
+                    texto = texto.substring(1).trim();
+                }
+                if (texto.isEmpty() || texto.startsWith("#")) {
+                    continue;
+                }
+
+                int separador = texto.indexOf('=');
+                if (separador <= 0) {
+                    continue;
+                }
+
+                String chave = texto.substring(0, separador).trim();
+                String valor = removerAspas(texto.substring(separador + 1).trim());
+                if (!chave.isEmpty()) {
+                    variaveis.put(chave, valor);
+                }
+            }
+        } catch (IOException exception) {
+            // Falha ao ler configuracao empacotada nao deve impedir variaveis do sistema.
+        }
+        return variaveis;
+    }
+
+    private String removerAspas(String valor) {
+        if (valor.length() >= 2) {
+            char inicio = valor.charAt(0);
+            char fim = valor.charAt(valor.length() - 1);
+            if ((inicio == '"' && fim == '"') || (inicio == '\'' && fim == '\'')) {
+                return valor.substring(1, valor.length() - 1);
+            }
+        }
+        return valor;
     }
 
     private void exibirErroFatal(String mensagem) {
@@ -327,6 +396,15 @@ public final class LancadorAtualizadorSigla {
                 "SIGLA",
                 JOptionPane.ERROR_MESSAGE
         ));
+    }
+
+    private Image carregarImagemMarca() {
+        Path arquivoLogo = resolverDiretorioInstalacao().resolve(LOGO_SIGLA);
+        try {
+            return Files.exists(arquivoLogo) ? ImageIO.read(arquivoLogo.toFile()) : null;
+        } catch (IOException exception) {
+            return null;
+        }
     }
 
     private void executarNaUi(Runnable runnable) {
@@ -354,9 +432,11 @@ public final class LancadorAtualizadorSigla {
         private final JDialog dialog;
         private final JProgressBar progressBar;
         private final JLabel label;
+        private final Image imagemMarca;
 
-        private ProgressoDownload(long tamanhoTotal) {
+        private ProgressoDownload(long tamanhoTotal, Image imagemMarca) {
             this.tamanhoTotal = tamanhoTotal;
+            this.imagemMarca = imagemMarca;
             this.dialog = new JDialog((JFrame) null, "Atualizando SIGLA", false);
             this.progressBar = new JProgressBar();
             this.label = new JLabel("Baixando atualizacao...", SwingConstants.CENTER);
@@ -369,11 +449,19 @@ public final class LancadorAtualizadorSigla {
             JLabel titulo = new JLabel("Atualizando SIGLA", SwingConstants.CENTER);
             titulo.setFont(titulo.getFont().deriveFont(Font.BOLD, 16));
 
+            JPanel cabecalho = new JPanel(new BorderLayout(10, 0));
+            if (imagemMarca != null) {
+                Image imagemRedimensionada = imagemMarca.getScaledInstance(48, 48, Image.SCALE_SMOOTH);
+                cabecalho.add(new JLabel(new ImageIcon(imagemRedimensionada)), BorderLayout.WEST);
+                dialog.setIconImage(imagemMarca);
+            }
+            cabecalho.add(titulo, BorderLayout.CENTER);
+
             progressBar.setIndeterminate(tamanhoTotal <= 0);
             progressBar.setStringPainted(tamanhoTotal > 0);
             progressBar.setPreferredSize(new Dimension(360, 24));
 
-            conteudo.add(titulo, BorderLayout.NORTH);
+            conteudo.add(cabecalho, BorderLayout.NORTH);
             conteudo.add(label, BorderLayout.CENTER);
             conteudo.add(progressBar, BorderLayout.SOUTH);
 

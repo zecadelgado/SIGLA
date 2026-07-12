@@ -6,3 +6,7 @@ sigla:
     modo-teste: true
     whatsapp:
       enabled: false
+    # Agendador embutido ligado em dev (para testar o ciclo localmente). Em producao fica desligado:
+    # quem dispara e a Edge Function (Supabase + pg_cron), evitando envio duplicado.
+    scheduler:
+      enabled: true

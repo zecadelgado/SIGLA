@@ -3,11 +3,14 @@ package br.com.sigla.interfacegrafica.util;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -186,8 +189,7 @@ public final class DialogoUi {
     }
 
     private static Region montarCabecalho(Tipo tipo, Label tituloLabel, Label subtituloLabel) {
-        Label icone = new Label(tipo.icone);
-        icone.getStyleClass().add("dialogo-icone");
+        Node icone = tipo == Tipo.CONFIRMAR ? logoSistema() : iconePadrao(tipo);
 
         VBox textos = new VBox(tituloLabel);
         textos.setAlignment(Pos.CENTER_LEFT);
@@ -202,6 +204,21 @@ public final class DialogoUi {
         cabecalho.setAlignment(Pos.CENTER_LEFT);
         cabecalho.setMaxWidth(Double.MAX_VALUE);
         return cabecalho;
+    }
+
+    private static Label iconePadrao(Tipo tipo) {
+        Label icone = new Label(tipo.icone);
+        icone.getStyleClass().add("dialogo-icone");
+        return icone;
+    }
+
+    private static ImageView logoSistema() {
+        ImageView logo = new ImageView(new Image(DialogoUi.class.getResourceAsStream("/imagens/sigla.png")));
+        logo.setFitWidth(42);
+        logo.setFitHeight(42);
+        logo.setPreserveRatio(true);
+        logo.getStyleClass().add("dialogo-logo-sistema");
+        return logo;
     }
 
     private static void adicionarStylesheet(DialogPane pane, String recurso) {

@@ -1,3 +1,4 @@
+br\com\sigla\aplicacao\notificacoes\casodeuso\CasoDeUsoGerarNotificacoes$ChavePlano.class
 br\com\sigla\aplicacao\agenda\porta\entrada\CasoDeUsoAgenda$ScheduleVisitCommand.class
 br\com\sigla\aplicacao\potenciaisclientes\porta\entrada\CasoDeUsoPotencialCliente$AlterarStatusIndicacaoCommand.class
 br\com\sigla\aplicacao\agenda\porta\entrada\CasoDeUsoAgenda$ChangeVisitStatusCommand.class

@@ -9,11 +9,13 @@ C:\Users\PC\IdeaProjects\SIGLA\sigla-interface\src\main\java\br\com\sigla\interf
 C:\Users\PC\IdeaProjects\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\async\ExecutorTarefasUi.java
 C:\Users\PC\IdeaProjects\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\async\IndicadorCarregamento.java
 C:\Users\PC\IdeaProjects\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\async\SobreposicaoCarregamento.java
+C:\Users\PC\IdeaProjects\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\componente\SeletorDiasLembrete.java
 C:\Users\PC\IdeaProjects\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\consulta\ContextoDetalheOrdemServico.java
 C:\Users\PC\IdeaProjects\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\consulta\ContextoEdicaoOrdemServico.java
 C:\Users\PC\IdeaProjects\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\consulta\ServicoConsultaOrdemServico.java
 C:\Users\PC\IdeaProjects\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\consulta\ServicoConsultaReferencias.java
 C:\Users\PC\IdeaProjects\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\controlador\ControladorAgenda.java
+C:\Users\PC\IdeaProjects\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\controlador\ControladorAlertas.java
 C:\Users\PC\IdeaProjects\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\controlador\ControladorCadastro.java
 C:\Users\PC\IdeaProjects\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\controlador\ControladorCadastroUsuario.java
 C:\Users\PC\IdeaProjects\SIGLA\sigla-interface\src\main\java\br\com\sigla\interfacegrafica\controlador\ControladorClientes.java

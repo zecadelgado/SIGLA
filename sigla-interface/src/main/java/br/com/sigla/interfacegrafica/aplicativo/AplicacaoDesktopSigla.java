@@ -108,12 +108,24 @@ public class AplicacaoDesktopSigla extends Application {
         }
 
         Throwable causa = falha.getCause() != null ? falha.getCause() : falha;
+        causa.printStackTrace();
         Alert alerta = new Alert(Alert.AlertType.ERROR);
         alerta.setTitle("S.I.G.L.A");
         alerta.setHeaderText("Nao foi possivel iniciar o sistema.");
-        alerta.setContentText(causa.getMessage());
+        alerta.setContentText(mensagemInicializacao(causa));
         alerta.showAndWait();
         Platform.exit();
+    }
+
+    private String mensagemInicializacao(Throwable falha) {
+        String texto = falha.getMessage() == null ? "" : falha.getMessage().toLowerCase();
+        if (texto.contains("password authentication failed")
+                || texto.contains("unable to obtain connection")
+                || texto.contains("entitymanagerfactory")
+                || texto.contains("flyway")) {
+            return "Nao foi possivel conectar ao banco de dados do SIGLA. Verifique a conexao com a internet ou contate o suporte.";
+        }
+        return "O SIGLA encontrou um problema ao iniciar. Feche o sistema e tente abrir novamente.";
     }
 
     @Override

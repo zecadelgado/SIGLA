@@ -45,6 +45,7 @@
             <Button fx:id="navContratos" maxWidth="Infinity" mnemonicParsing="false" onAction="#onContratosCertificadosClick" styleClass="app-nav-button" text="Contratos / Certificados" />
             <Button fx:id="navUsuarios" maxWidth="Infinity" mnemonicParsing="false" onAction="#onUsuariosClick" styleClass="app-nav-button" text="Usuários" />
             <Button fx:id="navNotificacoes" maxWidth="Infinity" mnemonicParsing="false" onAction="#onNotificacoesClick" styleClass="app-nav-button" text="Notificações" />
+            <Button fx:id="navAlertas" maxWidth="Infinity" mnemonicParsing="false" onAction="#onAlertasClick" styleClass="app-nav-button" text="Alertas" />
             <Region maxWidth="Infinity" VBox.vgrow="ALWAYS" />
             <Button fx:id="navSair" maxWidth="Infinity" mnemonicParsing="false" onAction="#onLogoutClick" styleClass="app-nav-button, shell-logout-button" text="Sair" />
          </children>
