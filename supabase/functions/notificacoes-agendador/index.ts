@@ -133,6 +133,7 @@ Deno.serve(async (req) => {
     const configsPorEvento = await carregarConfigs(sql);
     const pessoas = await carregarPessoas(sql);
 
+    const mensalidadesGeradas = await faturarMensalidadesContrato(sql, hoje);
     let geradas = 0;
     geradas += await processarContratos(sql, hoje, configsPorEvento.get("CONTRACT_EXPIRING") ?? [], pessoas);
     geradas += await processarCertificados(sql, hoje, configsPorEvento.get("CERTIFICATE_EXPIRING") ?? [], pessoas);
@@ -141,7 +142,7 @@ Deno.serve(async (req) => {
     const enviadas = await dispatchDue(sql);
     await registrarExecucao(sql, isoDate(hoje));
 
-    return json({ ok: true, hoje: isoDate(hoje), geradas, enviadas, modoTeste: MODO_TESTE, envioHabilitado: ENVIO_HABILITADO });
+    return json({ ok: true, hoje: isoDate(hoje), mensalidadesGeradas, geradas, enviadas, modoTeste: MODO_TESTE, envioHabilitado: ENVIO_HABILITADO });
   } catch (e) {
     console.error("Falha no ciclo de notificacoes", e);
     return json({ erro: String(e) }, 500);
@@ -175,6 +176,62 @@ async function carregarPessoas(sql: postgres.Sql): Promise<Map<string, Pessoa>> 
   const mapa = new Map<string, Pessoa>();
   for (const p of rows) mapa.set(p.id, p as Pessoa);
   return mapa;
+}
+
+/**
+ * Espelha o faturamento do desktop. O UUID e refeito como UUID v3 (MD5), igual
+ * a UUID.nameUUIDFromBytes, para que pg_cron e desktop nunca dupliquem a mesma
+ * mensalidade de contrato/competencia.
+ */
+async function faturarMensalidadesContrato(sql: postgres.Sql, hoje: Date): Promise<number> {
+  const competencia = isoDate(hoje).slice(0, 7);
+  const rows = await sql<{ geradas: string }[]>`
+    with referencias as (
+      select
+        (select id from financeiro_categorias
+          where ativo = true and upper(tipo) = 'ENTRY' and upper(nome) = 'SERVICOS'
+          order by created_at limit 1) as categoria_id,
+        (select id from financeiro_formas_pagamento
+          where ativo = true and upper(nome) = 'PIX'
+          order by created_at limit 1) as forma_pagamento_id
+    ), contratos_elegiveis as (
+      select c.id, c.cliente_id, coalesce(c.descricao, '') as descricao, c.valor_mensal,
+             make_date(
+               extract(year from ${competencia}::date)::integer,
+               extract(month from ${competencia}::date)::integer,
+               least(extract(day from c.data_inicio)::integer,
+                     extract(day from (date_trunc('month', ${competencia}::date) + interval '1 month - 1 day'))::integer)
+             ) as vencimento
+        from contratos c
+       where upper(coalesce(c.status, 'ACTIVE')) in ('ACTIVE', 'ATIVO')
+         and c.valor_mensal > 0
+         and date_trunc('month', c.data_inicio)::date <= ${competencia}::date
+         and date_trunc('month', c.data_fim)::date >= ${competencia}::date
+    ), hashes as (
+      select *, md5('contrato-mensalidade:' || id::text || ':' || ${competencia}) as hash
+        from contratos_elegiveis
+    ), lancamentos as (
+      insert into financeiro_lancamentos (
+        id, tipo, categoria_id, forma_pagamento_id, descricao, cliente_id,
+        valor_total, data_emissao, data_vencimento, status, parcelado,
+        quantidade_parcelas, observacoes
+      )
+      select (
+          substr(hash, 1, 8) || '-' || substr(hash, 9, 4) || '-3' || substr(hash, 14, 3) || '-' ||
+          lpad(to_hex((get_byte(decode(hash, 'hex'), 8) & 63) | 128), 2, '0') || substr(hash, 19, 14)
+        )::uuid,
+        'ENTRY', r.categoria_id, r.forma_pagamento_id,
+        'Mensalidade contrato' || case when descricao = '' then '' else ' ' || descricao end
+          || ' - ' || to_char(${competencia}::date, 'MM/YYYY'),
+        cliente_id, valor_mensal, vencimento, vencimento, 'PENDING', false, 1,
+        '[CONTRATO ' || id::text || ' COMPETENCIA ' || ${competencia} || ']'
+        from hashes cross join referencias r
+       where r.categoria_id is not null and r.forma_pagamento_id is not null
+      on conflict (id) do nothing
+      returning id
+    )
+    select count(*)::text as geradas from lancamentos`;
+  return Number(rows[0]?.geradas ?? 0);
 }
 
 // ------------------------------- processadores -------------------------------

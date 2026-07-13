@@ -2,6 +2,8 @@ package br.com.sigla.interfacegrafica.consulta;
 
 import br.com.sigla.aplicacao.clientes.porta.entrada.CasoDeUsoCliente;
 import br.com.sigla.aplicacao.funcionarios.porta.entrada.CasoDeUsoFuncionario;
+import br.com.sigla.aplicacao.financeiro.porta.entrada.CasoDeUsoFinanceiro;
+import br.com.sigla.dominio.financeiro.LancamentoFinanceiro;
 import br.com.sigla.aplicacao.servicos.porta.entrada.CasoDeUsoOrdemServico;
 import br.com.sigla.dominio.funcionarios.Funcionario;
 import br.com.sigla.dominio.servicos.OrdemServico;
@@ -21,15 +23,27 @@ public class ServicoConsultaOrdemServico {
     private final CasoDeUsoOrdemServico casoDeUsoOrdemServico;
     private final CasoDeUsoCliente casoDeUsoCliente;
     private final CasoDeUsoFuncionario casoDeUsoFuncionario;
+    private final CasoDeUsoFinanceiro casoDeUsoFinanceiro;
 
+    public ServicoConsultaOrdemServico(
+            CasoDeUsoOrdemServico casoDeUsoOrdemServico,
+            CasoDeUsoCliente casoDeUsoCliente,
+            CasoDeUsoFuncionario casoDeUsoFuncionario,
+            CasoDeUsoFinanceiro casoDeUsoFinanceiro
+    ) {
+        this.casoDeUsoOrdemServico = casoDeUsoOrdemServico;
+        this.casoDeUsoCliente = casoDeUsoCliente;
+        this.casoDeUsoFuncionario = casoDeUsoFuncionario;
+        this.casoDeUsoFinanceiro = casoDeUsoFinanceiro;
+    }
+
+    /** Compatibilidade para consultas sem o modulo financeiro (testes e telas isoladas). */
     public ServicoConsultaOrdemServico(
             CasoDeUsoOrdemServico casoDeUsoOrdemServico,
             CasoDeUsoCliente casoDeUsoCliente,
             CasoDeUsoFuncionario casoDeUsoFuncionario
     ) {
-        this.casoDeUsoOrdemServico = casoDeUsoOrdemServico;
-        this.casoDeUsoCliente = casoDeUsoCliente;
-        this.casoDeUsoFuncionario = casoDeUsoFuncionario;
+        this(casoDeUsoOrdemServico, casoDeUsoCliente, casoDeUsoFuncionario, null);
     }
 
     public List<OrdemServicoView> listAll() {
@@ -78,6 +92,10 @@ public class ServicoConsultaOrdemServico {
     private OrdemServicoView toView(OrdemServico order, Map<String, String> clientes, Map<String, String> funcionarios) {
         String responsavelId = order.responsavelInternoId() == null ? "" : order.responsavelInternoId();
         String responsavelNome = responsavelId.isBlank() ? "-" : funcionarios.getOrDefault(responsavelId, "-");
+        String statusFinanceiro = casoDeUsoFinanceiro == null ? (order.pago() ? "Pago" : "Nao faturada")
+                : casoDeUsoFinanceiro.buscarLancamentoPorOrdemServico(order.id())
+                .map(lancamento -> statusFinanceiro(lancamento))
+                .orElse("Nao faturada");
         return new OrdemServicoView(
                 order.id(),
                 order.numeroOs() == null ? order.id() : String.valueOf(order.numeroOs()),
@@ -96,11 +114,12 @@ public class ServicoConsultaOrdemServico {
                 order.dataFim(),
                 blankAsDash(order.observacoes()),
                 order.foiFeito(),
-                order.pago(),
+                "Pago".equals(statusFinanceiro),
                 order.assinaturaCliente(),
                 order.totalProdutos(),
                 order.produtos().size(),
-                order.anexos().size()
+                order.anexos().size(),
+                statusFinanceiro
         );
     }
 
@@ -126,7 +145,8 @@ public class ServicoConsultaOrdemServico {
             boolean signed,
             BigDecimal productTotal,
             int productCount,
-            int attachmentCount
+            int attachmentCount,
+            String financialStatus
     ) {
     }
 
@@ -140,5 +160,21 @@ public class ServicoConsultaOrdemServico {
 
     private String blankAsDash(String value) {
         return value == null || value.isBlank() ? "-" : value;
+    }
+
+    private String statusFinanceiro(LancamentoFinanceiro lancamento) {
+        if (lancamento.status() != LancamentoFinanceiro.Status.PAID
+                && lancamento.status() != LancamentoFinanceiro.Status.CANCELLED
+                && (lancamento.vencido(LocalDate.now())
+                || lancamento.parcelas().stream().anyMatch(parcela -> parcela.vencida(LocalDate.now())))) {
+            return "Vencido";
+        }
+        return switch (lancamento.status()) {
+            case PAID -> "Pago";
+            case PARTIAL -> "Parcial";
+            case CANCELLED -> "Cancelado";
+            case OVERDUE -> "Vencido";
+            case PENDING -> "Pendente";
+        };
     }
 }

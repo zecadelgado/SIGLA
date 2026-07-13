@@ -7,6 +7,7 @@ import br.com.sigla.aplicacao.financeiro.porta.saida.RepositorioDespesaFinanceir
 import br.com.sigla.aplicacao.financeiro.porta.saida.RepositorioEntradaFinanceira;
 import br.com.sigla.aplicacao.financeiro.porta.saida.RepositorioLancamentoFinanceiro;
 import br.com.sigla.aplicacao.financeiro.porta.saida.RepositorioPlanoParcelamento;
+import br.com.sigla.aplicacao.servicos.porta.saida.RepositorioOrdemServico;
 import br.com.sigla.dominio.auditoria.EventoAuditoria;
 import br.com.sigla.dominio.financeiro.CategoriaFinanceira;
 import br.com.sigla.dominio.financeiro.DespesaFinanceira;
@@ -96,6 +97,21 @@ class CasoDeUsoGerenciarFinanceiroTest {
     }
 
     @Test
+    void parcelaVencidaPrevaleceSobreStatusParcial() {
+        FakeLancamentos repository = new FakeLancamentos();
+        CasoDeUsoGerenciarFinanceiro financeiro = financeiro(repository);
+        financeiro.saveLancamento(new CasoDeUsoFinanceiro.SalvarLancamentoFinanceiroCommand(
+                "l-1", CasoDeUsoFinanceiro.TransactionType.ENTRY, "cat-servicos", "forma-pix", "Servico", "cliente-1", "",
+                BigDecimal.valueOf(100), LocalDate.now().minusMonths(3), LocalDate.now().minusMonths(2), null,
+                true, 2, "", "", CasoDeUsoFinanceiro.TransactionStatus.PENDING));
+
+        LancamentoFinanceiro lancamento = repository.findById("l-1").orElseThrow();
+        financeiro.baixarParcela("l-1", lancamento.parcelas().get(0).id(), LocalDate.now());
+
+        assertEquals(LancamentoFinanceiro.Status.OVERDUE, repository.findById("l-1").orElseThrow().status());
+    }
+
+    @Test
     void cancelaEEstornaComAuditoriaEmObservacoes() {
         FakeLancamentos repository = new FakeLancamentos();
         FakeAuditoria auditoria = new FakeAuditoria();
@@ -113,6 +129,38 @@ class CasoDeUsoGerenciarFinanceiroTest {
                 .anyMatch(evento -> evento.acao().equals("PAGAMENTO_ESTORNADO")));
         assertTrue(auditoria.findByEntidade("financeiro_lancamentos", "l-1").stream()
                 .anyMatch(evento -> evento.acao().equals("LANCAMENTO_CANCELADO")));
+    }
+
+    @Test
+    void sincronizaPagamentoDaOsAoBaixarEstornarOuCancelarLancamentoVinculado() {
+        FakeLancamentos lancamentos = new FakeLancamentos();
+        FakeOrdensServico ordens = new FakeOrdensServico();
+        ordens.save(ordemServico("os-1", false));
+        CasoDeUsoGerenciarFinanceiro financeiro = new CasoDeUsoGerenciarFinanceiro(
+                new FakeEntradas(), new FakeDespesas(), new FakePlanos(), lancamentos, ordens, null);
+        financeiro.saveLancamento(new CasoDeUsoFinanceiro.SalvarLancamentoFinanceiroCommand(
+                "l-1", CasoDeUsoFinanceiro.TransactionType.ENTRY, "cat-servicos", "forma-pix", "Servico", "cliente-1", "os-1",
+                BigDecimal.TEN, LocalDate.now(), LocalDate.now(), null, false, 1, "", "", CasoDeUsoFinanceiro.TransactionStatus.PENDING));
+
+        financeiro.markPaid("l-1", LocalDate.now());
+        assertTrue(ordens.findById("os-1").orElseThrow().pago());
+
+        financeiro.estornarPagamento("l-1", "Pagamento devolvido");
+        assertTrue(!ordens.findById("os-1").orElseThrow().pago());
+
+        financeiro.markPaid("l-1", LocalDate.now());
+        financeiro.cancel("l-1", "Cobranca cancelada");
+        assertTrue(!ordens.findById("os-1").orElseThrow().pago());
+
+        ordens.save(ordemServico("os-2", false));
+        financeiro.saveLancamento(new CasoDeUsoFinanceiro.SalvarLancamentoFinanceiroCommand(
+                "l-2", CasoDeUsoFinanceiro.TransactionType.ENTRY, "cat-servicos", "forma-pix", "Servico parcelado", "cliente-1", "os-2",
+                BigDecimal.TEN, LocalDate.now(), LocalDate.now(), null, true, 2, "", "", CasoDeUsoFinanceiro.TransactionStatus.PENDING));
+        LancamentoFinanceiro parcelado = lancamentos.findById("l-2").orElseThrow();
+        financeiro.baixarParcela("l-2", parcelado.parcelas().get(0).id(), LocalDate.now());
+        assertTrue(!ordens.findById("os-2").orElseThrow().pago());
+        financeiro.baixarParcela("l-2", parcelado.parcelas().get(1).id(), LocalDate.now());
+        assertTrue(ordens.findById("os-2").orElseThrow().pago());
     }
 
     @Test
@@ -149,6 +197,7 @@ class CasoDeUsoGerenciarFinanceiroTest {
         assertEquals(1, repository.findAll().size());
         LancamentoFinanceiro lancamento = repository.findAll().get(0);
         assertEquals(LancamentoFinanceiro.Tipo.ENTRY, lancamento.tipo());
+        assertEquals("ctr-1", lancamento.contratoId());
         assertEquals(0, BigDecimal.valueOf(200).compareTo(lancamento.valorTotal()));
         assertEquals(LocalDate.of(2026, 6, 10), lancamento.dataVencimento());
 
@@ -157,6 +206,48 @@ class CasoDeUsoGerenciarFinanceiroTest {
                 "ctr-1", "cliente-1", BigDecimal.valueOf(200), java.time.YearMonth.of(2026, 7),
                 LocalDate.of(2026, 7, 10), "Mensalidade contrato - 07/2026"));
         assertEquals(2, repository.findAll().size());
+
+        assertEquals(2, financeiro.cancelarLancamentosPendentesDoContrato(
+                "ctr-1", "Contrato encerrado", LocalDate.of(2026, 5, 31)));
+        assertTrue(repository.findByContratoId("ctr-1").stream()
+                .allMatch(item -> item.status() == LancamentoFinanceiro.Status.CANCELLED));
+    }
+
+    @Test
+    void encerramentoCancelaMensalidadeFuturaSemOsEPreservaCobrancasDevidasOuLiquidadas() {
+        FakeLancamentos repository = new FakeLancamentos();
+        CasoDeUsoGerenciarFinanceiro financeiro = financeiro(repository);
+        LocalDate encerramento = LocalDate.of(2026, 7, 13);
+        repository.save(lancamentoContrato("mensalidade-futura", "", LancamentoFinanceiro.Status.PENDING,
+                encerramento.plusMonths(1), null));
+        repository.save(lancamentoContrato("overdue-futuro", "", LancamentoFinanceiro.Status.OVERDUE,
+                encerramento.plusDays(5), null));
+        repository.save(lancamentoContrato("vencida-devida", "", LancamentoFinanceiro.Status.OVERDUE,
+                encerramento.minusDays(1), null));
+        repository.save(lancamentoContrato("parcial", "", LancamentoFinanceiro.Status.PARTIAL,
+                encerramento.plusDays(10), null));
+        repository.save(lancamentoContrato("paga", "", LancamentoFinanceiro.Status.PAID,
+                encerramento.plusDays(10), encerramento.minusDays(2)));
+        repository.save(lancamentoContrato("cancelada-pela-os", "os-cancelada", LancamentoFinanceiro.Status.CANCELLED,
+                encerramento.plusDays(10), null));
+
+        assertEquals(2, financeiro.cancelarLancamentosPendentesDoContrato(
+                "ctr-1", "Contrato encerrado", encerramento));
+
+        assertEquals(LancamentoFinanceiro.Status.CANCELLED,
+                repository.findById("mensalidade-futura").orElseThrow().status());
+        assertEquals(LancamentoFinanceiro.Status.CANCELLED,
+                repository.findById("overdue-futuro").orElseThrow().status());
+        assertEquals(LancamentoFinanceiro.Status.OVERDUE,
+                repository.findById("vencida-devida").orElseThrow().status());
+        assertEquals(LancamentoFinanceiro.Status.PARTIAL,
+                repository.findById("parcial").orElseThrow().status());
+        assertEquals(LancamentoFinanceiro.Status.PAID,
+                repository.findById("paga").orElseThrow().status());
+        assertEquals(LancamentoFinanceiro.Status.CANCELLED,
+                repository.findById("cancelada-pela-os").orElseThrow().status());
+        assertTrue(repository.findById("mensalidade-futura").orElseThrow().ordemServicoId().isBlank(),
+                "a mensalidade sem OS tambem deve ser cancelada pelo vinculo contratual");
     }
 
     private CasoDeUsoGerenciarFinanceiro financeiro(FakeLancamentos lancamentos) {
@@ -198,6 +289,22 @@ class CasoDeUsoGerenciarFinanceiroTest {
                 "Observacao real",
                 status
         );
+    }
+
+    private LancamentoFinanceiro lancamentoContrato(String id, String ordemServicoId,
+                                                     LancamentoFinanceiro.Status status,
+                                                     LocalDate vencimento, LocalDate pagamento) {
+        return new LancamentoFinanceiro(
+                id, LancamentoFinanceiro.Tipo.ENTRY, "", "", "", "", "Cobranca contratual",
+                "cliente-1", ordemServicoId, "ctr-1", BigDecimal.TEN,
+                LocalDate.of(2026, 1, 1), vencimento, pagamento, status,
+                false, 1, "", "", List.of());
+    }
+
+    private OrdemServico ordemServico(String id, boolean pago) {
+        return new OrdemServico(
+                id, 10L, "cliente-1", "Servico", "Descricao", "Limpeza", OrdemServico.OrdemServicoStatus.CONCLUIDA,
+                LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now(), "", "", true, pago, BigDecimal.TEN, "");
     }
 
     static final class FakeLancamentos implements RepositorioLancamentoFinanceiro {
@@ -285,6 +392,26 @@ class CasoDeUsoGerenciarFinanceiroTest {
         @Override
         public Optional<PlanoParcelamento> findById(String id) {
             return Optional.empty();
+        }
+    }
+
+    static final class FakeOrdensServico implements RepositorioOrdemServico {
+        private final Map<String, OrdemServico> storage = new HashMap<>();
+
+        @Override
+        public OrdemServico save(OrdemServico ordemServico) {
+            storage.put(ordemServico.id(), ordemServico);
+            return ordemServico;
+        }
+
+        @Override
+        public List<OrdemServico> findAll() {
+            return storage.values().stream().toList();
+        }
+
+        @Override
+        public Optional<OrdemServico> findById(String id) {
+            return Optional.ofNullable(storage.get(id));
         }
     }
 

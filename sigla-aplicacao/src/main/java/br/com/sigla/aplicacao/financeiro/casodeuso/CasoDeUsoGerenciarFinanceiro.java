@@ -6,6 +6,7 @@ import br.com.sigla.aplicacao.financeiro.porta.saida.RepositorioDespesaFinanceir
 import br.com.sigla.aplicacao.financeiro.porta.saida.RepositorioEntradaFinanceira;
 import br.com.sigla.aplicacao.financeiro.porta.saida.RepositorioLancamentoFinanceiro;
 import br.com.sigla.aplicacao.financeiro.porta.saida.RepositorioPlanoParcelamento;
+import br.com.sigla.aplicacao.servicos.porta.saida.RepositorioOrdemServico;
 import br.com.sigla.dominio.financeiro.CategoriaFinanceira;
 import br.com.sigla.dominio.financeiro.DespesaFinanceira;
 import br.com.sigla.dominio.financeiro.EntradaFinanceira;
@@ -15,6 +16,8 @@ import br.com.sigla.dominio.financeiro.PlanoParcelamento;
 import br.com.sigla.dominio.servicos.OrdemServico;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -33,6 +36,7 @@ public class CasoDeUsoGerenciarFinanceiro implements CasoDeUsoFinanceiro {
     private final RepositorioDespesaFinanceira expenseRepository;
     private final RepositorioPlanoParcelamento installmentPlanRepository;
     private final RepositorioLancamentoFinanceiro lancamentoRepository;
+    private final RepositorioOrdemServico ordemServicoRepository;
     private final ServicoAuditoriaFuncional auditoriaFuncional;
 
     @Autowired
@@ -41,12 +45,14 @@ public class CasoDeUsoGerenciarFinanceiro implements CasoDeUsoFinanceiro {
             RepositorioDespesaFinanceira expenseRepository,
             RepositorioPlanoParcelamento installmentPlanRepository,
             RepositorioLancamentoFinanceiro lancamentoRepository,
+            RepositorioOrdemServico ordemServicoRepository,
             ServicoAuditoriaFuncional auditoriaFuncional
     ) {
         this.entryRepository = entryRepository;
         this.expenseRepository = expenseRepository;
         this.installmentPlanRepository = installmentPlanRepository;
         this.lancamentoRepository = lancamentoRepository;
+        this.ordemServicoRepository = ordemServicoRepository;
         this.auditoriaFuncional = auditoriaFuncional;
     }
 
@@ -60,7 +66,23 @@ public class CasoDeUsoGerenciarFinanceiro implements CasoDeUsoFinanceiro {
         this.expenseRepository = expenseRepository;
         this.installmentPlanRepository = installmentPlanRepository;
         this.lancamentoRepository = lancamentoRepository;
+        this.ordemServicoRepository = null;
         this.auditoriaFuncional = null;
+    }
+
+    public CasoDeUsoGerenciarFinanceiro(
+            RepositorioEntradaFinanceira entryRepository,
+            RepositorioDespesaFinanceira expenseRepository,
+            RepositorioPlanoParcelamento installmentPlanRepository,
+            RepositorioLancamentoFinanceiro lancamentoRepository,
+            ServicoAuditoriaFuncional auditoriaFuncional
+    ) {
+        this.entryRepository = entryRepository;
+        this.expenseRepository = expenseRepository;
+        this.installmentPlanRepository = installmentPlanRepository;
+        this.lancamentoRepository = lancamentoRepository;
+        this.ordemServicoRepository = null;
+        this.auditoriaFuncional = auditoriaFuncional;
     }
 
     @Override
@@ -174,6 +196,7 @@ public class CasoDeUsoGerenciarFinanceiro implements CasoDeUsoFinanceiro {
     }
 
     @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void markPaid(String transactionId, LocalDate paymentDate) {
         LocalDate data = paymentDate == null ? LocalDate.now() : paymentDate;
         LancamentoFinanceiro lancamento = find(transactionId);
@@ -182,10 +205,12 @@ public class CasoDeUsoGerenciarFinanceiro implements CasoDeUsoFinanceiro {
                         parcela.id(), parcela.numeroParcela(), parcela.valorParcela(), parcela.dataVencimento(), data, LancamentoFinanceiro.Status.PAID))
                 .toList();
         salvarComStatus(lancamento, LancamentoFinanceiro.Status.PAID, data, parcelas, lancamento.auditar("PAGAMENTO", "Lancamento baixado"));
+        sincronizarPagamentoDaOrdemServico(lancamento, LancamentoFinanceiro.Status.PAID);
         auditar(lancamento.id(), "LANCAMENTO_PAGO", "Pagamento em " + data, lancamento.criadoPor());
     }
 
     @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void baixarParcela(String lancamentoId, String parcelaId, LocalDate paymentDate) {
         LocalDate data = paymentDate == null ? LocalDate.now() : paymentDate;
         LancamentoFinanceiro lancamento = find(lancamentoId);
@@ -212,6 +237,7 @@ public class CasoDeUsoGerenciarFinanceiro implements CasoDeUsoFinanceiro {
         LancamentoFinanceiro.Status status = statusPorParcelas(parcelas, lancamento.dataVencimento(), LocalDate.now());
         LocalDate dataPagamento = status == LancamentoFinanceiro.Status.PAID ? data : null;
         salvarComStatus(lancamento, status, dataPagamento, parcelas, lancamento.auditar("BAIXA_PARCELA", parcelaId));
+        sincronizarPagamentoDaOrdemServico(lancamento, status);
         auditar(lancamento.id(), "PARCELA_BAIXADA", parcelaId, lancamento.criadoPor());
     }
 
@@ -221,6 +247,7 @@ public class CasoDeUsoGerenciarFinanceiro implements CasoDeUsoFinanceiro {
     }
 
     @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void cancel(String transactionId, String motivo) {
         if (motivo == null || motivo.isBlank()) {
             throw new IllegalArgumentException("Motivo do cancelamento e obrigatorio.");
@@ -235,10 +262,41 @@ public class CasoDeUsoGerenciarFinanceiro implements CasoDeUsoFinanceiro {
                         parcela.dataPagamento(), LancamentoFinanceiro.Status.CANCELLED))
                 .toList();
         salvarComStatus(lancamento, LancamentoFinanceiro.Status.CANCELLED, lancamento.dataPagamento(), parcelas, lancamento.auditar("CANCELAMENTO", motivo));
+        sincronizarPagamentoDaOrdemServico(lancamento, LancamentoFinanceiro.Status.CANCELLED);
         auditar(lancamento.id(), "LANCAMENTO_CANCELADO", motivo, lancamento.criadoPor());
     }
 
     @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public int cancelarLancamentosPendentesDoContrato(String contratoId, String motivo, LocalDate dataEncerramento) {
+        if (contratoId == null || contratoId.isBlank() || motivo == null || motivo.isBlank()
+                || dataEncerramento == null) {
+            throw new IllegalArgumentException("Contrato, motivo e data do cancelamento sao obrigatorios.");
+        }
+        int cancelados = 0;
+        for (LancamentoFinanceiro lancamento : lancamentoRepository.findByContratoId(contratoId)) {
+            boolean statusCancelavel = lancamento.status() == LancamentoFinanceiro.Status.PENDING
+                    || lancamento.status() == LancamentoFinanceiro.Status.OVERDUE;
+            boolean cobrancaFutura = lancamento.dataVencimento() != null
+                    && lancamento.dataVencimento().isAfter(dataEncerramento);
+            if (!statusCancelavel || !cobrancaFutura) {
+                continue;
+            }
+            List<LancamentoFinanceiro.ParcelaFinanceira> parcelas = lancamento.parcelas().stream()
+                    .map(parcela -> new LancamentoFinanceiro.ParcelaFinanceira(
+                            parcela.id(), parcela.numeroParcela(), parcela.valorParcela(), parcela.dataVencimento(),
+                            parcela.dataPagamento(), LancamentoFinanceiro.Status.CANCELLED))
+                    .toList();
+            salvarComStatus(lancamento, LancamentoFinanceiro.Status.CANCELLED, lancamento.dataPagamento(), parcelas,
+                    lancamento.auditar("CANCELAMENTO_CONTRATO", motivo));
+            auditar(lancamento.id(), "LANCAMENTO_CANCELADO_CONTRATO", motivo, lancamento.criadoPor());
+            cancelados++;
+        }
+        return cancelados;
+    }
+
+    @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void estornarPagamento(String transactionId, String motivo) {
         if (motivo == null || motivo.isBlank()) {
             throw new IllegalArgumentException("Motivo do estorno e obrigatorio.");
@@ -251,7 +309,9 @@ public class CasoDeUsoGerenciarFinanceiro implements CasoDeUsoFinanceiro {
                 .map(parcela -> new LancamentoFinanceiro.ParcelaFinanceira(
                         parcela.id(), parcela.numeroParcela(), parcela.valorParcela(), parcela.dataVencimento(), null, LancamentoFinanceiro.Status.PENDING))
                 .toList();
-        salvarComStatus(lancamento, statusPorParcelas(parcelas, lancamento.dataVencimento(), LocalDate.now()), null, parcelas, lancamento.auditar("ESTORNO", motivo));
+        LancamentoFinanceiro.Status status = statusPorParcelas(parcelas, lancamento.dataVencimento(), LocalDate.now());
+        salvarComStatus(lancamento, status, null, parcelas, lancamento.auditar("ESTORNO", motivo));
+        sincronizarPagamentoDaOrdemServico(lancamento, status);
         auditar(lancamento.id(), "PAGAMENTO_ESTORNADO", motivo, lancamento.criadoPor());
     }
 
@@ -321,7 +381,8 @@ public class CasoDeUsoGerenciarFinanceiro implements CasoDeUsoFinanceiro {
                 1,
                 "",
                 "[CONTRATO " + command.contratoId() + " COMPETENCIA " + command.competencia() + "]",
-                TransactionStatus.PENDING));
+                TransactionStatus.PENDING,
+                command.contratoId()));
         auditar(lancamento.id(), "FINANCEIRO_GERADO_CONTRATO",
                 command.contratoId() + " " + command.competencia(), lancamento.criadoPor());
         return Optional.of(lancamento);
@@ -393,7 +454,7 @@ public class CasoDeUsoGerenciarFinanceiro implements CasoDeUsoFinanceiro {
                         ? new LancamentoFinanceiro(
                         lancamento.id(), lancamento.tipo(), lancamento.categoriaId(), lancamento.categoriaNome(),
                         lancamento.formaPagamentoId(), lancamento.formaPagamentoNome(), lancamento.descricao(),
-                        lancamento.clienteId(), lancamento.ordemServicoId(), lancamento.valorTotal(), lancamento.dataEmissao(),
+                        lancamento.clienteId(), lancamento.ordemServicoId(), lancamento.contratoId(), lancamento.valorTotal(), lancamento.dataEmissao(),
                         lancamento.dataVencimento(), lancamento.dataPagamento(), LancamentoFinanceiro.Status.OVERDUE,
                         lancamento.parcelado(), lancamento.quantidadeParcelas(), lancamento.observacoes(),
                         lancamento.criadoPor(), lancamento.parcelas())
@@ -483,6 +544,7 @@ public class CasoDeUsoGerenciarFinanceiro implements CasoDeUsoFinanceiro {
                 command.descricao(),
                 command.customerId(),
                 command.orderReference(),
+                command.contratoId(),
                 command.amount(),
                 command.issueDate() == null ? LocalDate.now() : command.issueDate(),
                 command.dueDate(),
@@ -529,15 +591,38 @@ public class CasoDeUsoGerenciarFinanceiro implements CasoDeUsoFinanceiro {
         lancamentoRepository.save(new LancamentoFinanceiro(
                 lancamento.id(), lancamento.tipo(), lancamento.categoriaId(), lancamento.categoriaNome(),
                 lancamento.formaPagamentoId(), lancamento.formaPagamentoNome(), lancamento.descricao(), lancamento.clienteId(),
-                lancamento.ordemServicoId(), lancamento.valorTotal(), lancamento.dataEmissao(), lancamento.dataVencimento(),
+                lancamento.ordemServicoId(), lancamento.contratoId(), lancamento.valorTotal(), lancamento.dataEmissao(), lancamento.dataVencimento(),
                 dataPagamento, status, lancamento.parcelado(), lancamento.quantidadeParcelas(), observacoes,
                 lancamento.criadoPor(), parcelas
         ));
     }
 
+    private void sincronizarPagamentoDaOrdemServico(LancamentoFinanceiro lancamento, LancamentoFinanceiro.Status statusFinanceiro) {
+        if (ordemServicoRepository == null || lancamento.ordemServicoId().isBlank()) {
+            return;
+        }
+        ordemServicoRepository.findById(lancamento.ordemServicoId()).ifPresent(ordemServico -> {
+            boolean pago = statusFinanceiro == LancamentoFinanceiro.Status.PAID;
+            if (ordemServico.pago() == pago) {
+                return;
+            }
+            ordemServicoRepository.save(new OrdemServico(
+                    ordemServico.id(), ordemServico.numeroOs(), ordemServico.clienteId(), ordemServico.contratoId(),
+                    ordemServico.titulo(), ordemServico.descricao(), ordemServico.tipoServico(), ordemServico.status(),
+                    ordemServico.dataAgendada(), ordemServico.dataInicio(), ordemServico.dataFim(), ordemServico.responsavelInternoId(),
+                    ordemServico.executadoPorId(), ordemServico.foiFeito(), pago, ordemServico.valorServico(),
+                    ordemServico.assinaturaCliente(), ordemServico.produtos(), ordemServico.anexos(), ordemServico.observacoes(),
+                    ordemServico.dadosFormulario()
+            ));
+        });
+    }
+
     private LancamentoFinanceiro.Status statusPorParcelas(List<LancamentoFinanceiro.ParcelaFinanceira> parcelas, LocalDate vencimento, LocalDate hoje) {
         if (parcelas.isEmpty()) {
             return vencimento != null && vencimento.isBefore(hoje) ? LancamentoFinanceiro.Status.OVERDUE : LancamentoFinanceiro.Status.PENDING;
+        }
+        if (parcelas.stream().anyMatch(parcela -> parcela.vencida(hoje))) {
+            return LancamentoFinanceiro.Status.OVERDUE;
         }
         long pagas = parcelas.stream().filter(parcela -> parcela.status() == LancamentoFinanceiro.Status.PAID).count();
         if (pagas == parcelas.size()) {
@@ -546,7 +631,7 @@ public class CasoDeUsoGerenciarFinanceiro implements CasoDeUsoFinanceiro {
         if (pagas > 0) {
             return LancamentoFinanceiro.Status.PARTIAL;
         }
-        return parcelas.stream().anyMatch(parcela -> parcela.vencida(hoje)) ? LancamentoFinanceiro.Status.OVERDUE : LancamentoFinanceiro.Status.PENDING;
+        return LancamentoFinanceiro.Status.PENDING;
     }
 
     private LancamentoFinanceiro find(String id) {

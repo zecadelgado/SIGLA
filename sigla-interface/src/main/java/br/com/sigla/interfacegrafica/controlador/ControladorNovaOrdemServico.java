@@ -349,7 +349,7 @@ public class ControladorNovaOrdemServico {
                         titulo,
                         descricaoField == null ? "" : descricaoField.getText(),
                         tipoServico,
-                        statusSelecionado(ordemEmEdicao.status()),
+                        null,
                         dataAgendada.atStartOfDay(),
                         chooseResponsible(),
                         UtilComboBox.idSelecionado(executadoPorCombo),

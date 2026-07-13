@@ -2,26 +2,36 @@ package br.com.sigla.aplicacao.servicos.casodeuso;
 
 import br.com.sigla.aplicacao.agenda.porta.saida.RepositorioAgenda;
 import br.com.sigla.aplicacao.auditoria.casodeuso.ServicoAuditoriaFuncional;
+import br.com.sigla.aplicacao.contratos.porta.saida.RepositorioContrato;
 import br.com.sigla.aplicacao.estoque.porta.entrada.CasoDeUsoEstoque;
 import br.com.sigla.aplicacao.estoque.porta.saida.RepositorioEstoque;
 import br.com.sigla.aplicacao.financeiro.porta.entrada.CasoDeUsoFinanceiro;
 import br.com.sigla.aplicacao.servicos.porta.entrada.CasoDeUsoOrdemServico;
 import br.com.sigla.aplicacao.servicos.porta.saida.RepositorioOrdemServico;
 import br.com.sigla.dominio.agenda.VisitaAgendada;
+import br.com.sigla.dominio.contratos.Contrato;
 import br.com.sigla.dominio.estoque.ItemEstoque;
 import br.com.sigla.dominio.servicos.DadosFormularioServico;
 import br.com.sigla.dominio.servicos.OrdemServico;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
+
+    private static final ZoneId TIMEZONE_OFICIAL = ZoneId.of("America/Sao_Paulo");
 
     private final RepositorioOrdemServico repository;
     private final RepositorioEstoque repositorioEstoque;
@@ -29,6 +39,7 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
     private final CasoDeUsoFinanceiro casoDeUsoFinanceiro;
     private final ServicoAuditoriaFuncional auditoriaFuncional;
     private final RepositorioAgenda repositorioAgenda;
+    private final RepositorioContrato repositorioContrato;
 
     @Autowired
     public CasoDeUsoGerenciarOrdemServico(
@@ -37,7 +48,8 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
             CasoDeUsoEstoque casoDeUsoEstoque,
             CasoDeUsoFinanceiro casoDeUsoFinanceiro,
             ServicoAuditoriaFuncional auditoriaFuncional,
-            RepositorioAgenda repositorioAgenda
+            RepositorioAgenda repositorioAgenda,
+            RepositorioContrato repositorioContrato
     ) {
         this.repository = repository;
         this.repositorioEstoque = repositorioEstoque;
@@ -45,6 +57,19 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
         this.casoDeUsoFinanceiro = casoDeUsoFinanceiro;
         this.auditoriaFuncional = auditoriaFuncional;
         this.repositorioAgenda = repositorioAgenda;
+        this.repositorioContrato = repositorioContrato;
+    }
+
+    public CasoDeUsoGerenciarOrdemServico(
+            RepositorioOrdemServico repository,
+            RepositorioEstoque repositorioEstoque,
+            CasoDeUsoEstoque casoDeUsoEstoque,
+            CasoDeUsoFinanceiro casoDeUsoFinanceiro,
+            ServicoAuditoriaFuncional auditoriaFuncional,
+            RepositorioAgenda repositorioAgenda
+    ) {
+        this(repository, repositorioEstoque, casoDeUsoEstoque, casoDeUsoFinanceiro,
+                auditoriaFuncional, repositorioAgenda, null);
     }
 
     public CasoDeUsoGerenciarOrdemServico(
@@ -58,10 +83,15 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
         this.casoDeUsoFinanceiro = null;
         this.auditoriaFuncional = null;
         this.repositorioAgenda = null;
+        this.repositorioContrato = null;
     }
 
     @Override
     public OrdemServico create(CreateOrdemServicoCommand command) {
+        if (command.status() != null && command.status() != OrdemServico.OrdemServicoStatus.AGENDADA) {
+            throw new IllegalArgumentException("Status operacional deve ser alterado apenas pelas acoes iniciar, concluir ou cancelar.");
+        }
+        validarContratoVinculado(command.clienteId(), command.contratoId(), command.dataAgendada());
         OrdemServico ordemServico = repository.save(new OrdemServico(
                 command.id(),
                 null,
@@ -70,7 +100,7 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
                 command.titulo(),
                 command.descricao(),
                 command.tipoServico(),
-                command.status() == null ? OrdemServico.OrdemServicoStatus.AGENDADA : command.status(),
+                OrdemServico.OrdemServicoStatus.AGENDADA,
                 command.dataAgendada(),
                 null,
                 null,
@@ -92,39 +122,87 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
     @Override
     public OrdemServico update(UpdateOrdemServicoCommand command) {
         OrdemServico atual = find(command.id());
-        if (atual.concluida()) {
-            throw new IllegalArgumentException("OS concluida nao pode ser editada livremente.");
+        if (atual.concluida() || atual.status() == OrdemServico.OrdemServicoStatus.CANCELADA) {
+            throw new IllegalArgumentException("OS concluida ou cancelada nao pode ser editada livremente.");
         }
-        // Campos nulos no comando significam "preservar o valor atual": mantem a
-        // compatibilidade com a forma reduzida e evita zerar dados nao editados.
-        OrdemServico.OrdemServicoStatus status = command.status() == null ? atual.status() : command.status();
+        if (command.status() != null && command.status() != atual.status()) {
+            throw new IllegalArgumentException("Status operacional deve ser alterado apenas pelas acoes iniciar, concluir ou cancelar.");
+        }
+
+        String contratoId = command.contratoId() == null ? atual.contratoId() : command.contratoId().trim();
+        if (!atual.contratoId().isBlank() && !atual.contratoId().equals(contratoId)) {
+            throw new IllegalArgumentException(
+                    "Contrato da OS nao pode ser removido ou trocado por uma edicao comum; use o comando administrativo explicito.");
+        }
+
+        // Consolida primeiro os campos opcionais. A validacao contratual deve
+        // enxergar exatamente o estado que sera persistido, nunca os valores
+        // crus e possivelmente nulos do comando parcial.
+        String clienteId = command.clienteId() == null ? atual.clienteId() : command.clienteId();
+        String titulo = command.titulo() == null ? atual.titulo() : command.titulo();
+        String descricao = command.descricao() == null ? atual.descricao() : command.descricao();
+        String tipoServico = command.tipoServico() == null ? atual.tipoServico() : command.tipoServico();
+        LocalDateTime dataAgendada = command.dataAgendada() == null ? atual.dataAgendada() : command.dataAgendada();
+        String responsavelInterno = command.responsavelInternoId() == null
+                ? atual.responsavelInternoId() : command.responsavelInternoId();
         String executadoPor = command.executadoPorId() == null ? atual.executadoPorId() : command.executadoPorId();
-        DadosFormularioServico dadosFormulario = command.dadosFormulario() == null ? atual.dadosFormulario() : command.dadosFormulario();
+        BigDecimal valorServico = command.valorServico() == null ? atual.valorServico() : command.valorServico();
+        String observacoes = command.observacoes() == null ? atual.observacoes() : command.observacoes();
+        DadosFormularioServico dadosFormulario = command.dadosFormulario() == null
+                ? atual.dadosFormulario() : command.dadosFormulario();
+
+        validarContratoVinculado(clienteId, contratoId, dataAgendada);
         OrdemServico atualizada = repository.save(new OrdemServico(
                 atual.id(),
                 atual.numeroOs(),
-                command.clienteId(),
-                command.contratoId(),
-                command.titulo(),
-                command.descricao(),
-                command.tipoServico(),
-                status,
-                command.dataAgendada(),
+                clienteId,
+                contratoId,
+                titulo,
+                descricao,
+                tipoServico,
+                atual.status(),
+                dataAgendada,
                 atual.dataInicio(),
                 atual.dataFim(),
-                command.responsavelInternoId(),
+                responsavelInterno,
                 executadoPor,
                 atual.foiFeito(),
                 atual.pago(),
-                command.valorServico(),
+                valorServico,
                 atual.assinaturaCliente(),
                 atual.produtos(),
                 atual.anexos(),
-                command.observacoes(),
+                observacoes,
                 dadosFormulario
         ));
         sincronizarAgenda(atualizada);
         return atualizada;
+    }
+
+    @Override
+    @Transactional
+    public OrdemServico desvincularContratoAdministrativamente(DesvincularContratoOrdemServicoCommand command) {
+        if (command == null || command.motivo() == null || command.motivo().isBlank()) {
+            throw new IllegalArgumentException("Motivo da desvinculacao contratual e obrigatorio.");
+        }
+        if (command.usuarioId() == null || command.usuarioId().isBlank()) {
+            throw new IllegalArgumentException("Usuario administrador da desvinculacao e obrigatorio.");
+        }
+        OrdemServico atual = find(command.id());
+        if (atual.contratoId().isBlank()) {
+            throw new IllegalArgumentException("OS nao possui contrato para desvincular.");
+        }
+        if (atual.status() != OrdemServico.OrdemServicoStatus.AGENDADA
+                || atual.dataInicio() != null || atual.dataFim() != null || atual.foiFeito()) {
+            throw new IllegalArgumentException("Nunca e permitido desvincular contrato de OS iniciada ou concluida.");
+        }
+        if (atual.dataAgendada() == null || !atual.dataAgendada().isAfter(agoraLocal())) {
+            throw new IllegalArgumentException("Somente OS futura pode ser desvinculada administrativamente.");
+        }
+        OrdemServico desvinculada = repository.desvincularContratoAdministrativamente(
+                atual.id(), command.motivo().trim(), command.usuarioId().trim());
+        sincronizarAgenda(desvinculada);
+        return desvinculada;
     }
 
     @Override
@@ -133,6 +211,10 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
         if (ordemServico.status() == OrdemServico.OrdemServicoStatus.CANCELADA || ordemServico.status() == OrdemServico.OrdemServicoStatus.CONCLUIDA) {
             throw new IllegalArgumentException("OS cancelada ou concluida nao pode ser iniciada.");
         }
+        if (ordemServico.status() == OrdemServico.OrdemServicoStatus.EM_ANDAMENTO) {
+            return ordemServico;
+        }
+        reservarMateriais(ordemServico);
         OrdemServico iniciada = repository.save(new OrdemServico(
                 ordemServico.id(),
                 ordemServico.numeroOs(),
@@ -143,7 +225,7 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
                 ordemServico.tipoServico(),
                 OrdemServico.OrdemServicoStatus.EM_ANDAMENTO,
                 ordemServico.dataAgendada(),
-                ordemServico.dataInicio() == null ? LocalDateTime.now() : ordemServico.dataInicio(),
+                ordemServico.dataInicio() == null ? agoraLocal() : ordemServico.dataInicio(),
                 ordemServico.dataFim(),
                 ordemServico.responsavelInternoId(),
                 ordemServico.executadoPorId(),
@@ -163,20 +245,45 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
     }
 
     @Override
+    public OrdemServico reschedule(ReagendarOrdemServicoCommand command) {
+        OrdemServico atual = find(command.id());
+        if (atual.concluida() || atual.status() == OrdemServico.OrdemServicoStatus.CANCELADA) {
+            throw new IllegalArgumentException("OS concluida ou cancelada nao pode ser reagendada.");
+        }
+        if (command.inicio() == null) {
+            throw new IllegalArgumentException("Data inicial obrigatoria.");
+        }
+        if (command.fim() != null && !command.fim().isAfter(command.inicio())) {
+            throw new IllegalArgumentException("Data final deve ser posterior a data inicial.");
+        }
+        validarContratoVinculado(atual.clienteId(), atual.contratoId(), command.inicio());
+        OrdemServico reagendada = repository.save(new OrdemServico(
+                atual.id(), atual.numeroOs(), atual.clienteId(), atual.contratoId(), atual.titulo(), atual.descricao(),
+                atual.tipoServico(), atual.status(), command.inicio(), atual.dataInicio(), atual.dataFim(),
+                atual.responsavelInternoId(), atual.executadoPorId(), atual.foiFeito(), atual.pago(),
+                atual.valorServico(), atual.assinaturaCliente(), atual.produtos(), atual.anexos(),
+                atual.observacoes(), atual.dadosFormulario()));
+        sincronizarAgenda(reagendada);
+        return reagendada;
+    }
+
+    @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public OrdemServico conclude(ConcluirOrdemServicoCommand command) {
         OrdemServico ordemServico = find(command.id());
         if (ordemServico.status() == OrdemServico.OrdemServicoStatus.CANCELADA) {
             throw new IllegalArgumentException("OS cancelada nao pode ser concluida.");
         }
         if (ordemServico.status() == OrdemServico.OrdemServicoStatus.CONCLUIDA) {
-            throw new IllegalArgumentException("OS ja concluida.");
+            return ordemServico;
         }
-        LocalDateTime inicio = ordemServico.dataInicio() == null ? LocalDateTime.now() : ordemServico.dataInicio();
-        LocalDateTime fim = command.dataFim() == null ? LocalDateTime.now() : command.dataFim();
-        if (!repositorioEstoque.existsMovementForOrder(ordemServico.id())) {
-            validarSaldoProdutos(ordemServico);
-            baixarEstoque(ordemServico);
+        if (ordemServico.status() != OrdemServico.OrdemServicoStatus.EM_ANDAMENTO) {
+            ordemServico = start(ordemServico.id());
         }
+        LocalDateTime inicio = ordemServico.dataInicio() == null ? agoraLocal() : ordemServico.dataInicio();
+        LocalDateTime fim = command.dataFim() == null ? agoraLocal() : command.dataFim();
+        validarMateriaisReservados(ordemServico);
+        baixarEstoque(ordemServico);
         boolean assinatura = command.assinaturaCliente()
                 || ordemServico.assinaturaCliente()
                 || ordemServico.anexos().stream().anyMatch(anexo -> anexo.tipo() == OrdemServico.TipoAnexo.ASSINATURA);
@@ -209,8 +316,15 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
     }
 
     @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public OrdemServico cancel(CancelarOrdemServicoCommand command) {
         OrdemServico ordemServico = find(command.id());
+        if (ordemServico.status() == OrdemServico.OrdemServicoStatus.CANCELADA) {
+            return ordemServico;
+        }
+        if (ordemServico.status() == OrdemServico.OrdemServicoStatus.CONCLUIDA || ordemServico.foiFeito()) {
+            throw new IllegalArgumentException("OS concluida nao pode ser cancelada; use a anulacao administrativa auditavel.");
+        }
         String observacoes = append(ordemServico.observacoes(), command.motivo());
         OrdemServico cancelada = repository.save(new OrdemServico(
                 ordemServico.id(),
@@ -226,7 +340,7 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
                 ordemServico.dataFim(),
                 ordemServico.responsavelInternoId(),
                 ordemServico.executadoPorId(),
-                ordemServico.foiFeito(),
+                false,
                 ordemServico.pago(),
                 ordemServico.valorServico(),
                 ordemServico.assinaturaCliente(),
@@ -237,38 +351,14 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
         ));
         auditarOs(cancelada.id(), "OS_CANCELADA", command.motivo(), cancelada.executadoPorId());
         cancelarFinanceiroVinculado(cancelada, command.motivo());
+        devolverMateriaisReservados(ordemServico);
         sincronizarAgenda(cancelada);
         return cancelada;
     }
 
     @Override
     public OrdemServico marcarPago(String id, boolean pago) {
-        OrdemServico ordemServico = find(id);
-        OrdemServico atualizada = repository.save(new OrdemServico(
-                ordemServico.id(),
-                ordemServico.numeroOs(),
-                ordemServico.clienteId(),
-                ordemServico.contratoId(),
-                ordemServico.titulo(),
-                ordemServico.descricao(),
-                ordemServico.tipoServico(),
-                ordemServico.status(),
-                ordemServico.dataAgendada(),
-                ordemServico.dataInicio(),
-                ordemServico.dataFim(),
-                ordemServico.responsavelInternoId(),
-                ordemServico.executadoPorId(),
-                ordemServico.foiFeito(),
-                pago,
-                ordemServico.valorServico(),
-                ordemServico.assinaturaCliente(),
-                ordemServico.produtos(),
-                ordemServico.anexos(),
-                ordemServico.observacoes(),
-                ordemServico.dadosFormulario()
-        ));
-        atualizarFinanceiroPago(atualizada, pago);
-        return atualizada;
+        throw new IllegalStateException("O pagamento deve ser baixado no Financeiro; a OS reflete o status financeiro automaticamente.");
     }
 
     private void sincronizarAgenda(OrdemServico ordemServico) {
@@ -282,7 +372,7 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
                 ordemServico.contratoId(),
                 "",
                 visitType(ordemServico.tipoServico()),
-                recurrence(ordemServico.tipoServico()),
+                VisitaAgendada.Recurrence.NONE,
                 ordemServico.dataAgendada().toLocalDate(),
                 (ordemServico.titulo() != null && !ordemServico.titulo().isBlank()
                         ? ordemServico.titulo()
@@ -325,14 +415,6 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
         return VisitaAgendada.VisitType.ONE_OFF;
     }
 
-    private VisitaAgendada.Recurrence recurrence(String tipoServico) {
-        return switch (visitType(tipoServico)) {
-            case MONTHLY -> VisitaAgendada.Recurrence.MONTHLY;
-            case BIWEEKLY -> VisitaAgendada.Recurrence.BIWEEKLY;
-            case ONE_OFF -> VisitaAgendada.Recurrence.NONE;
-        };
-    }
-
     private VisitaAgendada.VisitStatus agendaStatus(OrdemServico.OrdemServicoStatus status) {
         return switch (status) {
             case EM_ANDAMENTO -> VisitaAgendada.VisitStatus.IN_PROGRESS;
@@ -344,10 +426,12 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
     }
 
     @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public OrdemServico adicionarProduto(AdicionarProdutoOrdemCommand command) {
         OrdemServico ordem = find(command.ordemId());
-        if (ordem.concluida()) {
-            throw new IllegalArgumentException("Nao e possivel adicionar produto a OS concluida.");
+        if (ordem.concluida() || ordem.status() == OrdemServico.OrdemServicoStatus.CANCELADA
+                || ordem.status() == OrdemServico.OrdemServicoStatus.EM_ANDAMENTO) {
+            throw new IllegalArgumentException("Produtos so podem ser alterados antes de iniciar a OS.");
         }
         ItemEstoque produto = repositorioEstoque.findById(command.produtoId())
                 .orElseThrow(() -> new IllegalArgumentException("Produto nao encontrado."));
@@ -357,7 +441,10 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
         if (command.quantidade() <= 0) {
             throw new IllegalArgumentException("Quantidade deve ser positiva.");
         }
-        if (produto.quantity() < command.quantidade()) {
+        int totalSolicitado = ordem.produtos().stream()
+                .filter(item -> item.produtoId().equals(command.produtoId()))
+                .mapToInt(OrdemServico.ProdutoUsado::quantidade).sum() + command.quantidade();
+        if (produto.quantity() < totalSolicitado) {
             throw new IllegalArgumentException("Saldo insuficiente para usar produto na OS.");
         }
         BigDecimal valorUnitario = command.valorUnitario() == null ? produto.salePrice() : command.valorUnitario();
@@ -430,26 +517,98 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
                 .orElseThrow(() -> new IllegalArgumentException("Ordem de servico nao encontrada."));
     }
 
-    private void validarSaldoProdutos(OrdemServico ordem) {
-        for (OrdemServico.ProdutoUsado produtoUsado : ordem.produtos()) {
-            ItemEstoque produto = repositorioEstoque.findById(produtoUsado.produtoId())
+    private void validarContratoVinculado(String clienteId, String contratoId, LocalDateTime dataAgendada) {
+        if (contratoId == null || contratoId.isBlank()) {
+            return;
+        }
+        if (repositorioContrato == null) {
+            throw new IllegalStateException("Repositorio de contratos obrigatorio para validar OS contratual.");
+        }
+        Contrato contrato = repositorioContrato.findById(contratoId)
+                .orElseThrow(() -> new IllegalArgumentException("Contrato vinculado a OS nao encontrado."));
+        java.time.LocalDate hoje = java.time.LocalDate.now(TIMEZONE_OFICIAL);
+        if (contrato.status() == Contrato.ContratoStatus.CANCELLED) {
+            throw new IllegalArgumentException("Contrato cancelado nao permite criar ou alterar OS.");
+        }
+        if (contrato.isExpired(hoje)) {
+            throw new IllegalArgumentException("Contrato vencido nao permite criar ou alterar OS.");
+        }
+        if (!contrato.customerId().equals(clienteId)) {
+            throw new IllegalArgumentException("Cliente da OS diverge do cliente do contrato.");
+        }
+        if (dataAgendada == null) {
+            throw new IllegalArgumentException("Data da OS contratual e obrigatoria.");
+        }
+        java.time.LocalDate dataOs = dataAgendada.toLocalDate();
+        if (dataOs.isBefore(contrato.startDate()) || dataOs.isAfter(contrato.endDate())) {
+            throw new IllegalArgumentException("Data da OS esta fora da vigencia do contrato.");
+        }
+    }
+
+    private void reservarMateriais(OrdemServico ordem) {
+        Map<String, Integer> solicitados = ordem.produtos().stream()
+                .collect(Collectors.groupingBy(OrdemServico.ProdutoUsado::produtoId,
+                        Collectors.summingInt(OrdemServico.ProdutoUsado::quantidade)));
+        for (Map.Entry<String, Integer> entrada : solicitados.entrySet()) {
+            ItemEstoque item = repositorioEstoque.findById(entrada.getKey())
                     .orElseThrow(() -> new IllegalArgumentException("Produto da OS nao encontrado."));
-            if (produto.quantity() < produtoUsado.quantidade()) {
-                throw new IllegalArgumentException("Saldo insuficiente para produto " + produto.name() + ".");
+            int reservado = saldoMovimentos(item, ordem.id(), ItemEstoque.MovementType.RESERVA_OS,
+                    ItemEstoque.MovementType.DEVOLUCAO_RESERVA_OS);
+            int restante = entrada.getValue() - reservado;
+            if (restante <= 0) {
+                continue;
+            }
+            casoDeUsoEstoque.recordMovement(new CasoDeUsoEstoque.RecordInventoryMovementCommand(
+                    item.id(), idMovimento(ordem.id(), item.id(), "RESERVA"), ItemEstoque.MovementType.RESERVA_OS,
+                    restante, java.time.LocalDate.now(TIMEZONE_OFICIAL), item.costPrice(),
+                    item.costPrice().multiply(BigDecimal.valueOf(restante)), "", ordem.clienteId(), ordem.id(),
+                    "Reserva para OS " + (ordem.numeroOs() == null ? ordem.id() : ordem.numeroOs()),
+                    ordem.executadoPorId(), ordem.executadoPorId(), "", "Reserva automatica ao iniciar a OS."));
+        }
+    }
+
+    private void validarMateriaisReservados(OrdemServico ordem) {
+        Map<String, Integer> quantidadesPorProduto = ordem.produtos().stream()
+                .collect(Collectors.groupingBy(OrdemServico.ProdutoUsado::produtoId,
+                        Collectors.summingInt(OrdemServico.ProdutoUsado::quantidade)));
+        for (Map.Entry<String, Integer> entrada : quantidadesPorProduto.entrySet()) {
+            ItemEstoque item = repositorioEstoque.findById(entrada.getKey())
+                    .orElseThrow(() -> new IllegalArgumentException("Produto da OS nao encontrado."));
+            int reservado = item.movements().stream()
+                    .filter(movimento -> ordem.id().equals(movimento.orderReference()))
+                    .mapToInt(movimento -> switch (movimento.type()) {
+                        case RESERVA_OS -> movimento.amount();
+                        case DEVOLUCAO_RESERVA_OS -> -movimento.amount();
+                        default -> 0;
+                    })
+                    .sum();
+            if (reservado < entrada.getValue()) {
+                throw new IllegalStateException("Materiais da OS nao estao integralmente reservados para o produto " + item.name() + ".");
             }
         }
     }
 
     private void baixarEstoque(OrdemServico ordem) {
-        for (OrdemServico.ProdutoUsado produto : ordem.produtos()) {
+        Map<String, List<OrdemServico.ProdutoUsado>> agrupados = ordem.produtos().stream()
+                .collect(Collectors.groupingBy(OrdemServico.ProdutoUsado::produtoId));
+        for (List<OrdemServico.ProdutoUsado> itens : agrupados.values()) {
+            OrdemServico.ProdutoUsado produto = itens.getFirst();
+            int quantidade = itens.stream().mapToInt(OrdemServico.ProdutoUsado::quantidade).sum();
+            ItemEstoque itemEstoque = repositorioEstoque.findById(produto.produtoId())
+                    .orElseThrow(() -> new IllegalArgumentException("Produto da OS nao encontrado."));
+            int consumido = saldoMovimentos(itemEstoque, ordem.id(), ItemEstoque.MovementType.CONSUMO_RESERVA_OS,
+                    ItemEstoque.MovementType.ESTORNO_CONSUMO_OS);
+            if (consumido >= quantidade) {
+                continue;
+            }
             casoDeUsoEstoque.recordMovement(new CasoDeUsoEstoque.RecordInventoryMovementCommand(
                     produto.produtoId(),
-                    UUID.randomUUID().toString(),
-                    ItemEstoque.MovementType.USO_OS,
-                    produto.quantidade(),
-                    java.time.LocalDate.now(),
-                    produto.valorUnitario(),
-                    produto.valorTotal(),
+                    idMovimento(ordem.id(), produto.produtoId(), "CONSUMO"),
+                    ItemEstoque.MovementType.CONSUMO_RESERVA_OS,
+                    quantidade - consumido,
+                    java.time.LocalDate.now(TIMEZONE_OFICIAL),
+                    itemEstoque.costPrice(),
+                    itemEstoque.costPrice().multiply(BigDecimal.valueOf(quantidade - consumido)),
                     "",
                     ordem.clienteId(),
                     ordem.id(),
@@ -457,7 +616,59 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
                     ordem.executadoPorId(),
                     ordem.executadoPorId(),
                     "",
-                    "Baixa automatica ao concluir OS."
+                    "Consumo da reserva ao concluir OS."
+            ));
+        }
+    }
+
+    private void devolverMateriaisReservados(OrdemServico ordem) {
+        Map<String, List<OrdemServico.ProdutoUsado>> agrupados = ordem.produtos().stream()
+                .collect(Collectors.groupingBy(OrdemServico.ProdutoUsado::produtoId));
+        for (List<OrdemServico.ProdutoUsado> itens : agrupados.values()) {
+            OrdemServico.ProdutoUsado produto = itens.getFirst();
+            ItemEstoque itemEstoque = repositorioEstoque.findById(produto.produtoId())
+                    .orElseThrow(() -> new IllegalArgumentException("Produto da OS nao encontrado."));
+            int quantidade = saldoMovimentos(itemEstoque, ordem.id(), ItemEstoque.MovementType.RESERVA_OS,
+                    ItemEstoque.MovementType.DEVOLUCAO_RESERVA_OS);
+            if (quantidade <= 0) {
+                continue;
+            }
+            casoDeUsoEstoque.recordMovement(new CasoDeUsoEstoque.RecordInventoryMovementCommand(
+                    produto.produtoId(), idMovimento(ordem.id(), produto.produtoId(), "DEVOLUCAO"), ItemEstoque.MovementType.DEVOLUCAO_RESERVA_OS,
+                    quantidade, java.time.LocalDate.now(TIMEZONE_OFICIAL), itemEstoque.costPrice(),
+                    itemEstoque.costPrice().multiply(BigDecimal.valueOf(quantidade)), "", ordem.clienteId(), ordem.id(),
+                    "Devolucao da reserva da OS " + (ordem.numeroOs() == null ? ordem.id() : ordem.numeroOs()),
+                    ordem.executadoPorId(), ordem.executadoPorId(), "", "Devolucao automatica por cancelamento da OS."
+            ));
+        }
+    }
+
+    private void estornarMateriaisConsumidos(OrdemServico ordem) {
+        Map<String, Integer> consumidosPorProduto = new java.util.HashMap<>();
+        for (OrdemServico.ProdutoUsado produto : ordem.produtos()) {
+            ItemEstoque item = repositorioEstoque.findById(produto.produtoId())
+                    .orElseThrow(() -> new IllegalArgumentException("Produto da OS nao encontrado."));
+            int consumido = item.movements().stream()
+                    .filter(movimento -> ordem.id().equals(movimento.orderReference()))
+                    .mapToInt(movimento -> switch (movimento.type()) {
+                        case CONSUMO_RESERVA_OS, USO_OS -> movimento.amount();
+                        case ESTORNO_CONSUMO_OS -> -movimento.amount();
+                        default -> 0;
+                    })
+                    .sum();
+            if (consumido > 0) {
+                consumidosPorProduto.merge(produto.produtoId(), consumido, Math::max);
+            }
+        }
+        for (Map.Entry<String, Integer> entrada : consumidosPorProduto.entrySet()) {
+            ItemEstoque item = repositorioEstoque.findById(entrada.getKey())
+                    .orElseThrow(() -> new IllegalArgumentException("Produto da OS nao encontrado."));
+            casoDeUsoEstoque.recordMovement(new CasoDeUsoEstoque.RecordInventoryMovementCommand(
+                    item.id(), UUID.randomUUID().toString(), ItemEstoque.MovementType.ESTORNO_CONSUMO_OS,
+                    entrada.getValue(), java.time.LocalDate.now(), item.costPrice(),
+                    item.costPrice().multiply(BigDecimal.valueOf(entrada.getValue())), "", ordem.clienteId(), ordem.id(),
+                    "Estorno de consumo da OS " + (ordem.numeroOs() == null ? ordem.id() : ordem.numeroOs()),
+                    ordem.executadoPorId(), ordem.executadoPorId(), "", "Devolucao automatica por estorno da OS concluida."
             ));
         }
     }
@@ -473,7 +684,7 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
     }
 
     private void gerarFinanceiroSePossivel(OrdemServico ordemServico) {
-        if (casoDeUsoFinanceiro != null && ordemServico.totalGeral().signum() > 0) {
+        if (casoDeUsoFinanceiro != null && ordemServico.contratoId().isBlank() && ordemServico.totalGeral().signum() > 0) {
             casoDeUsoFinanceiro.gerarContaReceberOrdemServico(ordemServico);
         }
     }
@@ -503,9 +714,29 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
         if (casoDeUsoFinanceiro == null) {
             return;
         }
+        String motivoCancelamento = motivo == null || motivo.isBlank() ? "OS cancelada." : motivo;
         casoDeUsoFinanceiro.buscarLancamentoPorOrdemServico(ordemServico.id())
-                .filter(lancamento -> !lancamento.status().name().equals("PAID"))
-                .ifPresent(lancamento -> casoDeUsoFinanceiro.cancel(lancamento.id(), motivo == null || motivo.isBlank() ? "OS cancelada." : motivo));
+                .filter(lancamento -> lancamento.status().name().equals("PENDING")
+                        || lancamento.status().name().equals("OVERDUE"))
+                .ifPresent(lancamento -> casoDeUsoFinanceiro.cancel(lancamento.id(), motivoCancelamento));
+    }
+
+    private int saldoMovimentos(ItemEstoque item, String ordemId, ItemEstoque.MovementType positivo,
+                                ItemEstoque.MovementType negativo) {
+        return item.movements().stream()
+                .filter(movimento -> ordemId.equals(movimento.orderReference()))
+                .mapToInt(movimento -> movimento.type() == positivo ? movimento.amount()
+                        : movimento.type() == negativo ? -movimento.amount() : 0)
+                .sum();
+    }
+
+    private String idMovimento(String ordemId, String produtoId, String efeito) {
+        return UUID.nameUUIDFromBytes(("SIGLA:F3:" + ordemId + ":" + produtoId + ":" + efeito)
+                .getBytes(StandardCharsets.UTF_8)).toString();
+    }
+
+    private LocalDateTime agoraLocal() {
+        return LocalDateTime.now(TIMEZONE_OFICIAL);
     }
 
     private void auditarOs(String ordemServicoId, String acao, String detalhe, String usuarioId) {

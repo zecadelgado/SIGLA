@@ -205,6 +205,8 @@ interface SpringDataRepositorioFinanceiroLancamento extends JpaRepository<Financ
     List<FinanceiroLancamentoEntidade> findByTipo(String tipo);
 
     Optional<FinanceiroLancamentoEntidade> findByOrdemServicoId(UUID ordemServicoId);
+
+    List<FinanceiroLancamentoEntidade> findByContratoId(UUID contratoId);
 }
 
 interface SpringDataRepositorioFinanceiroCategoria extends JpaRepository<FinanceiroCategoriaEntidade, UUID> {

@@ -47,6 +47,7 @@ br\com\sigla\interfacegrafica\controlador\ControladorOrdemServico$OsSnapshot.cla
 br\com\sigla\interfacegrafica\inicializacao\InicializadorDadosDesenvolvimento.class
 br\com\sigla\interfacegrafica\formatador\FormatadorMascaraMoeda.class
 br\com\sigla\interfacegrafica\util\ResolvedorEntradaTexto.class
+br\com\sigla\interfacegrafica\consulta\ServicoConsultaOrdemServico$1.class
 br\com\sigla\interfacegrafica\controlador\ControladorNovaOrdemServico.class
 br\com\sigla\interfacegrafica\util\ToastNotificacao.class
 br\com\sigla\interfacegrafica\navegacao\GerenciadorNavegacao.class

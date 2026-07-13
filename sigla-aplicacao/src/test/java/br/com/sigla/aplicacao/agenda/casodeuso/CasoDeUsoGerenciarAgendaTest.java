@@ -2,6 +2,7 @@ package br.com.sigla.aplicacao.agenda.casodeuso;
 
 import br.com.sigla.aplicacao.agenda.porta.entrada.CasoDeUsoAgenda;
 import br.com.sigla.aplicacao.agenda.porta.saida.RepositorioAgenda;
+import br.com.sigla.aplicacao.servicos.porta.entrada.CasoDeUsoOrdemServico;
 import br.com.sigla.dominio.agenda.VisitaAgendada;
 import org.junit.jupiter.api.Test;
 
@@ -14,6 +15,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 class CasoDeUsoGerenciarAgendaTest {
 
@@ -62,6 +65,32 @@ class CasoDeUsoGerenciarAgendaTest {
         casoDeUso.cancel(new CasoDeUsoAgenda.ChangeVisitStatusCommand("evento-2", "Cliente pediu."));
         assertEquals(VisitaAgendada.VisitStatus.CANCELLED, repositorio.findById("evento-2").orElseThrow().status());
         assertThrows(IllegalArgumentException.class, () -> casoDeUso.complete(new CasoDeUsoAgenda.ChangeVisitStatusCommand("evento-2", "")));
+    }
+
+    @Test
+    void agendaDelegaComandosDeEventoVinculadoSemSalvarEstadoOperacionalDiretamente() {
+        FakeRepositorioAgenda repositorio = new FakeRepositorioAgenda();
+        CasoDeUsoOrdemServico os = mock(CasoDeUsoOrdemServico.class);
+        CasoDeUsoGerenciarAgenda casoDeUso = new CasoDeUsoGerenciarAgenda(repositorio, os);
+        LocalDate data = LocalDate.of(2026, 4, 10);
+        repositorio.save(new VisitaAgendada(
+                "evento-os", "cliente-1", "os-1", "", "", VisitaAgendada.VisitType.ONE_OFF,
+                VisitaAgendada.Recurrence.NONE, data, "OS", "os", "", data.atTime(8, 0),
+                data.atTime(9, 0), false, VisitaAgendada.VisitStatus.SCHEDULED,
+                VisitaAgendada.VisitPriority.NORMAL, "resp-1", false, 0, ""));
+
+        casoDeUso.reschedule(new CasoDeUsoAgenda.RescheduleVisitCommand(
+                "evento-os", data.atTime(10, 0), data.atTime(11, 0)));
+        casoDeUso.start(new CasoDeUsoAgenda.ChangeVisitStatusCommand("evento-os", ""));
+        casoDeUso.complete(new CasoDeUsoAgenda.ChangeVisitStatusCommand("evento-os", ""));
+        casoDeUso.cancel(new CasoDeUsoAgenda.ChangeVisitStatusCommand("evento-os", "Cliente pediu"));
+
+        verify(os).reschedule(new CasoDeUsoOrdemServico.ReagendarOrdemServicoCommand(
+                "os-1", data.atTime(10, 0), data.atTime(11, 0)));
+        verify(os).start("os-1");
+        verify(os).conclude(new CasoDeUsoOrdemServico.ConcluirOrdemServicoCommand("os-1", "resp-1", null, false));
+        verify(os).cancel(new CasoDeUsoOrdemServico.CancelarOrdemServicoCommand("os-1", "Cliente pediu"));
+        assertEquals(VisitaAgendada.VisitStatus.SCHEDULED, repositorio.findById("evento-os").orElseThrow().status());
     }
 
     private CasoDeUsoAgenda.ScheduleVisitCommand evento(

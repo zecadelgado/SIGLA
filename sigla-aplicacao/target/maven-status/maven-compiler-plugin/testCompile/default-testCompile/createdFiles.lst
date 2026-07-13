@@ -1,5 +1,6 @@
 br\com\sigla\aplicacao\financeiro\casodeuso\CasoDeUsoGerenciarFinanceiroTest$FakeDespesas.class
 br\com\sigla\aplicacao\servicos\casodeuso\CasoDeUsoGerenciarOrdemServicoTest$FakeEstoque.class
+br\com\sigla\aplicacao\financeiro\casodeuso\CasoDeUsoGerenciarFinanceiroTest$FakeOrdensServico.class
 br\com\sigla\aplicacao\servicos\casodeuso\CasoDeUsoGerenciarOrdemServicoTest$FakeAgenda.class
 br\com\sigla\aplicacao\usuarios\casodeuso\CasoDeUsoGerenciarUsuarioTest$FakeServicoSenha.class
 br\com\sigla\aplicacao\notificacoes\casodeuso\CasoDeUsoGerarNotificacoesTest.class

@@ -16,6 +16,7 @@ public record LancamentoFinanceiro(
         String descricao,
         String clienteId,
         String ordemServicoId,
+        String contratoId,
         BigDecimal valorTotal,
         LocalDate dataEmissao,
         LocalDate dataVencimento,
@@ -37,6 +38,7 @@ public record LancamentoFinanceiro(
         descricao = requireText(descricao, "descricao");
         clienteId = normalizeOptional(clienteId);
         ordemServicoId = normalizeOptional(ordemServicoId);
+        contratoId = normalizeOptional(contratoId);
         valorTotal = requirePositive(valorTotal);
         dataEmissao = Objects.requireNonNull(dataEmissao, "dataEmissao is required");
         dataVencimento = dataVencimento == null ? dataEmissao : dataVencimento;
@@ -62,6 +64,18 @@ public record LancamentoFinanceiro(
         parcelas = List.copyOf(parcelas == null ? List.of() : parcelas);
     }
 
+    public LancamentoFinanceiro(
+            String id, Tipo tipo, String categoriaId, String categoriaNome, String formaPagamentoId,
+            String formaPagamentoNome, String descricao, String clienteId, String ordemServicoId,
+            BigDecimal valorTotal, LocalDate dataEmissao, LocalDate dataVencimento, LocalDate dataPagamento,
+            Status status, boolean parcelado, int quantidadeParcelas, String observacoes, String criadoPor,
+            List<ParcelaFinanceira> parcelas
+    ) {
+        this(id, tipo, categoriaId, categoriaNome, formaPagamentoId, formaPagamentoNome, descricao, clienteId,
+                ordemServicoId, "", valorTotal, dataEmissao, dataVencimento, dataPagamento, status, parcelado,
+                quantidadeParcelas, observacoes, criadoPor, parcelas);
+    }
+
     public boolean vencido(LocalDate referenceDate) {
         return status != Status.PAID
                 && status != Status.CANCELLED
@@ -82,7 +96,7 @@ public record LancamentoFinanceiro(
     public LancamentoFinanceiro comParcelasGeradas(List<ParcelaFinanceira> novasParcelas) {
         return new LancamentoFinanceiro(
                 id, tipo, categoriaId, categoriaNome, formaPagamentoId, formaPagamentoNome, descricao, clienteId,
-                ordemServicoId, valorTotal, dataEmissao, dataVencimento, dataPagamento, status, parcelado,
+                ordemServicoId, contratoId, valorTotal, dataEmissao, dataVencimento, dataPagamento, status, parcelado,
                 quantidadeParcelas, observacoes, criadoPor, novasParcelas
         );
     }

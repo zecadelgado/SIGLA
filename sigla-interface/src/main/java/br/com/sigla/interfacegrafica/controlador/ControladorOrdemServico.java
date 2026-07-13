@@ -213,8 +213,7 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
     private void onMarcarPago() {
         var selected = selecionada();
         if (selected != null) {
-            executar(() -> casoDeUsoOrdemServico.marcarPago(selected.id(), true));
-            refresh();
+            mostrar("O pagamento deve ser registrado na tela Financeiro. A OS sera atualizada automaticamente.");
         }
     }
 
@@ -506,7 +505,7 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
         configureColumn(responsavelColumn, 4, row -> row.responsible());
         configureColumn(emissaoColumn, 5, row -> apresentadorData.format(row.emissionDate()));
         configureColumn(valorColumn, 6, row -> apresentadorMoeda.format(row.amount()));
-        configureColumn(pagoColumn, 7, row -> row.paid() ? "Sim" : "Não");
+        configureColumn(pagoColumn, 7, ServicoConsultaOrdemServico.OrdemServicoView::financialStatus);
         configureColumn(statusColumn, 8, row -> row.status());
     }
 

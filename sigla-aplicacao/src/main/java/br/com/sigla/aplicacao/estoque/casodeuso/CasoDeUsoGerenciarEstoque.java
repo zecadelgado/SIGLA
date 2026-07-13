@@ -2,7 +2,10 @@ package br.com.sigla.aplicacao.estoque.casodeuso;
 
 import br.com.sigla.aplicacao.estoque.porta.entrada.CasoDeUsoEstoque;
 import br.com.sigla.aplicacao.estoque.porta.saida.RepositorioEstoque;
+import br.com.sigla.aplicacao.financeiro.porta.entrada.CasoDeUsoFinanceiro;
 import br.com.sigla.dominio.estoque.ItemEstoque;
+import br.com.sigla.dominio.financeiro.DespesaFinanceira;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -16,9 +19,17 @@ public class CasoDeUsoGerenciarEstoque implements CasoDeUsoEstoque {
     private static final Set<String> UNIDADES = Set.of("un", "litro", "kg", "caixa", "pacote", "frasco");
 
     private final RepositorioEstoque repository;
+    private final CasoDeUsoFinanceiro casoDeUsoFinanceiro;
+
+    @Autowired
+    public CasoDeUsoGerenciarEstoque(RepositorioEstoque repository, CasoDeUsoFinanceiro casoDeUsoFinanceiro) {
+        this.repository = repository;
+        this.casoDeUsoFinanceiro = casoDeUsoFinanceiro;
+    }
 
     public CasoDeUsoGerenciarEstoque(RepositorioEstoque repository) {
         this.repository = repository;
+        this.casoDeUsoFinanceiro = null;
     }
 
     @Override
@@ -32,6 +43,9 @@ public class CasoDeUsoGerenciarEstoque implements CasoDeUsoEstoque {
     public void updateItem(RegisterItemEstoqueCommand command) {
         ItemEstoque atual = repository.findById(command.id())
                 .orElseThrow(() -> new IllegalArgumentException("Produto nao encontrado."));
+        if (command.quantity() != atual.quantity()) {
+            throw new IllegalArgumentException("Saldo nao pode ser alterado pela edicao do produto. Registre uma movimentacao de entrada, saida ou ajuste justificado.");
+        }
         ItemEstoque item = toItem(command, atual.movements());
         validarProduto(item, false);
         repository.save(item);
@@ -85,6 +99,9 @@ public class CasoDeUsoGerenciarEstoque implements CasoDeUsoEstoque {
     public void recordMovement(RecordInventoryMovementCommand command) {
         ItemEstoque item = repository.findById(command.itemId())
                 .orElseThrow(() -> new IllegalArgumentException("Inventory item not found: " + command.itemId()));
+        if (item.movements().stream().anyMatch(movement -> movement.id().equals(command.movementId()))) {
+            return;
+        }
         if (!item.ativo()) {
             throw new IllegalArgumentException("Produto inativo nao pode receber nova movimentacao.");
         }
@@ -112,6 +129,7 @@ public class CasoDeUsoGerenciarEstoque implements CasoDeUsoEstoque {
                 command.notes()
         ));
         repository.save(item);
+        gerarDespesaDaMovimentacao(item, command, type, unitPrice);
     }
 
     @Override
@@ -162,6 +180,68 @@ public class CasoDeUsoGerenciarEstoque implements CasoDeUsoEstoque {
 
     private BigDecimal normalizeMoney(BigDecimal value) {
         return value == null ? BigDecimal.ZERO : value;
+    }
+
+    /**
+     * Reserva e devolucao apenas alteram a disponibilidade do produto; nao representam
+     * custo realizado. A despesa e registrada na compra/entrada e na baixa efetiva.
+     */
+    private void gerarDespesaDaMovimentacao(
+            ItemEstoque item,
+            RecordInventoryMovementCommand command,
+            ItemEstoque.MovementType type,
+            BigDecimal unitPrice
+    ) {
+        if (casoDeUsoFinanceiro == null || !geraCustoFinanceiro(type)) {
+            return;
+        }
+        BigDecimal total = unitPrice.multiply(BigDecimal.valueOf(command.amount()));
+        if (total.signum() <= 0) {
+            return;
+        }
+        String responsavel = primeiroTexto(command.quemComprou(), command.createdBy(), "Sistema");
+        casoDeUsoFinanceiro.registerExpense(new CasoDeUsoFinanceiro.RegisterDespesaFinanceiraCommand(
+                "estoque-" + command.movementId(),
+                DespesaFinanceira.ExpenseCategory.PRODUCTS,
+                total,
+                command.occurredOn(),
+                responsavel,
+                descricaoFinanceira(type, item.name()),
+                command.occurredOn(),
+                null,
+                "",
+                command.createdBy(),
+                "",
+                DespesaFinanceira.ExpenseStatus.PENDING,
+                "[ESTOQUE] Movimento " + command.movementId()
+                        + (command.orderReference() == null || command.orderReference().isBlank()
+                        ? "" : " | OS " + command.orderReference())
+                        + (command.notes() == null || command.notes().isBlank() ? "" : " | " + command.notes())
+        ));
+    }
+
+    private boolean geraCustoFinanceiro(ItemEstoque.MovementType type) {
+        return switch (type) {
+            case COMPRA, ENTRADA, INBOUND, SAIDA, OUTBOUND, AJUSTE -> true;
+            case USO_OS, CONSUMO_RESERVA_OS, RESERVA_OS, DEVOLUCAO_RESERVA_OS, ESTORNO_CONSUMO_OS -> false;
+        };
+    }
+
+    private String descricaoFinanceira(ItemEstoque.MovementType type, String nomeProduto) {
+        return switch (type) {
+            case COMPRA, ENTRADA, INBOUND -> "Aquisição de estoque: " + nomeProduto;
+            case CONSUMO_RESERVA_OS, USO_OS -> "Custo de material aplicado: " + nomeProduto;
+            default -> "Baixa de estoque: " + nomeProduto;
+        };
+    }
+
+    private String primeiroTexto(String... valores) {
+        for (String valor : valores) {
+            if (valor != null && !valor.isBlank()) {
+                return valor.trim();
+            }
+        }
+        return "Sistema";
     }
 }
 

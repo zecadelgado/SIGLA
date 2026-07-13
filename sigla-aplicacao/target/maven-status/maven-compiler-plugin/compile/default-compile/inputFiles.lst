@@ -9,6 +9,7 @@ C:\Users\PC\IdeaProjects\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplica
 C:\Users\PC\IdeaProjects\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\clientes\casodeuso\CasoDeUsoGerenciarCliente.java
 C:\Users\PC\IdeaProjects\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\clientes\porta\entrada\CasoDeUsoCliente.java
 C:\Users\PC\IdeaProjects\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\clientes\porta\saida\RepositorioCliente.java
+C:\Users\PC\IdeaProjects\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\configuracao\porta\saida\ProvedorFeatureFlags.java
 C:\Users\PC\IdeaProjects\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\contratos\casodeuso\CasoDeUsoGerenciarContrato.java
 C:\Users\PC\IdeaProjects\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\contratos\casodeuso\CasoDeUsoGerenciarFaturamentoContrato.java
 C:\Users\PC\IdeaProjects\SIGLA\sigla-aplicacao\src\main\java\br\com\sigla\aplicacao\contratos\porta\entrada\CasoDeUsoContrato.java

@@ -14,6 +14,8 @@ public interface CasoDeUsoAgenda {
 
     void reschedule(RescheduleVisitCommand command);
 
+    void start(ChangeVisitStatusCommand command);
+
     void cancel(ChangeVisitStatusCommand command);
 
     void complete(ChangeVisitStatusCommand command);

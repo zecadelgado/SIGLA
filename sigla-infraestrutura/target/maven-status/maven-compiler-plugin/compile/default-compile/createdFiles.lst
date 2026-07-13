@@ -55,6 +55,7 @@ br\com\sigla\infraestrutura\relogio\ProvedorRelogioSistema.class
 br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioEntradaFinanceira.class
 br\com\sigla\infraestrutura\persistencia\repositorio\InMemoryAdaptadorRepositorioPlanoParcelamento.class
 br\com\sigla\infraestrutura\persistencia\repositorio\InMemoryAdaptadorRepositorioCertificado.class
+br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorFeatureFlagsPostgreSQL.class
 br\com\sigla\infraestrutura\persistencia\repositorio\InMemoryAdaptadorRepositorioNotificacao.class
 br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioAgenda.class
 br\com\sigla\infraestrutura\configuracao\ConfiguracaoInfraestrutura.class

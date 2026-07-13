@@ -4,6 +4,7 @@ import br.com.sigla.aplicacao.servicos.porta.saida.RepositorioOrdemServico;
 import br.com.sigla.dominio.servicos.OrdemServico;
 import br.com.sigla.infraestrutura.persistencia.PersistenciaIds;
 import br.com.sigla.infraestrutura.persistencia.entidade.OrdemServicoEntidade;
+import jakarta.persistence.EntityManager;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -22,15 +23,30 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AdaptadorRepositorioOrdemServico implements RepositorioOrdemServico {
 
     private final SpringDataRepositorioOrdemServico repository;
+    private final EntityManager entityManager;
 
-    public AdaptadorRepositorioOrdemServico(SpringDataRepositorioOrdemServico repository) {
+    public AdaptadorRepositorioOrdemServico(SpringDataRepositorioOrdemServico repository, EntityManager entityManager) {
         this.repository = repository;
+        this.entityManager = entityManager;
     }
 
     @Override
     @Transactional
     public OrdemServico save(OrdemServico ordemServico) {
         return toDomain(repository.save(toEntity(ordemServico)));
+    }
+
+    @Override
+    @Transactional
+    public OrdemServico desvincularContratoAdministrativamente(String id, String motivo, String usuarioId) {
+        repository.flush();
+        entityManager.createNativeQuery("select desvincular_os_contratual_v1(:osId, :motivo, :usuarioId)")
+                .setParameter("osId", PersistenciaIds.toUuid(id))
+                .setParameter("motivo", motivo)
+                .setParameter("usuarioId", PersistenciaIds.toUuid(usuarioId))
+                .getSingleResult();
+        entityManager.clear();
+        return findById(id).orElseThrow(() -> new IllegalArgumentException("Ordem de servico nao encontrada."));
     }
 
     @Override
@@ -151,6 +167,12 @@ class InMemoryAdaptadorRepositorioOrdemServico implements RepositorioOrdemServic
     public OrdemServico save(OrdemServico ordemServico) {
         storage.put(ordemServico.id(), ordemServico);
         return ordemServico;
+    }
+
+    @Override
+    public OrdemServico desvincularContratoAdministrativamente(String id, String motivo, String usuarioId) {
+        throw new UnsupportedOperationException(
+                "Desvinculacao administrativa exige persistencia com auditoria atomica.");
     }
 
     @Override

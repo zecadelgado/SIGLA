@@ -15,6 +15,13 @@ public interface RepositorioLancamentoFinanceiro {
 
     Optional<LancamentoFinanceiro> findByOrdemServicoId(String ordemServicoId);
 
+    default List<LancamentoFinanceiro> findByContratoId(String contratoId) {
+        if (contratoId == null || contratoId.isBlank()) {
+            return List.of();
+        }
+        return findAll().stream().filter(lancamento -> contratoId.equals(lancamento.contratoId())).toList();
+    }
+
     List<LancamentoFinanceiro> findAll();
 
     List<CategoriaFinanceira> findCategoriasAtivas();

@@ -124,7 +124,7 @@ public final class ItemEstoque {
         Objects.requireNonNull(movement, "movement is required");
         if (movement.type().increasesStock()) {
             quantity += movement.amount();
-        } else {
+        } else if (movement.type().decreasesStock()) {
             if (quantity - movement.amount() < 0) {
                 throw new ExcecaoDominio("Insufficient stock for item " + id);
             }
@@ -224,14 +224,19 @@ public final class ItemEstoque {
         SAIDA,
         AJUSTE,
         COMPRA,
-        USO_OS;
+        USO_OS,
+        RESERVA_OS,
+        CONSUMO_RESERVA_OS,
+        ESTORNO_CONSUMO_OS,
+        DEVOLUCAO_RESERVA_OS;
 
         public boolean increasesStock() {
-            return this == INBOUND || this == ENTRADA || this == COMPRA;
+            return this == INBOUND || this == ENTRADA || this == COMPRA
+                    || this == DEVOLUCAO_RESERVA_OS || this == ESTORNO_CONSUMO_OS;
         }
 
         public boolean decreasesStock() {
-            return this == OUTBOUND || this == SAIDA || this == USO_OS || this == AJUSTE;
+            return this == OUTBOUND || this == SAIDA || this == USO_OS || this == AJUSTE || this == RESERVA_OS;
         }
 
         public static MovementType from(String value) {
@@ -245,6 +250,10 @@ public final class ItemEstoque {
                 case "AJUSTE" -> AJUSTE;
                 case "COMPRA" -> COMPRA;
                 case "USO_OS", "USO_EM_OS" -> USO_OS;
+                case "RESERVA_OS" -> RESERVA_OS;
+                case "CONSUMO_RESERVA_OS" -> CONSUMO_RESERVA_OS;
+                case "ESTORNO_CONSUMO_OS" -> ESTORNO_CONSUMO_OS;
+                case "DEVOLUCAO_RESERVA_OS" -> DEVOLUCAO_RESERVA_OS;
                 default -> valueOf(normalized);
             };
         }

@@ -23,6 +23,7 @@ C:\Users\PC\IdeaProjects\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\i
 C:\Users\PC\IdeaProjects\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\persistencia\entidade\VisitaAgendadaEntidade.java
 C:\Users\PC\IdeaProjects\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\persistencia\MetadataMapCodec.java
 C:\Users\PC\IdeaProjects\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\persistencia\PersistenciaIds.java
+C:\Users\PC\IdeaProjects\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorFeatureFlagsPostgreSQL.java
 C:\Users\PC\IdeaProjects\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioAgenda.java
 C:\Users\PC\IdeaProjects\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioAuditoriaFuncional.java
 C:\Users\PC\IdeaProjects\SIGLA\sigla-infraestrutura\src\main\java\br\com\sigla\infraestrutura\persistencia\repositorio\AdaptadorRepositorioCertificado.java

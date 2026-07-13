@@ -13,7 +13,13 @@ public interface CasoDeUsoOrdemServico {
 
     OrdemServico update(UpdateOrdemServicoCommand command);
 
+    OrdemServico desvincularContratoAdministrativamente(DesvincularContratoOrdemServicoCommand command);
+
     OrdemServico start(String id);
+
+    default OrdemServico reschedule(ReagendarOrdemServicoCommand command) {
+        throw new UnsupportedOperationException("Reagendamento de OS nao suportado.");
+    }
 
     OrdemServico conclude(ConcluirOrdemServicoCommand command);
 
@@ -142,6 +148,20 @@ public interface CasoDeUsoOrdemServico {
     record CancelarOrdemServicoCommand(
             String id,
             String motivo
+    ) {
+    }
+
+    record DesvincularContratoOrdemServicoCommand(
+            String id,
+            String motivo,
+            String usuarioId
+    ) {
+    }
+
+    record ReagendarOrdemServicoCommand(
+            String id,
+            LocalDateTime inicio,
+            LocalDateTime fim
     ) {
     }
 

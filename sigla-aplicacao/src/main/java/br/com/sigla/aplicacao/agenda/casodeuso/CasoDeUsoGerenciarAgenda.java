@@ -2,7 +2,9 @@ package br.com.sigla.aplicacao.agenda.casodeuso;
 
 import br.com.sigla.aplicacao.agenda.porta.entrada.CasoDeUsoAgenda;
 import br.com.sigla.aplicacao.agenda.porta.saida.RepositorioAgenda;
+import br.com.sigla.aplicacao.servicos.porta.entrada.CasoDeUsoOrdemServico;
 import br.com.sigla.dominio.agenda.VisitaAgendada;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -13,9 +15,17 @@ import java.util.List;
 public class CasoDeUsoGerenciarAgenda implements CasoDeUsoAgenda {
 
     private final RepositorioAgenda repository;
+    private final CasoDeUsoOrdemServico ordemServicoUseCase;
+
+    @Autowired
+    public CasoDeUsoGerenciarAgenda(RepositorioAgenda repository, CasoDeUsoOrdemServico ordemServicoUseCase) {
+        this.repository = repository;
+        this.ordemServicoUseCase = ordemServicoUseCase;
+    }
 
     public CasoDeUsoGerenciarAgenda(RepositorioAgenda repository) {
         this.repository = repository;
+        this.ordemServicoUseCase = null;
     }
 
     @Override
@@ -27,10 +37,15 @@ public class CasoDeUsoGerenciarAgenda implements CasoDeUsoAgenda {
 
     @Override
     public void update(ScheduleVisitCommand command) {
-        repository.findById(command.id())
+        VisitaAgendada current = repository.findById(command.id())
                 .orElseThrow(() -> new IllegalArgumentException("Evento de agenda nao encontrado."));
         VisitaAgendada schedule = toSchedule(command);
         validate(schedule);
+        if (isOrdemServico(current)) {
+            ordemServicoUseCase.reschedule(new CasoDeUsoOrdemServico.ReagendarOrdemServicoCommand(
+                    current.orderId(), schedule.startAt(), schedule.endAt()));
+            return;
+        }
         repository.save(schedule);
     }
 
@@ -44,30 +59,56 @@ public class CasoDeUsoGerenciarAgenda implements CasoDeUsoAgenda {
         LocalDateTime endAt = command.endAt() == null ? command.startAt().plusHours(1) : command.endAt();
         VisitaAgendada updated = copy(current, command.startAt().toLocalDate(), command.startAt(), endAt, current.status(), current.notes());
         validate(updated);
+        if (isOrdemServico(current)) {
+            ordemServicoUseCase.reschedule(new CasoDeUsoOrdemServico.ReagendarOrdemServicoCommand(
+                    current.orderId(), command.startAt(), endAt));
+            return;
+        }
         repository.save(updated);
     }
 
     @Override
+    public void start(ChangeVisitStatusCommand command) {
+        VisitaAgendada current = find(command.id());
+        if (isOrdemServico(current)) {
+            ordemServicoUseCase.start(current.orderId());
+            return;
+        }
+        repository.save(copy(current, current.scheduledDate(), current.startAt(), current.endAt(),
+                VisitaAgendada.VisitStatus.IN_PROGRESS, current.notes()));
+    }
+
+    @Override
     public void cancel(ChangeVisitStatusCommand command) {
-        VisitaAgendada current = repository.findById(command.id())
-                .orElseThrow(() -> new IllegalArgumentException("Evento de agenda nao encontrado."));
+        VisitaAgendada current = find(command.id());
         if (current.status() == VisitaAgendada.VisitStatus.CANCELLED) {
             throw new IllegalArgumentException("Evento ja cancelado.");
         }
-        repository.save(copy(current, current.scheduledDate(), current.startAt(), current.endAt(), VisitaAgendada.VisitStatus.CANCELLED, append(current.notes(), "[CANCELAMENTO] " + command.reason())));
+        if (isOrdemServico(current)) {
+            ordemServicoUseCase.cancel(new CasoDeUsoOrdemServico.CancelarOrdemServicoCommand(current.orderId(), command.reason()));
+            return;
+        }
+        repository.save(copy(current, current.scheduledDate(), current.startAt(), current.endAt(),
+                VisitaAgendada.VisitStatus.CANCELLED, append(current.notes(), "[CANCELAMENTO] " + command.reason())));
     }
 
     @Override
     public void complete(ChangeVisitStatusCommand command) {
-        VisitaAgendada current = repository.findById(command.id())
-                .orElseThrow(() -> new IllegalArgumentException("Evento de agenda nao encontrado."));
+        VisitaAgendada current = find(command.id());
         if (current.status() == VisitaAgendada.VisitStatus.CANCELLED) {
             throw new IllegalArgumentException("Evento cancelado nao pode ser concluido.");
         }
         if (current.status() == VisitaAgendada.VisitStatus.COMPLETED) {
             throw new IllegalArgumentException("Evento ja concluido.");
         }
-        repository.save(copy(current, current.scheduledDate(), current.startAt(), current.endAt(), VisitaAgendada.VisitStatus.COMPLETED, command.reason() == null || command.reason().isBlank() ? current.notes() : append(current.notes(), "[CONCLUSAO] " + command.reason())));
+        if (isOrdemServico(current)) {
+            ordemServicoUseCase.conclude(new CasoDeUsoOrdemServico.ConcluirOrdemServicoCommand(
+                    current.orderId(), current.responsibleId(), null, false));
+            return;
+        }
+        repository.save(copy(current, current.scheduledDate(), current.startAt(), current.endAt(),
+                VisitaAgendada.VisitStatus.COMPLETED,
+                command.reason() == null || command.reason().isBlank() ? current.notes() : append(current.notes(), "[CONCLUSAO] " + command.reason())));
     }
 
     @Override
@@ -139,6 +180,15 @@ public class CasoDeUsoGerenciarAgenda implements CasoDeUsoAgenda {
                 throw new IllegalArgumentException("Conflito de agenda para o mesmo responsavel.");
             }
         }
+    }
+
+    private VisitaAgendada find(String id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Evento de agenda nao encontrado."));
+    }
+
+    private boolean isOrdemServico(VisitaAgendada schedule) {
+        return ordemServicoUseCase != null && schedule.orderId() != null && !schedule.orderId().isBlank();
     }
 
     private VisitaAgendada copy(

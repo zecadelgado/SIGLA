@@ -51,6 +51,7 @@ public class AdaptadorRepositorioLancamentoFinanceiro implements RepositorioLanc
         entity.setDescricao(lancamento.descricao());
         entity.setClienteId(PersistenciaIds.toUuid(lancamento.clienteId()));
         entity.setOrdemServicoId(PersistenciaIds.toUuid(lancamento.ordemServicoId()));
+        entity.setContratoId(PersistenciaIds.toUuid(lancamento.contratoId()));
         entity.setValorTotal(lancamento.valorTotal());
         entity.setDataEmissao(lancamento.dataEmissao());
         entity.setDataVencimento(lancamento.dataVencimento());
@@ -88,6 +89,13 @@ public class AdaptadorRepositorioLancamentoFinanceiro implements RepositorioLanc
             return Optional.empty();
         }
         return lancamentoRepository.findByOrdemServicoId(id).map(this::toDomain);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<LancamentoFinanceiro> findByContratoId(String contratoId) {
+        UUID id = PersistenciaIds.toUuid(contratoId);
+        return id == null ? List.of() : lancamentoRepository.findByContratoId(id).stream().map(this::toDomain).toList();
     }
 
     @Override
@@ -146,6 +154,7 @@ public class AdaptadorRepositorioLancamentoFinanceiro implements RepositorioLanc
                 entity.getDescricao() == null || entity.getDescricao().isBlank() ? "Lancamento financeiro" : entity.getDescricao(),
                 PersistenciaIds.toString(entity.getClienteId()),
                 PersistenciaIds.toString(entity.getOrdemServicoId()),
+                PersistenciaIds.toString(entity.getContratoId()),
                 entity.getValorTotal() == null || entity.getValorTotal().signum() <= 0 ? java.math.BigDecimal.ONE : entity.getValorTotal(),
                 entity.getDataEmissao() == null ? java.time.LocalDate.now() : entity.getDataEmissao(),
                 entity.getDataVencimento(),
@@ -225,6 +234,13 @@ class InMemoryAdaptadorRepositorioLancamentoFinanceiro implements RepositorioLan
         return storage.values().stream()
                 .filter(lancamento -> lancamento.ordemServicoId().equals(ordemServicoId))
                 .findFirst();
+    }
+
+    @Override
+    public List<LancamentoFinanceiro> findByContratoId(String contratoId) {
+        return storage.values().stream()
+                .filter(lancamento -> lancamento.contratoId().equals(contratoId))
+                .toList();
     }
 
     @Override

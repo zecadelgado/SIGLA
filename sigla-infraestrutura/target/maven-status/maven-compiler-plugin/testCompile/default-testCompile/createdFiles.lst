@@ -4,3 +4,4 @@ br\com\sigla\infraestrutura\armazenamento\AdaptadorArmazenamentoAnexoSistemaArqu
 br\com\sigla\infraestrutura\seguranca\AdaptadorAutenticacaoSupabaseTest.class
 br\com\sigla\infraestrutura\seguranca\AdaptadorAutenticacaoSupabaseTest$RespostaHttp.class
 br\com\sigla\infraestrutura\integracao\AdaptadorEnvioWhatsappN8nTest.class
+br\com\sigla\infraestrutura\migration\FundacaoSchemaPostgreSQLIT.class

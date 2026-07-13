@@ -29,6 +29,14 @@ public interface CasoDeUsoFinanceiro {
 
     void cancel(String transactionId, String motivo);
 
+    /** Cancela somente lancamentos futuros ainda pendentes vinculados ao contrato. */
+    default int cancelarLancamentosPendentesDoContrato(String contratoId, String motivo) {
+        return cancelarLancamentosPendentesDoContrato(
+                contratoId, motivo, LocalDate.now(java.time.ZoneId.of("America/Sao_Paulo")));
+    }
+
+    int cancelarLancamentosPendentesDoContrato(String contratoId, String motivo, LocalDate dataEncerramento);
+
     void estornarPagamento(String transactionId, String motivo);
 
     void baixarParcela(String lancamentoId, String parcelaId, LocalDate paymentDate);
@@ -202,8 +210,18 @@ public interface CasoDeUsoFinanceiro {
             int installmentCount,
             String createdBy,
             String notes,
-            TransactionStatus status
+            TransactionStatus status,
+            String contratoId
     ) {
+        public SalvarLancamentoFinanceiroCommand(
+                String id, TransactionType type, String categoriaId, String formaPagamentoId, String descricao,
+                String customerId, String orderReference, BigDecimal amount, LocalDate issueDate, LocalDate dueDate,
+                LocalDate paymentDate, boolean installment, int installmentCount, String createdBy, String notes,
+                TransactionStatus status
+        ) {
+            this(id, type, categoriaId, formaPagamentoId, descricao, customerId, orderReference, amount, issueDate,
+                    dueDate, paymentDate, installment, installmentCount, createdBy, notes, status, "");
+        }
     }
 
     record GerarMensalidadeContratoCommand(
@@ -227,7 +245,7 @@ public interface CasoDeUsoFinanceiro {
             String texto,
             boolean apenasVencidos
     ) {
-    }
+        }
 
     record TransacaoFinanceiraView(
             String id,

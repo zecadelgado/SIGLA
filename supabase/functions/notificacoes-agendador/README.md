@@ -1,8 +1,8 @@
 # notificacoes-agendador (Edge Function)
 
-Runtime externo **sempre-ligado** do SIGLA: gera e dispara as notificações de
-vencimento (contrato/certificado) e de serviços agendados (visitas) **mesmo com
-nenhum desktop aberto**, via webhook n8n → Uazap.
+Runtime externo **sempre-ligado** do SIGLA: gera as mensalidades de contratos,
+gera e dispara as notificações de vencimento (contrato/certificado) e de serviços
+agendados (visitas) **mesmo com nenhum desktop aberto**, via webhook n8n → Uazap.
 
 Espelha a lógica Java (`CasoDeUsoGerarNotificacoes`, `RenderizadorTemplate`,
 `TelefoneWhatsapp`, `DiasLembrete`, `AdaptadorEnvioWhatsappN8n`). O payload enviado ao
@@ -23,8 +23,9 @@ aplica no startup; aponte o datasource para o homolog antes.
 - ✅ Geração: `CONTRACT_EXPIRING`, `CERTIFICATE_EXPIRING`, `VISIT_UPCOMING` (com
   escalonamento 30/15/7/1) + reconciliação/dedup por dia.
 - ✅ Dispatch: envia `PENDING` vencidas e reprocessa `FAILED` (até `MAX_TENTATIVAS`).
-- ⏳ Pendente (fazer após validar schema financeiro em homolog): `INSTALLMENT_OVERDUE`
-  (parcela em atraso) e faturamento de mensalidade — hoje continuam no desktop.
+- ✅ Faturamento: gera a conta a receber da mensalidade da competência corrente para
+  contratos ativos. É idempotente e usa o mesmo UUID determinístico do desktop.
+- ⏳ Pendente: `INSTALLMENT_OVERDUE` (parcela em atraso).
 
 ## Deploy
 
@@ -89,5 +90,5 @@ select cron.schedule(
 
 Enquanto a Edge Function estiver ativa em produção, o agendador embutido no desktop
 deve ficar **desligado** (`sigla.notificacoes.scheduler.enabled=false`, que é o default).
-O desktop segue configurando templates e visualizando o histórico; quem envia é a Edge
-Function. O dedup no banco é a rede de segurança caso ambos rodem.
+O desktop segue configurando templates e visualizando o histórico; quem envia e fatura
+é a Edge Function. O UUID determinístico é a rede de segurança caso ambos rodem.

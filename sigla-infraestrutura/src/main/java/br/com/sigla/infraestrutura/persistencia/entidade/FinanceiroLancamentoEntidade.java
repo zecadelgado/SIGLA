@@ -38,6 +38,9 @@ public class FinanceiroLancamentoEntidade {
     @Column(name = "ordem_servico_id")
     private UUID ordemServicoId;
 
+    @Column(name = "contrato_id")
+    private UUID contratoId;
+
     @Column(name = "valor_total", nullable = false)
     private BigDecimal valorTotal;
 
@@ -118,6 +121,14 @@ public class FinanceiroLancamentoEntidade {
 
     public void setOrdemServicoId(UUID ordemServicoId) {
         this.ordemServicoId = ordemServicoId;
+    }
+
+    public UUID getContratoId() {
+        return contratoId;
+    }
+
+    public void setContratoId(UUID contratoId) {
+        this.contratoId = contratoId;
     }
 
     public BigDecimal getValorTotal() {

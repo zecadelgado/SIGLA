@@ -1,0 +1,6 @@
+# Pacote Flyway indivisivel da Fase 2, em ordem de aplicacao.
+# A homologacao deve falhar se qualquer arquivo abaixo estiver ausente.
+sigla-infraestrutura/src/main/resources/db/migration/V18__financeiro_lancamentos_contrato.sql
+sigla-infraestrutura/src/main/resources/db/migration/V19__fundacao_fluxos_operacionais.sql
+sigla-infraestrutura/src/main/resources/db/migration/V20__agenda_conflito_responsavel.sql
+sigla-infraestrutura/src/main/resources/db/migration/V21__contratos_rpc_views_v1.sql
