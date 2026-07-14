@@ -97,7 +97,7 @@ class CasoDeUsoGerenciarFinanceiroTest {
     }
 
     @Test
-    void parcelaVencidaPrevaleceSobreStatusParcial() {
+    void parcelaVencidaNaoPersisteOverdueOStatusFactualEPartial() {
         FakeLancamentos repository = new FakeLancamentos();
         CasoDeUsoGerenciarFinanceiro financeiro = financeiro(repository);
         financeiro.saveLancamento(new CasoDeUsoFinanceiro.SalvarLancamentoFinanceiroCommand(
@@ -108,7 +108,8 @@ class CasoDeUsoGerenciarFinanceiroTest {
         LancamentoFinanceiro lancamento = repository.findById("l-1").orElseThrow();
         financeiro.baixarParcela("l-1", lancamento.parcelas().get(0).id(), LocalDate.now());
 
-        assertEquals(LancamentoFinanceiro.Status.OVERDUE, repository.findById("l-1").orElseThrow().status());
+        // OVERDUE e projecao por relogio; o fato persistido e PARTIAL.
+        assertEquals(LancamentoFinanceiro.Status.PARTIAL, repository.findById("l-1").orElseThrow().status());
     }
 
     @Test
@@ -149,6 +150,9 @@ class CasoDeUsoGerenciarFinanceiroTest {
         assertTrue(!ordens.findById("os-1").orElseThrow().pago());
 
         financeiro.markPaid("l-1", LocalDate.now());
+        // Lancamento pago nao pode ser cancelado diretamente: primeiro o estorno.
+        assertThrows(IllegalArgumentException.class, () -> financeiro.cancel("l-1", "Cobranca cancelada"));
+        financeiro.estornarPagamento("l-1", "Pagamento devolvido antes do cancelamento");
         financeiro.cancel("l-1", "Cobranca cancelada");
         assertTrue(!ordens.findById("os-1").orElseThrow().pago());
 
@@ -182,35 +186,16 @@ class CasoDeUsoGerenciarFinanceiroTest {
     }
 
     @Test
-    void geraMensalidadeDeContratoSemDuplicarPorCompetencia() {
+    void mensalidadeDiretaERejeitadaPorqueAAutoridadeEARpc() {
         FakeLancamentos repository = new FakeLancamentos();
         CasoDeUsoGerenciarFinanceiro financeiro = financeiro(repository);
         CasoDeUsoFinanceiro.GerarMensalidadeContratoCommand comando = new CasoDeUsoFinanceiro.GerarMensalidadeContratoCommand(
                 "ctr-1", "cliente-1", BigDecimal.valueOf(200), java.time.YearMonth.of(2026, 6),
                 LocalDate.of(2026, 6, 10), "Mensalidade contrato - 06/2026");
 
-        Optional<LancamentoFinanceiro> primeira = financeiro.gerarMensalidadeContrato(comando);
-        Optional<LancamentoFinanceiro> segunda = financeiro.gerarMensalidadeContrato(comando);
-
-        assertTrue(primeira.isPresent());
-        assertTrue(segunda.isEmpty(), "rodar de novo na mesma competencia nao deve duplicar");
-        assertEquals(1, repository.findAll().size());
-        LancamentoFinanceiro lancamento = repository.findAll().get(0);
-        assertEquals(LancamentoFinanceiro.Tipo.ENTRY, lancamento.tipo());
-        assertEquals("ctr-1", lancamento.contratoId());
-        assertEquals(0, BigDecimal.valueOf(200).compareTo(lancamento.valorTotal()));
-        assertEquals(LocalDate.of(2026, 6, 10), lancamento.dataVencimento());
-
-        // competencia diferente gera um novo lancamento
-        financeiro.gerarMensalidadeContrato(new CasoDeUsoFinanceiro.GerarMensalidadeContratoCommand(
-                "ctr-1", "cliente-1", BigDecimal.valueOf(200), java.time.YearMonth.of(2026, 7),
-                LocalDate.of(2026, 7, 10), "Mensalidade contrato - 07/2026"));
-        assertEquals(2, repository.findAll().size());
-
-        assertEquals(2, financeiro.cancelarLancamentosPendentesDoContrato(
-                "ctr-1", "Contrato encerrado", LocalDate.of(2026, 5, 31)));
-        assertTrue(repository.findByContratoId("ctr-1").stream()
-                .allMatch(item -> item.status() == LancamentoFinanceiro.Status.CANCELLED));
+        assertThrows(IllegalStateException.class, () -> financeiro.gerarMensalidadeContrato(comando),
+                "desktop nao grava mensalidade; somente a rpc_faturar_mensalidades_v1");
+        assertEquals(0, repository.findAll().size());
     }
 
     @Test

@@ -1,60 +1,35 @@
 package br.com.sigla.aplicacao.contratos.casodeuso;
 
 import br.com.sigla.aplicacao.contratos.porta.entrada.CasoDeUsoFaturamentoContrato;
-import br.com.sigla.aplicacao.contratos.porta.saida.RepositorioContrato;
-import br.com.sigla.aplicacao.financeiro.porta.entrada.CasoDeUsoFinanceiro;
-import br.com.sigla.dominio.contratos.Contrato;
+import br.com.sigla.aplicacao.contratos.porta.saida.PortaFaturamentoMensalidades;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.YearMonth;
+import java.time.ZoneId;
 
 /**
- * Rotina de faturamento: para cada contrato ativo com mensalidade, gera a conta a receber da
- * competencia corrente. So trata o mes corrente (nao retroativo) e e idempotente, entao pode rodar
- * diariamente sem duplicar lancamentos.
+ * Rotina de faturamento do desktop. Desde a Fase 5 este caso de uso nao grava
+ * mensalidade: apenas solicita a execucao idempotente da autoridade unica
+ * (rpc_faturar_mensalidades_v1) com chave derivada da data de referencia em
+ * America/Sao_Paulo, podendo rodar diariamente e repetir sem duplicar.
  */
 @Service
 public class CasoDeUsoGerenciarFaturamentoContrato implements CasoDeUsoFaturamentoContrato {
 
-    private final RepositorioContrato contratoRepository;
-    private final CasoDeUsoFinanceiro casoDeUsoFinanceiro;
+    private static final ZoneId TIMEZONE_OFICIAL = ZoneId.of("America/Sao_Paulo");
 
-    public CasoDeUsoGerenciarFaturamentoContrato(RepositorioContrato contratoRepository, CasoDeUsoFinanceiro casoDeUsoFinanceiro) {
-        this.contratoRepository = contratoRepository;
-        this.casoDeUsoFinanceiro = casoDeUsoFinanceiro;
+    private final PortaFaturamentoMensalidades portaFaturamento;
+
+    public CasoDeUsoGerenciarFaturamentoContrato(PortaFaturamentoMensalidades portaFaturamento) {
+        this.portaFaturamento = portaFaturamento;
     }
 
     @Override
     public int faturarMensalidades(LocalDate hoje) {
-        LocalDate referencia = hoje == null ? LocalDate.now() : hoje;
-        YearMonth competencia = YearMonth.from(referencia);
-        int gerados = 0;
-        for (Contrato contrato : contratoRepository.findAll()) {
-            if (contrato.status() != Contrato.ContratoStatus.ACTIVE
-                    || contrato.monthlyValue() == null
-                    || contrato.monthlyValue().signum() <= 0) {
-                continue;
-            }
-            YearMonth inicio = YearMonth.from(contrato.startDate());
-            YearMonth fim = YearMonth.from(contrato.endDate());
-            if (competencia.isBefore(inicio) || competencia.isAfter(fim)) {
-                continue;
-            }
-            int diaVencimento = Math.min(contrato.startDate().getDayOfMonth(), competencia.lengthOfMonth());
-            LocalDate vencimento = competencia.atDay(diaVencimento);
-            String descricao = "Mensalidade contrato"
-                    + (contrato.description() == null || contrato.description().isBlank() ? "" : " " + contrato.description())
-                    + " - " + String.format("%02d/%d", competencia.getMonthValue(), competencia.getYear());
-            boolean criado = casoDeUsoFinanceiro.gerarMensalidadeContrato(
-                    new CasoDeUsoFinanceiro.GerarMensalidadeContratoCommand(
-                            contrato.id(), contrato.customerId(), contrato.monthlyValue(),
-                            competencia, vencimento, descricao))
-                    .isPresent();
-            if (criado) {
-                gerados++;
-            }
-        }
-        return gerados;
+        LocalDate referencia = hoje == null ? LocalDate.now(TIMEZONE_OFICIAL) : hoje;
+        String chaveExecucao = "FATURAMENTO:DESKTOP:" + referencia;
+        return (int) portaFaturamento.faturar(referencia, chaveExecucao).stream()
+                .filter(PortaFaturamentoMensalidades.ResultadoMensalidade::criada)
+                .count();
     }
 }

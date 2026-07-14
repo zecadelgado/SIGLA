@@ -246,11 +246,15 @@ public class CasoDeUsoGerenciarContrato implements CasoDeUsoContrato {
             boolean existente = ordemServico.listAll().stream().anyMatch(os -> os.id().equals(osId));
             if (!existente) {
                 LocalDateTime inicio = LocalDateTime.of(data, LocalTime.of(8, 0));
+                // Visita incluida no contrato: coberta pela mensalidade por definicao
+                // (declaracao explicita do produtor, nao inferencia).
                 ordemServico.create(new CasoDeUsoOrdemServico.CreateOrdemServicoCommand(
                         osId, contrato.customerId(), contrato.id(), "Visita contratual",
                         contrato.description(), "visita_contrato", null, inicio, null, null,
                         "", "", BigDecimal.ZERO,
-                        "[OCORRENCIA_CONTRATUAL] contrato=" + contrato.id() + "; data=" + data));
+                        "[OCORRENCIA_CONTRATUAL] contrato=" + contrato.id() + "; data=" + data,
+                        br.com.sigla.dominio.servicos.DadosFormularioServico.vazio(),
+                        br.com.sigla.dominio.servicos.OrdemServico.RegraCobranca.COBERTA_PELO_CONTRATO));
             }
             data = proximaOcorrencia(data, contrato.serviceFrequency());
         }

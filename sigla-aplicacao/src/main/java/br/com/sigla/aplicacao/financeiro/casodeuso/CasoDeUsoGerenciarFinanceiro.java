@@ -256,6 +256,13 @@ public class CasoDeUsoGerenciarFinanceiro implements CasoDeUsoFinanceiro {
         if (lancamento.status() == LancamentoFinanceiro.Status.CANCELLED) {
             throw new IllegalArgumentException("Lancamento ja cancelado.");
         }
+        boolean possuiPagamento = lancamento.status() == LancamentoFinanceiro.Status.PAID
+                || lancamento.status() == LancamentoFinanceiro.Status.PARTIAL
+                || lancamento.parcelas().stream().anyMatch(parcela -> parcela.status() == LancamentoFinanceiro.Status.PAID);
+        if (possuiPagamento) {
+            throw new IllegalArgumentException(
+                    "Lancamento pago ou parcialmente pago nao pode ser cancelado; registre estorno, credito ou reembolso.");
+        }
         List<LancamentoFinanceiro.ParcelaFinanceira> parcelas = lancamento.parcelas().stream()
                 .map(parcela -> new LancamentoFinanceiro.ParcelaFinanceira(
                         parcela.id(), parcela.numeroParcela(), parcela.valorParcela(), parcela.dataVencimento(),
@@ -351,41 +358,9 @@ public class CasoDeUsoGerenciarFinanceiro implements CasoDeUsoFinanceiro {
 
     @Override
     public Optional<LancamentoFinanceiro> gerarMensalidadeContrato(GerarMensalidadeContratoCommand command) {
-        if (command == null || command.valorMensal() == null || command.valorMensal().signum() <= 0
-                || command.competencia() == null || command.vencimento() == null) {
-            return Optional.empty();
-        }
-        // Id deterministico por contrato+competencia garante idempotencia sem coluna nova:
-        // a rotina diaria pode rodar varias vezes que nao duplica a mensalidade.
-        String id = UUID.nameUUIDFromBytes(
-                ("contrato-mensalidade:" + command.contratoId() + ":" + command.competencia())
-                        .getBytes(java.nio.charset.StandardCharsets.UTF_8)).toString();
-        if (lancamentoRepository.findById(id).isPresent()) {
-            return Optional.empty();
-        }
-        LancamentoFinanceiro lancamento = saveLancamento(new SalvarLancamentoFinanceiroCommand(
-                id,
-                TransactionType.ENTRY,
-                resolveCategoriaId(TransactionType.ENTRY, "SERVICOS"),
-                resolveFormaPagamentoId("PIX"),
-                command.descricao() == null || command.descricao().isBlank()
-                        ? "Mensalidade de contrato " + command.competencia()
-                        : command.descricao(),
-                command.clienteId(),
-                "",
-                command.valorMensal(),
-                command.vencimento(),
-                command.vencimento(),
-                null,
-                false,
-                1,
-                "",
-                "[CONTRATO " + command.contratoId() + " COMPETENCIA " + command.competencia() + "]",
-                TransactionStatus.PENDING,
-                command.contratoId()));
-        auditar(lancamento.id(), "FINANCEIRO_GERADO_CONTRATO",
-                command.contratoId() + " " + command.competencia(), lancamento.criadoPor());
-        return Optional.of(lancamento);
+        throw new IllegalStateException(
+                "Mensalidades sao geradas exclusivamente pela rpc_faturar_mensalidades_v1 (autoridade unica);"
+                        + " solicite o faturamento pela rotina de contratos.");
     }
 
     @Override
@@ -618,11 +593,9 @@ public class CasoDeUsoGerenciarFinanceiro implements CasoDeUsoFinanceiro {
     }
 
     private LancamentoFinanceiro.Status statusPorParcelas(List<LancamentoFinanceiro.ParcelaFinanceira> parcelas, LocalDate vencimento, LocalDate hoje) {
+        // OVERDUE e projecao por relogio (America/Sao_Paulo), nunca fato persistido.
         if (parcelas.isEmpty()) {
-            return vencimento != null && vencimento.isBefore(hoje) ? LancamentoFinanceiro.Status.OVERDUE : LancamentoFinanceiro.Status.PENDING;
-        }
-        if (parcelas.stream().anyMatch(parcela -> parcela.vencida(hoje))) {
-            return LancamentoFinanceiro.Status.OVERDUE;
+            return LancamentoFinanceiro.Status.PENDING;
         }
         long pagas = parcelas.stream().filter(parcela -> parcela.status() == LancamentoFinanceiro.Status.PAID).count();
         if (pagas == parcelas.size()) {

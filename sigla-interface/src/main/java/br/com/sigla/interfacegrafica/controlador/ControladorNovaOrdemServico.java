@@ -341,6 +341,7 @@ public class ControladorNovaOrdemServico {
             LocalDateTime inicio = dataInicio.atTime(8, 0);
             LocalDateTime fim = dataFim.atTime(18, 0);
 
+            OrdemServico.RegraCobranca regraCobranca = escolherRegraCobranca(contrato);
             if (modoEdicao && ordemEmEdicao != null) {
                 casoDeUsoOrdemServico.update(new CasoDeUsoOrdemServico.UpdateOrdemServicoCommand(
                         ordemEmEdicao.id(),
@@ -355,7 +356,8 @@ public class ControladorNovaOrdemServico {
                         UtilComboBox.idSelecionado(executadoPorCombo),
                         formatadorMoeda.valor(valorServicoField),
                         observacoesField == null ? "" : observacoesField.getText(),
-                        montarDadosFormulario()
+                        montarDadosFormulario(),
+                        regraCobranca
                 ));
             } else {
                 casoDeUsoOrdemServico.create(new CasoDeUsoOrdemServico.CreateOrdemServicoCommand(
@@ -373,7 +375,8 @@ public class ControladorNovaOrdemServico {
                         UtilComboBox.idSelecionado(executadoPorCombo),
                         formatadorMoeda.valor(valorServicoField),
                         observacoesField == null ? "" : observacoesField.getText(),
-                        montarDadosFormulario()
+                        montarDadosFormulario(),
+                        regraCobranca
                 ));
             }
             gerenciadorNavegacao.navigateTo(VisaoAplicacao.SERVICE_ORDER);
@@ -381,6 +384,35 @@ public class ControladorNovaOrdemServico {
         } catch (Exception exception) {
             setFeedback(br.com.sigla.interfacegrafica.util.MensagensErro.descrever(exception));
         }
+    }
+
+    /**
+     * A OS vinculada a contrato exige declaracao explicita da cobranca
+     * (coberta pela mensalidade ou cobrada a parte); nada e inferido.
+     */
+    private OrdemServico.RegraCobranca escolherRegraCobranca(OpcaoId contrato) {
+        if (contrato == null) {
+            return null;
+        }
+        if (modoEdicao && ordemEmEdicao != null && ordemEmEdicao.regraCobranca() != null
+                && contrato.id().equals(ordemEmEdicao.contratoId())) {
+            return ordemEmEdicao.regraCobranca();
+        }
+        String coberta = "Coberta pela mensalidade do contrato";
+        String extra = "Cobrar à parte (serviço extra)";
+        javafx.scene.control.ChoiceDialog<String> dialogo =
+                new javafx.scene.control.ChoiceDialog<>(coberta, java.util.List.of(coberta, extra));
+        br.com.sigla.interfacegrafica.util.DialogoUi.estilizar(dialogo);
+        dialogo.setTitle("Cobrança da OS contratual");
+        dialogo.setHeaderText("Como esta OS vinculada a contrato deve ser cobrada?");
+        dialogo.setContentText("Regra de cobrança");
+        String escolha = dialogo.showAndWait().orElse(null);
+        if (escolha == null) {
+            throw new IllegalArgumentException("Selecione a regra de cobrança da OS contratual.");
+        }
+        return escolha.equals(extra)
+                ? OrdemServico.RegraCobranca.COBRAR_EXTRA
+                : OrdemServico.RegraCobranca.COBERTA_PELO_CONTRATO;
     }
 
     private DadosFormularioServico montarDadosFormulario() {
