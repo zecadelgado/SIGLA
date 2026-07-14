@@ -81,6 +81,11 @@ class ServicoConsultaOrdemServicoTest {
         }
 
         @Override
+        public OrdemServico desvincularContratoAdministrativamente(DesvincularContratoOrdemServicoCommand command) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
         public OrdemServico start(String id) {
             throw new UnsupportedOperationException();
         }

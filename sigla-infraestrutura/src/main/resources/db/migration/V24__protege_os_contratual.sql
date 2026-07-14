@@ -69,12 +69,23 @@ SET search_path = public, pg_temp
 AS $$
 DECLARE
   v_os ordens_servico%ROWTYPE;
+  v_usuario usuarios%ROWTYPE;
 BEGIN
   IF NULLIF(btrim(p_motivo), '') IS NULL THEN
     RAISE EXCEPTION 'motivo da desvinculacao e obrigatorio' USING ERRCODE = '23514';
   END IF;
   IF p_usuario_id IS NULL THEN
     RAISE EXCEPTION 'usuario administrador da desvinculacao e obrigatorio' USING ERRCODE = '23514';
+  END IF;
+
+  -- SECURITY DEFINER: o chamador nao pode forjar autorizacao administrativa
+  -- apenas informando um UUID; o usuario precisa existir e ser ADMIN ativo.
+  SELECT * INTO v_usuario FROM usuarios WHERE id = p_usuario_id;
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'usuario da desvinculacao nao existe' USING ERRCODE = '23514';
+  END IF;
+  IF upper(COALESCE(v_usuario.tipo, '')) <> 'ADMIN' OR NOT COALESCE(v_usuario.ativo, false) THEN
+    RAISE EXCEPTION 'somente ADMIN ativo pode desvincular OS contratual' USING ERRCODE = '23514';
   END IF;
 
   SELECT * INTO STRICT v_os
