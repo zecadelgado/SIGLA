@@ -187,7 +187,7 @@ public class InicializadorDadosDesenvolvimento {
             estoqueUseCase.registerItem(new CasoDeUsoEstoque.RegisterItemEstoqueCommand(
                     "INV-001",
                     "Inseticida concentrado",
-                    14,
+                    java.math.BigDecimal.valueOf(14),
                     "litro"
             ));
 
@@ -195,7 +195,7 @@ public class InicializadorDadosDesenvolvimento {
                     "INV-001",
                     "MOV-001",
                     ItemEstoque.MovementType.OUTBOUND,
-                    2,
+                    java.math.BigDecimal.valueOf(2),
                     today.minusDays(1),
                     "Carlos Detetizador",
                     "",

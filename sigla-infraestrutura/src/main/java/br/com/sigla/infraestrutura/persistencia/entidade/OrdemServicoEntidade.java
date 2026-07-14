@@ -38,6 +38,9 @@ public class OrdemServicoEntidade {
     @Column(name = "contrato_id")
     private UUID contratoId;
 
+    @Column(name = "regra_cobranca")
+    private String regraCobranca;
+
     @Column(name = "titulo", nullable = false)
     private String titulo;
 
@@ -119,6 +122,14 @@ public class OrdemServicoEntidade {
 
     public void setContratoId(UUID contratoId) {
         this.contratoId = contratoId;
+    }
+
+    public String getRegraCobranca() {
+        return regraCobranca;
+    }
+
+    public void setRegraCobranca(String regraCobranca) {
+        this.regraCobranca = regraCobranca;
     }
 
     public String getTitulo() {

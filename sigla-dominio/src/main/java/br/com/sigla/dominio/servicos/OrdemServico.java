@@ -26,7 +26,8 @@ public record OrdemServico(
         List<ProdutoUsado> produtos,
         List<Anexo> anexos,
         String observacoes,
-        DadosFormularioServico dadosFormulario
+        DadosFormularioServico dadosFormulario,
+        RegraCobranca regraCobranca
 ) {
     public OrdemServico {
         id = requireText(id, "id");
@@ -47,6 +48,19 @@ public record OrdemServico(
         observacoes = normalizeOptional(observacoes);
         dadosFormulario = dadosFormulario == null ? DadosFormularioServico.vazio() : dadosFormulario;
         validarDatas(dataAgendada, dataInicio, dataFim);
+    }
+
+    /** Assinatura anterior a Fase 5: sem regra de cobranca (legado/na criacao avulsa). */
+    public OrdemServico(
+            String id, Long numeroOs, String clienteId, String contratoId, String titulo, String descricao,
+            String tipoServico, OrdemServicoStatus status, LocalDateTime dataAgendada, LocalDateTime dataInicio,
+            LocalDateTime dataFim, String responsavelInternoId, String executadoPorId, boolean foiFeito,
+            boolean pago, BigDecimal valorServico, boolean assinaturaCliente, List<ProdutoUsado> produtos,
+            List<Anexo> anexos, String observacoes, DadosFormularioServico dadosFormulario
+    ) {
+        this(id, numeroOs, clienteId, contratoId, titulo, descricao, tipoServico, status, dataAgendada,
+                dataInicio, dataFim, responsavelInternoId, executadoPorId, foiFeito, pago, valorServico,
+                assinaturaCliente, produtos, anexos, observacoes, dadosFormulario, null);
     }
 
     public OrdemServico(
@@ -110,7 +124,7 @@ public record OrdemServico(
             String id,
             String produtoId,
             String nomeProduto,
-            int quantidade,
+            BigDecimal quantidade,
             BigDecimal valorUnitario,
             BigDecimal valorTotal
     ) {
@@ -118,14 +132,17 @@ public record OrdemServico(
             id = normalizeOptional(id);
             produtoId = requireText(produtoId, "produtoId");
             nomeProduto = normalizeOptional(nomeProduto);
-            if (quantidade <= 0) {
+            if (quantidade == null || quantidade.signum() <= 0) {
                 throw new IllegalArgumentException("quantidade must be positive");
+            }
+            if (quantidade.stripTrailingZeros().scale() > 4) {
+                throw new IllegalArgumentException("quantidade must have at most 4 decimal places");
             }
             valorUnitario = valorUnitario == null ? BigDecimal.ZERO : valorUnitario;
             if (valorUnitario.signum() < 0) {
                 throw new IllegalArgumentException("valorUnitario must not be negative");
             }
-            valorTotal = valorUnitario.multiply(BigDecimal.valueOf(quantidade));
+            valorTotal = valorUnitario.multiply(quantidade);
         }
     }
 
@@ -150,6 +167,23 @@ public record OrdemServico(
             if (tamanhoBytes < 0) {
                 throw new IllegalArgumentException("tamanhoBytes must not be negative");
             }
+        }
+    }
+
+    /** Regra explicita de cobranca da OS contratual (Fase 5). */
+    public enum RegraCobranca {
+        COBERTA_PELO_CONTRATO,
+        COBRAR_EXTRA;
+
+        public static RegraCobranca from(String value) {
+            if (value == null || value.isBlank()) {
+                return null;
+            }
+            return switch (value.trim().toUpperCase().replace('-', '_')) {
+                case "COBERTA_PELO_CONTRATO", "COBERTA" -> COBERTA_PELO_CONTRATO;
+                case "COBRAR_EXTRA", "EXTRA" -> COBRAR_EXTRA;
+                default -> null;
+            };
         }
     }
 

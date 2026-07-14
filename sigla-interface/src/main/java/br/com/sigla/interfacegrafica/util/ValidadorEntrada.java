@@ -84,6 +84,50 @@ public final class ValidadorEntrada {
         return numero;
     }
 
+    /** Exige quantidade (até 4 casas decimais) maior que zero. Retorna o valor (ou ZERO quando inválido). */
+    public BigDecimal quantidadePositiva(String valor, String descricao) {
+        BigDecimal quantidade = parseQuantidade(valor, descricao);
+        if (quantidade == null) {
+            return BigDecimal.ZERO;
+        }
+        if (quantidade.signum() <= 0) {
+            erro(maiuscula(descricao) + " deve ser maior que zero.");
+            return BigDecimal.ZERO;
+        }
+        return quantidade;
+    }
+
+    /** Exige quantidade (até 4 casas decimais) maior ou igual a zero. Retorna o valor (ou ZERO quando inválido). */
+    public BigDecimal quantidadeNaoNegativa(String valor, String descricao) {
+        BigDecimal quantidade = parseQuantidade(valor, descricao);
+        if (quantidade == null) {
+            return BigDecimal.ZERO;
+        }
+        if (quantidade.signum() < 0) {
+            erro(maiuscula(descricao) + " não pode ser negativa.");
+            return BigDecimal.ZERO;
+        }
+        return quantidade;
+    }
+
+    private BigDecimal parseQuantidade(String valor, String descricao) {
+        if (valor == null || valor.isBlank()) {
+            erro("Informe " + descricao + ".");
+            return null;
+        }
+        try {
+            BigDecimal quantidade = new BigDecimal(valor.trim().replace(',', '.'));
+            if (quantidade.stripTrailingZeros().scale() > 4) {
+                erro(maiuscula(descricao) + " aceita no máximo 4 casas decimais.");
+                return null;
+            }
+            return quantidade;
+        } catch (NumberFormatException excecao) {
+            erro(maiuscula(descricao) + " deve ser um número válido (use vírgula para casas decimais).");
+            return null;
+        }
+    }
+
     /** Exige valor monetário maior que zero. Retorna o valor (ou ZERO quando inválido). */
     public BigDecimal valorPositivo(BigDecimal valor, String descricao) {
         if (valor == null || valor.signum() <= 0) {

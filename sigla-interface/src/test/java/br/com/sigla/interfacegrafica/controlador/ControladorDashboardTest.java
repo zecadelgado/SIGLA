@@ -185,7 +185,8 @@ class ControladorDashboardTest {
     }
 
     private ItemEstoque item(String id, String nome, int quantidade) {
-        return new ItemEstoque(id, nome, "", "", BigDecimal.ONE, BigDecimal.ONE, quantidade, 1, "un", true, List.of());
+        return new ItemEstoque(id, nome, "", "", BigDecimal.ONE, BigDecimal.ONE,
+                BigDecimal.valueOf(quantidade), BigDecimal.ONE, "un", true, List.of());
     }
 
     private OrdemServico ordem(String id, OrdemServico.OrdemServicoStatus status) {

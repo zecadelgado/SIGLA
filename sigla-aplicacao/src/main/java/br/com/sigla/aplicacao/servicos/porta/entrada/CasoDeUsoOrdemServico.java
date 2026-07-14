@@ -61,8 +61,21 @@ public interface CasoDeUsoOrdemServico {
             String executadoPorId,
             BigDecimal valorServico,
             String observacoes,
-            DadosFormularioServico dadosFormulario
+            DadosFormularioServico dadosFormulario,
+            OrdemServico.RegraCobranca regraCobranca
     ) {
+        /** Assinatura anterior a Fase 5 (sem regra de cobranca). */
+        public CreateOrdemServicoCommand(
+                String id, String clienteId, String contratoId, String titulo, String descricao,
+                String tipoServico, OrdemServico.OrdemServicoStatus status, LocalDateTime dataAgendada,
+                LocalDateTime dataInicio, LocalDateTime dataFim, String responsavelInternoId,
+                String executadoPorId, BigDecimal valorServico, String observacoes,
+                DadosFormularioServico dadosFormulario
+        ) {
+            this(id, clienteId, contratoId, titulo, descricao, tipoServico, status, dataAgendada, dataInicio,
+                    dataFim, responsavelInternoId, executadoPorId, valorServico, observacoes, dadosFormulario, null);
+        }
+
         public CreateOrdemServicoCommand(
                 String id,
                 String clienteId,
@@ -114,8 +127,20 @@ public interface CasoDeUsoOrdemServico {
             String executadoPorId,
             BigDecimal valorServico,
             String observacoes,
-            DadosFormularioServico dadosFormulario
+            DadosFormularioServico dadosFormulario,
+            OrdemServico.RegraCobranca regraCobranca
     ) {
+        /** Assinatura anterior a Fase 5 (sem regra de cobranca). */
+        public UpdateOrdemServicoCommand(
+                String id, String clienteId, String contratoId, String titulo, String descricao,
+                String tipoServico, OrdemServico.OrdemServicoStatus status, LocalDateTime dataAgendada,
+                String responsavelInternoId, String executadoPorId, BigDecimal valorServico,
+                String observacoes, DadosFormularioServico dadosFormulario
+        ) {
+            this(id, clienteId, contratoId, titulo, descricao, tipoServico, status, dataAgendada,
+                    responsavelInternoId, executadoPorId, valorServico, observacoes, dadosFormulario, null);
+        }
+
         /**
          * Forma reduzida (compatibilidade): edita apenas os campos basicos e
          * PRESERVA status, executado por e dados do formulario (campos nulos =
@@ -169,7 +194,7 @@ public interface CasoDeUsoOrdemServico {
             String ordemId,
             String id,
             String produtoId,
-            int quantidade,
+            BigDecimal quantidade,
             BigDecimal valorUnitario
     ) {
     }

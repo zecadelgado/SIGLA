@@ -92,6 +92,10 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
             throw new IllegalArgumentException("Status operacional deve ser alterado apenas pelas acoes iniciar, concluir ou cancelar.");
         }
         validarContratoVinculado(command.clienteId(), command.contratoId(), command.dataAgendada());
+        if (command.contratoId() != null && !command.contratoId().isBlank() && command.regraCobranca() == null) {
+            throw new IllegalArgumentException(
+                    "OS contratual exige regra de cobranca explicita: coberta pela mensalidade ou cobrar a parte.");
+        }
         OrdemServico ordemServico = repository.save(new OrdemServico(
                 command.id(),
                 null,
@@ -113,7 +117,8 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
                 List.of(),
                 List.of(),
                 command.observacoes(),
-                command.dadosFormulario()
+                command.dadosFormulario(),
+                command.regraCobranca()
         ));
         sincronizarAgenda(ordemServico);
         return ordemServico;
@@ -151,6 +156,12 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
         DadosFormularioServico dadosFormulario = command.dadosFormulario() == null
                 ? atual.dadosFormulario() : command.dadosFormulario();
 
+        OrdemServico.RegraCobranca regraCobranca = command.regraCobranca() != null
+                ? command.regraCobranca() : atual.regraCobranca();
+        if (atual.contratoId().isBlank() && !contratoId.isBlank() && regraCobranca == null) {
+            throw new IllegalArgumentException(
+                    "Vincular contrato exige regra de cobranca explicita: coberta pela mensalidade ou cobrar a parte.");
+        }
         validarContratoVinculado(clienteId, contratoId, dataAgendada);
         OrdemServico atualizada = repository.save(new OrdemServico(
                 atual.id(),
@@ -173,7 +184,8 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
                 atual.produtos(),
                 atual.anexos(),
                 observacoes,
-                dadosFormulario
+                dadosFormulario,
+                regraCobranca
         ));
         sincronizarAgenda(atualizada);
         return atualizada;
@@ -206,6 +218,7 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
     }
 
     @Override
+    @Transactional
     public OrdemServico start(String id) {
         OrdemServico ordemServico = find(id);
         if (ordemServico.status() == OrdemServico.OrdemServicoStatus.CANCELADA || ordemServico.status() == OrdemServico.OrdemServicoStatus.CONCLUIDA) {
@@ -236,7 +249,8 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
                 ordemServico.produtos(),
                 ordemServico.anexos(),
                 ordemServico.observacoes(),
-                ordemServico.dadosFormulario()
+                ordemServico.dadosFormulario(),
+                ordemServico.regraCobranca()
         ));
         // Iniciar a OS nao gera financeiro: a conta a receber so e criada na conclusao,
         // quando a OS atinge status CONCLUIDA (ver conclude/gerarFinanceiroSePossivel).
@@ -262,7 +276,7 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
                 atual.tipoServico(), atual.status(), command.inicio(), atual.dataInicio(), atual.dataFim(),
                 atual.responsavelInternoId(), atual.executadoPorId(), atual.foiFeito(), atual.pago(),
                 atual.valorServico(), atual.assinaturaCliente(), atual.produtos(), atual.anexos(),
-                atual.observacoes(), atual.dadosFormulario()));
+                atual.observacoes(), atual.dadosFormulario(), atual.regraCobranca()));
         sincronizarAgenda(reagendada);
         return reagendada;
     }
@@ -308,7 +322,8 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
                 ordemServico.produtos(),
                 ordemServico.anexos(),
                 ordemServico.observacoes(),
-                ordemServico.dadosFormulario()
+                ordemServico.dadosFormulario(),
+                ordemServico.regraCobranca()
         ));
         gerarFinanceiroSePossivel(concluida);
         sincronizarAgenda(concluida);
@@ -347,7 +362,8 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
                 ordemServico.produtos(),
                 ordemServico.anexos(),
                 observacoes,
-                ordemServico.dadosFormulario()
+                ordemServico.dadosFormulario(),
+                ordemServico.regraCobranca()
         ));
         auditarOs(cancelada.id(), "OS_CANCELADA", command.motivo(), cancelada.executadoPorId());
         cancelarFinanceiroVinculado(cancelada, command.motivo());
@@ -438,13 +454,18 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
         if (!produto.ativo()) {
             throw new IllegalArgumentException("Produto inativo nao pode ser usado em OS.");
         }
-        if (command.quantidade() <= 0) {
+        if (command.quantidade() == null || command.quantidade().signum() <= 0) {
             throw new IllegalArgumentException("Quantidade deve ser positiva.");
         }
-        int totalSolicitado = ordem.produtos().stream()
+        if (command.quantidade().stripTrailingZeros().scale() > 4) {
+            throw new IllegalArgumentException("Quantidade aceita no maximo 4 casas decimais.");
+        }
+        BigDecimal totalSolicitado = ordem.produtos().stream()
                 .filter(item -> item.produtoId().equals(command.produtoId()))
-                .mapToInt(OrdemServico.ProdutoUsado::quantidade).sum() + command.quantidade();
-        if (produto.quantity() < totalSolicitado) {
+                .map(OrdemServico.ProdutoUsado::quantidade)
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .add(command.quantidade());
+        if (produto.quantity().compareTo(totalSolicitado) < 0) {
             throw new IllegalArgumentException("Saldo insuficiente para usar produto na OS.");
         }
         BigDecimal valorUnitario = command.valorUnitario() == null ? produto.salePrice() : command.valorUnitario();
@@ -453,7 +474,7 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
         return repository.save(new OrdemServico(
                 ordem.id(), ordem.numeroOs(), ordem.clienteId(), ordem.contratoId(), ordem.titulo(), ordem.descricao(), ordem.tipoServico(),
                 ordem.status(), ordem.dataAgendada(), ordem.dataInicio(), ordem.dataFim(), ordem.responsavelInternoId(), ordem.executadoPorId(),
-                ordem.foiFeito(), ordem.pago(), ordem.valorServico(), ordem.assinaturaCliente(), produtos, ordem.anexos(), ordem.observacoes(), ordem.dadosFormulario()
+                ordem.foiFeito(), ordem.pago(), ordem.valorServico(), ordem.assinaturaCliente(), produtos, ordem.anexos(), ordem.observacoes(), ordem.dadosFormulario(), ordem.regraCobranca()
         ));
     }
 
@@ -475,7 +496,7 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
         return repository.save(new OrdemServico(
                 ordem.id(), ordem.numeroOs(), ordem.clienteId(), ordem.contratoId(), ordem.titulo(), ordem.descricao(), ordem.tipoServico(),
                 ordem.status(), ordem.dataAgendada(), ordem.dataInicio(), ordem.dataFim(), ordem.responsavelInternoId(), ordem.executadoPorId(),
-                ordem.foiFeito(), ordem.pago(), ordem.valorServico(), assinatura, ordem.produtos(), anexos, ordem.observacoes(), ordem.dadosFormulario()
+                ordem.foiFeito(), ordem.pago(), ordem.valorServico(), assinatura, ordem.produtos(), anexos, ordem.observacoes(), ordem.dadosFormulario(), ordem.regraCobranca()
         ));
     }
 
@@ -486,7 +507,8 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
                 ordem.id(), ordem.numeroOs(), ordem.clienteId(), ordem.contratoId(), ordem.titulo(), ordem.descricao(), ordem.tipoServico(),
                 ordem.status(), ordem.dataAgendada(), ordem.dataInicio(), ordem.dataFim(), ordem.responsavelInternoId(), ordem.executadoPorId(),
                 ordem.foiFeito(), ordem.pago(), ordem.valorServico(), ordem.assinaturaCliente(), ordem.produtos(), ordem.anexos(), ordem.observacoes(),
-                dados == null ? DadosFormularioServico.vazio() : dados
+                dados == null ? DadosFormularioServico.vazio() : dados,
+                ordem.regraCobranca()
         ));
     }
 
@@ -546,43 +568,38 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
     }
 
     private void reservarMateriais(OrdemServico ordem) {
-        Map<String, Integer> solicitados = ordem.produtos().stream()
-                .collect(Collectors.groupingBy(OrdemServico.ProdutoUsado::produtoId,
-                        Collectors.summingInt(OrdemServico.ProdutoUsado::quantidade)));
-        for (Map.Entry<String, Integer> entrada : solicitados.entrySet()) {
+        Map<String, BigDecimal> solicitados = quantidadesPorProduto(ordem);
+        for (Map.Entry<String, BigDecimal> entrada : solicitados.entrySet()) {
             ItemEstoque item = repositorioEstoque.findById(entrada.getKey())
                     .orElseThrow(() -> new IllegalArgumentException("Produto da OS nao encontrado."));
-            int reservado = saldoMovimentos(item, ordem.id(), ItemEstoque.MovementType.RESERVA_OS,
+            BigDecimal reservado = saldoMovimentos(item, ordem.id(), ItemEstoque.MovementType.RESERVA_OS,
                     ItemEstoque.MovementType.DEVOLUCAO_RESERVA_OS);
-            int restante = entrada.getValue() - reservado;
-            if (restante <= 0) {
+            BigDecimal restante = entrada.getValue().subtract(reservado);
+            if (restante.signum() <= 0) {
                 continue;
             }
             casoDeUsoEstoque.recordMovement(new CasoDeUsoEstoque.RecordInventoryMovementCommand(
                     item.id(), idMovimento(ordem.id(), item.id(), "RESERVA"), ItemEstoque.MovementType.RESERVA_OS,
                     restante, java.time.LocalDate.now(TIMEZONE_OFICIAL), item.costPrice(),
-                    item.costPrice().multiply(BigDecimal.valueOf(restante)), "", ordem.clienteId(), ordem.id(),
+                    item.costPrice().multiply(restante), "", ordem.clienteId(), ordem.id(),
                     "Reserva para OS " + (ordem.numeroOs() == null ? ordem.id() : ordem.numeroOs()),
                     ordem.executadoPorId(), ordem.executadoPorId(), "", "Reserva automatica ao iniciar a OS."));
         }
     }
 
-    private void validarMateriaisReservados(OrdemServico ordem) {
-        Map<String, Integer> quantidadesPorProduto = ordem.produtos().stream()
+    private Map<String, BigDecimal> quantidadesPorProduto(OrdemServico ordem) {
+        return ordem.produtos().stream()
                 .collect(Collectors.groupingBy(OrdemServico.ProdutoUsado::produtoId,
-                        Collectors.summingInt(OrdemServico.ProdutoUsado::quantidade)));
-        for (Map.Entry<String, Integer> entrada : quantidadesPorProduto.entrySet()) {
+                        Collectors.reducing(BigDecimal.ZERO, OrdemServico.ProdutoUsado::quantidade, BigDecimal::add)));
+    }
+
+    private void validarMateriaisReservados(OrdemServico ordem) {
+        for (Map.Entry<String, BigDecimal> entrada : quantidadesPorProduto(ordem).entrySet()) {
             ItemEstoque item = repositorioEstoque.findById(entrada.getKey())
                     .orElseThrow(() -> new IllegalArgumentException("Produto da OS nao encontrado."));
-            int reservado = item.movements().stream()
-                    .filter(movimento -> ordem.id().equals(movimento.orderReference()))
-                    .mapToInt(movimento -> switch (movimento.type()) {
-                        case RESERVA_OS -> movimento.amount();
-                        case DEVOLUCAO_RESERVA_OS -> -movimento.amount();
-                        default -> 0;
-                    })
-                    .sum();
-            if (reservado < entrada.getValue()) {
+            BigDecimal reservado = saldoMovimentos(item, ordem.id(), ItemEstoque.MovementType.RESERVA_OS,
+                    ItemEstoque.MovementType.DEVOLUCAO_RESERVA_OS);
+            if (reservado.compareTo(entrada.getValue()) < 0) {
                 throw new IllegalStateException("Materiais da OS nao estao integralmente reservados para o produto " + item.name() + ".");
             }
         }
@@ -593,22 +610,24 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
                 .collect(Collectors.groupingBy(OrdemServico.ProdutoUsado::produtoId));
         for (List<OrdemServico.ProdutoUsado> itens : agrupados.values()) {
             OrdemServico.ProdutoUsado produto = itens.getFirst();
-            int quantidade = itens.stream().mapToInt(OrdemServico.ProdutoUsado::quantidade).sum();
+            BigDecimal quantidade = itens.stream().map(OrdemServico.ProdutoUsado::quantidade)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
             ItemEstoque itemEstoque = repositorioEstoque.findById(produto.produtoId())
                     .orElseThrow(() -> new IllegalArgumentException("Produto da OS nao encontrado."));
-            int consumido = saldoMovimentos(itemEstoque, ordem.id(), ItemEstoque.MovementType.CONSUMO_RESERVA_OS,
+            BigDecimal consumido = saldoMovimentos(itemEstoque, ordem.id(), ItemEstoque.MovementType.CONSUMO_RESERVA_OS,
                     ItemEstoque.MovementType.ESTORNO_CONSUMO_OS);
-            if (consumido >= quantidade) {
+            if (consumido.compareTo(quantidade) >= 0) {
                 continue;
             }
+            BigDecimal restanteConsumo = quantidade.subtract(consumido);
             casoDeUsoEstoque.recordMovement(new CasoDeUsoEstoque.RecordInventoryMovementCommand(
                     produto.produtoId(),
                     idMovimento(ordem.id(), produto.produtoId(), "CONSUMO"),
                     ItemEstoque.MovementType.CONSUMO_RESERVA_OS,
-                    quantidade - consumido,
+                    restanteConsumo,
                     java.time.LocalDate.now(TIMEZONE_OFICIAL),
                     itemEstoque.costPrice(),
-                    itemEstoque.costPrice().multiply(BigDecimal.valueOf(quantidade - consumido)),
+                    itemEstoque.costPrice().multiply(restanteConsumo),
                     "",
                     ordem.clienteId(),
                     ordem.id(),
@@ -628,15 +647,15 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
             OrdemServico.ProdutoUsado produto = itens.getFirst();
             ItemEstoque itemEstoque = repositorioEstoque.findById(produto.produtoId())
                     .orElseThrow(() -> new IllegalArgumentException("Produto da OS nao encontrado."));
-            int quantidade = saldoMovimentos(itemEstoque, ordem.id(), ItemEstoque.MovementType.RESERVA_OS,
+            BigDecimal quantidade = saldoMovimentos(itemEstoque, ordem.id(), ItemEstoque.MovementType.RESERVA_OS,
                     ItemEstoque.MovementType.DEVOLUCAO_RESERVA_OS);
-            if (quantidade <= 0) {
+            if (quantidade.signum() <= 0) {
                 continue;
             }
             casoDeUsoEstoque.recordMovement(new CasoDeUsoEstoque.RecordInventoryMovementCommand(
                     produto.produtoId(), idMovimento(ordem.id(), produto.produtoId(), "DEVOLUCAO"), ItemEstoque.MovementType.DEVOLUCAO_RESERVA_OS,
                     quantidade, java.time.LocalDate.now(TIMEZONE_OFICIAL), itemEstoque.costPrice(),
-                    itemEstoque.costPrice().multiply(BigDecimal.valueOf(quantidade)), "", ordem.clienteId(), ordem.id(),
+                    itemEstoque.costPrice().multiply(quantidade), "", ordem.clienteId(), ordem.id(),
                     "Devolucao da reserva da OS " + (ordem.numeroOs() == null ? ordem.id() : ordem.numeroOs()),
                     ordem.executadoPorId(), ordem.executadoPorId(), "", "Devolucao automatica por cancelamento da OS."
             ));
@@ -644,29 +663,29 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
     }
 
     private void estornarMateriaisConsumidos(OrdemServico ordem) {
-        Map<String, Integer> consumidosPorProduto = new java.util.HashMap<>();
+        Map<String, BigDecimal> consumidosPorProduto = new java.util.HashMap<>();
         for (OrdemServico.ProdutoUsado produto : ordem.produtos()) {
             ItemEstoque item = repositorioEstoque.findById(produto.produtoId())
                     .orElseThrow(() -> new IllegalArgumentException("Produto da OS nao encontrado."));
-            int consumido = item.movements().stream()
+            BigDecimal consumido = item.movements().stream()
                     .filter(movimento -> ordem.id().equals(movimento.orderReference()))
-                    .mapToInt(movimento -> switch (movimento.type()) {
+                    .map(movimento -> switch (movimento.type()) {
                         case CONSUMO_RESERVA_OS, USO_OS -> movimento.amount();
-                        case ESTORNO_CONSUMO_OS -> -movimento.amount();
-                        default -> 0;
+                        case ESTORNO_CONSUMO_OS -> movimento.amount().negate();
+                        default -> BigDecimal.ZERO;
                     })
-                    .sum();
-            if (consumido > 0) {
-                consumidosPorProduto.merge(produto.produtoId(), consumido, Math::max);
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            if (consumido.signum() > 0) {
+                consumidosPorProduto.merge(produto.produtoId(), consumido, BigDecimal::max);
             }
         }
-        for (Map.Entry<String, Integer> entrada : consumidosPorProduto.entrySet()) {
+        for (Map.Entry<String, BigDecimal> entrada : consumidosPorProduto.entrySet()) {
             ItemEstoque item = repositorioEstoque.findById(entrada.getKey())
                     .orElseThrow(() -> new IllegalArgumentException("Produto da OS nao encontrado."));
             casoDeUsoEstoque.recordMovement(new CasoDeUsoEstoque.RecordInventoryMovementCommand(
                     item.id(), UUID.randomUUID().toString(), ItemEstoque.MovementType.ESTORNO_CONSUMO_OS,
                     entrada.getValue(), java.time.LocalDate.now(), item.costPrice(),
-                    item.costPrice().multiply(BigDecimal.valueOf(entrada.getValue())), "", ordem.clienteId(), ordem.id(),
+                    item.costPrice().multiply(entrada.getValue()), "", ordem.clienteId(), ordem.id(),
                     "Estorno de consumo da OS " + (ordem.numeroOs() == null ? ordem.id() : ordem.numeroOs()),
                     ordem.executadoPorId(), ordem.executadoPorId(), "", "Devolucao automatica por estorno da OS concluida."
             ));
@@ -683,8 +702,19 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
         return atual + System.lineSeparator() + "[CANCELAMENTO] " + motivo.trim();
     }
 
+    /**
+     * OS avulsa fatura na conclusao. OS contratual COBERTA_PELO_CONTRATO nao
+     * gera conta propria (a mensalidade cobre); COBRAR_EXTRA gera no maximo
+     * uma cobranca (unicidade por OS garantida no banco, com contrato e
+     * vigencia herdados da OS). Contratual legada sem regra explicita nao
+     * fatura e permanece no relatorio de conciliacao.
+     */
     private void gerarFinanceiroSePossivel(OrdemServico ordemServico) {
-        if (casoDeUsoFinanceiro != null && ordemServico.contratoId().isBlank() && ordemServico.totalGeral().signum() > 0) {
+        if (casoDeUsoFinanceiro == null || ordemServico.totalGeral().signum() <= 0) {
+            return;
+        }
+        if (ordemServico.contratoId().isBlank()
+                || ordemServico.regraCobranca() == OrdemServico.RegraCobranca.COBRAR_EXTRA) {
             casoDeUsoFinanceiro.gerarContaReceberOrdemServico(ordemServico);
         }
     }
@@ -721,13 +751,13 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
                 .ifPresent(lancamento -> casoDeUsoFinanceiro.cancel(lancamento.id(), motivoCancelamento));
     }
 
-    private int saldoMovimentos(ItemEstoque item, String ordemId, ItemEstoque.MovementType positivo,
-                                ItemEstoque.MovementType negativo) {
+    private BigDecimal saldoMovimentos(ItemEstoque item, String ordemId, ItemEstoque.MovementType positivo,
+                                       ItemEstoque.MovementType negativo) {
         return item.movements().stream()
                 .filter(movimento -> ordemId.equals(movimento.orderReference()))
-                .mapToInt(movimento -> movimento.type() == positivo ? movimento.amount()
-                        : movimento.type() == negativo ? -movimento.amount() : 0)
-                .sum();
+                .map(movimento -> movimento.type() == positivo ? movimento.amount()
+                        : movimento.type() == negativo ? movimento.amount().negate() : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     private String idMovimento(String ordemId, String produtoId, String efeito) {

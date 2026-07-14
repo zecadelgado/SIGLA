@@ -97,7 +97,7 @@ public class ControladorNovaMovimentacao {
         try {
             ValidadorEntrada validador = ValidadorEntrada.nova();
             OpcaoId produto = validador.selecao(UtilComboBox.selecionado(produtoCombo), "o produto");
-            int quantidade = validador.inteiroPositivo(texto(quantidadeField), "a quantidade");
+            java.math.BigDecimal quantidade = validador.quantidadePositiva(texto(quantidadeField), "a quantidade");
             validador.validar();
 
             var cliente = UtilComboBox.selecionado(clienteCombo);
@@ -135,7 +135,7 @@ public class ControladorNovaMovimentacao {
 
     private void recomputeTotal() {
         try {
-            BigDecimal quantidade = new BigDecimal(quantidadeField.getText().trim());
+            BigDecimal quantidade = br.com.sigla.interfacegrafica.util.FormatadorQuantidade.parse(quantidadeField.getText());
             BigDecimal valorUnitario = formatadorMoeda.valor(valorUnitarioField);
             valorTotalField.setText(quantidade.multiply(valorUnitario).toPlainString());
         } catch (Exception ignored) {

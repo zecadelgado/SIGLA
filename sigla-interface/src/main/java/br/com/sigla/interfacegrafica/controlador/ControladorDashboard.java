@@ -219,7 +219,7 @@ public class ControladorDashboard {
         }
         List<ItemEstoque> top = itens.stream()
                 .filter(ItemEstoque::ativo)
-                .sorted(Comparator.comparingInt(ItemEstoque::quantity).reversed())
+                .sorted(Comparator.comparing(ItemEstoque::quantity).reversed())
                 .limit(5)
                 .toList();
         XYChart.Series<String, Number> serie = new XYChart.Series<>();

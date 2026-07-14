@@ -9,6 +9,13 @@ public interface RepositorioEstoque {
 
     void save(ItemEstoque item);
 
+    /**
+     * Anexa um movimento a razao imutavel de estoque. O saldo materializado do
+     * produto e atualizado de forma atomica pela persistencia (trigger no
+     * PostgreSQL), nunca por releitura/regravacao do agregado.
+     */
+    void registrarMovimento(ItemEstoque item, ItemEstoque.InventoryMovement movimento);
+
     List<ItemEstoque> findAll();
 
     Optional<ItemEstoque> findById(String id);

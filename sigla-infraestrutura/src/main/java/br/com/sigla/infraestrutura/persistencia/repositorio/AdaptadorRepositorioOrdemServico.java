@@ -85,7 +85,7 @@ public class AdaptadorRepositorioOrdemServico implements RepositorioOrdemServico
                                 PersistenciaIds.toString(produto.getId()),
                                 PersistenciaIds.toString(produto.getProdutoId()),
                                 "",
-                                produto.getQuantidade() == null ? 0 : produto.getQuantidade().intValue(),
+                                produto.getQuantidade() == null ? BigDecimal.ONE : produto.getQuantidade(),
                                 produto.getValorUnitario(),
                                 produto.getValorTotal()
                         ))
@@ -103,7 +103,8 @@ public class AdaptadorRepositorioOrdemServico implements RepositorioOrdemServico
                         ))
                         .toList(),
                 entity.getObservacoes(),
-                entity.getDadosFormulario()
+                entity.getDadosFormulario(),
+                OrdemServico.RegraCobranca.from(entity.getRegraCobranca())
         );
     }
 
@@ -127,12 +128,13 @@ public class AdaptadorRepositorioOrdemServico implements RepositorioOrdemServico
         entity.setAssinaturaCliente(ordemServico.assinaturaCliente());
         entity.setObservacoes(ordemServico.observacoes());
         entity.setDadosFormulario(ordemServico.dadosFormulario());
+        entity.setRegraCobranca(ordemServico.regraCobranca() == null ? null : ordemServico.regraCobranca().name());
         List<OrdemServicoEntidade.ProdutoEntidade> produtos = new ArrayList<>();
         for (OrdemServico.ProdutoUsado produto : ordemServico.produtos()) {
             OrdemServicoEntidade.ProdutoEntidade produtoEntidade = new OrdemServicoEntidade.ProdutoEntidade();
             produtoEntidade.setId(PersistenciaIds.toUuid(produto.id().isBlank() ? UUID.randomUUID().toString() : produto.id()));
             produtoEntidade.setProdutoId(PersistenciaIds.toUuid(produto.produtoId()));
-            produtoEntidade.setQuantidade(BigDecimal.valueOf(produto.quantidade()));
+            produtoEntidade.setQuantidade(produto.quantidade());
             produtoEntidade.setValorUnitario(produto.valorUnitario());
             produtoEntidade.setValorTotal(produto.valorTotal());
             produtos.add(produtoEntidade);

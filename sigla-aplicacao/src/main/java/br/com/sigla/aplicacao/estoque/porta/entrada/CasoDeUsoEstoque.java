@@ -31,8 +31,8 @@ public interface CasoDeUsoEstoque {
             String sku,
             BigDecimal costPrice,
             BigDecimal salePrice,
-            int quantity,
-            int minimumQuantity,
+            BigDecimal quantity,
+            BigDecimal minimumQuantity,
             String unit,
             boolean ativo
     ) {
@@ -42,15 +42,15 @@ public interface CasoDeUsoEstoque {
                 String description,
                 BigDecimal costPrice,
                 BigDecimal salePrice,
-                int quantity,
-                int minimumQuantity,
+                BigDecimal quantity,
+                BigDecimal minimumQuantity,
                 String unit
         ) {
             this(id, name, description, "", costPrice, salePrice, quantity, minimumQuantity, unit, true);
         }
 
-        public RegisterItemEstoqueCommand(String id, String name, int quantity, String unit) {
-            this(id, name, "", "", BigDecimal.ZERO, BigDecimal.ZERO, quantity, 0, unit, true);
+        public RegisterItemEstoqueCommand(String id, String name, BigDecimal quantity, String unit) {
+            this(id, name, "", "", BigDecimal.ZERO, BigDecimal.ZERO, quantity, BigDecimal.ZERO, unit, true);
         }
     }
 
@@ -58,7 +58,7 @@ public interface CasoDeUsoEstoque {
             String itemId,
             String movementId,
             ItemEstoque.MovementType type,
-            int amount,
+            BigDecimal amount,
             LocalDate occurredOn,
             BigDecimal unitPrice,
             BigDecimal totalPrice,
@@ -75,7 +75,7 @@ public interface CasoDeUsoEstoque {
                 String itemId,
                 String movementId,
                 ItemEstoque.MovementType type,
-                int amount,
+                BigDecimal amount,
                 LocalDate occurredOn,
                 BigDecimal unitPrice,
                 BigDecimal totalPrice,
@@ -92,7 +92,7 @@ public interface CasoDeUsoEstoque {
                 String itemId,
                 String movementId,
                 ItemEstoque.MovementType type,
-                int amount,
+                BigDecimal amount,
                 LocalDate occurredOn,
                 String handledBy,
                 String purchasedBy,
@@ -124,7 +124,7 @@ public interface CasoDeUsoEstoque {
             String itemName,
             String movementId,
             ItemEstoque.MovementType type,
-            int amount,
+            BigDecimal amount,
             LocalDate occurredOn,
             BigDecimal unitPrice,
             BigDecimal totalPrice,

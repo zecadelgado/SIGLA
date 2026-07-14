@@ -36,13 +36,13 @@ class CasoDeUsoGerenciarOrdemServicoTest {
         FakeEstoque estoque = new FakeEstoque();
         CasoDeUsoGerenciarEstoque casoEstoque = new CasoDeUsoGerenciarEstoque(estoque);
         casoEstoque.registerItem(new CasoDeUsoEstoque.RegisterItemEstoqueCommand(
-                "produto-1", "Produto", "Descricao", "SKU-1", BigDecimal.TEN, BigDecimal.valueOf(15), 5, 1, "un", true));
+                "produto-1", "Produto", "Descricao", "SKU-1", BigDecimal.TEN, BigDecimal.valueOf(15), BigDecimal.valueOf(5), BigDecimal.valueOf(1), "un", true));
 
         CasoDeUsoGerenciarOrdemServico casoOs = new CasoDeUsoGerenciarOrdemServico(new FakeOs(), estoque, casoEstoque);
         casoOs.create(new CasoDeUsoOrdemServico.CreateOrdemServicoCommand(
                 "os-1", "cliente-1", "", "Servico", "Descricao", "Limpeza", OrdemServico.OrdemServicoStatus.AGENDADA,
                 LocalDateTime.now(), null, null, "", "", BigDecimal.valueOf(100), ""));
-        casoOs.adicionarProduto(new CasoDeUsoOrdemServico.AdicionarProdutoOrdemCommand("os-1", "uso-1", "produto-1", 2, BigDecimal.valueOf(15)));
+        casoOs.adicionarProduto(new CasoDeUsoOrdemServico.AdicionarProdutoOrdemCommand("os-1", "uso-1", "produto-1", BigDecimal.valueOf(2), BigDecimal.valueOf(15)));
         casoOs.start("os-1");
 
         OrdemServico concluida = casoOs.conclude(new CasoDeUsoOrdemServico.ConcluirOrdemServicoCommand("os-1", "func-1", null, true));
@@ -51,7 +51,7 @@ class CasoDeUsoGerenciarOrdemServicoTest {
         assertTrue(concluida.foiFeito());
         assertTrue(concluida.assinaturaCliente());
         assertEquals(0, BigDecimal.valueOf(130).compareTo(concluida.totalGeral()));
-        assertEquals(3, estoque.findById("produto-1").orElseThrow().quantity());
+        assertEquals(0, BigDecimal.valueOf(3).compareTo(estoque.findById("produto-1").orElseThrow().quantity()));
         assertEquals(2, estoque.findById("produto-1").orElseThrow().movements().size());
         assertEquals(OrdemServico.OrdemServicoStatus.CONCLUIDA,
                 casoOs.conclude(new CasoDeUsoOrdemServico.ConcluirOrdemServicoCommand("os-1", "func-1", null, true)).status());
@@ -63,14 +63,14 @@ class CasoDeUsoGerenciarOrdemServicoTest {
         FakeEstoque estoque = new FakeEstoque();
         CasoDeUsoGerenciarEstoque casoEstoque = new CasoDeUsoGerenciarEstoque(estoque);
         casoEstoque.registerItem(new CasoDeUsoEstoque.RegisterItemEstoqueCommand(
-                "produto-1", "Produto", "Descricao", "SKU-1", BigDecimal.TEN, BigDecimal.valueOf(15), 1, 1, "un", true));
+                "produto-1", "Produto", "Descricao", "SKU-1", BigDecimal.TEN, BigDecimal.valueOf(15), BigDecimal.valueOf(1), BigDecimal.valueOf(1), "un", true));
         CasoDeUsoGerenciarOrdemServico casoOs = new CasoDeUsoGerenciarOrdemServico(new FakeOs(), estoque, casoEstoque);
         casoOs.create(new CasoDeUsoOrdemServico.CreateOrdemServicoCommand(
                 "os-1", "cliente-1", "", "Servico", "Descricao", "Limpeza", OrdemServico.OrdemServicoStatus.AGENDADA,
                 LocalDateTime.now(), null, null, "", "", BigDecimal.valueOf(100), ""));
 
         assertThrows(IllegalArgumentException.class, () -> casoOs.adicionarProduto(
-                new CasoDeUsoOrdemServico.AdicionarProdutoOrdemCommand("os-1", "uso-1", "produto-1", 2, BigDecimal.valueOf(15))));
+                new CasoDeUsoOrdemServico.AdicionarProdutoOrdemCommand("os-1", "uso-1", "produto-1", BigDecimal.valueOf(2), BigDecimal.valueOf(15))));
     }
 
     @Test
@@ -78,16 +78,16 @@ class CasoDeUsoGerenciarOrdemServicoTest {
         FakeEstoque estoque = new FakeEstoque();
         CasoDeUsoGerenciarEstoque casoEstoque = new CasoDeUsoGerenciarEstoque(estoque);
         casoEstoque.registerItem(new CasoDeUsoEstoque.RegisterItemEstoqueCommand(
-                "produto-1", "Produto", "Descricao", "SKU-1", BigDecimal.TEN, BigDecimal.valueOf(15), 10, 1, "un", true));
+                "produto-1", "Produto", "Descricao", "SKU-1", BigDecimal.TEN, BigDecimal.valueOf(15), BigDecimal.valueOf(10), BigDecimal.valueOf(1), "un", true));
         CasoDeUsoGerenciarOrdemServico casoOs = new CasoDeUsoGerenciarOrdemServico(new FakeOs(), estoque, casoEstoque);
         casoOs.create(new CasoDeUsoOrdemServico.CreateOrdemServicoCommand(
                 "os-1", "cliente-1", "", "Servico", "Descricao", "Limpeza", OrdemServico.OrdemServicoStatus.AGENDADA,
                 LocalDateTime.now(), null, null, "", "", BigDecimal.ZERO, ""));
 
-        casoOs.adicionarProduto(new CasoDeUsoOrdemServico.AdicionarProdutoOrdemCommand("os-1", "uso-1", "produto-1", 6, BigDecimal.valueOf(15)));
+        casoOs.adicionarProduto(new CasoDeUsoOrdemServico.AdicionarProdutoOrdemCommand("os-1", "uso-1", "produto-1", BigDecimal.valueOf(6), BigDecimal.valueOf(15)));
         assertThrows(IllegalArgumentException.class, () -> casoOs.adicionarProduto(
-                new CasoDeUsoOrdemServico.AdicionarProdutoOrdemCommand("os-1", "uso-2", "produto-1", 6, BigDecimal.valueOf(15))));
-        assertEquals(6, casoOs.listAll().getFirst().produtos().getFirst().quantidade());
+                new CasoDeUsoOrdemServico.AdicionarProdutoOrdemCommand("os-1", "uso-2", "produto-1", BigDecimal.valueOf(6), BigDecimal.valueOf(15))));
+        assertEquals(0, BigDecimal.valueOf(6).compareTo(casoOs.listAll().getFirst().produtos().getFirst().quantidade()));
     }
 
     @Test
@@ -95,24 +95,24 @@ class CasoDeUsoGerenciarOrdemServicoTest {
         FakeEstoque estoque = new FakeEstoque();
         CasoDeUsoGerenciarEstoque casoEstoque = new CasoDeUsoGerenciarEstoque(estoque);
         casoEstoque.registerItem(new CasoDeUsoEstoque.RegisterItemEstoqueCommand(
-                "produto-1", "Produto", "Descricao", "SKU-1", BigDecimal.TEN, BigDecimal.valueOf(15), 10, 1, "un", true));
+                "produto-1", "Produto", "Descricao", "SKU-1", BigDecimal.TEN, BigDecimal.valueOf(15), BigDecimal.valueOf(10), BigDecimal.valueOf(1), "un", true));
         CasoDeUsoGerenciarOrdemServico casoOs = new CasoDeUsoGerenciarOrdemServico(new FakeOs(), estoque, casoEstoque);
         casoOs.create(new CasoDeUsoOrdemServico.CreateOrdemServicoCommand(
                 "os-1", "cliente-1", "", "Servico", "Descricao", "Limpeza", OrdemServico.OrdemServicoStatus.AGENDADA,
                 LocalDateTime.now(), null, null, "", "", BigDecimal.ZERO, ""));
 
-        casoOs.adicionarProduto(new CasoDeUsoOrdemServico.AdicionarProdutoOrdemCommand("os-1", "uso-1", "produto-1", 6, BigDecimal.valueOf(15)));
-        casoOs.adicionarProduto(new CasoDeUsoOrdemServico.AdicionarProdutoOrdemCommand("os-1", "uso-2", "produto-1", 4, BigDecimal.valueOf(15)));
-        assertEquals(10, estoque.findById("produto-1").orElseThrow().quantity());
+        casoOs.adicionarProduto(new CasoDeUsoOrdemServico.AdicionarProdutoOrdemCommand("os-1", "uso-1", "produto-1", BigDecimal.valueOf(6), BigDecimal.valueOf(15)));
+        casoOs.adicionarProduto(new CasoDeUsoOrdemServico.AdicionarProdutoOrdemCommand("os-1", "uso-2", "produto-1", BigDecimal.valueOf(4), BigDecimal.valueOf(15)));
+        assertEquals(0, BigDecimal.valueOf(10).compareTo(estoque.findById("produto-1").orElseThrow().quantity()));
         casoOs.start("os-1");
-        assertEquals(0, estoque.findById("produto-1").orElseThrow().quantity());
+        assertEquals(0, BigDecimal.valueOf(0).compareTo(estoque.findById("produto-1").orElseThrow().quantity()));
 
         casoOs.conclude("os-1");
         ItemEstoque item = estoque.findById("produto-1").orElseThrow();
-        assertEquals(0, item.quantity());
+        assertEquals(0, BigDecimal.valueOf(0).compareTo(item.quantity()));
         assertEquals(2, item.movements().size());
         assertEquals(1, item.movements().stream().filter(movimento -> movimento.type() == ItemEstoque.MovementType.CONSUMO_RESERVA_OS).count());
-        assertEquals(10, item.movements().stream().filter(movimento -> movimento.type() == ItemEstoque.MovementType.CONSUMO_RESERVA_OS).findFirst().orElseThrow().amount());
+        assertEquals(0, BigDecimal.valueOf(10).compareTo(item.movements().stream().filter(movimento -> movimento.type() == ItemEstoque.MovementType.CONSUMO_RESERVA_OS).findFirst().orElseThrow().amount()));
     }
 
     @Test
@@ -120,18 +120,18 @@ class CasoDeUsoGerenciarOrdemServicoTest {
         FakeEstoque estoque = new FakeEstoque();
         CasoDeUsoGerenciarEstoque casoEstoque = new CasoDeUsoGerenciarEstoque(estoque);
         casoEstoque.registerItem(new CasoDeUsoEstoque.RegisterItemEstoqueCommand(
-                "produto-1", "Produto", "Descricao", "SKU-1", BigDecimal.TEN, BigDecimal.valueOf(15), 5, 1, "un", true));
+                "produto-1", "Produto", "Descricao", "SKU-1", BigDecimal.TEN, BigDecimal.valueOf(15), BigDecimal.valueOf(5), BigDecimal.valueOf(1), "un", true));
         CasoDeUsoGerenciarOrdemServico casoOs = new CasoDeUsoGerenciarOrdemServico(new FakeOs(), estoque, casoEstoque);
         casoOs.create(new CasoDeUsoOrdemServico.CreateOrdemServicoCommand(
                 "os-1", "cliente-1", "", "Servico", "Descricao", "Limpeza", OrdemServico.OrdemServicoStatus.AGENDADA,
                 LocalDateTime.now(), null, null, "", "", BigDecimal.ZERO, ""));
-        casoOs.adicionarProduto(new CasoDeUsoOrdemServico.AdicionarProdutoOrdemCommand("os-1", "uso-1", "produto-1", 3, BigDecimal.valueOf(15)));
+        casoOs.adicionarProduto(new CasoDeUsoOrdemServico.AdicionarProdutoOrdemCommand("os-1", "uso-1", "produto-1", BigDecimal.valueOf(3), BigDecimal.valueOf(15)));
         casoOs.start("os-1");
 
         casoOs.cancel("os-1");
 
         ItemEstoque item = estoque.findById("produto-1").orElseThrow();
-        assertEquals(5, item.quantity());
+        assertEquals(0, BigDecimal.valueOf(5).compareTo(item.quantity()));
         assertEquals(ItemEstoque.MovementType.DEVOLUCAO_RESERVA_OS, item.movements().getLast().type());
     }
 
@@ -140,12 +140,12 @@ class CasoDeUsoGerenciarOrdemServicoTest {
         FakeEstoque estoque = new FakeEstoque();
         CasoDeUsoGerenciarEstoque casoEstoque = new CasoDeUsoGerenciarEstoque(estoque);
         casoEstoque.registerItem(new CasoDeUsoEstoque.RegisterItemEstoqueCommand(
-                "produto-1", "Produto", "Descricao", "SKU-1", BigDecimal.TEN, BigDecimal.valueOf(15), 5, 1, "un", true));
+                "produto-1", "Produto", "Descricao", "SKU-1", BigDecimal.TEN, BigDecimal.valueOf(15), BigDecimal.valueOf(5), BigDecimal.valueOf(1), "un", true));
         CasoDeUsoGerenciarOrdemServico casoOs = new CasoDeUsoGerenciarOrdemServico(new FakeOs(), estoque, casoEstoque);
         casoOs.create(new CasoDeUsoOrdemServico.CreateOrdemServicoCommand(
                 "os-1", "cliente-1", "", "Servico", "Descricao", "Limpeza", OrdemServico.OrdemServicoStatus.AGENDADA,
                 LocalDateTime.now(), null, null, "", "", BigDecimal.ZERO, ""));
-        casoOs.adicionarProduto(new CasoDeUsoOrdemServico.AdicionarProdutoOrdemCommand("os-1", "uso-1", "produto-1", 3, BigDecimal.valueOf(15)));
+        casoOs.adicionarProduto(new CasoDeUsoOrdemServico.AdicionarProdutoOrdemCommand("os-1", "uso-1", "produto-1", BigDecimal.valueOf(3), BigDecimal.valueOf(15)));
         casoOs.conclude("os-1");
 
         assertThrows(IllegalArgumentException.class, () ->
@@ -153,7 +153,7 @@ class CasoDeUsoGerenciarOrdemServicoTest {
 
         ItemEstoque item = estoque.findById("produto-1").orElseThrow();
         assertEquals(OrdemServico.OrdemServicoStatus.CONCLUIDA, casoOs.listAll().getFirst().status());
-        assertEquals(2, item.quantity());
+        assertEquals(0, BigDecimal.valueOf(2).compareTo(item.quantity()));
         assertEquals(ItemEstoque.MovementType.CONSUMO_RESERVA_OS, item.movements().getLast().type());
     }
 
@@ -345,7 +345,9 @@ class CasoDeUsoGerenciarOrdemServicoTest {
         return new CasoDeUsoOrdemServico.CreateOrdemServicoCommand(
                 id, clienteId, contratoId, "Visita", "", "visita_contrato",
                 OrdemServico.OrdemServicoStatus.AGENDADA, data, null, null,
-                "", "", BigDecimal.ZERO, "");
+                "", "", BigDecimal.ZERO, "",
+                br.com.sigla.dominio.servicos.DadosFormularioServico.vazio(),
+                OrdemServico.RegraCobranca.COBERTA_PELO_CONTRATO);
     }
 
     private static Contrato contrato(String id, String clienteId, LocalDate inicio, LocalDate fim,
@@ -472,6 +474,11 @@ class CasoDeUsoGerenciarOrdemServicoTest {
 
         @Override
         public void save(ItemEstoque item) {
+            storage.put(item.id(), item);
+        }
+
+        @Override
+        public void registrarMovimento(ItemEstoque item, ItemEstoque.InventoryMovement movimento) {
             storage.put(item.id(), item);
         }
 

@@ -7,6 +7,7 @@ import br.com.sigla.dominio.estoque.ItemEstoque;
 import br.com.sigla.dominio.financeiro.DespesaFinanceira;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -43,7 +44,7 @@ public class CasoDeUsoGerenciarEstoque implements CasoDeUsoEstoque {
     public void updateItem(RegisterItemEstoqueCommand command) {
         ItemEstoque atual = repository.findById(command.id())
                 .orElseThrow(() -> new IllegalArgumentException("Produto nao encontrado."));
-        if (command.quantity() != atual.quantity()) {
+        if (command.quantity() == null || command.quantity().compareTo(atual.quantity()) != 0) {
             throw new IllegalArgumentException("Saldo nao pode ser alterado pela edicao do produto. Registre uma movimentacao de entrada, saida ou ajuste justificado.");
         }
         ItemEstoque item = toItem(command, atual.movements());
@@ -95,7 +96,14 @@ public class CasoDeUsoGerenciarEstoque implements CasoDeUsoEstoque {
         );
     }
 
+    /**
+     * Movimentacao manual + efeito financeiro em UMA transacao: se a despesa
+     * falhar, o movimento de estoque sofre rollback completo. O saldo
+     * materializado e mantido de forma atomica no PostgreSQL (razao imutavel +
+     * trigger); aqui apenas validamos e anexamos o movimento.
+     */
     @Override
+    @Transactional
     public void recordMovement(RecordInventoryMovementCommand command) {
         ItemEstoque item = repository.findById(command.itemId())
                 .orElseThrow(() -> new IllegalArgumentException("Inventory item not found: " + command.itemId()));
@@ -108,17 +116,23 @@ public class CasoDeUsoGerenciarEstoque implements CasoDeUsoEstoque {
         ItemEstoque.MovementType type = command.type() == null
                 ? ItemEstoque.MovementType.SAIDA
                 : ItemEstoque.MovementType.from(command.type().name());
-        if (type.decreasesStock() && item.quantity() < command.amount()) {
+        if (command.amount() == null || command.amount().signum() <= 0) {
+            throw new IllegalArgumentException("Quantidade da movimentacao deve ser maior que zero.");
+        }
+        if (command.amount().stripTrailingZeros().scale() > ItemEstoque.ESCALA_QUANTIDADE) {
+            throw new IllegalArgumentException("Quantidade da movimentacao aceita no maximo 4 casas decimais.");
+        }
+        if (type.decreasesStock() && item.quantity().compareTo(command.amount()) < 0) {
             throw new IllegalArgumentException("Saldo insuficiente para movimentacao de estoque.");
         }
         BigDecimal unitPrice = normalizeMoney(command.unitPrice());
-        item.recordMovement(new ItemEstoque.InventoryMovement(
+        ItemEstoque.InventoryMovement movimento = new ItemEstoque.InventoryMovement(
                 command.movementId(),
                 type,
                 command.amount(),
                 command.occurredOn(),
                 unitPrice,
-                unitPrice.multiply(BigDecimal.valueOf(command.amount())),
+                unitPrice.multiply(command.amount()),
                 command.createdBy(),
                 command.customerId(),
                 command.orderReference(),
@@ -127,8 +141,9 @@ public class CasoDeUsoGerenciarEstoque implements CasoDeUsoEstoque {
                 command.quemPegou(),
                 command.quemComprou(),
                 command.notes()
-        ));
-        repository.save(item);
+        );
+        item.recordMovement(movimento);
+        repository.registrarMovimento(item, movimento);
         gerarDespesaDaMovimentacao(item, command, type, unitPrice);
     }
 
@@ -195,7 +210,7 @@ public class CasoDeUsoGerenciarEstoque implements CasoDeUsoEstoque {
         if (casoDeUsoFinanceiro == null || !geraCustoFinanceiro(type)) {
             return;
         }
-        BigDecimal total = unitPrice.multiply(BigDecimal.valueOf(command.amount()));
+        BigDecimal total = unitPrice.multiply(command.amount());
         if (total.signum() <= 0) {
             return;
         }

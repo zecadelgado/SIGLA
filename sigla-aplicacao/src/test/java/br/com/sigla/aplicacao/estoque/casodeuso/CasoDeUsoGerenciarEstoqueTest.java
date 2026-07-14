@@ -28,12 +28,12 @@ class CasoDeUsoGerenciarEstoqueTest {
         InMemoryRepositorioEstoque repository = new InMemoryRepositorioEstoque();
         CasoDeUsoGerenciarEstoque useCase = new CasoDeUsoGerenciarEstoque(repository);
 
-        useCase.registerItem(new CasoDeUsoEstoque.RegisterItemEstoqueCommand("INV-100", "Produto", 5, "un"));
+        useCase.registerItem(new CasoDeUsoEstoque.RegisterItemEstoqueCommand("INV-100", "Produto", BigDecimal.valueOf(5), "un"));
         useCase.recordMovement(new CasoDeUsoEstoque.RecordInventoryMovementCommand(
                 "INV-100",
                 "MOV-100",
                 ItemEstoque.MovementType.OUTBOUND,
-                2,
+                BigDecimal.valueOf(2),
                 LocalDate.now(),
                 "Carlos",
                 "",
@@ -42,7 +42,7 @@ class CasoDeUsoGerenciarEstoqueTest {
         ));
 
         ItemEstoque item = repository.findById("INV-100").orElseThrow();
-        assertEquals(3, item.quantity());
+        assertEquals(0, BigDecimal.valueOf(3).compareTo(item.quantity()));
         assertEquals(1, item.movements().size());
     }
 
@@ -51,13 +51,13 @@ class CasoDeUsoGerenciarEstoqueTest {
         InMemoryRepositorioEstoque repository = new InMemoryRepositorioEstoque();
         CasoDeUsoGerenciarEstoque useCase = new CasoDeUsoGerenciarEstoque(repository);
 
-        useCase.registerItem(new CasoDeUsoEstoque.RegisterItemEstoqueCommand("INV-100", "Produto", 1, "un"));
+        useCase.registerItem(new CasoDeUsoEstoque.RegisterItemEstoqueCommand("INV-100", "Produto", BigDecimal.ONE, "un"));
 
         assertThrows(IllegalArgumentException.class, () -> useCase.recordMovement(new CasoDeUsoEstoque.RecordInventoryMovementCommand(
                 "INV-100",
                 "MOV-100",
                 ItemEstoque.MovementType.SAIDA,
-                2,
+                BigDecimal.valueOf(2),
                 LocalDate.now(),
                 "Carlos",
                 "",
@@ -71,12 +71,12 @@ class CasoDeUsoGerenciarEstoqueTest {
         InMemoryRepositorioEstoque repository = new InMemoryRepositorioEstoque();
         CasoDeUsoGerenciarEstoque useCase = new CasoDeUsoGerenciarEstoque(repository);
 
-        useCase.registerItem(new CasoDeUsoEstoque.RegisterItemEstoqueCommand("INV-100", "Produto", 1, "un"));
+        useCase.registerItem(new CasoDeUsoEstoque.RegisterItemEstoqueCommand("INV-100", "Produto", BigDecimal.ONE, "un"));
         useCase.recordMovement(new CasoDeUsoEstoque.RecordInventoryMovementCommand(
                 "INV-100",
                 "MOV-100",
                 ItemEstoque.MovementType.COMPRA,
-                3,
+                BigDecimal.valueOf(3),
                 LocalDate.now(),
                 BigDecimal.valueOf(4),
                 BigDecimal.ZERO,
@@ -91,7 +91,7 @@ class CasoDeUsoGerenciarEstoqueTest {
         ));
 
         ItemEstoque item = repository.findById("INV-100").orElseThrow();
-        assertEquals(4, item.quantity());
+        assertEquals(0, BigDecimal.valueOf(4).compareTo(item.quantity()));
         assertEquals(0, BigDecimal.valueOf(12).compareTo(item.movements().get(0).totalPrice()));
     }
 
@@ -101,7 +101,7 @@ class CasoDeUsoGerenciarEstoqueTest {
         CasoDeUsoGerenciarEstoque useCase = new CasoDeUsoGerenciarEstoque(repository);
 
         useCase.registerItem(new CasoDeUsoEstoque.RegisterItemEstoqueCommand(
-                "INV-100", "Produto", "Descricao", "SKU-100", BigDecimal.ZERO, BigDecimal.ZERO, 1, 2, "un", true));
+                "INV-100", "Produto", "Descricao", "SKU-100", BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ONE, BigDecimal.valueOf(2), "un", true));
         useCase.inativarItem("INV-100");
 
         assertTrue(useCase.listLowStock().stream().anyMatch(item -> item.id().equals("INV-100")));
@@ -114,13 +114,13 @@ class CasoDeUsoGerenciarEstoqueTest {
         CasoDeUsoFinanceiro financeiro = mock(CasoDeUsoFinanceiro.class);
         CasoDeUsoGerenciarEstoque useCase = new CasoDeUsoGerenciarEstoque(repository, financeiro);
         useCase.registerItem(new CasoDeUsoEstoque.RegisterItemEstoqueCommand(
-                "INV-100", "Produto", "", "", BigDecimal.valueOf(4), BigDecimal.ZERO, 5, 0, "un", true));
+                "INV-100", "Produto", "", "", BigDecimal.valueOf(4), BigDecimal.ZERO, BigDecimal.valueOf(5), BigDecimal.ZERO, "un", true));
 
-        useCase.recordMovement(movimento("COMPRA-1", ItemEstoque.MovementType.COMPRA, 2, BigDecimal.valueOf(6)));
-        useCase.recordMovement(movimento("SAIDA-1", ItemEstoque.MovementType.SAIDA, 1, BigDecimal.valueOf(4)));
-        useCase.recordMovement(movimento("RESERVA-1", ItemEstoque.MovementType.RESERVA_OS, 1, BigDecimal.valueOf(4)));
-        useCase.recordMovement(movimento("CONSUMO-1", ItemEstoque.MovementType.CONSUMO_RESERVA_OS, 1, BigDecimal.valueOf(4)));
-        useCase.recordMovement(movimento("USO-1", ItemEstoque.MovementType.USO_OS, 1, BigDecimal.valueOf(4)));
+        useCase.recordMovement(movimento("COMPRA-1", ItemEstoque.MovementType.COMPRA, BigDecimal.valueOf(2), BigDecimal.valueOf(6)));
+        useCase.recordMovement(movimento("SAIDA-1", ItemEstoque.MovementType.SAIDA, BigDecimal.ONE, BigDecimal.valueOf(4)));
+        useCase.recordMovement(movimento("RESERVA-1", ItemEstoque.MovementType.RESERVA_OS, BigDecimal.ONE, BigDecimal.valueOf(4)));
+        useCase.recordMovement(movimento("CONSUMO-1", ItemEstoque.MovementType.CONSUMO_RESERVA_OS, BigDecimal.ONE, BigDecimal.valueOf(4)));
+        useCase.recordMovement(movimento("USO-1", ItemEstoque.MovementType.USO_OS, BigDecimal.ONE, BigDecimal.valueOf(4)));
 
         org.mockito.ArgumentCaptor<CasoDeUsoFinanceiro.RegisterDespesaFinanceiraCommand> captor =
                 org.mockito.ArgumentCaptor.forClass(CasoDeUsoFinanceiro.RegisterDespesaFinanceiraCommand.class);
@@ -132,8 +132,23 @@ class CasoDeUsoGerenciarEstoqueTest {
         verify(financeiro, never()).saveLancamento(any());
     }
 
+    @Test
+    void falhaNoFinanceiroPropagaParaORollbackDaTransacaoUnica() {
+        InMemoryRepositorioEstoque repository = new InMemoryRepositorioEstoque();
+        CasoDeUsoFinanceiro financeiro = mock(CasoDeUsoFinanceiro.class);
+        org.mockito.Mockito.doThrow(new IllegalStateException("financeiro indisponivel"))
+                .when(financeiro).registerExpense(any());
+        CasoDeUsoGerenciarEstoque useCase = new CasoDeUsoGerenciarEstoque(repository, financeiro);
+        useCase.registerItem(new CasoDeUsoEstoque.RegisterItemEstoqueCommand("INV-100", "Produto", BigDecimal.ONE, "un"));
+
+        // A excecao precisa escapar de recordMovement (@Transactional): e ela que
+        // faz o Spring desfazer o movimento de estoque junto com a despesa.
+        assertThrows(IllegalStateException.class, () ->
+                useCase.recordMovement(movimento("COMPRA-ERRO", ItemEstoque.MovementType.COMPRA, BigDecimal.ONE, BigDecimal.valueOf(9))));
+    }
+
     private CasoDeUsoEstoque.RecordInventoryMovementCommand movimento(
-            String id, ItemEstoque.MovementType type, int quantidade, BigDecimal precoUnitario
+            String id, ItemEstoque.MovementType type, BigDecimal quantidade, BigDecimal precoUnitario
     ) {
         return new CasoDeUsoEstoque.RecordInventoryMovementCommand(
                 "INV-100", id, type, quantidade, LocalDate.now(), precoUnitario, BigDecimal.ZERO,
@@ -146,6 +161,11 @@ class CasoDeUsoGerenciarEstoqueTest {
 
         @Override
         public void save(ItemEstoque item) {
+            items.put(item.id(), item);
+        }
+
+        @Override
+        public void registrarMovimento(ItemEstoque item, ItemEstoque.InventoryMovement movimento) {
             items.put(item.id(), item);
         }
 

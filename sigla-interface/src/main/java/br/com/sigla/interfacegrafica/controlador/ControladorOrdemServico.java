@@ -558,7 +558,7 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
                     ordemId,
                     UUID.randomUUID().toString(),
                     opcao.id(),
-                    Integer.parseInt(quantidade.getText().trim()),
+                    br.com.sigla.interfacegrafica.util.FormatadorQuantidade.parse(quantidade.getText()),
                     formatadorMoeda.valor(valor)
             );
         });
@@ -569,7 +569,7 @@ public class ControladorOrdemServico extends ControladorComMenuPrincipal {
     private void validarProduto(ComboBox<OpcaoId> produto, TextField quantidade) {
         ValidadorEntrada validador = ValidadorEntrada.nova();
         validador.selecao(UtilComboBox.selecionado(produto), "um produto");
-        validador.inteiroPositivo(quantidade.getText(), "a quantidade");
+        validador.quantidadePositiva(quantidade.getText(), "a quantidade");
         validador.validar();
     }
 

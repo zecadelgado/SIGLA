@@ -62,8 +62,8 @@ public class ControladorNovoProduto {
         try {
             ValidadorEntrada validador = ValidadorEntrada.nova();
             String nome = validador.texto(texto(nomeField), "o nome do produto");
-            int quantidade = validador.inteiroNaoNegativo(texto(quantidadeField), "a quantidade em estoque");
-            int quantidadeMinima = validador.inteiroNaoNegativo(texto(quantidadeMinimaField), "a quantidade mínima");
+            java.math.BigDecimal quantidade = validador.quantidadeNaoNegativa(texto(quantidadeField), "a quantidade em estoque");
+            java.math.BigDecimal quantidadeMinima = validador.quantidadeNaoNegativa(texto(quantidadeMinimaField), "a quantidade mínima");
             validador.validar();
 
             casoDeUsoEstoque.registerItem(new CasoDeUsoEstoque.RegisterItemEstoqueCommand(

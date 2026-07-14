@@ -177,7 +177,9 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
         ButtonType cancelar = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().addAll(confirmar, cancelar);
         TextField quantidade = new TextField();
-        quantidade.setPromptText("Quantidade (disponível: " + row.quantidade() + " " + row.unidade() + ")");
+        quantidade.setPromptText("Quantidade (disponível: "
+                + br.com.sigla.interfacegrafica.util.FormatadorQuantidade.formatar(row.quantidade())
+                + " " + row.unidade() + ")");
         TextField motivo = new TextField();
         motivo.setPromptText("Motivo do descarte");
         GridPane grid = new GridPane();
@@ -190,7 +192,7 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
             if (button != confirmar) {
                 return null;
             }
-            int qtd = Integer.parseInt(quantidade.getText().trim());
+            BigDecimal qtd = br.com.sigla.interfacegrafica.util.FormatadorQuantidade.parse(quantidade.getText());
             return new CasoDeUsoEstoque.RecordInventoryMovementCommand(
                     row.id(),
                     UUID.randomUUID().toString(),
@@ -332,7 +334,7 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
             totalProdutosLabel.setText(String.valueOf(items.size()));
         }
         BigDecimal valorTotal = items.stream()
-                .map(item -> item.salePrice().multiply(BigDecimal.valueOf(item.quantity())))
+                .map(item -> item.salePrice().multiply(item.quantity()))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         if (valorTotalLabel != null) {
             valorTotalLabel.setText(apresentadorMoeda.format(valorTotal));
@@ -351,7 +353,9 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
                     ? "Nenhum produto em baixa."
                     : items.stream()
                     .filter(item -> item.isLowStock())
-                    .map(item -> item.name() + " (" + item.quantity() + "/" + item.minimumQuantity() + ")")
+                    .map(item -> item.name() + " ("
+                            + br.com.sigla.interfacegrafica.util.FormatadorQuantidade.formatar(item.quantity()) + "/"
+                            + br.com.sigla.interfacegrafica.util.FormatadorQuantidade.formatar(item.minimumQuantity()) + ")")
                     .reduce((left, right) -> left + ", " + right)
                     .orElse("-"));
         }
@@ -383,13 +387,17 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
         configureProdutoColumn(produtoDescricaoColumn, 1, row -> row.descricao());
         configureProdutoColumn(produtoCustoColumn, 2, row -> apresentadorMoeda.format(row.custo()));
         configureProdutoColumn(produtoVendaColumn, 3, row -> apresentadorMoeda.format(row.venda()));
-        configureProdutoColumn(produtoQuantidadeColumn, 4, row -> row.quantidade() + " " + row.unidade() + (row.baixoEstoque() ? " - baixo" : ""));
-        configureProdutoColumn(produtoMinimoColumn, 5, row -> String.valueOf(row.minimo()));
+        configureProdutoColumn(produtoQuantidadeColumn, 4, row ->
+                br.com.sigla.interfacegrafica.util.FormatadorQuantidade.formatar(row.quantidade())
+                        + " " + row.unidade() + (row.baixoEstoque() ? " - baixo" : ""));
+        configureProdutoColumn(produtoMinimoColumn, 5, row ->
+                br.com.sigla.interfacegrafica.util.FormatadorQuantidade.formatar(row.minimo()));
         configureProdutoColumn(produtoStatusColumn, 6, row -> row.ativo() ? "Ativo" : "Inativo");
 
         configureMovimentoColumn(movimentoProdutoColumn, 0, row -> row.itemName());
         configureMovimentoColumn(movimentoTipoColumn, 1, row -> row.type().name());
-        configureMovimentoColumn(movimentoQuantidadeColumn, 2, row -> String.valueOf(row.amount()));
+        configureMovimentoColumn(movimentoQuantidadeColumn, 2, row ->
+                br.com.sigla.interfacegrafica.util.FormatadorQuantidade.formatar(row.amount()));
         configureMovimentoColumn(movimentoValorColumn, 3, row -> apresentadorMoeda.format(row.unitPrice()));
         configureMovimentoColumn(movimentoValorTotalColumn, 4, row -> apresentadorMoeda.format(row.totalPrice()));
         configureMovimentoColumn(movimentoUsuarioColumn, 5, row -> resolveUsuario(row.createdBy()));
@@ -495,7 +503,8 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
         dialog.getDialogPane().setContent(grid);
         dialog.setResultConverter(button -> button == ButtonType.OK ? new CasoDeUsoEstoque.RegisterItemEstoqueCommand(
                 item.id(), nome.getText(), descricao.getText(), sku.getText(), formatadorMoeda.valor(custo),
-                formatadorMoeda.valor(venda), item.quantity(), Integer.parseInt(minimo.getText()),
+                formatadorMoeda.valor(venda), item.quantity(),
+                br.com.sigla.interfacegrafica.util.FormatadorQuantidade.parse(minimo.getText()),
                 unidade.getValue(), ativo.isSelected()) : null);
         return dialog.showAndWait();
     }
@@ -520,8 +529,8 @@ public class ControladorEstoque extends ControladorComMenuPrincipal {
             String unidade,
             BigDecimal custo,
             BigDecimal venda,
-            int quantidade,
-            int minimo,
+            BigDecimal quantidade,
+            BigDecimal minimo,
             boolean ativo,
             boolean baixoEstoque
     ) {
