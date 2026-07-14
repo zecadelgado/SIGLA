@@ -1,0 +1,31 @@
+-- Fase 6 — agendamento via pg_cron (PREPARADO, NAO ATIVAR SEM APROVACAO).
+--
+-- O agendamento oficial do SIGLA e a Edge Function `notificacoes-agendador`
+-- (disparada por cron do Supabase), que por sua vez chama a autoridade unica
+-- rpc_faturar_mensalidades_v1. Este script e a alternativa equivalente 100%%
+-- dentro do banco, para o caso de se optar por pg_cron no cutover.
+--
+-- Pre-requisitos (produção, somente com aprovação explícita):
+--   1. Habilitar a extensao no dashboard (Database > Extensions > pg_cron)
+--      ou: create extension if not exists pg_cron;
+--   2. Conferir timezone do job: pg_cron agenda em UTC; 08:00 America/Sao_Paulo
+--      corresponde a 11:00 UTC (BRT, sem horario de verao vigente).
+--
+-- ATIVACAO (comentada de proposito):
+-- select cron.schedule(
+--   'sigla-faturamento-mensalidades',
+--   '0 11 * * *',  -- 11:00 UTC = 08:00 America/Sao_Paulo
+--   $$select rpc_faturar_mensalidades_v1(
+--        (current_timestamp at time zone 'America/Sao_Paulo')::date,
+--        'FATURAMENTO:PG_CRON:' || to_char(current_timestamp at time zone 'America/Sao_Paulo', 'YYYY-MM-DD'),
+--        'PG_CRON',
+--        null)$$
+-- );
+--
+-- DESATIVACAO/ROLLBACK:
+-- select cron.unschedule('sigla-faturamento-mensalidades');
+--
+-- OBSERVABILIDADE:
+-- select * from cron.job;
+-- select * from cron.job_run_details order by start_time desc limit 20;
+-- select * from sigla_faturamento_execucoes order by executado_em desc limit 20;

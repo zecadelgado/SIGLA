@@ -55,6 +55,22 @@ class FundacaoSchemaPostgreSQLIT {
                 .locations("classpath:db/migration")
                 .load()
                 .migrate();
+        simularPrivilegiosPadraoSupabase();
+    }
+
+    /**
+     * No Supabase real o service_role tem BYPASSRLS e grants padrao de tabela;
+     * o banco efemero replica isso para os testes de RLS/grants serem fieis.
+     */
+    private static void simularPrivilegiosPadraoSupabase() {
+        try (Connection connection = connection(); Statement statement = connection.createStatement()) {
+            statement.execute("alter role service_role bypassrls");
+            statement.execute("grant usage on schema public to anon, authenticated, service_role");
+            statement.execute("grant all on all tables in schema public to service_role");
+            statement.execute("grant all on all sequences in schema public to service_role");
+        } catch (SQLException error) {
+            throw new IllegalStateException("Nao foi possivel simular privilegios padrao Supabase", error);
+        }
     }
 
     private static void prepararPapeisSupabase() {
@@ -93,11 +109,11 @@ class FundacaoSchemaPostgreSQLIT {
         try (Connection connection = connection(); Statement statement = connection.createStatement()) {
             ResultSet version = statement.executeQuery("select max(version::integer) from flyway_schema_history where success");
             assertTrue(version.next());
-            assertEquals(26, version.getInt(1));
+            assertEquals(27, version.getInt(1));
 
             ResultSet rls = statement.executeQuery("select relrowsecurity from pg_class where relname = 'contrato_vigencias'");
             assertTrue(rls.next());
-            assertEquals(false, rls.getBoolean(1), "A Fase 2 nao deve ativar RLS");
+            assertEquals(true, rls.getBoolean(1), "Fase 6 ativa RLS com negacao por padrao");
         }
     }
 
@@ -897,6 +913,82 @@ class FundacaoSchemaPostgreSQLIT {
             try (Connection admin = connection(); Statement statement = admin.createStatement()) {
                 statement.execute("drop database if exists " + banco + " with (force)");
             }
+        }
+    }
+
+    @Test
+    void rlsNegaAcessoDiretoDeAnonEAuthenticated() throws SQLException {
+        try (Connection connection = connection(); Statement statement = connection.createStatement()) {
+            statement.execute("set role anon");
+            assertEquals("42501", assertThrows(SQLException.class, () -> statement.execute(
+                    "select count(*) from contratos")).getSQLState(), "anon nao le contratos");
+            assertEquals("42501", assertThrows(SQLException.class, () -> statement.execute(
+                    "select count(*) from financeiro_lancamentos")).getSQLState(), "anon nao le financeiro");
+            assertEquals("42501", assertThrows(SQLException.class, () -> statement.execute(
+                    "select * from rpc_faturar_mensalidades_v1(current_date,'rls-anon')")).getSQLState(),
+                    "anon nao executa a RPC de faturamento");
+            statement.execute("reset role");
+
+            statement.execute("set role authenticated");
+            assertEquals("42501", assertThrows(SQLException.class, () -> statement.execute(
+                    "select count(*) from estoque_movimentacoes")).getSQLState(), "authenticated nao le estoque");
+            assertEquals("42501", assertThrows(SQLException.class, () -> statement.execute(
+                    "select desvincular_os_contratual_v1('52000000-0000-0000-0000-000000000001','x',"
+                            + "'14000000-0000-0000-0000-000000000001')")).getSQLState(),
+                    "authenticated nao executa RPC administrativa com UUID forjado");
+            statement.execute("reset role");
+        }
+    }
+
+    @Test
+    void serviceRoleExecutaFaturamentoPeloGrantMinimo() throws SQLException {
+        try (Connection connection = connection(); Statement statement = connection.createStatement()) {
+            statement.execute("insert into cadastro(id,nome) values ('10000000-0000-0000-0000-000000000014','Cliente service role')");
+            statement.execute("insert into contratos(id,cliente_id,data_inicio,data_fim,valor_mensal,status) values "
+                    + "('20000000-0000-0000-0000-000000000014','10000000-0000-0000-0000-000000000014',"
+                    + "'2026-01-01','2026-12-31',120,'ACTIVE')");
+            statement.execute("insert into contrato_vigencias(contrato_id,versao,data_inicio,data_fim,valor_mensal,tipo_contrato,chave_idempotencia) "
+                    + "values ('20000000-0000-0000-0000-000000000014',1,'2026-01-01','2026-12-31',120,'MENSAL','vig-sr-1')");
+
+            statement.execute("set role service_role");
+            statement.execute("select * from rpc_faturar_mensalidades_v1('2026-07-14','exec-service-role','EDGE_FUNCTION',null)");
+            statement.execute("reset role");
+
+            ResultSet mensalidade = statement.executeQuery(
+                    "select count(*) from financeiro_lancamentos "
+                            + "where contrato_id='20000000-0000-0000-0000-000000000014' and origem_tipo='CONTRATO'");
+            assertTrue(mensalidade.next());
+            assertEquals(1, mensalidade.getInt(1), "papel tecnico fatura via RPC, sem escrita direta do cliente");
+        }
+    }
+
+    @Test
+    void faturamentoRegistraOrigemAtorEAuditoriaDoDisparo() throws SQLException {
+        try (Connection connection = connection(); Statement statement = connection.createStatement()) {
+            statement.execute("insert into cadastro(id,nome) values ('10000000-0000-0000-0000-000000000013','Cliente auditoria')");
+            statement.execute("insert into usuarios(id,nome,usuario,senha,tipo,ativo) values "
+                    + "('14000000-0000-0000-0000-000000000013','Admin auditoria','admin-auditoria','hash','ADMIN',true) "
+                    + "on conflict (id) do nothing");
+            statement.execute("insert into contratos(id,cliente_id,data_inicio,data_fim,valor_mensal,status) values "
+                    + "('20000000-0000-0000-0000-000000000013','10000000-0000-0000-0000-000000000013',"
+                    + "'2026-01-01','2026-12-31',90,'ACTIVE')");
+            statement.execute("insert into contrato_vigencias(contrato_id,versao,data_inicio,data_fim,valor_mensal,tipo_contrato,chave_idempotencia) "
+                    + "values ('20000000-0000-0000-0000-000000000013',1,'2026-01-01','2026-12-31',90,'MENSAL','vig-audit-1')");
+
+            statement.execute("select * from rpc_faturar_mensalidades_v1('2026-07-14','exec-audit','EDGE_FUNCTION',"
+                    + "'14000000-0000-0000-0000-000000000013')");
+
+            ResultSet execucao = statement.executeQuery(
+                    "select origem, ator::text, criadas from sigla_faturamento_execucoes where chave_execucao='exec-audit'");
+            assertTrue(execucao.next());
+            assertEquals("EDGE_FUNCTION", execucao.getString(1));
+            assertEquals("14000000-0000-0000-0000-000000000013", execucao.getString(2));
+            assertEquals(1, execucao.getInt(3));
+
+            ResultSet auditoria = statement.executeQuery(
+                    "select count(*) from auditoria_eventos where entidade_id='exec-audit' and acao='FATURAMENTO_EXECUTADO'");
+            assertTrue(auditoria.next());
+            assertEquals(1, auditoria.getInt(1), "todo disparo de faturamento e auditado com ator e origem");
         }
     }
 

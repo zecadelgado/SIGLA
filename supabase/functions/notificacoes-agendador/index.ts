@@ -10,9 +10,11 @@
 //   - AdaptadorEnvioWhatsappN8n.toJson (mesmo payload p/ o n8n)
 //   - DiasLembrete (conjunto de dias)
 //
-// ESCOPO INICIAL: contrato, certificado e visita (serviços agendados) + dispatch.
-// Parcela em atraso (INSTALLMENT_OVERDUE) e faturamento de mensalidade continuam no
-// desktop por ora — adicionar aqui apos validar o schema financeiro em homolog.
+// ESCOPO: contrato, certificado e visita (serviços agendados) + dispatch.
+// FATURAMENTO (Fase 6): esta função apenas DISPARA a autoridade única
+// rpc_faturar_mensalidades_v1 (origem EDGE_FUNCTION, chave idempotente); não
+// replica a regra em SQL/TS. Em SIGLA_AGENDADOR_DRY_RUN=true nada é escrito.
+// Parcela em atraso (INSTALLMENT_OVERDUE) segue no desktop por ora.
 //
 // SEGURANCA: aplicar e validar SEMPRE no projeto Supabase de HOMOLOGACAO antes de
 // habilitar o pg_cron em producao. Segredos vem de variaveis de ambiente (Function
@@ -29,6 +31,8 @@ const MODO_TESTE = (Deno.env.get("SIGLA_NOTIFICACOES_MODO_TESTE") ?? "true") ===
 const HORA_ENVIO = parseInt(Deno.env.get("SIGLA_NOTIFICACOES_HORA_ENVIO") ?? "8", 10);
 const TIMEOUT_MS = parseInt(Deno.env.get("SIGLA_NOTIFICACOES_TIMEOUT_MS") ?? "15000", 10);
 const MAX_TENTATIVAS = parseInt(Deno.env.get("SIGLA_NOTIFICACOES_MAX_TENTATIVAS") ?? "5", 10);
+// Fase 6: modo seco para homologacao — nenhuma escrita e feita.
+const DRY_RUN = (Deno.env.get("SIGLA_AGENDADOR_DRY_RUN") ?? "false") === "true";
 
 const STATUS_ATIVOS = ["PENDING", "SENT", "OPEN"];
 
@@ -133,7 +137,10 @@ Deno.serve(async (req) => {
     const configsPorEvento = await carregarConfigs(sql);
     const pessoas = await carregarPessoas(sql);
 
-    const mensalidadesGeradas = await faturarMensalidadesContrato(sql, hoje);
+    const mensalidadesGeradas = await faturarMensalidadesContrato(sql);
+    if (DRY_RUN) {
+      return json({ ok: true, dryRun: true, hoje: isoDate(hoje), mensalidadesGeradas: 0, geradas: 0, enviadas: 0, modoTeste: MODO_TESTE, envioHabilitado: ENVIO_HABILITADO });
+    }
     let geradas = 0;
     geradas += await processarContratos(sql, hoje, configsPorEvento.get("CONTRACT_EXPIRING") ?? [], pessoas);
     geradas += await processarCertificados(sql, hoje, configsPorEvento.get("CERTIFICATE_EXPIRING") ?? [], pessoas);
@@ -179,59 +186,50 @@ async function carregarPessoas(sql: postgres.Sql): Promise<Map<string, Pessoa>> 
 }
 
 /**
- * Espelha o faturamento do desktop. O UUID e refeito como UUID v3 (MD5), igual
- * a UUID.nameUUIDFromBytes, para que pg_cron e desktop nunca dupliquem a mesma
- * mensalidade de contrato/competencia.
+ * Fase 6: a Edge Function nao replica regra de negocio em SQL/TS — ela apenas
+ * dispara a autoridade unica rpc_faturar_mensalidades_v1 com chave idempotente
+ * derivada da data de referencia em America/Sao_Paulo e origem EDGE_FUNCTION.
+ * Em modo seco (SIGLA_AGENDADOR_DRY_RUN=true) nada e escrito: apenas loga
+ * quantas mensalidades seriam criadas.
  */
-async function faturarMensalidadesContrato(sql: postgres.Sql, hoje: Date): Promise<number> {
-  const competencia = isoDate(hoje).slice(0, 7);
-  const rows = await sql<{ geradas: string }[]>`
-    with referencias as (
-      select
-        (select id from financeiro_categorias
-          where ativo = true and upper(tipo) = 'ENTRY' and upper(nome) = 'SERVICOS'
-          order by created_at limit 1) as categoria_id,
-        (select id from financeiro_formas_pagamento
-          where ativo = true and upper(nome) = 'PIX'
-          order by created_at limit 1) as forma_pagamento_id
-    ), contratos_elegiveis as (
-      select c.id, c.cliente_id, coalesce(c.descricao, '') as descricao, c.valor_mensal,
-             make_date(
-               extract(year from ${competencia}::date)::integer,
-               extract(month from ${competencia}::date)::integer,
-               least(extract(day from c.data_inicio)::integer,
-                     extract(day from (date_trunc('month', ${competencia}::date) + interval '1 month - 1 day'))::integer)
-             ) as vencimento
+async function faturarMensalidadesContrato(sql: postgres.Sql): Promise<number> {
+  const dataReferencia = new Date().toLocaleDateString("en-CA", { timeZone: "America/Sao_Paulo" });
+  const chave = `FATURAMENTO:EDGE:${dataReferencia}`;
+  const inicio = Date.now();
+  if (DRY_RUN) {
+    const previa = await sql<{ pendentes: string }[]>`
+      select count(*)::text as pendentes
         from contratos c
-       where upper(coalesce(c.status, 'ACTIVE')) in ('ACTIVE', 'ATIVO')
-         and c.valor_mensal > 0
-         and date_trunc('month', c.data_inicio)::date <= ${competencia}::date
-         and date_trunc('month', c.data_fim)::date >= ${competencia}::date
-    ), hashes as (
-      select *, md5('contrato-mensalidade:' || id::text || ':' || ${competencia}) as hash
-        from contratos_elegiveis
-    ), lancamentos as (
-      insert into financeiro_lancamentos (
-        id, tipo, categoria_id, forma_pagamento_id, descricao, cliente_id,
-        valor_total, data_emissao, data_vencimento, status, parcelado,
-        quantidade_parcelas, observacoes
-      )
-      select (
-          substr(hash, 1, 8) || '-' || substr(hash, 9, 4) || '-3' || substr(hash, 14, 3) || '-' ||
-          lpad(to_hex((get_byte(decode(hash, 'hex'), 8) & 63) | 128), 2, '0') || substr(hash, 19, 14)
-        )::uuid,
-        'ENTRY', r.categoria_id, r.forma_pagamento_id,
-        'Mensalidade contrato' || case when descricao = '' then '' else ' ' || descricao end
-          || ' - ' || to_char(${competencia}::date, 'MM/YYYY'),
-        cliente_id, valor_mensal, vencimento, vencimento, 'PENDING', false, 1,
-        '[CONTRATO ' || id::text || ' COMPETENCIA ' || ${competencia} || ']'
-        from hashes cross join referencias r
-       where r.categoria_id is not null and r.forma_pagamento_id is not null
-      on conflict (id) do nothing
-      returning id
-    )
-    select count(*)::text as geradas from lancamentos`;
-  return Number(rows[0]?.geradas ?? 0);
+        join contrato_vigencias v on v.contrato_id = c.id
+       where upper(coalesce(c.status, '')) in ('ACTIVE', 'ATIVO')
+         and ${dataReferencia}::date >= v.data_inicio
+         and (v.data_fim is null or ${dataReferencia}::date <= v.data_fim)
+         and coalesce(v.valor_mensal, 0) > 0
+         and not exists (
+           select 1 from financeiro_lancamentos l
+            where l.chave_idempotencia = 'MENSALIDADE:' || c.id || ':'
+              || to_char(date_trunc('month', ${dataReferencia}::date), 'YYYY-MM'))`;
+    console.log(JSON.stringify({
+      etapa: "faturamento", dryRun: true, chave, dataReferencia,
+      criariam: Number(previa[0]?.pendentes ?? 0), duracaoMs: Date.now() - inicio,
+    }));
+    return 0;
+  }
+  try {
+    const resultados = await sql<{ resultado: string }[]>`
+      select resultado from rpc_faturar_mensalidades_v1(${dataReferencia}::date, ${chave}, 'EDGE_FUNCTION', null)`;
+    const criadas = resultados.filter((r) => r.resultado === "CRIADA").length;
+    console.log(JSON.stringify({
+      etapa: "faturamento", dryRun: false, chave, dataReferencia,
+      criadas, existentes: resultados.length - criadas, duracaoMs: Date.now() - inicio,
+    }));
+    return criadas;
+  } catch (e) {
+    console.error(JSON.stringify({
+      etapa: "faturamento", chave, dataReferencia, erro: String(e), duracaoMs: Date.now() - inicio,
+    }));
+    throw e;
+  }
 }
 
 // ------------------------------- processadores -------------------------------
