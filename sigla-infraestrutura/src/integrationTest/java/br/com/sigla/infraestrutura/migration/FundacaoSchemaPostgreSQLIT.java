@@ -109,7 +109,7 @@ class FundacaoSchemaPostgreSQLIT {
         try (Connection connection = connection(); Statement statement = connection.createStatement()) {
             ResultSet version = statement.executeQuery("select max(version::integer) from flyway_schema_history where success");
             assertTrue(version.next());
-            assertEquals(27, version.getInt(1));
+            assertEquals(28, version.getInt(1));
 
             ResultSet rls = statement.executeQuery("select relrowsecurity from pg_class where relname = 'contrato_vigencias'");
             assertTrue(rls.next());
@@ -863,6 +863,9 @@ class FundacaoSchemaPostgreSQLIT {
             statement.execute("create database " + banco);
         }
         String urlCopia = urlBase + banco;
+        String idLegadoMensalidade = java.util.UUID.nameUUIDFromBytes(
+                ("contrato-mensalidade:20000000-0000-0000-0000-000000000099:2026-03")
+                        .getBytes(java.nio.charset.StandardCharsets.UTF_8)).toString();
         try {
             Flyway.configure().dataSource(urlCopia, username, password)
                     .locations("classpath:db/migration").target("17").load().migrate();
@@ -882,6 +885,12 @@ class FundacaoSchemaPostgreSQLIT {
                 statement.execute("insert into financeiro_lancamentos(id,tipo,descricao,cliente_id,valor_total,status,data_vencimento) values "
                         + "('40000000-0000-0000-0000-000000000099','ENTRY','Cobranca legada vencida',"
                         + "'10000000-0000-0000-0000-000000000099',80,'OVERDUE','2026-06-01')");
+                // Estilo V17: sem coluna contrato_id; identidade so pelo id
+                // deterministico do produtor + marcador nas observacoes.
+                statement.execute("insert into financeiro_lancamentos(id,tipo,descricao,cliente_id,valor_total,data_vencimento,data_pagamento,status,observacoes) values "
+                        + "('" + idLegadoMensalidade + "','ENTRY','Mensalidade legada paga',"
+                        + "'10000000-0000-0000-0000-000000000099',100,"
+                        + "'2026-03-10','2026-03-10','PAID','[CONTRATO 20000000-0000-0000-0000-000000000099 COMPETENCIA 2026-03]')");
                 statement.execute("insert into produtos(id,nome,quantidade_atual) values "
                         + "('61000000-0000-0000-0000-000000000099','Produto legado',3)");
                 statement.execute("insert into estoque_movimentacoes(produto_id,tipo_movimentacao,quantidade) values "
@@ -899,7 +908,8 @@ class FundacaoSchemaPostgreSQLIT {
                         + "(select count(*) from vw_os_contratuais_sem_regra_v1 where id='52000000-0000-0000-0000-000000000099'),"
                         + "(select status from financeiro_lancamentos where id='40000000-0000-0000-0000-000000000099'),"
                         + "(select quantidade_atual_decimal from produtos where id='61000000-0000-0000-0000-000000000099'),"
-                        + "(select count(*) from reconciliar_estoque_v1() r where r.produto_id='61000000-0000-0000-0000-000000000099')");
+                        + "(select count(*) from reconciliar_estoque_v1() r where r.produto_id='61000000-0000-0000-0000-000000000099'),"
+                        + "(select chave_idempotencia from financeiro_lancamentos where id='" + idLegadoMensalidade + "')");
                 assertTrue(resultado.next());
                 assertEquals(1, resultado.getInt(1), "contrato legado ganha vigencia inicial estrutural");
                 assertEquals("COBERTA_PELO_CONTRATO", resultado.getString(2),
@@ -908,6 +918,8 @@ class FundacaoSchemaPostgreSQLIT {
                 assertEquals("PENDING", resultado.getString(4), "OVERDUE persistido legado vira PENDING (projecao)");
                 assertEquals(3, resultado.getBigDecimal(5).intValueExact(), "saldo legado copiado para a coluna decimal");
                 assertEquals(0, resultado.getInt(6), "baseline absorve a razao legada sem divergencia");
+                assertEquals("MENSALIDADE:20000000-0000-0000-0000-000000000099:2026-03", resultado.getString(7),
+                        "mensalidade legada recebe identidade formal no backfill");
             }
         } finally {
             try (Connection admin = connection(); Statement statement = admin.createStatement()) {
@@ -989,6 +1001,70 @@ class FundacaoSchemaPostgreSQLIT {
                     "select count(*) from auditoria_eventos where entidade_id='exec-audit' and acao='FATURAMENTO_EXECUTADO'");
             assertTrue(auditoria.next());
             assertEquals(1, auditoria.getInt(1), "todo disparo de faturamento e auditado com ator e origem");
+        }
+    }
+
+    @Test
+    void mensalidadeDoProdutorLegadoENormalizadaSemDuplicarComARpc() throws SQLException {
+        try (Connection connection = connection(); Statement statement = connection.createStatement()) {
+            statement.execute("insert into cadastro(id,nome) values ('10000000-0000-0000-0000-000000000015','Cliente legado prod')");
+            statement.execute("insert into contratos(id,cliente_id,data_inicio,data_fim,valor_mensal,status) values "
+                    + "('20000000-0000-0000-0000-000000000015','10000000-0000-0000-0000-000000000015',"
+                    + "'2026-01-10','2026-12-31',100,'ACTIVE')");
+            statement.execute("insert into contrato_vigencias(contrato_id,versao,data_inicio,data_fim,valor_mensal,tipo_contrato,chave_idempotencia) "
+                    + "values ('20000000-0000-0000-0000-000000000015',1,'2026-01-10','2026-12-31',100,'MENSAL','vig-legado-1')");
+
+            // Desktop antigo grava mensalidade sem origem/competencia/chave.
+            statement.execute("insert into financeiro_lancamentos(tipo,descricao,cliente_id,contrato_id,valor_total,data_vencimento,status,observacoes) "
+                    + "values ('ENTRY','Mensalidade legada','10000000-0000-0000-0000-000000000015',"
+                    + "'20000000-0000-0000-0000-000000000015',100,'2026-09-10','PENDING',"
+                    + "'[CONTRATO 20000000-0000-0000-0000-000000000015 COMPETENCIA 2026-09]')");
+
+            ResultSet normalizada = statement.executeQuery(
+                    "select origem_tipo, competencia::text, chave_idempotencia, contrato_vigencia_id is not null,"
+                            + "(select count(*) from auditoria_eventos where acao='MENSALIDADE_LEGADA_NORMALIZADA') "
+                            + "from financeiro_lancamentos where contrato_id='20000000-0000-0000-0000-000000000015'");
+            assertTrue(normalizada.next());
+            assertEquals("CONTRATO", normalizada.getString(1));
+            assertEquals("2026-09-01", normalizada.getString(2));
+            assertEquals("MENSALIDADE:20000000-0000-0000-0000-000000000015:2026-09", normalizada.getString(3));
+            assertTrue(normalizada.getBoolean(4), "normalizacao vincula a vigencia");
+            assertEquals(1, normalizada.getInt(5), "normalizacao e auditada");
+
+            // A RPC reconhece a competencia legada e nao duplica.
+            ResultSet rpc = statement.executeQuery(
+                    "select resultado from rpc_faturar_mensalidades_v1('2026-09-15','legado-rpc') r "
+                            + "where r.contrato_id='20000000-0000-0000-0000-000000000015'");
+            assertTrue(rpc.next());
+            assertEquals("JA_EXISTENTE", rpc.getString(1));
+
+            // Estilo V17 (sem contrato_id): marcador + id deterministico verificado.
+            String idLegadoV17 = java.util.UUID.nameUUIDFromBytes(
+                    ("contrato-mensalidade:20000000-0000-0000-0000-000000000015:2026-10")
+                            .getBytes(java.nio.charset.StandardCharsets.UTF_8)).toString();
+            statement.execute("insert into financeiro_lancamentos(id,tipo,descricao,cliente_id,valor_total,data_vencimento,status,observacoes) values "
+                    + "('" + idLegadoV17 + "','ENTRY','Mensalidade legada V17',"
+                    + "'10000000-0000-0000-0000-000000000015',100,'2026-10-10','PENDING',"
+                    + "'[CONTRATO 20000000-0000-0000-0000-000000000015 COMPETENCIA 2026-10]')");
+            ResultSet v17 = statement.executeQuery(
+                    "select origem_tipo, chave_idempotencia, contrato_id::text from financeiro_lancamentos where id='" + idLegadoV17 + "'");
+            assertTrue(v17.next());
+            assertEquals("CONTRATO", v17.getString(1));
+            assertEquals("MENSALIDADE:20000000-0000-0000-0000-000000000015:2026-10", v17.getString(2));
+            assertEquals("20000000-0000-0000-0000-000000000015", v17.getString(3),
+                    "normalizacao V17 preenche o contrato extraido e verificado");
+
+            // Segundo insert legado do mesmo mes vira colisao de chave (23505).
+            assertEquals("23505", assertThrows(SQLException.class, () -> statement.execute(
+                    "insert into financeiro_lancamentos(tipo,descricao,cliente_id,contrato_id,valor_total,data_vencimento,status) "
+                            + "values ('ENTRY','Mensalidade legada bis','10000000-0000-0000-0000-000000000015',"
+                            + "'20000000-0000-0000-0000-000000000015',100,'2026-09-10','PENDING')")).getSQLState());
+
+            ResultSet total = statement.executeQuery(
+                    "select count(*) from financeiro_lancamentos "
+                            + "where contrato_id='20000000-0000-0000-0000-000000000015' and competencia='2026-09-01'");
+            assertTrue(total.next());
+            assertEquals(1, total.getInt(1), "uma unica mensalidade ativa por contrato/competencia");
         }
     }
 

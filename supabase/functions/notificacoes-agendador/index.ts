@@ -137,7 +137,14 @@ Deno.serve(async (req) => {
     const configsPorEvento = await carregarConfigs(sql);
     const pessoas = await carregarPessoas(sql);
 
-    const mensalidadesGeradas = await faturarMensalidadesContrato(sql);
+    let mensalidadesGeradas = 0;
+    try {
+      mensalidadesGeradas = await faturarMensalidadesContrato(sql);
+    } catch (e) {
+      // Faturamento tem autoridade propria (RPC); falha nele nao pode
+      // derrubar o ciclo de notificacoes.
+      console.error("Faturamento falhou; ciclo de notificacoes continua", e);
+    }
     if (DRY_RUN) {
       return json({ ok: true, dryRun: true, hoje: isoDate(hoje), mensalidadesGeradas: 0, geradas: 0, enviadas: 0, modoTeste: MODO_TESTE, envioHabilitado: ENVIO_HABILITADO });
     }
