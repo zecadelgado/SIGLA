@@ -1,4 +1,5 @@
 target/
+var/*.pdf
 *.log
 *.tmp
 .DS_Store
