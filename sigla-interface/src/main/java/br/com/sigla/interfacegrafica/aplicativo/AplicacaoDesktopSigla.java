@@ -100,13 +100,6 @@ public class AplicacaoDesktopSigla extends Application {
     }
 
     private void exibirFalhaInicializacao(Throwable falha) {
-        if (telaAbertura != null) {
-            telaAbertura.parar();
-        }
-        if (splashStage != null) {
-            splashStage.close();
-        }
-
         Throwable causa = falha.getCause() != null ? falha.getCause() : falha;
         causa.printStackTrace();
         Alert alerta = new Alert(Alert.AlertType.ERROR);
@@ -114,6 +107,15 @@ public class AplicacaoDesktopSigla extends Application {
         alerta.setHeaderText("Nao foi possivel iniciar o sistema.");
         alerta.setContentText(mensagemInicializacao(causa));
         alerta.showAndWait();
+
+        // Mantém a identidade visual do SIGLA atrás do aviso de falha. A tela de
+        // abertura só é encerrada após o usuário reconhecer a mensagem.
+        if (telaAbertura != null) {
+            telaAbertura.parar();
+        }
+        if (splashStage != null) {
+            splashStage.close();
+        }
         Platform.exit();
     }
 

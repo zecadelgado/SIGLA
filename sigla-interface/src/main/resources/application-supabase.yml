@@ -18,11 +18,11 @@ spring:
 
 supabase:
   project:
-    ref: ${SIGLA_SUPABASE_PROJECT_REF:jhderjgvzaxgzvcbkeol}
+    ref: ${SIGLA_SUPABASE_PROJECT_REF:ctbmgxhamwyoytolnddy}
     ids:
       - 06fcda92-fa5c-487e-a255-ba1de13dfd03
       - 426932ee-bac8-4b35-9f91-5515189841f5
   auth:
     enabled: ${SIGLA_SUPABASE_AUTH_ENABLED:true}
-    url: ${SIGLA_SUPABASE_AUTH_URL:https://jhderjgvzaxgzvcbkeol.supabase.co/auth/v1}
-    anon-key: ${SIGLA_SUPABASE_ANON_KEY:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpoZGVyamd2emF4Z3p2Y2JrZW9sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NjgzODUsImV4cCI6MjA4ODI0NDM4NX0.OmWAJOEP3Kz-6P1TH2xHY3_QUuQ5fNNGqnmYnKwrw80}
+    url: ${SIGLA_SUPABASE_AUTH_URL:https://ctbmgxhamwyoytolnddy.supabase.co/auth/v1}
+    anon-key: ${SIGLA_SUPABASE_ANON_KEY:sb_publishable_lxaX_v-DnKG4fBrLCeau8w_DLeAkisk}

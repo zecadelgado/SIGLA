@@ -2,6 +2,15 @@
 
 O SIGLA passa a abrir pelo `sigla-launcher.jar`. O launcher copia/atualiza o `sigla.jar` em `%LOCALAPPDATA%\SIGLA\app` e executa essa copia local. Isso evita escrever em `Program Files` e permite atualizar sem permissao de administrador.
 
+## Convencao de publicacao
+
+No contexto deste projeto, o pedido **"subir o codigo"** significa concluir as duas publicacoes abaixo, depois de compilar e testar a alteracao:
+
+1. Commitar e enviar a branch `homolog` para `zecadelgado/SIGLA` (`origin`).
+2. Criar e publicar uma nova GitHub Release em `Richarlison-Avila/sigla-update`, anexando obrigatoriamente `sigla.jar` e `versao.json`.
+
+Use uma tag nova para cada release (por exemplo, `v2.0-build.4`). O campo `build` de `versao.json` deve ser maior que o da release anterior. A autenticacao do GitHub CLI precisa ter permissao de escrita em **Contents** no repositorio principal e em **Contents/Releases** no repositorio de atualizacoes. Nenhuma senha ou segredo do Supabase faz parte desse fluxo.
+
 ## Gerar o sigla.jar atualizado
 
 Na raiz do projeto:

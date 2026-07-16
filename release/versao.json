@@ -1,6 +1,6 @@
 {
-  "build": 4,
-  "versao": "0.1.0-build.4",
-  "mensagem": "Uma nova atualizacao do SIGLA esta disponivel.",
+  "build": 5,
+  "versao": "0.1.0-build.4.1",
+  "mensagem": "Correcao de conexao com o banco para o executavel do SIGLA.",
   "url": "https://github.com/Richarlison-Avila/sigla-update/releases/latest/download/sigla.jar"
 }
