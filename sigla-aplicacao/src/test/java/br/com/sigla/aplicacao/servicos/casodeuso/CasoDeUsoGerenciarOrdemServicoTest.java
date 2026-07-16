@@ -15,8 +15,10 @@ import br.com.sigla.dominio.financeiro.LancamentoFinanceiro;
 import br.com.sigla.dominio.servicos.OrdemServico;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -30,6 +32,18 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CasoDeUsoGerenciarOrdemServicoTest {
+
+    @Test
+    void operacoesQuePersistemOsEProjetamAgendaPossuemFronteiraTransacional() throws NoSuchMethodException {
+        assertTrue(transacional("create", CasoDeUsoOrdemServico.CreateOrdemServicoCommand.class));
+        assertTrue(transacional("update", CasoDeUsoOrdemServico.UpdateOrdemServicoCommand.class));
+        assertTrue(transacional("reschedule", CasoDeUsoOrdemServico.ReagendarOrdemServicoCommand.class));
+    }
+
+    private static boolean transacional(String nome, Class<?> tipoDoComando) throws NoSuchMethodException {
+        Method metodo = CasoDeUsoGerenciarOrdemServico.class.getMethod(nome, tipoDoComando);
+        return metodo.isAnnotationPresent(Transactional.class);
+    }
 
     @Test
     void iniciaConcluiComProdutoBaixaEstoqueENaoDuplica() {

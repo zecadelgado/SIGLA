@@ -9,7 +9,7 @@ $launcherJarName = "sigla-launcher-0.1.0-SNAPSHOT.jar"
 $launcherMainJar = "sigla-launcher.jar"
 $appJarName = "sigla-interface-0.1.0-SNAPSHOT.jar"
 $appRuntimeJar = "sigla.jar"
-$appVersion = "2.0.0"
+$appVersion = "3.0.0"
 $inputDir = Join-Path $repoRoot "sigla-interface/target/jpackage-input"
 $launcherJarPath = Join-Path $repoRoot "sigla-launcher/target/$launcherJarName"
 $appJarPath = Join-Path $repoRoot "sigla-interface/target/$appJarName"
@@ -25,7 +25,7 @@ $simpleArchivePath = Join-Path $simpleInstallerDir "SIGLA-app.zip"
 $simpleInstallerScript = Join-Path $repoRoot "scripts/package/instalador-simples-win.ps1"
 $simpleUninstallerScript = Join-Path $repoRoot "scripts/package/desinstalador-simples-win.ps1"
 $simpleInstallerIcon = Join-Path $simpleInstallerDir "sigla.ico"
-$simpleInstallerExe = Join-Path $installerDir "SIGLA-Setup-2.0.exe"
+$simpleInstallerExe = Join-Path $installerDir "SIGLA-Setup-3.0.exe"
 $simpleInstallerSed = Join-Path $simpleInstallerDir "SIGLA-Setup.sed"
 $javaOptions = "--enable-native-access=ALL-UNNAMED"
 
@@ -102,7 +102,7 @@ function Set-InstallerIcon {
 
     & $rceditPath $InstallerPath --set-file-version $appVersion --set-product-version $appVersion
     if ($LASTEXITCODE -ne 0) {
-        throw "Nao foi possivel definir a versao 2.0 do instalador."
+        throw "Nao foi possivel definir a versao 3.0 do instalador."
     }
 }
 
@@ -233,7 +233,7 @@ try {
     $outputInstallerDir = Join-Path $repoRoot "outputs/instaladores"
     New-Item -ItemType Directory -Force -Path $outputInstallerDir | Out-Null
     Remove-Item -Path (Join-Path $outputInstallerDir "SIGLA*.exe") -Force -ErrorAction SilentlyContinue
-    Copy-Item -LiteralPath $simpleInstallerExe -Destination (Join-Path $outputInstallerDir "SIGLA-Setup-2.0.exe") -Force
+    Copy-Item -LiteralPath $simpleInstallerExe -Destination (Join-Path $outputInstallerDir "SIGLA-Setup-3.0.exe") -Force
 } finally {
     Pop-Location
 }

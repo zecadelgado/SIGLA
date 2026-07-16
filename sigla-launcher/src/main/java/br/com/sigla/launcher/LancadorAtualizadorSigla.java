@@ -50,7 +50,7 @@ public final class LancadorAtualizadorSigla {
     private static final String LOGO_SIGLA = "sigla-logo.png";
     private static final String VERSAO_LOCAL = "versao-local.txt";
     private static final String ULTIMA_VERIFICACAO = "ultima-verificacao.txt";
-    private static final long BUILD_INICIAL = 1L;
+    private static final long BUILD_INICIAL = 3L;
 
     private final HttpClient httpClient = HttpClient.newBuilder()
             .connectTimeout(java.time.Duration.ofSeconds(4))

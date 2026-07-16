@@ -97,7 +97,7 @@ function Register-InstalledApplication {
     New-Item -Path $uninstallRegistryPath -Force | Out-Null
     $uninstallCommand = "powershell.exe -NoProfile -ExecutionPolicy Bypass -File `"$uninstallerPath`""
     New-ItemProperty -Path $uninstallRegistryPath -Name "DisplayName" -Value "SIGLA" -PropertyType String -Force | Out-Null
-    New-ItemProperty -Path $uninstallRegistryPath -Name "DisplayVersion" -Value "2.0.0" -PropertyType String -Force | Out-Null
+    New-ItemProperty -Path $uninstallRegistryPath -Name "DisplayVersion" -Value "3.0.0" -PropertyType String -Force | Out-Null
     New-ItemProperty -Path $uninstallRegistryPath -Name "Publisher" -Value "SIGLA" -PropertyType String -Force | Out-Null
     New-ItemProperty -Path $uninstallRegistryPath -Name "InstallDate" -Value (Get-Date -Format "yyyyMMdd") -PropertyType String -Force | Out-Null
     New-ItemProperty -Path $uninstallRegistryPath -Name "InstallLocation" -Value $installRoot -PropertyType String -Force | Out-Null

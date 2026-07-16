@@ -4,8 +4,8 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-$datasourceUrl = "jdbc:postgresql://aws-0-us-west-2.pooler.supabase.com:5432/postgres?sslmode=require"
-$datasourceUsername = "postgres.jhderjgvzaxgzvcbkeol"
+$datasourceUrl = "jdbc:postgresql://aws-1-sa-east-1.pooler.supabase.com:5432/postgres?sslmode=require"
+$datasourceUsername = "postgres.ctbmgxhamwyoytolnddy"
 
 if ([string]::IsNullOrWhiteSpace($Senha)) {
     $securePassword = Read-Host "Cole a senha do banco Supabase" -AsSecureString

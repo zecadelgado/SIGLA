@@ -87,6 +87,7 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
     }
 
     @Override
+    @Transactional
     public OrdemServico create(CreateOrdemServicoCommand command) {
         if (command.status() != null && command.status() != OrdemServico.OrdemServicoStatus.AGENDADA) {
             throw new IllegalArgumentException("Status operacional deve ser alterado apenas pelas acoes iniciar, concluir ou cancelar.");
@@ -125,6 +126,7 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
     }
 
     @Override
+    @Transactional
     public OrdemServico update(UpdateOrdemServicoCommand command) {
         OrdemServico atual = find(command.id());
         if (atual.concluida() || atual.status() == OrdemServico.OrdemServicoStatus.CANCELADA) {
@@ -259,6 +261,7 @@ public class CasoDeUsoGerenciarOrdemServico implements CasoDeUsoOrdemServico {
     }
 
     @Override
+    @Transactional
     public OrdemServico reschedule(ReagendarOrdemServicoCommand command) {
         OrdemServico atual = find(command.id());
         if (atual.concluida() || atual.status() == OrdemServico.OrdemServicoStatus.CANCELADA) {

@@ -47,8 +47,7 @@ public class ControladorLogin {
     private static final URI VERSAO_REMOTA_URI = URI.create(
             "https://github.com/Richarlison-Avila/sigla-update/releases/latest/download/versao.json"
     );
-    private static final long BUILD_INICIAL = 1L;
-    private static final String VERSAO_ATUAL = "2.0";
+    private static final long BUILD_INICIAL = 3L;
 
     private final SessaoLocalAplicacao sessaoLocalAplicacao;
     private final FluxoAplicacao fluxoAplicacao;
@@ -111,32 +110,25 @@ public class ControladorLogin {
             return;
         }
 
-        versaoAtualizacaoLabel.setText("(V " + VERSAO_ATUAL + ")");
+        versaoAtualizacaoLabel.setText("(V ...)");
         versaoAtualizacaoLabel.setOpacity(0.72);
+        executorTarefasUi.executar(
+                () -> {
+                    try {
+                        return buscarAtualizacao();
+                    } catch (Exception exception) {
+                        LOGGER.debug("Nao foi possivel carregar a versao atual do SIGLA.", exception);
+                        return Optional.<VersaoRemota>empty();
+                    }
+                },
+                versaoRemota -> versaoRemota.ifPresent(this::exibirVersaoAtualizacao)
+        );
     }
 
-    private String resolverBuildAtual() {
-        String buildEnv = System.getenv("SIGLA_BUILD_LOCAL");
-        if (buildEnv != null && !buildEnv.isBlank()) {
-            return "build " + buildEnv.trim();
+    private void exibirVersaoAtualizacao(VersaoRemota versaoRemota) {
+        if (versaoAtualizacaoLabel != null) {
+            versaoAtualizacaoLabel.setText("(V " + versaoRemota.versao() + ")");
         }
-
-        String appDir = System.getenv("SIGLA_APP_DIR");
-        Path versaoLocal = appDir == null || appDir.isBlank()
-                ? Path.of("versao-local.txt")
-                : Path.of(appDir, "versao-local.txt");
-
-        try {
-            if (Files.exists(versaoLocal)) {
-                String build = Files.readString(versaoLocal, StandardCharsets.UTF_8).trim();
-                if (!build.isBlank()) {
-                    return "build " + build;
-                }
-            }
-        } catch (Exception exception) {
-            LOGGER.debug("Nao foi possivel ler versao local do SIGLA.", exception);
-        }
-        return "2.0 (build " + BUILD_INICIAL + ")";
     }
 
     @FXML

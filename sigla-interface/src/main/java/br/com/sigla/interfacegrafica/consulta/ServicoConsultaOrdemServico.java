@@ -7,6 +7,7 @@ import br.com.sigla.dominio.financeiro.LancamentoFinanceiro;
 import br.com.sigla.aplicacao.servicos.porta.entrada.CasoDeUsoOrdemServico;
 import br.com.sigla.dominio.funcionarios.Funcionario;
 import br.com.sigla.dominio.servicos.OrdemServico;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -25,6 +26,7 @@ public class ServicoConsultaOrdemServico {
     private final CasoDeUsoFuncionario casoDeUsoFuncionario;
     private final CasoDeUsoFinanceiro casoDeUsoFinanceiro;
 
+    @Autowired
     public ServicoConsultaOrdemServico(
             CasoDeUsoOrdemServico casoDeUsoOrdemServico,
             CasoDeUsoCliente casoDeUsoCliente,

@@ -1,7 +1,7 @@
 spring:
   datasource:
-    url: ${SIGLA_DATASOURCE_URL:${SPRING_DATASOURCE_URL:jdbc:postgresql://aws-0-us-west-2.pooler.supabase.com:5432/postgres?sslmode=require}}
-    username: ${SIGLA_DATASOURCE_USERNAME:${SPRING_DATASOURCE_USERNAME:postgres.jhderjgvzaxgzvcbkeol}}
+    url: ${SIGLA_DATASOURCE_URL:${SPRING_DATASOURCE_URL:jdbc:postgresql://aws-1-sa-east-1.pooler.supabase.com:5432/postgres?sslmode=require}}
+    username: ${SIGLA_DATASOURCE_USERNAME:${SPRING_DATASOURCE_USERNAME:postgres.ctbmgxhamwyoytolnddy}}
     password: ${SIGLA_DATASOURCE_PASSWORD:${SPRING_DATASOURCE_PASSWORD}}
     hikari:
       pool-name: sigla-pool
